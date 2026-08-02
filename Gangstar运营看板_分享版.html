@@ -144,7 +144,7 @@
   .cell{padding:7px 8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:48px;background:#fff;font-size:12px;position:relative}
   .cell:last-child{border-right:none}
   /* 素材卡片 */
-  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;cursor:default;transition:box-shadow .15s}
+  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;cursor:grab;transition:box-shadow .15s}.item:active{cursor:grabbing}.item.dragging{opacity:.4}.cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-3px}
   .item:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
   .item .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;margin-bottom:3px}
   .item .title{font-weight:600;color:var(--ink)}
@@ -2643,17 +2643,41 @@ const REGIONAL_DATA={
 };
 
 // ===== 区域素材独立看板（周历格式，保留独立入口）=====
+// 拖拽移动记录：localStorage 增量（uid -> 目标日期），不改动源数据
+function getRegionMoves(){
+  try{return JSON.parse(localStorage.getItem('gangstar_regional_moves')||'{}');}catch(e){return {};}
+}
+function regionUid(range,date,it){return range+'|'+date+'|'+it.type+'|'+it.title;}
+
 function renderRegional(){
   const el=document.getElementById('regionalView');
   const today=new Date().toISOString().slice(0,10);
   const weeks=(REGIONAL_DATA&&REGIONAL_DATA.weeks)||[];
   if(!weeks.length){el.innerHTML='<p style="color:var(--muted);padding:40px;text-align:center">暂无素材数据</p>';return;}
 
-  const weeksHtml=weeks.map(week=>{
+  // 应用拖拽移动：构建每个 week 的显示 items
+  const moves=getRegionMoves();
+  const dateWeek={};
+  weeks.forEach((w,wi)=>w.days.forEach(d=>dateWeek[d.date]=wi));
+  const dispItems=weeks.map(()=>({}));
+  weeks.forEach((w,wi)=>{
+    Object.entries(w.items||{}).forEach(([od,arr])=>{
+      (arr||[]).forEach(it=>{
+        const uid=regionUid(w.range,od,it);
+        const eff=moves[uid]||od;
+        const ti=dateWeek[eff];
+        if(ti===undefined) return;
+        (dispItems[ti][eff]=dispItems[ti][eff]||[]).push(it);
+      });
+    });
+  });
+
+  const weeksHtml=weeks.map((week,wi)=>{
+    const items=dispItems[wi];
     let totalItems=0;
     const typeCount={};
     CONTENT_TYPES.forEach(t=>typeCount[t.key]=0);
-    Object.values(week.items||{}).forEach(dayItems=>{
+    Object.values(items||{}).forEach(dayItems=>{
       (dayItems||[]).forEach(it=>{totalItems++;if(typeCount[it.type]!==undefined)typeCount[it.type]++;});
     });
 
@@ -2668,14 +2692,15 @@ function renderRegional(){
     const usedTypes=CONTENT_TYPES.filter(t=>typeCount[t.key]>0);
     const rowsHtml=usedTypes.map(t=>{
       const cells=week.days.map(d=>{
-        const dayItems=(week.items[d.date]||[]).filter(it=>it.type===t.key);
+        const dayItems=(items[d.date]||[]).filter(it=>it.type===t.key);
         const cellContent=dayItems.map(it=>{
           const typeCls='t-'+it.type;
           const partnerHtml=it.partner?`<div class="partner">合作方：<u>${esc(it.partner)}</u></div>`:'';
           const descHtml=it.desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(it.desc)}</div>`:'';
-          return `<div class="item ${typeCls}"><span class="tag">${t.name}</span><div class="title">${esc(it.title)}</div>${partnerHtml}${descHtml}</div>`;
+          const uid=regionUid(week.range,d.date,it);
+          return `<div class="item ${typeCls}" draggable="true" data-uid="${esc(uid)}" title="拖拽可改日期"><span class="tag">${t.name}</span><div class="title">${esc(it.title)}</div>${partnerHtml}${descHtml}</div>`;
         }).join('');
-        return `<div class="cell">${cellContent}</div>`;
+        return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
       return `<div class="cal-row">
         <div class="type-label"><span class="dot" style="background:${t.color}"></span>${t.icon} ${t.name}<span style="margin-left:auto;color:var(--muted);font-size:11px;font-weight:700">${typeCount[t.key]}</span></div>
@@ -2694,10 +2719,53 @@ function renderRegional(){
 
   el.innerHTML=`
     <h2>📝 区域素材周历</h2>
-    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材</div>
+    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材 · 卡片可拖拽改日期</div>
     ${weeksHtml}
   `;
 }
+
+// 区域素材拖拽改日期（事件委托，绑定一次）
+(function bindRegionDrag(){
+  const rv=document.getElementById('regionalView');
+  if(!rv) return;
+  rv.addEventListener('dragstart',e=>{
+    const it=e.target.closest('.item');
+    if(!it) return;
+    e.dataTransfer.setData('text/plain', it.getAttribute('data-uid'));
+    e.dataTransfer.effectAllowed='move';
+    it.classList.add('dragging');
+  });
+  rv.addEventListener('dragend',e=>{
+    const it=e.target.closest('.item');
+    if(it) it.classList.remove('dragging');
+  });
+  rv.addEventListener('dragover',e=>{
+    const cell=e.target.closest('.cell');
+    if(!cell) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect='move';
+    cell.classList.add('drop-over');
+  });
+  rv.addEventListener('dragleave',e=>{
+    const cell=e.target.closest('.cell');
+    if(cell && !cell.contains(e.relatedTarget)) cell.classList.remove('drop-over');
+  });
+  rv.addEventListener('drop',e=>{
+    const cell=e.target.closest('.cell');
+    if(!cell) return;
+    e.preventDefault();
+    cell.classList.remove('drop-over');
+    const uid=e.dataTransfer.getData('text/plain');
+    if(!uid) return;
+    const target=cell.getAttribute('data-date');
+    const orig=uid.split('|')[1];
+    const moves=getRegionMoves();
+    if(target===orig) delete moves[uid]; else moves[uid]=target;
+    localStorage.setItem('gangstar_regional_moves',JSON.stringify(moves));
+    renderRegional();
+  });
+})();
+
 
 // 页面加载后如果当前是 regional 视图则渲染
 if(views.regional.classList.contains('active')) renderRegional();
