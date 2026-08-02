@@ -61,6 +61,12 @@
 - 特性：刷新不丢；拖回原日期自动清除该记录；支持跨周拖拽（按日期归属自动落到对应周）；主看板与分享版同步
 - 校验：node 逻辑测试 PASS（8/3 KOC 拖到 8/7 生效），两文件 JS 语法 OK
 
+### 2026-08-02 ｜ 拖拽改用 Pointer Events + 手柄按钮
+- **原因**：HTML5 DnD 在部分浏览器环境下不触发 dragstart（用户反馈无法拖拽）
+- **改动**：卡片右上角新增 ⠿ 拖拽手柄按钮（hover 变橙色）；放弃 HTML5 DnD API，改用 pointerdown/pointermove/pointerup 手动实现
+- **效果**：手柄外区域不可拖拽（防误触）；ghost 跟随鼠标带旋转阴影效果；目标格橙色虚线高亮
+- **校验**：无头浏览器测试 PASS（26 个手柄、ghost 跟随、drop 高亮、localStorage 写入、ghost 清理均正常）
+
 ---
 
 ## 今后约定
