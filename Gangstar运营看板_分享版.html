@@ -144,7 +144,13 @@
   .cell{padding:7px 8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:48px;background:#fff;font-size:12px;position:relative}
   .cell:last-child{border-right:none}
   /* 素材卡片 */
-  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;cursor:grab;transition:box-shadow .15s}.item:active{cursor:grabbing}.item.dragging{opacity:.4}.cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-3px}
+  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 26px 7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;transition:box-shadow .15s;position:relative}
+  .item .drag-handle{position:absolute;top:5px;right:5px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e5ea;border-radius:5px;background:#eef0f4;color:#9aa1ac;font-size:11px;line-height:1;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;transition:.12s}
+  .item .drag-handle:hover{background:#f59e0b;border-color:#f59e0b;color:#fff;transform:scale(1.08)}
+  .item .drag-handle:active{cursor:grabbing}
+  .item.dragging{opacity:.3}
+  .drag-ghost{position:fixed !important;margin:0 !important;pointer-events:none;z-index:9999;opacity:.96;box-shadow:0 12px 28px rgba(0,0,0,.2);transform:rotate(-1.5deg);background:#fff}
+  .cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-3px}
   .item:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
   .item .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;margin-bottom:3px}
   .item .title{font-weight:600;color:var(--ink)}
@@ -2698,7 +2704,7 @@ function renderRegional(){
           const partnerHtml=it.partner?`<div class="partner">合作方：<u>${esc(it.partner)}</u></div>`:'';
           const descHtml=it.desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(it.desc)}</div>`:'';
           const uid=regionUid(week.range,d.date,it);
-          return `<div class="item ${typeCls}" draggable="true" data-uid="${esc(uid)}" title="拖拽可改日期"><span class="tag">${t.name}</span><div class="title">${esc(it.title)}</div>${partnerHtml}${descHtml}</div>`;
+          return `<div class="item ${typeCls}" data-uid="${esc(uid)}"><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${t.name}</span><div class="title">${esc(it.title)}</div>${partnerHtml}${descHtml}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
@@ -2724,46 +2730,81 @@ function renderRegional(){
   `;
 }
 
-// 区域素材拖拽改日期（事件委托，绑定一次）
+// 区域素材拖拽改日期（按住卡片右上角手柄 · Pointer Events 实现，兼容性更好）
 (function bindRegionDrag(){
   const rv=document.getElementById('regionalView');
   if(!rv) return;
-  rv.addEventListener('dragstart',e=>{
-    const it=e.target.closest('.item');
-    if(!it) return;
-    e.dataTransfer.setData('text/plain', it.getAttribute('data-uid'));
-    e.dataTransfer.effectAllowed='move';
-    it.classList.add('dragging');
-  });
-  rv.addEventListener('dragend',e=>{
-    const it=e.target.closest('.item');
-    if(it) it.classList.remove('dragging');
-  });
-  rv.addEventListener('dragover',e=>{
-    const cell=e.target.closest('.cell');
-    if(!cell) return;
+  let drag=null;
+
+  function cellFromPoint(x,y){
+    const els=document.elementsFromPoint(x,y)||[];
+    for(const el of els){
+      if(el && el.closest){ const c=el.closest('.cell'); if(c) return c; }
+    }
+    return null;
+  }
+  function moveGhost(x,y){
+    if(!drag) return;
+    drag.ghost.style.left=(x-drag.dx)+'px';
+    drag.ghost.style.top=(y-drag.dy)+'px';
+  }
+  function cleanup(){
+    if(!drag) return;
+    const d=drag; drag=null;
+    if(d.ghost&&d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
+    d.item.classList.remove('dragging');
+    if(d.cell) d.cell.classList.remove('drop-over');
+    document.body.style.userSelect='';
+    return d;
+  }
+
+  rv.addEventListener('pointerdown',e=>{
+    if(e.button!==undefined&&e.button!==0) return;
+    const h=e.target.closest&&e.target.closest('.drag-handle');
+    if(!h) return;
+    const item=h.closest('.item');
+    if(!item||!item.getAttribute('data-uid')) return;
     e.preventDefault();
-    e.dataTransfer.dropEffect='move';
-    cell.classList.add('drop-over');
+    const rect=item.getBoundingClientRect();
+    const ghost=item.cloneNode(true);
+    ghost.classList.add('drag-ghost');
+    ghost.style.width=rect.width+'px';
+    document.body.appendChild(ghost);
+    drag={uid:item.getAttribute('data-uid'),item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
+    item.classList.add('dragging');
+    document.body.style.userSelect='none';
+    moveGhost(e.clientX,e.clientY);
   });
-  rv.addEventListener('dragleave',e=>{
-    const cell=e.target.closest('.cell');
-    if(cell && !cell.contains(e.relatedTarget)) cell.classList.remove('drop-over');
-  });
-  rv.addEventListener('drop',e=>{
-    const cell=e.target.closest('.cell');
-    if(!cell) return;
+
+  document.addEventListener('pointermove',e=>{
+    if(!drag) return;
     e.preventDefault();
-    cell.classList.remove('drop-over');
-    const uid=e.dataTransfer.getData('text/plain');
-    if(!uid) return;
+    drag.moved=true;
+    moveGhost(e.clientX,e.clientY);
+    drag.ghost.style.visibility='hidden';
+    const cell=cellFromPoint(e.clientX,e.clientY);
+    drag.ghost.style.visibility='';
+    if(drag.cell&&drag.cell!==cell) drag.cell.classList.remove('drop-over');
+    if(cell) cell.classList.add('drop-over');
+    drag.cell=cell;
+  },{passive:false});
+
+  document.addEventListener('pointerup',e=>{
+    if(!drag) return;
+    const cell=drag.cell, uid=drag.uid, moved=drag.moved;
+    cleanup();
+    if(!cell||!moved) return;
     const target=cell.getAttribute('data-date');
-    const orig=uid.split('|')[1];
+    if(!target) return;
+    const orig=(uid.split('|')[1])||'';
     const moves=getRegionMoves();
     if(target===orig) delete moves[uid]; else moves[uid]=target;
     localStorage.setItem('gangstar_regional_moves',JSON.stringify(moves));
     renderRegional();
   });
+
+  document.addEventListener('pointercancel',()=>{cleanup();});
+  window.addEventListener('blur',()=>{cleanup();});
 })();
 
 
