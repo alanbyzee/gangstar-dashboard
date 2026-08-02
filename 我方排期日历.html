@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我方排期 · HQ Calendar</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --line:#e5e7eb; --accent:#6d28d9; --gold:#f59e0b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:24px;line-height:1.4}
+  .wrap{max-width:1280px;margin:0 auto}
+  header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+  h1{font-size:22px;font-weight:700}
+  h1 small{font-size:13px;color:var(--muted);font-weight:400;margin-left:8px}
+  .stats{display:flex;gap:10px;flex-wrap:wrap}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;text-align:center;min-width:64px}
+  .stat b{display:block;font-size:20px;color:var(--accent)}
+  .stat span{font-size:11px;color:var(--muted)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 22px}
+  .lg{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;user-select:none;transition:.15s}
+  .lg .dot{width:11px;height:11px;border-radius:3px}
+  .lg.off{opacity:.35;text-decoration:line-through}
+  .lg b{color:var(--muted);font-weight:600}
+  .months{display:grid;grid-template-columns:1fr;gap:28px}
+  @media(min-width:1080px){.months{grid-template-columns:1fr 1fr;gap:24px}}
+  .month{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .month h2{font-size:17px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .month h2 .tag{font-size:11px;background:#ede9fe;color:var(--accent);padding:2px 8px;border-radius:10px;font-weight:600}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:5px}
+  .dow div{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding:2px 0}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cell{min-height:62px;border:1px solid var(--line);border-radius:8px;padding:4px 5px;background:#fcfcfd;display:flex;flex-direction:column;gap:3px;overflow:hidden;cursor:pointer;transition:.12s}
+  .cell:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(109,40,217,.12)}
+  .cell.empty{background:transparent;border-color:transparent;cursor:default}
+  .cell.empty:hover{box-shadow:none}
+  .dnum{font-size:12px;font-weight:700;color:var(--ink)}
+  .cell.out .dnum{color:#cbd5e1}
+  .cell.launch{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:var(--gold)}
+  .cell.launch .dnum{color:#b45309}
+  .cell.launch::after{content:"上线";font-size:9px;color:#fff;background:var(--gold);border-radius:4px;padding:0 4px;align-self:flex-start;margin-top:-1px}
+  .chip{font-size:10px;line-height:1.25;padding:2px 5px;border-radius:5px;border-left:3px solid;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .more{font-size:10px;color:var(--muted);font-weight:600;padding-left:2px}
+  /* drawer */
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;z-index:50}
+  .overlay.show{display:block}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:380px;max-width:90vw;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,.18);transform:translateX(100%);transition:.22s;z-index:60;display:flex;flex-direction:column}
+  .drawer.show{transform:translateX(0)}
+  .dh{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start}
+  .dh h3{font-size:18px}
+  .dh .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .close{cursor:pointer;border:none;background:#f3f4f6;width:30px;height:30px;border-radius:8px;font-size:16px;color:var(--muted)}
+  .dbody{padding:14px 20px;overflow-y:auto;flex:1}
+  .di{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+  .di .cat{font-size:11px;font-weight:700;display:inline-block;padding:1px 8px;border-radius:10px;margin-bottom:5px}
+  .di .txt{font-size:13px;white-space:pre-wrap;word-break:break-word}
+  .foot{margin-top:26px;text-align:center;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>我方排期 · HQ Calendar <small>2026 预注册期 · 上线日 8/20</small></h1>
+    <div class="stats" id="stats"></div>
+  </header>
+  <div class="legend" id="legend"></div>
+  <div class="months" id="months"></div>
+  <div class="foot">数据来源：我方排期.xlsx · 共 <span id="total"></span> 条排期 · 由 WorkBuddy 生成</div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="dh">
+    <div><h3 id="dTitle"></h3><div class="sub" id="dSub"></div></div>
+    <button class="close" id="dClose">✕</button>
+  </div>
+  <div class="dbody" id="dBody"></div>
+</div>
+
+<script>
+const DATA = {"items": [{"date": "2026-07-21", "cat": "HQ Assets", "text": "1.PVP玩法快剪视频", "short": "1.PVP玩法快剪视频"}, {"date": "2026-07-23", "cat": "HQ Assets", "text": "1.“Don Phil日常”进度图三", "short": "1.“Don Phil日常”进度图三"}, {"date": "2026-07-24", "cat": "HQ Assets", "text": "1.合抢玩法快剪视频", "short": "1.合抢玩法快剪视频"}, {"date": "2026-07-25", "cat": "HQ Assets", "text": "1.“趣味帮派日常”—— 泽西帮 劲力宝宣传片", "short": "1.“趣味帮派日常”—— 泽西帮 劲力宝宣传片"}, {"date": "2026-07-27", "cat": "HQ Assets", "text": "1.角色介绍：买宝(武器入门)通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法", "short": "1.角色介绍：买宝(武器入门)通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法"}, {"date": "2026-07-28", "cat": "HQ Assets", "text": "1.常规装备快剪视频", "short": "1.常规装备快剪视频"}, {"date": "2026-07-29", "cat": "HQ Assets", "text": "1.阵营介绍：阿加雷斯", "short": "1.阵营介绍：阿加雷斯"}, {"date": "2026-07-30", "cat": "HQ Assets", "text": "1.“Don Phil日常”进度图四", "short": "1.“Don Phil日常”进度图四"}, {"date": "2026-07-31", "cat": "HQ Assets", "text": "1.阵营介绍：极光", "short": "1.阵营介绍：极光"}, {"date": "2026-08-01", "cat": "HQ Assets", "text": "1.“趣味帮派日常”—— 幽灵族 路灯维修工最痛恨的一批人", "short": "1.“趣味帮派日常”—— 幽灵族 路灯维修工最痛恨的一批人"}, {"date": "2026-08-03", "cat": "HQ Assets", "text": "1.在Rooklyn体验别样人生 海报", "short": "1.在Rooklyn体验别样人生 海报"}, {"date": "2026-08-04", "cat": "HQ Assets", "text": "1.“Rooklyn新闻台” 第四期 城市产业欣欣向荣", "short": "1.“Rooklyn新闻台” 第四期 城市产业欣欣向荣"}, {"date": "2026-08-06", "cat": "HQ Assets", "text": "1.经营玩法快剪视频", "short": "1.经营玩法快剪视频"}, {"date": "2026-08-07", "cat": "HQ Assets", "text": "导游波比带你游Rooklyn游戏完整地图介绍+人设展示视频，会以一种导游带完的形式，让波比在城市街头逐一介绍城市景色，同时在过程中展现市民的“自由”以及波比嘴欠的人物形象。", "short": "导游波比带你游Rooklyn游戏完整地图介绍+人设展示视频，会以一种导游带完的形式，让波比在城市街头逐一介绍城市景色，同时在过程中展现市民的“自由”以及波比嘴欠的人物形象。"}, {"date": "2026-08-08", "cat": "HQ Assets", "text": "1.“趣味帮派日常”—— 极光 意思下就得了，谁上班玩命啊", "short": "1.“趣味帮派日常”—— 极光 意思下就得了，谁上班玩命啊"}, {"date": "2026-08-11", "cat": "HQ Assets", "text": "1.DonPhil预注册核心视频", "short": "1.DonPhil预注册核心视频"}, {"date": "2026-08-13", "cat": "HQ Assets", "text": "1.“Don Phil日常”进度图六", "short": "1.“Don Phil日常”进度图六"}, {"date": "2026-08-14", "cat": "HQ Assets", "text": "1.机型推荐图文公告（社区）", "short": "1.机型推荐图文公告（社区）"}, {"date": "2026-08-15", "cat": "HQ Assets", "text": "1.YDHDT洗脑广告——无需遵守秩序，随意破坏", "short": "1.YDHDT洗脑广告——无需遵守秩序，随意破坏"}, {"date": "2026-08-16", "cat": "HQ Assets", "text": "1.开服倒计时15秒视频-大世界", "short": "1.开服倒计时15秒视频-大世界"}, {"date": "2026-08-17", "cat": "HQ Assets", "text": "1.YDHDT洗脑广告——无需氪金才能获得体验", "short": "1.YDHDT洗脑广告——无需氪金才能获得体验"}, {"date": "2026-08-18", "cat": "HQ Assets", "text": "1.开服倒计时15秒视频-高火力装备", "short": "1.开服倒计时15秒视频-高火力装备"}, {"date": "2026-08-19", "cat": "HQ Assets", "text": "1.YDHDT洗脑广告——不必在竞技排位中受挫", "short": "1.YDHDT洗脑广告——不必在竞技排位中受挫"}, {"date": "2026-08-20", "cat": "HQ Assets", "text": "1.混沌都市爽感玩法演示视频", "short": "1.混沌都市爽感玩法演示视频"}, {"date": "2026-07-21", "cat": "HQ Assets", "text": "1.游戏PVP玩法一图流（社区）", "short": "1.游戏PVP玩法一图流（社区）"}, {"date": "2026-07-27", "cat": "HQ Assets", "text": "2.Buymore：机器人店长生存指南：", "short": "2.Buymore：机器人店长生存指南："}, {"date": "2026-07-28", "cat": "HQ Assets", "text": "1.“Rooklyn新闻台” 第三期 电台激情解说", "short": "1.“Rooklyn新闻台” 第三期 电台激情解说"}, {"date": "2026-07-30", "cat": "HQ Assets", "text": "2.阵营介绍：铁壁安保通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备", "short": "2.阵营介绍：铁壁安保通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备"}, {"date": "2026-08-06", "cat": "HQ Assets", "text": "1.“Don Phil日常”进度图五", "short": "1.“Don Phil日常”进度图五"}, {"date": "2026-08-07", "cat": "HQ Assets", "text": "1.经营玩法一图流（社区）", "short": "1.经营玩法一图流（社区）"}, {"date": "2026-08-15", "cat": "HQ Assets", "text": "1.开服倒计时海报5天", "short": "1.开服倒计时海报5天"}, {"date": "2026-08-16", "cat": "HQ Assets", "text": "1.开服倒计时海报4天", "short": "1.开服倒计时海报4天"}, {"date": "2026-08-17", "cat": "HQ Assets", "text": "2.开服倒计时15秒视频-PVP&合抢", "short": "2.开服倒计时15秒视频-PVP&合抢"}, {"date": "2026-08-18", "cat": "HQ Assets", "text": "1.开服倒计时海报2天", "short": "1.开服倒计时海报2天"}, {"date": "2026-08-19", "cat": "HQ Assets", "text": "2.开服倒计时15秒视频-商业帝国经营", "short": "2.开服倒计时15秒视频-商业帝国经营"}, {"date": "2026-08-20", "cat": "HQ Assets", "text": "2.LIB 制作人访谈", "short": "2.LIB 制作人访谈"}, {"date": "2026-08-15", "cat": "HQ Assets", "text": "2.开服倒计时15秒视频-IP演变", "short": "2.开服倒计时15秒视频-IP演变"}, {"date": "2026-08-17", "cat": "HQ Assets", "text": "1.开服倒计时海报3天", "short": "1.开服倒计时海报3天"}, {"date": "2026-08-19", "cat": "HQ Assets", "text": "1.开服倒计时海报1天", "short": "1.开服倒计时海报1天"}, {"date": "2026-08-20", "cat": "HQ Assets", "text": "1.主线KV（有枪版）", "short": "1.主线KV（有枪版）"}, {"date": "2026-08-20", "cat": "HQ Assets", "text": "2. “新市民安置福利”——开服福利一览（社区）", "short": "2. “新市民安置福利”——开服福利一览（社区）"}, {"date": "2026-08-20", "cat": "HQ Assets", "text": "3.上线内宣海报", "short": "3.上线内宣海报"}, {"date": "2026-07-22", "cat": "MKT Campaign", "text": "Sherlock Live\nSherlock's story video assets", "short": "Sherlock Live"}, {"date": "2026-07-25", "cat": "MKT Campaign", "text": "1. Soul Zeref - IG Reel", "short": "1. Soul Zeref - IG Reel"}, {"date": "2026-07-29", "cat": "MKT Campaign", "text": "Raw videos mashup (24-25 July)", "short": "Raw videos mashup (24-25 July)"}, {"date": "2026-08-01", "cat": "MKT Campaign", "text": "Clippers Activation", "short": "Clippers Activation"}, {"date": "2026-08-02", "cat": "MKT Campaign", "text": "Clippers Activation", "short": "Clippers Activation"}, {"date": "2026-07-22", "cat": "MKT Campaign", "text": "Raw videos mashup (18-19 July) \nhttps://drive.google.com/drive/folders/1Ndm6R-Axbd0njA4w-oDcFb9nRn8hsu6u", "short": "Raw videos mashup (18-19 July)"}, {"date": "2026-07-25", "cat": "MKT Campaign", "text": "Headflicker- IG Reel", "short": "Headflicker- IG Reel"}, {"date": "2026-08-20", "cat": "MKT Campaign", "text": "TG: Carousel Post", "short": "TG: Carousel Post"}, {"date": "2026-07-21", "cat": "KOC", "text": "Delay\nTG KOC poster：5M", "short": "Delay"}, {"date": "2026-07-22", "cat": "KOC", "text": "TG KOC poster：5M ₹", "short": "TG KOC poster：5M ₹"}, {"date": "2026-07-31", "cat": "Shortdrama", "text": "Set leak 1", "short": "Set leak 1"}, {"date": "2026-08-01", "cat": "Shortdrama", "text": "Set leak 2", "short": "Set leak 2"}, {"date": "2026-08-02", "cat": "Shortdrama", "text": "Set leak 3", "short": "Set leak 3"}, {"date": "2026-08-10", "cat": "Shortdrama", "text": "Short Drama BTS", "short": "Short Drama BTS"}, {"date": "2026-08-11", "cat": "Shortdrama", "text": "Short Drama BTS", "short": "Short Drama BTS"}, {"date": "2026-08-12", "cat": "Shortdrama", "text": "Short Drama BTS", "short": "Short Drama BTS"}, {"date": "2026-07-21", "cat": "Copost", "text": "Delay\nShareChat + Moj \n\nChannel link: https://www.instagram.com/quick_tv_official/?hl=en", "short": "Delay"}, {"date": "2026-07-22", "cat": "Copost", "text": "ShareChat + Moj \n\nChannel link: https://www.instagram.com/quick_tv_official/?hl=en", "short": "ShareChat + Moj"}, {"date": "2026-07-23", "cat": "Copost", "text": "CR7 Horaa\n\nCollab link: https://www.instagram.com/cr7horaaaa/\n\nPhotos: https://drive.google.com/drive/folders/1U1KcRqNr25LaLTHvWCpIAEjvdOR0zEFi", "short": "CR7 Horaa"}, {"date": "2026-07-24", "cat": "Copost", "text": "True Rippers\n\nCollab channel: https://www.instagram.com/truerippers.gg/?hl=en\n\nLogo file:", "short": "True Rippers"}, {"date": "2026-07-26", "cat": "Copost", "text": "Horaa Esports\n\nCollab link: https://www.instagram.com/horaaesports/?hl=en\n\nLogo:\nhttps://drive.google.com/drive/folders/12Dfa01Jm5REdSuudmbagK5p9NKE8p75u?usp=drive_link", "short": "Horaa Esports"}, {"date": "2026-07-27", "cat": "Copost", "text": "Glazer Games\n\nCollab Channel: https://www.instagram.com/glazer.games/?hl=en", "short": "Glazer Games"}, {"date": "2026-07-28", "cat": "Copost", "text": "OneGame Esports:\n\nhttps://www.instagram.com/onegameesports/?hl=en", "short": "OneGame Esports:"}, {"date": "2026-07-29", "cat": "Copost", "text": "Univ Esports\n\nhttps://www.instagram.com/univ.esports/?hl=en", "short": "Univ Esports"}, {"date": "2026-07-24", "cat": "Copost", "text": "Spero casts- Static Post\nhttps://drive.google.com/open?id=1Ai1WOn7BIXUm2n9jwhbjZ5oWQlOY33iw&usp=drive_fs", "short": "Spero casts- Static Post"}, {"date": "2026-07-24", "cat": "Copost", "text": "Sherlock live - IG Reel\nhttps://drive.google.com/file/d/17PvTgzt67LNmuC2EQy0t1X-BQu3NQzGI/view?usp=drive_link", "short": "Sherlock live - IG Reel"}, {"date": "2026-08-15", "cat": "Poster", "text": "Countdown poster5", "short": "Countdown poster5"}, {"date": "2026-08-16", "cat": "Poster", "text": "Countdown poster4", "short": "Countdown poster4"}, {"date": "2026-08-17", "cat": "Poster", "text": "Countdown poster3", "short": "Countdown poster3"}, {"date": "2026-08-18", "cat": "Poster", "text": "Countdown poster2", "short": "Countdown poster2"}, {"date": "2026-08-19", "cat": "Poster", "text": "Countdown poster1", "short": "Countdown poster1"}], "launch": "2026-08-20", "catOrder": ["HQ Assets", "MKT Campaign", "Copost", "Shortdrama", "KOC", "Poster"], "catCount": {"HQ Assets": 42, "MKT Campaign": 8, "KOC": 2, "Shortdrama": 6, "Copost": 10, "Poster": 5}};
+const COLORS = {"HQ Assets": "#2563EB", "MKT Campaign": "#7C3AED", "Copost": "#0D9488", "Shortdrama": "#DB2777", "KOC": "#D97706", "Poster": "#059669"};
+const TINT = {"HQ Assets": "rgba(37,99,235,0.12)", "MKT Campaign": "rgba(124,58,237,0.12)", "Copost": "rgba(13,148,136,0.12)", "Shortdrama": "rgba(219,39,119,0.12)", "KOC": "rgba(217,119,6,0.12)", "Poster": "rgba(5,150,105,0.12)"};
+const CN = {"HQ Assets": "HQ 素材", "MKT Campaign": "市场活动", "Copost": "联合发布", "Shortdrama": "短剧", "KOC": "KOC", "Poster": "海报"};
+const LAUNCH = DATA.launch;
+let hidden = new Set();
+
+// stats
+(function(){
+  const s=document.getElementById('stats');
+  const total=DATA.items.length;
+  const pre=DATA.items.filter(i=>i.date<LAUNCH).length;
+  const post=DATA.items.filter(i=>i.date>=LAUNCH).length;
+  const days=new Set(DATA.items.map(i=>i.date)).size;
+  const cards=[['总排期',total],['上线前',pre],['上线及后',post],['覆盖天数',days]];
+  s.innerHTML=cards.map(c=>`<div class="stat"><b>${c[1]}</b><span>${c[0]}</span></div>`).join('');
+  document.getElementById('total').textContent=total;
+})();
+
+// legend
+(function(){
+  const lg=document.getElementById('legend');
+  lg.innerHTML=DATA.catOrder.map(c=>{
+    const n=DATA.catCount[c]||0;
+    return `<div class="lg" data-cat="${c}"><span class="dot" style="background:${COLORS[c]}"></span>${CN[c]||c}<b>&nbsp;${n}</b></div>`;
+  }).join('');
+  lg.querySelectorAll('.lg').forEach(el=>{
+    el.onclick=()=>{
+      const c=el.dataset.cat;
+      if(hidden.has(c)){hidden.delete(c);el.classList.remove('off');}
+      else{hidden.add(c);el.classList.add('off');}
+      renderMonths();
+    };
+  });
+})();
+
+function itemsOn(date){
+  return DATA.items.filter(i=>i.date===date && !hidden.has(i.cat));
+}
+function dayName(d){
+  const w=['周一','周二','周三','周四','周五','周六','周日'];
+  const dt=new Date(d+'T00:00:00');
+  return w[(dt.getDay()+6)%7];
+}
+
+function monthGrid(year, month){ // month 0-based
+  const first=new Date(year,month,1);
+  const startIdx=(first.getDay()+6)%7; // Monday=0
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const cells=[];
+  for(let i=0;i<startIdx;i++) cells.push(null);
+  for(let d=1;d<=daysInMonth;d++) cells.push(d);
+  while(cells.length%7!==0) cells.push(null);
+  return cells;
+}
+
+function renderMonths(){
+  const wrap=document.getElementById('months');
+  wrap.innerHTML='';
+  const defs=[[2026,6,'2026年7月'],[2026,7,'2026年8月']];
+  defs.forEach(([y,m,title])=>{
+    const cells=monthGrid(y,m);
+    const box=document.createElement('div');
+    box.className='month';
+    let html=`<h2>${title}<span class="tag">预注册期</span></h2>`;
+    html+=`<div class="dow"><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div></div>`;
+    html+=`<div class="grid">`;
+    cells.forEach(d=>{
+      if(d===null){html+=`<div class="cell empty"></div>`;return;}
+      const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const list=itemsOn(iso);
+      const isLaunch=iso===LAUNCH;
+      const cls='cell'+(isLaunch?' launch':'');
+      let chips='';
+      list.slice(0,4).forEach(it=>{
+        chips+=`<div class="chip" style="background:${TINT[it.cat]};border-left-color:${COLORS[it.cat]};color:${COLORS[it.cat]}" title="${esc(it.text)}">${esc(it.short)}</div>`;
+      });
+      if(list.length>4) chips+=`<div class="more">+${list.length-4} 更多</div>`;
+      const num=list.length?`<span style="float:right;font-size:10px;color:var(--muted)">${list.length}</span>`:'';
+      html+=`<div class="${cls}" data-date="${iso}"><div class="dnum">${d}${num}</div>${chips}</div>`;
+    });
+    html+=`</div>`;
+    box.innerHTML=html;
+    wrap.appendChild(box);
+  });
+  // 事件委托：兼容自动化测试 click
+  if(!wrap._calBound){
+    wrap.addEventListener('click', e=>{
+      const cell=e.target.closest('.cell[data-date]');
+      if(cell) openDay(cell.dataset.date);
+    });
+    wrap._calBound=true;
+  }
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function openDay(date){
+  const list=DATA.items.filter(i=>i.date===date);
+  document.getElementById('dTitle').textContent=date;
+  document.getElementById('dSub').textContent=dayName(date)+(date===LAUNCH?' · 🎮 游戏上线日':'');
+  const body=document.getElementById('dBody');
+  if(!list.length){body.innerHTML='<p style="color:var(--muted)">当日无排期</p>';}
+  else{
+    body.innerHTML=list.map(it=>{
+      const c=it.cat;
+      return `<div class="di"><span class="cat" style="background:${TINT[c]};color:${COLORS[c]}">${CN[c]||c}</span><div class="txt">${esc(it.text)}</div></div>`;
+    }).join('');
+  }
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('drawer').classList.add('show');
+}
+function closeDay(){document.getElementById('overlay').classList.remove('show');document.getElementById('drawer').classList.remove('show');}
+document.getElementById('overlay').onclick=closeDay;
+document.getElementById('dClose').onclick=closeDay;
+
+renderMonths();
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HQ 排期日历 · 2026</title>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:28px 20px 60px;line-height:1.45}
+  .wrap{max-width:1320px;margin:0 auto}
+  header{margin-bottom:26px}
+  h1{font-size:24px;font-weight:800}
+  h1 small{font-size:13px;color:var(--muted);font-weight:400;margin-left:10px}
+  .note{margin-top:8px;font-size:13px;color:var(--muted)}
+  .note b{color:var(--ink)}
+  .month{margin-bottom:46px}
+  .mtitle{font-size:20px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+  .mtitle .tag{font-size:12px;background:#ede9fe;color:#6d28d9;padding:3px 11px;border-radius:12px;font-weight:700}
+  .week{margin-bottom:18px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+  .wband{display:flex;align-items:center;gap:12px;padding:11px 16px;color:#fff;font-weight:700;font-size:14px}
+  .wband .wk{font-size:12px;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:9px;font-weight:700;white-space:nowrap}
+  .wband .rng{font-size:12px;opacity:.92;white-space:nowrap}
+  .wband .th{font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cell{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:7px 8px;min-height:60px;display:flex;flex-direction:column;gap:5px;background:#fcfcfd}
+  .cell:first-child{border-left:none}
+  .dhead{font-size:12px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px}
+  .dhead .dow{font-size:10px;color:var(--muted);font-weight:600}
+  .cell.empty{background:transparent}
+  .cell.launch{background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+  .cell.launch .dhead{color:#b45309}
+  .cell.launch .dhead::after{content:"上线";font-size:9px;background:#f59e0b;color:#fff;border-radius:4px;padding:0 5px;margin-left:6px}
+  .post{border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff}
+  .post .t{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#64748b;border-radius:4px;padding:0 5px;margin-bottom:3px}
+  .post .b{font-size:12px;color:var(--ink);word-break:break-word;white-space:normal}
+  .post .p{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3}
+  .empty-tip{font-size:11px;color:#cbd5e1;text-align:center;padding:14px 0}
+  footer{text-align:center;font-size:12px;color:var(--muted);margin-top:30px}
+  /* 折叠 / 当前周 */
+  .wband .th{flex:1 1 auto;min-width:0}
+  .wband .cur{font-size:12px;background:rgba(0,0,0,.2);padding:2px 9px;border-radius:9px;font-weight:700;white-space:nowrap}
+  .wband .toggle{margin-left:auto;cursor:pointer;border:none;background:rgba(255,255,255,.28);color:#fff;font-size:12px;font-weight:700;padding:5px 13px;border-radius:9px;font-family:inherit;transition:background .15s;white-space:nowrap}
+  .wband .toggle:hover{background:rgba(255,255,255,.45)}
+  .wbody.collapsed{display:none}
+  .sep{font-size:13px;font-weight:800;color:var(--muted);margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+  .sep::before{content:"";flex:0 0 4px;width:4px;height:15px;border-radius:3px;background:var(--ink);opacity:.35}
+  .sep small{font-size:11px;font-weight:600;color:#9ca3af}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>HQ 排期日历 <small>2026 预注册期 · 上线日 8/20</small></h1>
+    <div class="note">数据来源：<b>排期.xlsx</b>（全部为 HQ 公线素材，共 <b id="cnt"></b> 条发布）· 每周上方为当周发布主题总结 · 所有内容完整展示 · <b>当前周已自动置顶并展开</b>，历史周默认折叠（点「展开」查看）</div>
+  </header>
+  <div id="root"></div>
+  <footer>由 WorkBuddy 生成 · HQ 公线排期可视化</footer>
+</div>
+<script>
+const DATA = {"july": [{"monday": "2026-06-29", "sunday": "2026-07-05", "range": "06-29–07-05", "theme": "预注册启动：实机 Teaser + 预注册 KV 打响第一枪，铺开角色与都市世界观", "color": "#4f46e5", "cells": [{"date": "2026-06-29", "dow": "一", "posts": []}, {"date": "2026-06-30", "dow": "二", "posts": [{"date": "2026-06-30", "time": "21:00:00", "plat": "X（twitter）,FB,Reddit,INS", "brief": "预注册日期预告"}]}, {"date": "2026-07-01", "dow": "三", "posts": []}, {"date": "2026-07-02", "dow": "四", "posts": [{"date": "2026-07-02", "time": "12:00:00", "plat": "X（twitter）,FB,Reddit,INS", "brief": "预注册启动KV(研发预注册海报)（后发）"}, {"date": "2026-07-02", "time": "12:00:00", "plat": "X（twitter）,FB,Reddit,INS, YT", "brief": "游戏实机录屏 Teaser（先发）"}, {"date": "2026-07-02", "time": "19:00:00", "plat": "FB", "brief": "金库海报 / Don Phil 预注册主线首张海报"}]}, {"date": "2026-07-03", "dow": "五", "posts": [{"date": "2026-07-03", "time": "19:00:00", "plat": "", "brief": "都市乐园导览手册"}]}, {"date": "2026-07-04", "dow": "六", "posts": [{"date": "2026-07-04", "time": "19:00:00", "plat": "", "brief": "1.角色介绍：查理（联系人委托）"}]}, {"date": "2026-07-05", "dow": "日", "posts": [{"date": "2026-07-05", "time": "19:00:00", "plat": "", "brief": "角色介绍：奈杰尔（车辆改装）"}, {"date": "2026-07-05", "time": "19:00:00", "plat": "", "brief": "角色介绍：娜塔莉（街头竞速）"}]}]}, {"monday": "2026-07-06", "sunday": "2026-07-12", "range": "07-06–07-12", "theme": "App Store 预注册开启、冲刺 10M 预约，密集角色与帮派势力介绍", "color": "#2563eb", "cells": [{"date": "2026-07-06", "dow": "一", "posts": [{"date": "2026-07-06", "time": "19:00:00", "plat": "", "brief": "1.角色介绍：杰姬（经营玩法） 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法"}]}, {"date": "2026-07-07", "dow": "二", "posts": [{"date": "2026-07-07", "time": "11:00:00", "plat": "", "brief": "App Store预注册开启的公告内容"}, {"date": "2026-07-07", "time": "19:00:00", "plat": "", "brief": "1.角色介绍：C10UD（合作抢劫） 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法"}]}, {"date": "2026-07-08", "dow": "三", "posts": [{"date": "2026-07-08", "time": "12:00:00\n\n（发布时间视页面预约量达到600w的时间点而定）", "plat": "", "brief": "1.“Don Phil日常”进度图一 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素  预约六百万"}, {"date": "2026-07-08", "time": "19:00:00", "plat": "", "brief": "1.角色介绍：封喉（刺杀玩法） 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法"}]}, {"date": "2026-07-09", "dow": "四", "posts": []}, {"date": "2026-07-10", "dow": "五", "posts": [{"date": "2026-07-10", "time": "17:00:00", "plat": "", "brief": "1.从Vegas到Mirage City平面海报（从7.6号延期而来） 情怀向素材，将会是一张包含了Vegas过往海报元素的GSTM的海报"}, {"date": "2026-07-10", "time": "19:00:00", "plat": "", "brief": "1.角色介绍：Bobby(新手入门) 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法"}, {"date": "2026-07-10", "time": "发布时间取决于页面预约数量达成时间\n\n预计7.10-7.12期间达成\n\n已达10M可对外", "plat": "", "brief": "10M预约达成"}]}, {"date": "2026-07-11", "dow": "六", "posts": [{"date": "2026-07-11", "time": "18:00:00", "plat": "", "brief": "1.“Rooklyn新闻台” 第一期 “文明城市”路人抽象街访 以新闻台的形式，制作包装视频，内容则是趣味向的内容 （搞笑街访新闻，内容是展现新城市作为文明城市欢迎新市民进入，但是在实际采访过程中出现大量不文明行为形成反差感，展现自由城市的特点）"}, {"date": "2026-07-11", "time": "19:00:00", "plat": "", "brief": "1.游戏势力地盘展示——黑手党 展示帮派据点内容，展现大世界玩法以及世界设定"}]}, {"date": "2026-07-12", "dow": "日", "posts": [{"date": "2026-07-12", "time": "18:00:00", "plat": "", "brief": "1.“趣味帮派日常” ——黑手党 如何在生活中保持优雅 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}, {"date": "2026-07-12", "time": "19:00:00", "plat": "", "brief": "1.游戏势力地盘展示——橘帮 展示帮派据点内容，展现大世界玩法以及世界设定"}]}]}, {"monday": "2026-07-13", "sunday": "2026-07-19", "range": "07-13–07-19", "theme": "深入大世界与帮派势力展示，释放无枪版主线 KV", "color": "#0d9488", "cells": [{"date": "2026-07-13", "dow": "一", "posts": [{"date": "2026-07-13", "time": "19:00:00", "plat": "", "brief": "游戏势力地盘展示——泽西帮 展示帮派据点内容，展现大世界玩法以及世界设定"}]}, {"date": "2026-07-14", "dow": "二", "posts": [{"date": "2026-07-14", "time": "19:00:00", "plat": "", "brief": "游戏势力地盘展示——幽灵族 （没有据点，引出赛车玩法）展示帮派据点内容，展现大世界玩法以及世界设定"}]}, {"date": "2026-07-15", "dow": "三", "posts": []}, {"date": "2026-07-16", "dow": "四", "posts": [{"date": "2026-07-16", "time": "19:00:00（已达到1500w，可正常按时发布）", "plat": "", "brief": "1.“Don Phil日常”进度图二 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素"}, {"date": "2026-07-16", "time": "18:00:00", "plat": "", "brief": "2.大世界玩法一图流（社区）信息向的内容，快速介绍游戏的多种玩法"}]}, {"date": "2026-07-17", "dow": "五", "posts": []}, {"date": "2026-07-18", "dow": "六", "posts": [{"date": "2026-07-18", "time": "18:00:00", "plat": "", "brief": "1.“Rooklyn新闻台” 第二期 城市安保采访 通过电台播报中安保人员信誓旦旦这是世界上最安全的城市和后面发生的现场动乱形成反差。"}, {"date": "2026-07-18", "time": "18:30:00", "plat": "", "brief": "2.“趣味帮派日常”——橘帮 潮牌穿搭比拼大会通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}, {"date": "2026-07-18", "time": "19:00:00", "plat": "", "brief": "1.主线KV（无枪版） 无枪版本的KV,展示游戏的世界设定和玩法场景"}]}, {"date": "2026-07-19", "dow": "日", "posts": []}]}, {"monday": "2026-07-20", "sunday": "2026-07-26", "range": "07-20–07-26", "theme": "聚焦 PVP 与合抢核心玩法爽点，集中释放玩法快剪", "color": "#0891b2", "cells": [{"date": "2026-07-20", "dow": "一", "posts": []}, {"date": "2026-07-21", "dow": "二", "posts": [{"date": "2026-07-21", "time": "18:00:00", "plat": "", "brief": "1.PVP玩法快剪视频"}, {"date": "2026-07-21", "time": "19:00:00", "plat": "", "brief": "1.游戏PVP玩法一图流（社区） 信息向的内容，快速介绍游戏的多种玩法"}]}, {"date": "2026-07-22", "dow": "三", "posts": []}, {"date": "2026-07-23", "dow": "四", "posts": [{"date": "2026-07-23", "time": "19:00:00", "plat": "", "brief": "1.“Don Phil日常”进度图三 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素"}]}, {"date": "2026-07-24", "dow": "五", "posts": [{"date": "2026-07-24", "time": "19:00:00", "plat": "", "brief": "1.合抢玩法快剪视频"}]}, {"date": "2026-07-25", "dow": "六", "posts": [{"date": "2026-07-25", "time": "19:00:00", "plat": "", "brief": "1.“趣味帮派日常”—— 泽西帮 劲力宝宣传片 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}]}, {"date": "2026-07-26", "dow": "日", "posts": []}]}, {"monday": "2026-07-27", "sunday": "2026-08-02", "range": "07-27–08-02", "theme": "阵营系统与装备体系介绍，收尾角色 / 世界观铺陈", "color": "#7c3aed", "cells": [{"date": "2026-07-27", "dow": "一", "posts": [{"date": "2026-07-27", "time": "18:00:00", "plat": "", "brief": "1.角色介绍：买宝(武器入门)通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法"}, {"date": "2026-07-27", "time": "19:00:00", "plat": "", "brief": "2.Buymore：机器人店长生存指南： 机器人店长生存指南 通过展示机器人买宝的拟人化的一天来展现游戏荒诞的世界观 以及买宝人工智障福利官的定位"}]}, {"date": "2026-07-28", "dow": "二", "posts": [{"date": "2026-07-28", "time": "18:00:00", "plat": "", "brief": "1.常规装备快剪视频 （枪车资产介绍+个性化皮肤）"}, {"date": "2026-07-28", "time": "19:00:00", "plat": "", "brief": "1.“Rooklyn新闻台” 第三期 电台激情解说 通过电台主持人“声情并茂”的解说一场城市抢劫的过程，展现游戏世界观混乱自由的特性，以及与电台这种传统认知中偏正统的印象形成反差"}]}, {"date": "2026-07-29", "dow": "三", "posts": [{"date": "2026-07-29", "time": "19:00:00", "plat": "", "brief": "1.阵营介绍：阿加雷斯 通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备"}]}, {"date": "2026-07-30", "dow": "四", "posts": [{"date": "2026-07-30", "time": "18:00:00", "plat": "", "brief": "1.“Don Phil日常”进度图四 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素"}, {"date": "2026-07-30", "time": "19:00:00", "plat": "", "brief": "2.阵营介绍：铁壁安保通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备"}]}, {"date": "2026-07-31", "dow": "五", "posts": [{"date": "2026-07-31", "time": "19:00:00", "plat": "", "brief": "1.阵营介绍：极光 通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备"}]}, {"date": "2026-08-01", "dow": "六", "posts": [{"date": "2026-08-01", "time": "19:00:00", "plat": "", "brief": "1.“趣味帮派日常”—— 幽灵族 路灯维修工最痛恨的一批人 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}]}, {"date": "2026-08-02", "dow": "日", "posts": []}]}], "august": [{"monday": "2026-08-03", "sunday": "2026-08-09", "range": "08-03–08-09", "theme": "转向经营与第二人生玩法展示，城市探索导览预热", "color": "#059669", "cells": [{"date": "2026-08-03", "dow": "一", "posts": [{"date": "2026-08-03", "time": "19:00:00", "plat": "", "brief": "1.在Rooklyn体验别样人生 海报 第二人生玩法向海报"}]}, {"date": "2026-08-04", "dow": "二", "posts": [{"date": "2026-08-04", "time": "19:00:00", "plat": "", "brief": "1.“Rooklyn新闻台” 第四期 城市产业欣欣向荣 暗含反讽性质在内的抽象采访，通过介绍城市产业增长（实则是由于混乱造成的修缮等成本增加）如“全民射击锻炼热潮”“路灯制造产业增长”等，来反映城市的混乱"}]}, {"date": "2026-08-05", "dow": "三", "posts": []}, {"date": "2026-08-06", "dow": "四", "posts": [{"date": "2026-08-06", "time": "19:00:00", "plat": "", "brief": "1.经营玩法快剪视频 商业帝国构建——从街头小子到社会顶层"}, {"date": "2026-08-06", "time": "19:00:00", "plat": "", "brief": "1.“Don Phil日常”进度图五 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素"}]}, {"date": "2026-08-07", "dow": "五", "posts": [{"date": "2026-08-07", "time": "19:00:00", "plat": "", "brief": "导游波比带你游Rooklyn游戏完整地图介绍+人设展示视频，会以一种导游带完的形式，让波比在城市街头逐一介绍城市景色，同时在过程中展现市民的“自由”以及波比嘴欠的人物形象。"}, {"date": "2026-08-07", "time": "19:00:00", "plat": "", "brief": "1.经营玩法一图流（社区） 信息向的内容，快速介绍游戏的多种玩法"}]}, {"date": "2026-08-08", "dow": "六", "posts": [{"date": "2026-08-08", "time": "19:00:00", "plat": "", "brief": "1.“趣味帮派日常”—— 极光 意思下就得了，谁上班玩命啊 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}]}, {"date": "2026-08-09", "dow": "日", "posts": []}]}, {"monday": "2026-08-10", "sunday": "2026-08-16", "range": "08-10–08-16", "theme": "开服倒计时系列（海报 + 15 秒视频）全面启动，洗脑广告冲量", "color": "#d97706", "cells": [{"date": "2026-08-10", "dow": "一", "posts": []}, {"date": "2026-08-11", "dow": "二", "posts": [{"date": "2026-08-11", "time": "19:00:00", "plat": "", "brief": "1.DonPhil预注册核心视频"}]}, {"date": "2026-08-12", "dow": "三", "posts": []}, {"date": "2026-08-13", "dow": "四", "posts": [{"date": "2026-08-13", "time": "19:00:00", "plat": "", "brief": "1.“Don Phil日常”进度图六 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素"}]}, {"date": "2026-08-14", "dow": "五", "posts": [{"date": "2026-08-14", "time": "19:00:00", "plat": "", "brief": "1.机型推荐图文公告（社区） 核心展现机型下探+游戏小包体优化"}]}, {"date": "2026-08-15", "dow": "六", "posts": [{"date": "2026-08-15", "time": "19:00:00", "plat": "", "brief": "1.YDHDT洗脑广告——无需遵守秩序，随意破坏 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）"}, {"date": "2026-08-15", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时海报5天"}, {"date": "2026-08-15", "time": "19:00:00", "plat": "", "brief": "2.开服倒计时15秒视频-IP演变 结合倒计时海报，以固定主题展示游戏内对应玩法爽点"}]}, {"date": "2026-08-16", "dow": "日", "posts": [{"date": "2026-08-16", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时15秒视频-大世界 结合倒计时海报，以固定主题展示游戏内对应玩法爽点"}, {"date": "2026-08-16", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时海报4天"}]}]}, {"monday": "2026-08-17", "sunday": "2026-08-23", "range": "08-17–08-23", "theme": "倒计时收官，8/20 正式上线，上线即冲商店榜单", "color": "#f59e0b", "cells": [{"date": "2026-08-17", "dow": "一", "posts": [{"date": "2026-08-17", "time": "19:00:00", "plat": "", "brief": "1.YDHDT洗脑广告——无需氪金才能获得体验 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）"}, {"date": "2026-08-17", "time": "19:00:00", "plat": "", "brief": "2.开服倒计时15秒视频-PVP&合抢 结合倒计时海报，以固定主题展示游戏内对应玩法爽点"}, {"date": "2026-08-17", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时海报3天"}]}, {"date": "2026-08-18", "dow": "二", "posts": [{"date": "2026-08-18", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时15秒视频-高火力装备 结合倒计时海报，以固定主题展示游戏内对应玩法爽点"}, {"date": "2026-08-18", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时海报2天"}]}, {"date": "2026-08-19", "dow": "三", "posts": [{"date": "2026-08-19", "time": "19:00:00", "plat": "", "brief": "1.YDHDT洗脑广告——不必在竞技排位中受挫 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）"}, {"date": "2026-08-19", "time": "19:00:00", "plat": "", "brief": "2.开服倒计时15秒视频-商业帝国经营 结合倒计时海报，以固定主题展示游戏内对应玩法爽点"}, {"date": "2026-08-19", "time": "19:00:00", "plat": "", "brief": "1.开服倒计时海报1天"}]}, {"date": "2026-08-20", "dow": "四", "posts": [{"date": "2026-08-20", "time": "19:00:00", "plat": "", "brief": "1.混沌都市爽感玩法演示视频 ——肆意破坏、好友组队干票大的 游戏整体的玩法向的卖点视频，用于开服第一天，展示玩家通过逐渐养成账号能够享受到的不同的爽点玩法"}, {"date": "2026-08-20", "time": "19:00:00", "plat": "", "brief": "2.LIB 制作人访谈"}, {"date": "2026-08-20", "time": "19:00:00", "plat": "", "brief": "1.主线KV（有枪版） 有枪版本的KV,展示游戏的世界设定和玩法场景"}, {"date": "2026-08-20", "time": "19:00:00", "plat": "", "brief": "2. “新市民安置福利”——开服福利一览（社区） 信息向的内容，快速介绍游戏的多种玩法"}, {"date": "2026-08-20", "time": "19:00:00", "plat": "", "brief": "3.上线内宣海报"}]}, {"date": "2026-08-21", "dow": "五", "posts": [{"date": "2026-08-21", "time": "19:00:00", "plat": "", "brief": "1.苹果榜单海报 2.谷歌榜单海报 商店登顶的海报"}]}, {"date": "2026-08-22", "dow": "六", "posts": [{"date": "2026-08-22", "time": "19:00:00", "plat": "", "brief": "1.commercial专栏 洛克林创业广告片 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解"}]}, {"date": "2026-08-23", "dow": "日", "posts": []}]}, {"monday": "2026-08-24", "sunday": "2026-08-30", "range": "08-24–08-30", "theme": "上线首周运营，首个活动「黄牌反攻」+ commercial 趣味专栏", "color": "#e11d48", "cells": [{"date": "2026-08-24", "dow": "一", "posts": [{"date": "2026-08-24", "time": "19:00:00", "plat": "", "brief": "1.commercial专栏 全世界小狗都想要的项链 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解"}]}, {"date": "2026-08-25", "dow": "二", "posts": [{"date": "2026-08-25", "time": "19:00:00", "plat": "", "brief": "1.合作抢劫KV 合作抢劫玩法的KV"}]}, {"date": "2026-08-26", "dow": "三", "posts": [{"date": "2026-08-26", "time": "19:00:00", "plat": "", "brief": "1.commercial专栏 脑黄金 “一口成仙” 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解"}, {"date": "2026-08-26", "time": "19:00:00", "plat": "", "brief": "1.SL3 黄牌反攻 KV 游戏内活动玩法黄牌反攻的KV"}]}, {"date": "2026-08-27", "dow": "四", "posts": [{"date": "2026-08-27", "time": "19:00:00", "plat": "", "brief": "1.“Rooklyn新闻台” 第五期 首周新闻 通过展现开服首周的游戏内趣味场景，来帮助社区提供游戏内容分享的案例（如开放第一天火烈鸟酒吧门口全是车），给玩家“官方在关注游戏内的事件”，和玩家一起玩的感觉在"}]}, {"date": "2026-08-28", "dow": "五", "posts": [{"date": "2026-08-28", "time": "19:00:00", "plat": "", "brief": "2.出租车故事视频 （基于研发游戏内版本修改）"}]}, {"date": "2026-08-29", "dow": "六", "posts": [{"date": "2026-08-29", "time": "19:00:00", "plat": "", "brief": "1.commercial专栏 AllRide，你的生活出行管家 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解"}]}, {"date": "2026-08-30", "dow": "日", "posts": [{"date": "2026-08-30", "time": "19:00:00", "plat": "", "brief": "1.“Rooklyn新闻台” 第六期 出租车事件快报 通过新闻台包装的形式，展现游戏首个运营活动的趣味的点，帮助玩家认识游戏玩法以及挖掘玩法趣味性"}]}]}, {"monday": "2026-08-31", "sunday": "2026-09-06", "range": "08-31–09-06", "theme": "首活动延续，预热帮派战争大版本", "color": "#db2777", "cells": [{"date": "2026-08-31", "dow": "一", "posts": [{"date": "2026-08-31", "time": "19:00:00", "plat": "", "brief": "2.“趣味帮派日常”—— DonPhil 怎么接不到单了？ 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}]}, {"date": "2026-09-01", "dow": "二", "posts": [{"date": "2026-09-01", "time": "19:00:00", "plat": "", "brief": "1.黄牌反攻爽点视频 出租车老司机都市狂飙，展现黄牌反攻玩法的爽点和趣味的点"}]}, {"date": "2026-09-02", "dow": "三", "posts": []}, {"date": "2026-09-03", "dow": "四", "posts": []}, {"date": "2026-09-04", "dow": "五", "posts": [{"date": "2026-09-04", "time": "19:00:00", "plat": "", "brief": "1.“趣味帮派日常”——吉普尼 兄弟再多也能载下 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点"}]}, {"date": "2026-09-05", "dow": "六", "posts": []}, {"date": "2026-09-06", "dow": "日", "posts": [{"date": "2026-09-06", "time": "19:00:00", "plat": "", "brief": "1.帮派战争预热-原材料运货车 帮派战争预热悬念向的海报"}]}]}], "launch": "2026-08-20"};
+document.getElementById('cnt').textContent = (function(){
+  let n=0; ['july','august'].forEach(k=>DATA[k].forEach(w=>w.cells.forEach(c=>n+=c.posts.length))); return n;
+})();
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ===== 当前日期 → 当前周置顶 =====
+function todayStr(){
+  const t=new Date();
+  const y=t.getFullYear();
+  const m=String(t.getMonth()+1).padStart(2,'0');
+  const d=String(t.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+const allWeeks = DATA.july.concat(DATA.august);
+allWeeks.forEach((w,i)=>w._idx=i);                 // 全局第几周（0 起）
+const today = todayStr();
+const current = allWeeks.find(w=>w.monday<=today && today<=w.sunday)
+              || (today < allWeeks[0].monday ? allWeeks[0] : allWeeks[allWeeks.length-1]);
+const future = allWeeks.filter(w=>w!==current && w.monday>today).sort((a,b)=>a._idx-b._idx);
+const past   = allWeeks.filter(w=>w!==current && w.sunday<today).sort((a,b)=>a._idx-b._idx);
+
+// ===== 渲染单周（可折叠）=====
+function renderWeek(w, expanded){
+  const isCur = (w===current);
+  const wk=document.createElement('div');
+  wk.className='week';
+  const band=`<div class="wband" style="background:${w.color}">
+      <span class="wk">第${w._idx+1}周</span>
+      <span class="rng">${w.range}</span>
+      <span class="th">📌 本周主题：${w.theme}</span>
+      ${isCur?`<span class="cur">🔸 本周</span>`:''}
+      <button class="toggle" type="button" aria-label="展开/收起">${expanded?'收起 ▴':'展开 ▾'}</button>
+    </div>`;
+  let cells='';
+  w.cells.forEach(c=>{
+    const isLaunch=c.date===DATA.launch;
+    let body;
+    if(!c.posts.length){ body='<div class="empty-tip">—</div>'; }
+    else{
+      body=c.posts.map(p=>{
+        const plat=p.plat?`<div class="p">📡 ${esc(p.plat)}</div>`:'';
+        return `<div class="post"><span class="t">${esc(p.time||'--')}</span><div class="b">${esc(p.brief)}</div>${plat}</div>`;
+      }).join('');
+    }
+    cells+=`<div class="cell${isLaunch?' launch':''}${c.posts.length?'':' empty'}">
+        <div class="dhead"><span>${c.date.slice(5)}</span><span class="dow">周${c.dow}</span></div>${body}</div>`;
+  });
+  wk.innerHTML=band+`<div class="wbody${expanded?'':' collapsed'}"><div class="grid">${cells}</div></div>`;
+  const btn=wk.querySelector('.toggle');
+  btn.addEventListener('click',()=>{
+    const body=wk.querySelector('.wbody');
+    const col=body.classList.toggle('collapsed');
+    btn.textContent=col?'展开 ▾':'收起 ▴';
+  });
+  return wk;
+}
+
+const root=document.getElementById('root');
+function sep(txt,sub){const d=document.createElement('div');d.className='sep';d.innerHTML=`<span>${txt}</span>${sub?`<small>${sub}</small>`:''}`;return d;}
+
+// 渲染顺序：当前周（展开）→ 未来周（展开）→ 历史周（折叠）
+root.appendChild(renderWeek(current, true));
+if(future.length){
+  root.appendChild(sep('▸ 未来排期','即将到来'));
+  future.forEach(w=>root.appendChild(renderWeek(w, true)));
+}
+if(past.length){
+  root.appendChild(sep('▾ 历史排期','已发布 · 默认折叠，点「展开」查看'));
+  past.forEach(w=>root.appendChild(renderWeek(w, false)));
+}
+</script>
+</body>
+</html>

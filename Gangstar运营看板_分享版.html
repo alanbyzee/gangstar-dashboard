@@ -1,0 +1,2708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gangstar 运营看板</title>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--brand:#6d28d9;--brand2:#2563eb;--ok:#059669;--err:#dc2626;--warn:#d97706}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+  /* ===== 顶部导航 ===== */
+  .topbar{display:flex;align-items:center;gap:18px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.04);z-index:5;flex:none}
+  .brand{font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+  .tabs{display:flex;gap:8px;margin-left:8px}
+  .tab{padding:8px 16px;border-radius:10px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;border:1px solid transparent;background:#f3f4f6;transition:.15s}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 3px 10px rgba(109,40,217,.25)}
+  .spacer{flex:1}
+  .upd{font-size:12px;color:var(--muted)}
+
+  /* ===== 内容区 ===== */
+  .stage{flex:1;position:relative;overflow:hidden}
+  .view{position:absolute;inset:0;display:none}
+  .view.active{display:block}
+  .view.scroll{overflow:auto}
+
+  /* ===== 粉丝监控 ===== */
+  .fan{padding:26px 22px 40px;max-width:1180px;margin:0 auto}
+  .fan h2{font-size:21px;font-weight:800;margin-bottom:4px}
+  .fan .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+
+  /* 汇总卡片 */
+  .summary{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;min-width:150px}
+  .stat .k{font-size:12px;color:var(--muted)}
+  .stat .v{font-size:22px;font-weight:800;margin-top:3px}
+
+  /* 工具栏 + 刷新状态 */
+  .toolbar{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+  .refresh{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;padding:11px 20px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(109,40,217,.25);display:flex;align-items:center;gap:8px;position:relative;overflow:hidden}
+  .refresh:active{transform:translateY(1px)}
+  .refresh[disabled]{opacity:.65;cursor:default}
+
+  /* 刷新按钮内 spinner */
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .refresh .spin{display:none;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+  .refresh.loading .spin{display:inline-block}
+  .refresh.loading .btn-text{opacity:.5}
+
+  /* 状态文字 */
+  .status{font-size:13px;font-weight:600;padding:5px 12px;border-radius:8px;display:none}
+  .status.show{display:inline-block}
+  .status.ok{color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0}
+  .status.err{color:var(--err);background:#fef2f2;border:1px solid #fecaca}
+  .status.warn{color:var(--warn);background:#fffbeb;border:1px solid #fde68a}
+  .status.info{color:var(--brand2);background:#eff6ff;border:1px solid #bfdbfe}
+
+  /* Toast 通知 */
+  .toast{position:fixed;top:80px;right:24px;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:700;z-index:999;transform:translateX(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-width:380px;line-height:1.5;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+  .toast.show{transform:translateX(0)}
+  .toast.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+  .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+
+  /* 平台卡片网格 */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .pc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:box-shadow .2s}
+  .pc:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+  .pc .bar{position:absolute;top:0;left:0;width:5px;height:100%;border-radius:14px 0 0 14px}
+  .pc .ph{display:flex;align-items:center;gap:9px}
+  .pc .ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
+  .pc .nm{font-size:14px;font-weight:800}
+  .pc .hd{font-size:11px;color:var(--muted)}
+  .pc .big{font-size:30px;font-weight:800;letter-spacing:-.5px}
+  .pc .big small{font-size:13px;color:var(--muted);font-weight:600;margin-left:4px}
+  .pc .delta{font-size:12px;font-weight:700}
+  .pc .delta.up{color:var(--ok)}.pc .delta.down{color:var(--err)}.pc .delta.flat{color:#9ca3af}
+  .pc .note{font-size:11px;color:var(--warn);background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:4px 8px}
+  /* 折线图区域 */
+  .chart-area{margin-top:4px;background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:10px}
+  .chart-area svg{width:100%;height:auto}
+  .pc .lk{font-size:11px;color:var(--brand);text-decoration:none;word-break:break-all}
+  .pc .lk:hover{text-decoration:underline}
+
+  /* ===== 洞察区：作战进度 + 占比 ===== */
+  .insights{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:22px}
+  @media(max-width:760px){.insights{grid-template-columns:1fr}}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .panel h3{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+  .panel h3 .em{font-size:15px}
+
+  /* 目标进度 */
+  .countdown{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .countdown .big{font-size:34px;font-weight:800;color:var(--brand);line-height:1}
+  .countdown .lbl{font-size:13px;color:var(--muted)}
+  .prog{height:14px;background:#eef2f7;border-radius:8px;overflow:hidden;margin:12px 0 6px}
+  .prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--brand2),var(--brand));border-radius:8px;transition:width .6s}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:5px}
+  .meta b{color:var(--ink)}
+  .target-edit{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-top:12px}
+  .target-edit input{width:84px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font-size:13px;font-weight:700;color:var(--ink)}
+  .target-edit button{font-size:12px;padding:5px 11px;border:none;background:var(--brand);color:#fff;border-radius:7px;cursor:pointer;font-weight:700}
+  .target-edit button:active{transform:translateY(1px)}
+
+  /* 占比环图 */
+  .donut-wrap{display:flex;align-items:center;gap:18px}
+  .donut{position:relative;flex:none;width:120px;height:120px}
+  .donut .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .donut .center .n{font-size:20px;font-weight:800}
+  .donut .center .t{font-size:10px;color:var(--muted)}
+  .legend{display:flex;flex-direction:column;gap:7px;font-size:12px;flex:1}
+  .legend .row{display:flex;align-items:center;gap:7px}
+  .legend .dot{width:10px;height:10px;border-radius:3px;flex:none}
+  .legend .nm{font-weight:700;min-width:64px}
+  .legend .pc2{color:var(--muted)}
+  .legend .vl{margin-left:auto;font-weight:700}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
+
+  /* 卡片动能行 */
+  .momentum{display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}
+  .momentum .m{display:flex;flex-direction:column;gap:2px}
+  .momentum .m .k{font-size:10px;color:var(--muted)}
+  .momentum .m .v{font-size:13px;font-weight:800}
+  .m-up{color:var(--ok)}.m-down{color:var(--err)}.m-flat{color:#9ca3af}
+
+  /* ===== 区域素材周历 ===== */
+  .regional{padding:20px 22px 40px;max-width:1280px;margin:0 auto}
+  .regional h2{font-size:21px;font-weight:800;margin-bottom:4px}
+  .regional .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+  /* 周历表头 */
+  .cal-head{display:grid;grid-template-columns:140px repeat(7,1fr);gap:0;border:1px solid var(--line);border-radius:12px 12px 0 0;overflow:hidden}
+  .cal-head>div{text-align:center;padding:11px 6px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+  .cal-head>div:first-child{background:var(--card);color:var(--ink);border-right:1px solid var(--line)}
+  .cal-head .date-num{font-size:15px;display:block;margin-top:2px}
+  .cal-head .dow{font-size:11px;opacity:.8}
+  .cal-head .today-ring{box-shadow:inset 0 0 0 2px #fbbf24,0 0 8px rgba(251,191,36,.4);border-radius:6px}
+  /* 周历行 */
+  .cal-body{display:grid;grid-template-columns:140px repeat(7,1fr);gap:0;border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0 0 12px 12px;overflow:hidden}
+  .cal-row{display:contents}
+  .type-label{padding:10px 12px;font-size:12px;font-weight:700;color:var(--ink);background:#fafbfc;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px}
+  .type-label .dot{width:9px;height:9px;border-radius:3px;flex:none}
+  .cell{padding:7px 8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:48px;background:#fff;font-size:12px;position:relative}
+  .cell:last-child{border-right:none}
+  /* 素材卡片 */
+  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;cursor:default;transition:box-shadow .15s}
+  .item:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .item .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;margin-bottom:3px}
+  .item .title{font-weight:600;color:var(--ink)}
+  .item .partner{color:var(--muted);font-size:11px;margin-top:2px}
+  .item .partner u{color:var(--brand2);text-decoration:none;font-weight:600}
+  /* 类型色 */
+  .t-copost{border-left:3px solid #2f80ed}.t-copost .tag{background:#dbeafe;color:#1d4ed8}
+  .t-meme{border-left:3px solid #f2994a}.t-meme .tag{background:#fdebd7;color:#b45309}
+  .t-kol{border-left:3px solid #e05299}.t-kol .tag{background:#fbdcee;color:#b0307a}
+  .t-koc{border-left:3px solid #12a594}.t-koc .tag{background:#d2f0eb;color:#0b7a6e}
+  .t-poster{border-left:3px solid #58a83c}.t-poster .tag{background:#e0f0d8;color:#3a7a24}
+  .t-gameplay{border-left:3px solid #e14b4b}.t-gameplay .tag{background:#fbdddd;color:#b02a2a}
+  /* 统计条 */
+  .regional-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .rstat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:120px}
+  .rstat .rk{font-size:11px;color:var(--muted)}.rstat .rv{font-size:18px;font-weight:800;margin-top:2px}
+  /* 周导航 */
+  .week-nav{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .week-nav button{padding:7px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+  .week-nav button:hover{border-color:var(--brand);color:var(--brand)}
+  .week-nav .wlbl{font-size:15px;font-weight:800;color:var(--ink)}
+
+  /* ===== 南亚社群排期（HQ + 区域 合并）===== */
+  .southasia{padding:20px 22px 40px;max-width:1320px;margin:0 auto}
+  .southasia h2{font-size:21px;font-weight:800;margin-bottom:4px}
+  .southasia .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+  /* 筛选开关 */
+  .sa-filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px;align-items:center}
+  .sa-filters .f-label{font-size:13px;font-weight:700;color:var(--muted);margin-right:4px}
+  .chip{padding:7px 15px;border:1px solid var(--line);border-radius:20px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:#6b7280;transition:.15s;user-select:none}
+  .chip:hover{border-color:#c5cad0;color:#4b5563}
+  .chip.on{color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(0,0,0,.10)}
+  .chip.all.on{background:#64748b}
+  /* 莫兰迪色系：低饱和灰调，柔和耐看 */
+  .chip[data-f="hq"]{border-color:#e3dff0}
+  .chip[data-f="hq"].on{background:#7c5cd6}
+  .chip[data-f="copost"]{border-color:#dbeafe}
+  .chip[data-f="copost"].on{background:#2f80ed}
+  .chip[data-f="kol"]{border-color:#fbdcee}
+  .chip[data-f="kol"].on{background:#e05299}
+  .chip[data-f="koc"]{border-color:#d2f0eb}
+  .chip[data-f="koc"].on{background:#12a594}
+  .chip[data-f="meme"]{border-color:#fdebd7}
+  .chip[data-f="meme"].on{background:#f2994a}
+  .chip[data-f="poster"]{border-color:#e0f0d8}
+  .chip[data-f="poster"].on{background:#58a83c}
+  .chip[data-f="gameplay"]{border-color:#fbdddd}
+  .chip[data-f="gameplay"].on{background:#e14b4b}
+  /* 分区标题带 */
+  .sa-section{margin-bottom:30px}
+  .sa-banner{display:flex;align-items:center;gap:10px;padding:11px 18px;border-radius:12px 12px 0 0;font-size:15px;font-weight:800;color:#fff}
+  .sa-banner.hq{background:linear-gradient(135deg,#8b6fe0,#7c5cd6)}
+  .sa-banner.region{background:linear-gradient(135deg,#f59e0b,#d97706)}
+  .sa-banner .cnt{margin-left:auto;font-size:12px;font-weight:700;background:rgba(255,255,255,.22);padding:2px 10px;border-radius:9px}
+  .sa-restore{margin-left:8px;font-size:12px;font-weight:700;background:rgba(255,255,255,.28);padding:2px 10px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .sa-restore:hover{background:rgba(255,255,255,.45)}
+  /* 团队产能条 */
+  .sa-cap{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:11px 16px;margin-bottom:16px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;font-size:13.5px}
+  .sa-cap .ca-t{font-weight:800;color:var(--ink);margin-right:2px}
+  .sa-cap .cap{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ecedf2;border-left:3px solid var(--c);border-radius:9px;padding:5px 12px;font-weight:600;color:#3a3a44;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .sa-cap .cap b{font-size:15px;font-weight:800;color:var(--c)}
+  /* HQ 周历网格 */
+  .sa-grid{border:1px solid var(--line);border-radius:0 0 12px 12px;overflow:hidden;background:#fff}
+  .sa-week{border-bottom:1px solid var(--line)}
+  .sa-week:last-child{border-bottom:none}
+  .sa-wband{display:flex;align-items:center;gap:12px;padding:10px 16px;font-weight:700;font-size:13px;color:#fff}
+  .sa-wband .wk{font-size:11px;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:9px;font-weight:700;white-space:nowrap}
+  .sa-wband .rng{font-size:12px;opacity:.92;white-space:nowrap}
+  .sa-wband .th{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sa-wband .cur{font-size:11px;background:rgba(0,0,0,.22);padding:2px 9px;border-radius:9px;white-space:nowrap}
+  .sa-wband .toggle{margin-left:auto;cursor:pointer;border:none;background:rgba(255,255,255,.28);color:#fff;font-size:12px;font-weight:700;padding:5px 13px;border-radius:9px;white-space:nowrap}
+  .sa-wband .toggle:hover{background:rgba(255,255,255,.45)}
+  .sa-wbody.collapsed{display:none}
+  .sa-cells{display:grid;grid-template-columns:repeat(7,1fr)}
+  .sa-cell{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:7px 8px;min-height:58px;background:#fcfcfd;font-size:12px}
+  .sa-cell:first-child{border-left:none}
+  .sa-cell.empty{background:transparent}
+  .sa-cell.launch{background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+  .sa-dhead{font-weight:700;color:var(--ink);display:flex;justify-content:space-between;margin-bottom:3px}
+  .sa-dhead .dow{font-size:10px;color:var(--muted);font-weight:600}
+  /* 当天高亮（莫兰迪暖陶土色） */
+  .sa-cell.is-today{background:linear-gradient(160deg,#fff8f1,#fcefe3);box-shadow:inset 0 0 0 2px #c0896a;position:relative}
+  .sa-cell.is-today .sa-dhead{margin-bottom:4px}
+  .sa-cell.is-today .sa-dhead>span:first-child{background:#c0896a;color:#fff;border-radius:5px;padding:1px 6px;font-size:12px;box-shadow:0 1px 4px rgba(192,137,106,.4)}
+  .sa-cell.is-today .sa-dhead .dow{color:#c0896a;font-weight:800}
+  .sa-cell.is-today .sa-add-btn:hover{background:#f3ddd0;color:#9c6b4f}
+  .sa-post{border:1px solid var(--line);border-radius:7px;padding:5px 7px;background:#fff;margin-bottom:5px}
+  .sa-post .t{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#64748b;border-radius:4px;padding:0 5px;margin-bottom:2px}
+  .sa-post .b{font-size:12px;color:var(--ink);word-break:break-word}
+  .sa-post .p{font-size:10px;color:var(--muted);margin-top:2px}
+  .sa-empty-tip{font-size:11px;color:#cbd5e1;text-align:center;padding:14px 0}
+  .sa-mtime{font-size:10px;color:var(--muted);font-weight:700;margin-left:5px}
+  .sa-legend{display:flex;flex-wrap:wrap;gap:8px 16px;padding:6px 4px 14px;font-size:11px;color:var(--muted)}
+  .sa-add-btn{display:block;text-align:center;font-size:16px;color:#cbd5e1;cursor:pointer;padding:3px 0;border-radius:5px;transition:.15s;line-height:1}
+  .sa-add-btn:hover{background:#f1f5f9;color:#64748b}
+  .sa-post .del{float:right;cursor:pointer;color:#cbd5e1;font-size:13px;line-height:1;margin-left:4px}
+  .sa-post .del:hover{color:#ef4444}
+  .sa-post .act{float:right;cursor:pointer;font-size:11px;line-height:1.4;margin-left:5px;color:#cbd5e1;transition:.15s;padding:0 3px;border-radius:3px}
+  .sa-post .act:hover{color:#64748b;background:#f1f5f9}
+  .sa-post .act.del:hover{color:#ef4444}
+  .sa-post .act.cancel.on{color:#e14b4b;background:#fbdddd}
+  .sa-post.cancelled{opacity:.5}
+  .sa-post .act.edit:hover{color:#2f80ed;background:#dbeafe}
+  .sa-post.cancelled .b,.sa-post.cancelled .p,.sa-post.cancelled .t,.sa-post.cancelled .sa-mtime{text-decoration:line-through}
+  /* 模态框 */
+  .sa-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9999;display:flex;align-items:center;justify-content:center}
+  .sa-modal{background:#fff;border-radius:14px;padding:24px 28px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+  .sa-modal h3{font-size:16px;font-weight:800;margin-bottom:16px;color:var(--ink)}
+  .sa-modal label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;margin-top:12px}
+  .sa-modal label:first-of-type{margin-top:0}
+  .sa-modal input,.sa-modal select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--ink);background:#fff;box-sizing:border-box}
+  .sa-modal input:focus,.sa-modal select:focus{outline:none;border-color:#7c5cd6}
+  .sa-modal .sa-modal-btns{display:flex;gap:10px;margin-top:20px}
+  .sa-modal .sa-modal-btns button{flex:1;padding:9px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+  .sa-modal .btn-save{background:#7c5cd6;color:#fff}
+  .sa-modal .btn-save:hover{background:#6a4cc4}
+  .sa-modal .btn-cancel{background:#f1f5f9;color:#64748b}
+  .sa-modal .btn-cancel:hover{background:#e2e8f0}
+  .sa-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 22px;border-radius:20px;font-size:13px;font-weight:600;z-index:10000;animation:sa-fade .15s}
+  @keyframes sa-fade{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  .sa-popover{position:fixed;z-index:9999;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);padding:14px 16px;width:330px;max-width:90vw;font-size:13px;line-height:1.7;color:var(--ink);animation:sa-pop .12s}
+  @keyframes sa-pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+  .sa-popover .pop-close{float:right;cursor:pointer;color:#cbd5e1;font-size:16px;line-height:1;margin-left:8px}
+  .sa-popover .pop-close:hover{color:#64748b}
+  .sa-popover .pop-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
+  .sa-popover .pop-body{white-space:pre-wrap;word-break:break-word}
+  .sa-legend .lg{display:flex;align-items:center;gap:5px}
+  .sa-legend .lgd{width:10px;height:10px;border-radius:3px;flex:none}
+  /* 区域素材：按类别列表 */
+  .cat-block{border:1px solid var(--line);border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:14px;background:#fff}
+  .cat-head{display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;font-weight:800;background:#fafbfc;border-bottom:1px solid var(--line)}
+  .cat-head .dot{width:10px;height:10px;border-radius:3px;flex:none}
+  .cat-head .cnt{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)}
+  .cat-items{padding:8px 14px 12px}
+  .cat-item{border-left:3px solid #ddd;border-radius:8px;background:#f8f9fb;padding:8px 12px;margin-top:8px;display:flex;flex-direction:column;gap:2px}
+  .cat-item:first-child{margin-top:4px}
+  .cat-item .ci-top{display:flex;align-items:center;gap:10px}
+  .cat-item .ci-date{font-size:11px;font-weight:700;color:var(--brand2);background:#eff6ff;border-radius:5px;padding:1px 7px;white-space:nowrap}
+  .cat-item .ci-title{font-size:13px;font-weight:700;color:var(--ink)}
+  .cat-item .ci-partner{font-size:11px;color:var(--muted)}
+  .cat-item .ci-partner u{color:var(--brand2);text-decoration:none;font-weight:600}
+
+footer{text-align:center;font-size:12px;color:var(--muted);padding:14px}
+
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span>Gangstar 运营看板</div>
+  <div class="tabs">
+    <div class="tab active" data-view="sa">📅 南亚社群排期</div>
+    <div class="tab" data-view="fan">📊 粉丝监控</div>
+    <div class="tab" data-view="regional">📝 区域素材</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="upd" id="upd">数据更新于 —</div>
+</div>
+
+<div class="stage">
+  <div class="view scroll active" id="view-sa">
+    <div class="southasia" id="southAsiaView"></div>
+  </div>
+  <div class="view scroll" id="view-regional">
+    <div class="regional" id="regionalView"></div>
+  </div>
+  <div class="view scroll" id="view-fan">
+    <div class="fan">
+      <h2>📊 区域社媒粉丝监控</h2>
+      <div class="sub">IG / FB / YTB / X 实时追踪 · 点击「刷新」后台自动读取最新数据，无需手动输入</div>
+
+      <div class="summary" id="summary"></div>
+
+      <div class="insights" id="insights"></div>
+
+      <div class="toolbar">
+        <button class="refresh" id="refreshBtn">
+          <span class="spin"></span>
+          <span class="btn-text">🔄 刷新粉丝数</span>
+        </button>
+        <span class="status" id="status"></span>
+      </div>
+
+      <div class="cards" id="cards"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast 通知 -->
+<div class="toast" id="toast"></div>
+
+<footer>Gangstar Mirage City · 区域发行运营看板</footer>
+
+<script>
+// HQ 公线排期数据（提取自 HQ排期日历.html，供南亚社群排期合并视图使用）
+window.HQ_DATA = {
+  "july": [
+    {
+      "monday": "2026-06-29",
+      "sunday": "2026-07-05",
+      "range": "06-29–07-05",
+      "theme": "预注册启动：实机 Teaser + 预注册 KV 打响第一枪，铺开角色与都市世界观",
+      "color": "#7c5cd6",
+      "cells": [
+        {
+          "date": "2026-06-29",
+          "dow": "一",
+          "posts": []
+        },
+        {
+          "date": "2026-06-30",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-06-30",
+              "time": "21:00:00",
+              "plat": "X（twitter）,FB,Reddit,INS",
+              "brief": "预注册日期预告",
+              "fullBrief": "预注册日期预告",
+              "fullTime": "21:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-01",
+          "dow": "三",
+          "posts": []
+        },
+        {
+          "date": "2026-07-02",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-07-02",
+              "time": "12:00:00",
+              "plat": "X（twitter）,FB,Reddit,INS",
+              "brief": "预注册启动KV(研发预注册海报)（后发）",
+              "fullBrief": "预注册启动KV(研发预注册海报)（后发）",
+              "fullTime": "12:00:00"
+            },
+            {
+              "date": "2026-07-02",
+              "time": "12:00:00",
+              "plat": "X（twitter）,FB,Reddit,INS, YT",
+              "brief": "游戏实机录屏 Teaser（先发）",
+              "fullBrief": "游戏实机录屏 Teaser（先发）",
+              "fullTime": "12:00:00"
+            },
+            {
+              "date": "2026-07-02",
+              "time": "19:00:00",
+              "plat": "FB",
+              "brief": "金库海报 / Don Phil 预注册主线首张海报",
+              "fullBrief": "金库海报 / Don Phil 预注册主线首张海报",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-03",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-07-03",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "都市乐园导览手册",
+              "fullBrief": "都市乐园导览手册",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-04",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-07-04",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：查理（联系人委托）",
+              "fullBrief": "1.角色介绍：查理（联系人委托）",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-05",
+          "dow": "日",
+          "posts": [
+            {
+              "date": "2026-07-05",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：奈杰尔（车辆改装）",
+              "fullBrief": "角色介绍：奈杰尔（车辆改装）",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-07-05",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：娜塔莉（街头竞速）",
+              "fullBrief": "角色介绍：娜塔莉（街头竞速）",
+              "fullTime": "19:00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "monday": "2026-07-06",
+      "sunday": "2026-07-12",
+      "range": "07-06–07-12",
+      "theme": "App Store 预注册开启、冲刺 10M 预约，密集角色与帮派势力介绍",
+      "color": "#2f80ed",
+      "cells": [
+        {
+          "date": "2026-07-06",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-07-06",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：杰姬（经营玩法）",
+              "fullBrief": "1.角色介绍：杰姬（经营玩法） 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-07",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-07-07",
+              "time": "11:00:00",
+              "plat": "",
+              "brief": "App Store预注册开启的公告内容",
+              "fullBrief": "App Store预注册开启的公告内容",
+              "fullTime": "11:00:00"
+            },
+            {
+              "date": "2026-07-07",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：C10UD（合作抢劫）",
+              "fullBrief": "1.角色介绍：C10UD（合作抢劫） 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-08",
+          "dow": "三",
+          "posts": [
+            {
+              "date": "2026-07-08",
+              "time": "12:00:00",
+              "plat": "",
+              "brief": "“Don Phil日常”进度图一 预约六百万",
+              "fullBrief": "1.“Don Phil日常”进度图一 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素  预约六百万",
+              "fullTime": "12:00:00\n\n（发布时间视页面预约量达到600w的时间点而定）"
+            },
+            {
+              "date": "2026-07-08",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：封喉（刺杀玩法）",
+              "fullBrief": "1.角色介绍：封喉（刺杀玩法） 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-09",
+          "dow": "四",
+          "posts": []
+        },
+        {
+          "date": "2026-07-10",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-07-10",
+              "time": "17:00:00",
+              "plat": "",
+              "brief": "从Vegas到Mirage City平面海报",
+              "fullBrief": "1.从Vegas到Mirage City平面海报（从7.6号延期而来） 情怀向素材，将会是一张包含了Vegas过往海报元素的GSTM的海报",
+              "fullTime": "17:00:00"
+            },
+            {
+              "date": "2026-07-10",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "角色介绍：Bobby(新手入门)",
+              "fullBrief": "1.角色介绍：Bobby(新手入门) 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-07-10",
+              "time": "发布时间取决于页面预约数量达成时间",
+              "plat": "",
+              "brief": "10M预约达成",
+              "fullBrief": "10M预约达成",
+              "fullTime": "发布时间取决于页面预约数量达成时间\n\n预计7.10-7.12期间达成\n\n已达10M可对外"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-11",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-07-11",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "“Rooklyn新闻台” 第一期 “文明城市”路人抽象街访",
+              "fullBrief": "1.“Rooklyn新闻台” 第一期 “文明城市”路人抽象街访 以新闻台的形式，制作包装视频，内容则是趣味向的内容 （搞笑街访新闻，内容是展现新城市作为文明城市欢迎新市民进入，但是在实际采访过程中出现大量不文明行为形成反差感，展现自由城市的特点）",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-11",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "游戏势力地盘展示——黑手党",
+              "fullBrief": "1.游戏势力地盘展示——黑手党 展示帮派据点内容，展现大世界玩法以及世界设定",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-12",
+          "dow": "日",
+          "posts": [
+            {
+              "date": "2026-07-12",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "“趣味帮派日常” ——黑手党 如何在生活中保持优雅",
+              "fullBrief": "1.“趣味帮派日常” ——黑手党 如何在生活中保持优雅 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-12",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "游戏势力地盘展示——橘帮",
+              "fullBrief": "1.游戏势力地盘展示——橘帮 展示帮派据点内容，展现大世界玩法以及世界设定",
+              "fullTime": "19:00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "monday": "2026-07-13",
+      "sunday": "2026-07-19",
+      "range": "07-13–07-19",
+      "theme": "深入大世界与帮派势力展示，释放无枪版主线 KV",
+      "color": "#12a594",
+      "cells": [
+        {
+          "date": "2026-07-13",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-07-13",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "游戏势力地盘展示——泽西帮",
+              "fullBrief": "游戏势力地盘展示——泽西帮 展示帮派据点内容，展现大世界玩法以及世界设定",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-14",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-07-14",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "游戏势力地盘展示——幽灵族 （没有据点，引出赛车玩法）",
+              "fullBrief": "游戏势力地盘展示——幽灵族 （没有据点，引出赛车玩法）展示帮派据点内容，展现大世界玩法以及世界设定",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-15",
+          "dow": "三",
+          "posts": []
+        },
+        {
+          "date": "2026-07-16",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-07-16",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Don Phil日常”进度图二",
+              "fullBrief": "1.“Don Phil日常”进度图二 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素",
+              "fullTime": "19:00:00（已达到1500w，可正常按时发布）"
+            },
+            {
+              "date": "2026-07-16",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "大世界玩法一图流（社区）",
+              "fullBrief": "2.大世界玩法一图流（社区）信息向的内容，快速介绍游戏的多种玩法",
+              "fullTime": "18:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-17",
+          "dow": "五",
+          "posts": []
+        },
+        {
+          "date": "2026-07-18",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-07-18",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "“Rooklyn新闻台” 第二期 城市安保采访",
+              "fullBrief": "1.“Rooklyn新闻台” 第二期 城市安保采访 通过电台播报中安保人员信誓旦旦这是世界上最安全的城市和后面发生的现场动乱形成反差。",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-18",
+              "time": "18:30:00",
+              "plat": "",
+              "brief": "“趣味帮派日常”——橘帮 潮牌穿搭比拼大会",
+              "fullBrief": "2.“趣味帮派日常”——橘帮 潮牌穿搭比拼大会通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "18:30:00"
+            },
+            {
+              "date": "2026-07-18",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "主线KV（无枪版）",
+              "fullBrief": "1.主线KV（无枪版） 无枪版本的KV,展示游戏的世界设定和玩法场景",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-19",
+          "dow": "日",
+          "posts": []
+        }
+      ]
+    },
+    {
+      "monday": "2026-07-20",
+      "sunday": "2026-07-26",
+      "range": "07-20–07-26",
+      "theme": "聚焦 PVP 与合抢核心玩法爽点，集中释放玩法快剪",
+      "color": "#58a83c",
+      "cells": [
+        {
+          "date": "2026-07-20",
+          "dow": "一",
+          "posts": []
+        },
+        {
+          "date": "2026-07-21",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-07-21",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "PVP玩法快剪视频",
+              "fullBrief": "1.PVP玩法快剪视频",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-21",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "游戏PVP玩法一图流（社区）",
+              "fullBrief": "1.游戏PVP玩法一图流（社区） 信息向的内容，快速介绍游戏的多种玩法",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-22",
+          "dow": "三",
+          "posts": []
+        },
+        {
+          "date": "2026-07-23",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-07-23",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Don Phil日常”进度图三",
+              "fullBrief": "1.“Don Phil日常”进度图三 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-24",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-07-24",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "合抢玩法快剪视频",
+              "fullBrief": "1.合抢玩法快剪视频",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-25",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-07-25",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“趣味帮派日常”—— 泽西帮 劲力宝宣传片",
+              "fullBrief": "1.“趣味帮派日常”—— 泽西帮 劲力宝宣传片 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-26",
+          "dow": "日",
+          "posts": []
+        }
+      ]
+    },
+    {
+      "monday": "2026-07-27",
+      "sunday": "2026-08-02",
+      "range": "07-27–08-02",
+      "theme": "阵营系统与装备体系介绍，收尾角色 / 世界观铺陈",
+      "color": "#f2994a",
+      "cells": [
+        {
+          "date": "2026-07-27",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-07-27",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "角色介绍：买宝(武器入门)",
+              "fullBrief": "1.角色介绍：买宝(武器入门)通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-27",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "Buymore",
+              "fullBrief": "2.Buymore：机器人店长生存指南： 机器人店长生存指南 通过展示机器人买宝的拟人化的一天来展现游戏荒诞的世界观 以及买宝人工智障福利官的定位",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-28",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-07-28",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "常规装备快剪视频 （枪车资产介绍+个性化皮肤）",
+              "fullBrief": "1.常规装备快剪视频 （枪车资产介绍+个性化皮肤）",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-28",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Rooklyn新闻台” 第三期 电台激情解说",
+              "fullBrief": "1.“Rooklyn新闻台” 第三期 电台激情解说 通过电台主持人“声情并茂”的解说一场城市抢劫的过程，展现游戏世界观混乱自由的特性，以及与电台这种传统认知中偏正统的印象形成反差",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-29",
+          "dow": "三",
+          "posts": [
+            {
+              "date": "2026-07-29",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "阵营介绍：阿加雷斯",
+              "fullBrief": "1.阵营介绍：阿加雷斯 通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-30",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-07-30",
+              "time": "18:00:00",
+              "plat": "",
+              "brief": "“Don Phil日常”进度图四",
+              "fullBrief": "1.“Don Phil日常”进度图四 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素",
+              "fullTime": "18:00:00"
+            },
+            {
+              "date": "2026-07-30",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "阵营介绍：铁壁安保",
+              "fullBrief": "2.阵营介绍：铁壁安保通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-07-31",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-07-31",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "阵营介绍：极光",
+              "fullBrief": "1.阵营介绍：极光 通过阵营介绍的形式，在释放设定和世界观的同时，展示对应的核心玩法挑战和装备",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-01",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-08-01",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“趣味帮派日常”—— 幽灵族 路灯维修工最痛恨的一批人",
+              "fullBrief": "1.“趣味帮派日常”—— 幽灵族 路灯维修工最痛恨的一批人 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-01",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "合抢玩法快剪视频",
+              "fullBrief": "🤝 一个人能上街，一队人才能干成大事。\n合作抢劫玩法快剪来了。\n\n分工、配合、突入、撤离，每一步都要跟上节奏。\n\n在 Mirage City，真正的 Boss 不只靠自己。\n\n加入 Discord，提前找到你的未来搭档，一起准备下一票行动。\n#GangstarMirageCity #GSTM #Gangstar",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-01",
+              "time": "20:00:00",
+              "plat": "",
+              "brief": "常规装备快剪（枪车资产+皮肤）",
+              "fullBrief": "🔧 在 Mirage City，装备不只是工具，也是你的名片。\n\n武器、载具、资产、个性化皮肤——\n从火力配置到街头座驾，每一次选择都在定义你的风格。\n\n想低调行动，还是高调入场？\n\n先把你的装备准备好。\n#GangstarMirageCity #GSTM #Gangstar",
+              "fullTime": "20:00:00"
+            },
+            {
+              "date": "2026-08-01",
+              "time": "00:00:00",
+              "plat": "HQ社区",
+              "brief": "🎯【活动】Creation Challenge 预注册创作挑战开启（3周）",
+              "fullBrief": "🎯 HQ社区预注册期 Creation Challenge（8/1起，为期3周）\n形式：玩家投稿 → 官方精选 → 二次传播，持续沉淀与扩散社区创作内容。\n第一期活动素材及相关信息已更新至HQ排期表，活动形式与素材可供区域伙伴参考复刻。\n注意：当前活动文案奖励仅适用于HQ社区参与者；区域如计划本地复刻，可结合各区域实际情况与预算调整奖励及规则。",
+              "fullTime": "8/1 起 · 持续3周"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-02",
+          "dow": "日",
+          "posts": []
+        }
+      ]
+    }
+  ],
+  "august": [
+    {
+      "monday": "2026-08-03",
+      "sunday": "2026-08-09",
+      "range": "08-03–08-09",
+      "theme": "转向经营与第二人生玩法展示，城市探索导览预热",
+      "color": "#e05299",
+      "cells": [
+        {
+          "date": "2026-08-03",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-08-03",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "导游波比带你游Rooklyn 地图介绍+人设展示",
+              "fullBrief": "导游波比带你游Rooklyn游戏完整地图介绍+人设展示视频，会以一种导游带完的形式，让波比在城市街头逐一介绍城市景色，同时在过程中展现市民的“自由”以及波比嘴欠的人物形象。",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-04",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-08-04",
+              "time": "待定",
+              "plat": "",
+              "brief": "幽灵族漫画（素材delay至下周，日期待定）",
+              "fullBrief": "1.幽灵族漫画 正在制作中，因内容调整素材delay至下周，具体日期待定",
+              "fullTime": "待定"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-05",
+          "dow": "三",
+          "posts": [
+            {
+              "date": "2026-08-05",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Rooklyn新闻台” 第四期 城市产业欣欣向荣",
+              "fullBrief": "1.“Rooklyn新闻台” 第四期 城市产业欣欣向荣 暗含反讽性质在内的抽象采访，通过介绍城市产业增长（实则是由于混乱造成的修缮等成本增加）如“全民射击锻炼热潮”“路灯制造产业增长”等，来反映城市的混乱",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-06",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-08-06",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "经营玩法快剪视频（素材已完成，本地化优化中）",
+              "fullBrief": "1.经营玩法快剪视频 商业帝国构建——从街头小子到社会顶层（素材已完成，目前本地化优化中）",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-06",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Don Phil日常”进度图五",
+              "fullBrief": "1.“Don Phil日常”进度图五 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-07",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-08-07",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "经营玩法一图流（社区）",
+              "fullBrief": "1.经营玩法一图流（社区） 信息向的内容，快速介绍游戏的多种玩法",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-08",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-08-08",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“趣味帮派日常”—— 极光 意思下就得了，谁上班玩命啊",
+              "fullBrief": "1.“趣味帮派日常”—— 极光 意思下就得了，谁上班玩命啊 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-09",
+          "dow": "日",
+          "posts": []
+        }
+      ]
+    },
+    {
+      "monday": "2026-08-10",
+      "sunday": "2026-08-16",
+      "range": "08-10–08-16",
+      "theme": "开服倒计时系列（海报 + 15 秒视频）全面启动，洗脑广告冲量",
+      "color": "#e14b4b",
+      "cells": [
+        {
+          "date": "2026-08-10",
+          "dow": "一",
+          "posts": []
+        },
+        {
+          "date": "2026-08-11",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-08-11",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "DonPhil预注册核心视频",
+              "fullBrief": "1.DonPhil预注册核心视频",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-12",
+          "dow": "三",
+          "posts": []
+        },
+        {
+          "date": "2026-08-13",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-08-13",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Don Phil日常”进度图六",
+              "fullBrief": "1.“Don Phil日常”进度图六 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-14",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-08-14",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "机型推荐图文公告（社区）",
+              "fullBrief": "1.机型推荐图文公告（社区） 核心展现机型下探+游戏小包体优化",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-14",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "在Rooklyn体验别样人生 海报（第二人生玩法向，内容方向及制作精度优化中）",
+              "fullBrief": "1.在Rooklyn体验别样人生 海报 第二人生玩法向海报（内容方向及制作精度进一步优化，调整至8/14发布）",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-15",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-08-15",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "YDHDT洗脑广告——无需遵守秩序，随意破坏",
+              "fullBrief": "1.YDHDT洗脑广告——无需遵守秩序，随意破坏 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-15",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时海报5天",
+              "fullBrief": "1.开服倒计时海报5天",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-15",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时15秒视频-IP演变",
+              "fullBrief": "2.开服倒计时15秒视频-IP演变 结合倒计时海报，以固定主题展示游戏内对应玩法爽点",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-16",
+          "dow": "日",
+          "posts": [
+            {
+              "date": "2026-08-16",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时15秒视频-大世界",
+              "fullBrief": "1.开服倒计时15秒视频-大世界 结合倒计时海报，以固定主题展示游戏内对应玩法爽点",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-16",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时海报4天",
+              "fullBrief": "1.开服倒计时海报4天",
+              "fullTime": "19:00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "monday": "2026-08-17",
+      "sunday": "2026-08-23",
+      "range": "08-17–08-23",
+      "theme": "倒计时收官，8/20 正式上线，上线即冲商店榜单",
+      "color": "#7c5cd6",
+      "cells": [
+        {
+          "date": "2026-08-17",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-08-17",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "YDHDT洗脑广告——无需氪金才能获得体验",
+              "fullBrief": "1.YDHDT洗脑广告——无需氪金才能获得体验 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-17",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时15秒视频-PVP&合抢",
+              "fullBrief": "2.开服倒计时15秒视频-PVP&合抢 结合倒计时海报，以固定主题展示游戏内对应玩法爽点",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-17",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时海报3天",
+              "fullBrief": "1.开服倒计时海报3天",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-18",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-08-18",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时15秒视频-高火力装备",
+              "fullBrief": "1.开服倒计时15秒视频-高火力装备 结合倒计时海报，以固定主题展示游戏内对应玩法爽点",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-18",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时海报2天",
+              "fullBrief": "1.开服倒计时海报2天",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-19",
+          "dow": "三",
+          "posts": [
+            {
+              "date": "2026-08-19",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "YDHDT洗脑广告——不必在竞技排位中受挫",
+              "fullBrief": "1.YDHDT洗脑广告——不必在竞技排位中受挫 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-19",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时15秒视频-商业帝国经营",
+              "fullBrief": "2.开服倒计时15秒视频-商业帝国经营 结合倒计时海报，以固定主题展示游戏内对应玩法爽点",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-19",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "开服倒计时海报1天",
+              "fullBrief": "1.开服倒计时海报1天",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-20",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-08-20",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "混沌都市爽感玩法演示视频 ——肆意破坏、好友组队干票大的",
+              "fullBrief": "1.混沌都市爽感玩法演示视频 ——肆意破坏、好友组队干票大的 游戏整体的玩法向的卖点视频，用于开服第一天，展示玩家通过逐渐养成账号能够享受到的不同的爽点玩法",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-20",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "LIB 制作人访谈",
+              "fullBrief": "2.LIB 制作人访谈",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-20",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "主线KV（有枪版）",
+              "fullBrief": "1.主线KV（有枪版） 有枪版本的KV,展示游戏的世界设定和玩法场景",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-20",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“新市民安置福利”——开服福利一览（社区）",
+              "fullBrief": "2. “新市民安置福利”——开服福利一览（社区） 信息向的内容，快速介绍游戏的多种玩法",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-20",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "上线内宣海报",
+              "fullBrief": "3.上线内宣海报",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-21",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-08-21",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "苹果榜单海报 2.谷歌榜单海报",
+              "fullBrief": "1.苹果榜单海报 2.谷歌榜单海报 商店登顶的海报",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-22",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-08-22",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "commercial专栏 洛克林创业广告片",
+              "fullBrief": "1.commercial专栏 洛克林创业广告片 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-23",
+          "dow": "日",
+          "posts": []
+        }
+      ]
+    },
+    {
+      "monday": "2026-08-24",
+      "sunday": "2026-08-30",
+      "range": "08-24–08-30",
+      "theme": "上线首周运营，首个活动「黄牌反攻」+ commercial 趣味专栏",
+      "color": "#2f80ed",
+      "cells": [
+        {
+          "date": "2026-08-24",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-08-24",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "commercial专栏 全世界小狗都想要的项链",
+              "fullBrief": "1.commercial专栏 全世界小狗都想要的项链 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-25",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-08-25",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "合作抢劫KV",
+              "fullBrief": "1.合作抢劫KV 合作抢劫玩法的KV",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-26",
+          "dow": "三",
+          "posts": [
+            {
+              "date": "2026-08-26",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "commercial专栏 脑黄金 “一口成仙”",
+              "fullBrief": "1.commercial专栏 脑黄金 “一口成仙” 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解",
+              "fullTime": "19:00:00"
+            },
+            {
+              "date": "2026-08-26",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "SL3 黄牌反攻 KV",
+              "fullBrief": "1.SL3 黄牌反攻 KV 游戏内活动玩法黄牌反攻的KV",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-27",
+          "dow": "四",
+          "posts": [
+            {
+              "date": "2026-08-27",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Rooklyn新闻台” 第五期 首周新闻",
+              "fullBrief": "1.“Rooklyn新闻台” 第五期 首周新闻 通过展现开服首周的游戏内趣味场景，来帮助社区提供游戏内容分享的案例（如开放第一天火烈鸟酒吧门口全是车），给玩家“官方在关注游戏内的事件”，和玩家一起玩的感觉在",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-28",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-08-28",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "出租车故事视频 （基于研发游戏内版本修改）",
+              "fullBrief": "2.出租车故事视频 （基于研发游戏内版本修改）",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-29",
+          "dow": "六",
+          "posts": [
+            {
+              "date": "2026-08-29",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "commercial专栏 AllRide，你的生活出行管家",
+              "fullBrief": "1.commercial专栏 AllRide，你的生活出行管家 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-08-30",
+          "dow": "日",
+          "posts": [
+            {
+              "date": "2026-08-30",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“Rooklyn新闻台” 第六期 出租车事件快报",
+              "fullBrief": "1.“Rooklyn新闻台” 第六期 出租车事件快报 通过新闻台包装的形式，展现游戏首个运营活动的趣味的点，帮助玩家认识游戏玩法以及挖掘玩法趣味性",
+              "fullTime": "19:00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "monday": "2026-08-31",
+      "sunday": "2026-09-06",
+      "range": "08-31–09-06",
+      "theme": "首活动延续，预热帮派战争大版本",
+      "color": "#12a594",
+      "cells": [
+        {
+          "date": "2026-08-31",
+          "dow": "一",
+          "posts": [
+            {
+              "date": "2026-08-31",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“趣味帮派日常”—— DonPhil 怎么接不到单了？",
+              "fullBrief": "2.“趣味帮派日常”—— DonPhil 怎么接不到单了？ 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-01",
+          "dow": "二",
+          "posts": [
+            {
+              "date": "2026-09-01",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "黄牌反攻爽点视频",
+              "fullBrief": "1.黄牌反攻爽点视频 出租车老司机都市狂飙，展现黄牌反攻玩法的爽点和趣味的点",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-02",
+          "dow": "三",
+          "posts": []
+        },
+        {
+          "date": "2026-09-03",
+          "dow": "四",
+          "posts": []
+        },
+        {
+          "date": "2026-09-04",
+          "dow": "五",
+          "posts": [
+            {
+              "date": "2026-09-04",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "“趣味帮派日常”——吉普尼 兄弟再多也能载下",
+              "fullBrief": "1.“趣味帮派日常”——吉普尼 兄弟再多也能载下 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点",
+              "fullTime": "19:00:00"
+            }
+          ]
+        },
+        {
+          "date": "2026-09-05",
+          "dow": "六",
+          "posts": []
+        },
+        {
+          "date": "2026-09-06",
+          "dow": "日",
+          "posts": [
+            {
+              "date": "2026-09-06",
+              "time": "19:00:00",
+              "plat": "",
+              "brief": "帮派战争预热-原材料运货车",
+              "fullBrief": "1.帮派战争预热-原材料运货车 帮派战争预热悬念向的海报",
+              "fullTime": "19:00:00"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "launch": "2026-08-20"
+};
+;
+
+</script>
+<script>
+// ===== 标签切换 =====
+const tabs=document.querySelectorAll('.tab');
+const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),regional:document.getElementById('view-regional')};
+tabs.forEach(t=>t.onclick=()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const v=t.dataset.view;
+  Object.values(views).forEach(x=>x.classList.remove('active'));
+  views[v].classList.add('active');
+  if(v==='fan') loadFans();
+  if(v==='sa') renderSouthAsia();
+  if(v==='regional') renderRegional();
+});
+
+// ===== 工具函数 =====
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function daysToLaunch(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  return Math.max(0, Math.round((new Date('2026-08-20')-today)/86400000));
+}
+function todayStr(){
+  const t=new Date();
+  const y=t.getFullYear();
+  const m=String(t.getMonth()+1).padStart(2,'0');
+  const d=String(t.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+// ===== 折线图绘制（内联 SVG） =====
+function drawChart(hist,color,events){
+  if(!hist||hist.length<2){
+    return `<div class="chart-area" style="text-align:center;padding:20px;color:var(--muted);font-size:12px">
+      数据点不足（需至少 2 次记录），继续更新后将自动画出增长曲线
+    </div>`;
+  }
+  const W=250,H=90,padL=36,padR=14,padT=8,padB=20;
+  const vals=hist.map(p=>p.value);
+  const minV=Math.min(...vals)*0.95,maxV=Math.max(...vals)*1.03;
+  const span=(maxV-minV)||1;
+  const n=vals.length;
+  // 坐标映射
+  function px(i,v){return{x:padL+(W-padL-padR)*Math.max(0,Math.min(1,(n<=1?0.5:i/(n-1)))),y:padT+(H-padT-padB)*(1-Math.max(0,Math.min(1,(v-minV)/span)))};}
+  const pts=vals.map((v,i)=>px(i,v));
+  // 路径
+  let lineD='';pts.forEach((p,i)=>lineD+=(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)+' ');
+  // 面积填充
+  const areaD=lineD+`L${pts[pts.length-1].x.toFixed(1)},${(H-padB).toFixed(1)} L${pts[0].x.toFixed(1)},${(H-padB).toFixed(1)} Z`;
+  // 数据点圆（关键事件点高亮为金色 + 标注）
+  const evtMap={};(events||[]).forEach(e=>evtMap[e.date]=e.label);
+  const dotsCircs=pts.map((p,i)=>{
+    const ev=evtMap[hist[i].date];
+    if(ev){
+      const ty=Math.max(padT+10,p.y-9);
+      return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.6" fill="#f59e0b" stroke="#fff" stroke-width="1.6"/>`+
+        `<text x="${p.x.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="8.5" fill="#b45309" font-weight="800">${esc(ev)}</text>`;
+    }
+    return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.8" fill="${color}" opacity=".75"/>`;
+  }).join('');
+  // X轴标签（每隔几个显示一个）
+  const xLabels=[];
+  const step=Math.ceil(n/6);
+  hist.forEach((p,i)=>{if(i%step===0||i===n-1)xLabels.push(`<text x="${pts[i].x.toFixed(1)}" y="${H-3}" text-anchor="middle" font-size="9" fill="#9ca3af">${p.date.slice(5)}</text>`);});
+  // Y轴标签
+  const yTicks=[minV,minV+(maxV-minV)*0.5,maxV];
+  const yLabels=yTicks.map(v=>`<text x="${padL-4}" y="${padT+(H-padT-padB)*(1-(v-minV)/span).toFixed(1)}" text-anchor="end" font-size="9" fill="#9ca3af">${Math.round(v)}</text>`).join('');
+  // 最新值标注
+  const last=pts[pts.length-1];
+  const lastLabel=`<text x="${last.x.toFixed(1)}" y="${Math.max(padT+10,last.y-8)}" text-anchor="middle" font-size="10" fill="${color}" font-weight="700">${fmt(vals[vals.length-1])}</text>`;
+  // 网格线
+  const gridLines=[0,.5,1].map(f=>`<line x1="${padL}" y1="${padT+(H-padT-padB)*(1-f)}" x2="${W-padR}" y2="${padT+(H-padT-padB)*(1-f)}" stroke="#e5e7eb" stroke-dasharray="3,3"/>`).join('');
+
+  return `<div class="chart-area">
+    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+      <!-- 网格 -->${gridLines}
+      <!-- 面积 --><path d="${areaD}" fill="${color}" opacity=".08"/>
+      <!-- 线条 --><path d="${lineD}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- 点 -->${dotsCircs}${lastLabel}
+      <!-- X轴 -->${xLabels.join('')}
+      <!-- Y轴 -->${yLabels}
+    </svg>
+  </div>`;
+}
+
+// ===== 周增长计算（基于历史，找 ~7 天前锚点）=====
+function weeklyGrowth(pl){
+  const hist=pl.history||[];
+  if(hist.length<2) return null;
+  const last=hist[hist.length-1];
+  const lastDate=new Date(last.date+'T00:00:00');
+  const target=new Date(lastDate); target.setDate(target.getDate()-7);
+  let base=null;
+  for(const h of hist){
+    const d=new Date(h.date+'T00:00:00');
+    if(d<=target) base=h.value; else break;
+  }
+  if(base===null) base=hist[0].value;
+  const diff=last.value-base;
+  const pct=base? (diff/base*100):0;
+  return {diff, pct, daily:diff/7};
+}
+
+// 关键事件标注（在折线图对应日期点高亮）
+const PLATFORM_EVENTS={
+  youtube:[{date:'2026-07-11',label:'TechnoGamerz'}]
+};
+
+// 官方品牌图标（Simple Icons 单路径，白色填充，置于品牌色方块上）
+const PLATFORM_ICONS={
+  instagram:'<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>',
+  facebook:'<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
+  x:'<svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'
+};
+
+// ===== 渲染粉丝卡片 =====
+function renderFans(data){
+  document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
+  const p=data.platforms;
+  const totalAll=(p.instagram?.value||0)+(p.facebook?.value||0)+(p.youtube?.value||0)+(p.x?.value||0);
+  const d=daysToLaunch();
+
+  const igHist=p.instagram?.history||[];
+  const igBase=igHist.length?igHist[0].value:0;
+  const igGain=(p.instagram?.value||0)-igBase;
+  document.getElementById('summary').innerHTML=`
+    <div class="stat"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
+    <div class="stat"><div class="k">社区总粉丝（4 平台）</div><div class="v">${fmt(totalAll)}</div></div>
+    <div class="stat"><div class="k">Instagram</div><div class="v">${fmt(p.instagram?.value||0)}<small style="font-size:11px;color:var(--ok)">▲ +${fmt(igGain)}</small></div></div>
+    <div class="stat"><div class="k">YouTube 订阅</div><div class="v">${fmt(p.youtube?.value||0)}</div></div>`;
+
+  // 洞察区（作战进度 + 占比 + 本周最佳）
+  renderInsights(data);
+
+  const order=['instagram','facebook','youtube','x'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  document.getElementById('cards').innerHTML=order.map(k=>{
+    const pl=p[k]; if(!pl) return '';
+    const hist=pl.history||[];
+    const prev=hist.length>1?hist[hist.length-2].value:pl.value;
+    const diff=pl.value-prev;
+    const dcls=diff>0?'up':(diff<0?'down':'flat');
+    const dtxt=diff>0?`▲ +${fmt(diff)}`:(diff<0?`▼ ${fmt(diff)}`:'—');
+    const initial=pl.name.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+    const wg=weeklyGrowth(pl);
+    const momentum=wg?`<div class="momentum">
+      <div class="m"><span class="k">近 7 天</span><span class="v ${wg.diff>0?'m-up':wg.diff<0?'m-down':'m-flat'}">${wg.diff>0?'+':''}${fmt(wg.diff)}</span></div>
+      <div class="m"><span class="k">周环比</span><span class="v ${wg.pct>=0?'m-up':'m-down'}">${wg.pct>=0?'+':''}${wg.pct.toFixed(1)}%</span></div>
+      <div class="m"><span class="k">日均增</span><span class="v ${wg.daily>=0?'m-up':'m-down'}">${wg.daily>=0?'+':''}${wg.daily.toFixed(1)}</span></div>
+    </div>`:'';
+    return `<div class="pc">
+      <div class="bar" style="background:${pl.color}"></div>
+      <div class="ph">
+        <div class="ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</div>
+        <div><div class="nm">${esc(pl.name)}</div><div class="hd">${esc(pl.handle)}</div></div>
+      </div>
+      <div class="big">${fmt(pl.value)}<small>${esc(pl.label)}</small></div>
+      <div class="delta ${dcls}">${dtxt}</div>
+      ${momentum}
+      ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
+      <a class="lk" href="${esc(pl.url)}" target="_blank" rel="noopener">${esc(pl.url)}</a>
+    </div>`;
+  }).join('');
+}
+
+// ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
+function renderInsights(data){
+  const p=data.platforms;
+  const order=['instagram','facebook','youtube','x'];
+  const vals=order.map(k=>p[k]?.value||0);
+  const names=order.map(k=>p[k]?.name||k);
+  const colors=order.map(k=>p[k]?.color||'#999');
+  const total=vals.reduce((a,b)=>a+b,0);
+
+  // 占比环图（SVG 描边分段）
+  const R=52,C=2*Math.PI*R;
+  let off=0;
+  const segs=order.map((k,i)=>{
+    const frac=total?vals[i]/total:0;
+    const dash=frac*C;
+    const seg=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${colors[i]}" stroke-width="18" stroke-dasharray="${dash.toFixed(1)} ${(C-dash).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" transform="rotate(-90 60 60)"/>`;
+    off+=dash;
+    return seg;
+  }).join('');
+  const donut=`<svg width="120" height="120" viewBox="0 0 120 120">${segs}</svg>`;
+  const legendRows=order.map((k,i)=>`
+    <div class="row"><span class="dot" style="background:${colors[i]}"></span>
+      <span class="nm">${esc(names[i])}</span>
+      <span class="pc2">${(total?vals[i]/total*100:0).toFixed(1)}%</span>
+      <span class="vl">${fmt(vals[i])}</span></div>`).join('');
+
+  // 本周最佳渠道（按周绝对增量，避免小基数百分比误导）
+  const grows=order.map(k=>({name:p[k]?.name||k,wg:weeklyGrowth(p[k])}));
+  const valid=grows.filter(g=>g.wg).sort((a,b)=>b.wg.diff-a.wg.diff);
+  const best=valid[0];
+
+  // 上线目标进度（目标值存 localStorage，可改）
+  const target=Number(lsGet('gangstar_fan_target')||10000);
+  const prog=Math.min(100,total/target*100);
+  const remain=Math.max(0,target-total);
+  const dl=daysToLaunch();
+  const needDaily=dl>0?remain/dl:0;
+
+  const el=document.getElementById('insights');
+  if(!el) return;
+  el.innerHTML=`
+    <div class="panel">
+      <h3><span class="em">🎯</span> 上线作战进度</h3>
+      <div class="countdown"><span class="big">D-${dl}</span><span class="lbl">距 2026-08-20 正式上线</span></div>
+      <div class="prog"><i style="width:${prog.toFixed(1)}%"></i></div>
+      <div class="meta"><span>社区总粉丝 <b>${fmt(total)}</b></span><span>目标 <b>${fmt(target)}</b></span></div>
+      <div class="meta"><span>完成度 <b>${prog.toFixed(1)}%</b></span><span>日均需 +<b>${needDaily.toFixed(0)}</b> 连 ${dl} 天</span></div>
+      <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
+    </div>
+    <div class="panel">
+      <h3><span class="em">🥧</span> 平台粉丝占比</h3>
+      <div class="donut-wrap">
+        <div class="donut">${donut}<div class="center"><div class="n">${fmt(total)}</div><div class="t">总粉丝</div></div></div>
+        <div class="legend">${legendRows}</div>
+      </div>
+      ${best?`<div style="margin-top:14px;text-align:center"><span class="badge">🏆 本周最佳 · ${esc(best.name)}（周 +${fmt(best.wg.diff)}）</span></div>`:''}
+    </div>`;
+
+  const saveBtn=document.getElementById('targetSave');
+  if(saveBtn) saveBtn.onclick=()=>{
+    const v=Number(document.getElementById('targetInput').value);
+    if(v>0){lsSet('gangstar_fan_target',v);renderInsights(lastData);}
+  };
+}
+
+// ===== Toast 通知 =====
+let toastTimer=null;
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+type;
+  clearTimeout(toastTimer);
+  // 强制 reflow 后加 show
+  void t.offsetWidth;
+  t.classList.add('show');
+  toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// ===== 数据加载 =====
+// 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
+const FALLBACK_DATA = {
+  "updated_at": "2026-08-01",
+  "launch_date": "2026-08-20",
+  "platforms": {
+    "instagram": {
+      "name": "Instagram",
+      "handle": "@gangstarmiragecityindia",
+      "url": "https://www.instagram.com/gangstarmiragecityindia/",
+      "value": 1808,
+      "label": "粉丝",
+      "color": "#E1306C",
+      "note": "数据来源：用户截图校准（2026-08-01 晚）；本轮增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
+      "history": [
+        {
+          "date": "2026-07-02",
+          "value": 1450
+        },
+        {
+          "date": "2026-07-05",
+          "value": 1478
+        },
+        {
+          "date": "2026-07-08",
+          "value": 1505
+        },
+        {
+          "date": "2026-07-11",
+          "value": 1580
+        },
+        {
+          "date": "2026-07-15",
+          "value": 1610
+        },
+        {
+          "date": "2026-07-18",
+          "value": 1640
+        },
+        {
+          "date": "2026-07-22",
+          "value": 1665
+        },
+        {
+          "date": "2026-07-25",
+          "value": 1682
+        },
+        {
+          "date": "2026-07-30",
+          "value": 1696
+        },
+        {
+          "date": "2026-08-01",
+          "value": 1808
+        }
+      ]
+    },
+    "facebook": {
+      "name": "Facebook",
+      "handle": "Gangstar Mirage City India",
+      "url": "https://www.facebook.com/profile.php?id=61572148744773",
+      "value": 44,
+      "label": "关注者",
+      "color": "#1877F2",
+      "note": "数据来源：用户截图校准",
+      "history": [
+        {
+          "date": "2026-07-02",
+          "value": 4
+        },
+        {
+          "date": "2026-07-05",
+          "value": 8
+        },
+        {
+          "date": "2026-07-08",
+          "value": 15
+        },
+        {
+          "date": "2026-07-11",
+          "value": 22
+        },
+        {
+          "date": "2026-07-15",
+          "value": 30
+        },
+        {
+          "date": "2026-07-18",
+          "value": 35
+        },
+        {
+          "date": "2026-07-22",
+          "value": 38
+        },
+        {
+          "date": "2026-07-25",
+          "value": 39
+        },
+        {
+          "date": "2026-07-30",
+          "value": 42
+        },
+        {
+          "date": "2026-07-31",
+          "value": 42
+        },
+        {
+          "date": "2026-08-01",
+          "value": 44
+        }
+      ]
+    },
+    "youtube": {
+      "name": "YouTube",
+      "handle": "@GangstarMirageCityIndia",
+      "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
+      "value": 658,
+      "label": "订阅者",
+      "color": "#FF0000",
+      "note": "数据来源：用户截图校准（2026-08-01 晚）",
+      "history": [
+        {
+          "date": "2026-07-02",
+          "value": 5
+        },
+        {
+          "date": "2026-07-03",
+          "value": 6
+        },
+        {
+          "date": "2026-07-04",
+          "value": 7
+        },
+        {
+          "date": "2026-07-06",
+          "value": 8
+        },
+        {
+          "date": "2026-07-08",
+          "value": 10
+        },
+        {
+          "date": "2026-07-09",
+          "value": 12
+        },
+        {
+          "date": "2026-07-10",
+          "value": 13
+        },
+        {
+          "date": "2026-07-11",
+          "value": 58
+        },
+        {
+          "date": "2026-07-12",
+          "value": 83
+        },
+        {
+          "date": "2026-07-13",
+          "value": 100
+        },
+        {
+          "date": "2026-07-14",
+          "value": 135
+        },
+        {
+          "date": "2026-07-15",
+          "value": 161
+        },
+        {
+          "date": "2026-07-16",
+          "value": 180
+        },
+        {
+          "date": "2026-07-17",
+          "value": 216
+        },
+        {
+          "date": "2026-07-18",
+          "value": 244
+        },
+        {
+          "date": "2026-07-19",
+          "value": 257
+        },
+        {
+          "date": "2026-07-20",
+          "value": 273
+        },
+        {
+          "date": "2026-07-21",
+          "value": 290
+        },
+        {
+          "date": "2026-07-22",
+          "value": 299
+        },
+        {
+          "date": "2026-07-23",
+          "value": 313
+        },
+        {
+          "date": "2026-07-24",
+          "value": 324
+        },
+        {
+          "date": "2026-07-25",
+          "value": 344
+        },
+        {
+          "date": "2026-07-26",
+          "value": 372
+        },
+        {
+          "date": "2026-07-27",
+          "value": 425
+        },
+        {
+          "date": "2026-07-28",
+          "value": 451
+        },
+        {
+          "date": "2026-07-29",
+          "value": 481
+        },
+        {
+          "date": "2026-07-30",
+          "value": 494
+        },
+        {
+          "date": "2026-07-31",
+          "value": 519
+        },
+        {
+          "date": "2026-08-01",
+          "value": 658
+        }
+      ]
+    },
+    "x": {
+      "name": "X (Twitter)",
+      "handle": "@GangstarMCIndia",
+      "url": "https://x.com/GangstarMCIndia",
+      "value": 24,
+      "label": "粉丝",
+      "color": "#1DA1F2",
+      "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
+      "history": [
+        {
+          "date": "2026-07-30",
+          "value": 23
+        },
+        {
+          "date": "2026-07-31",
+          "value": 24
+        },
+        {
+          "date": "2026-08-01",
+          "value": 24
+        }
+      ]
+    }
+  }
+};;;;
+let lastData=null;
+const isFile = (location.protocol==='file:');
+async function loadFans(){
+  try{
+    const r=await fetch('fan_data.json',{cache:'no-store'});
+    if(r.ok){lastData=await r.json();renderFans(lastData);return true;}
+  }catch(e){}
+  // 抓取失败（多为 file:// 或未连服务）→ 用内联兜底渲染，保证不空白
+  if(lastData===null && typeof FALLBACK_DATA!=='undefined'){
+    lastData=FALLBACK_DATA; renderFans(lastData); return true;
+  }
+  return false;
+}
+// ===== 刷新按钮：核心交互 =====
+const btn=document.getElementById('refreshBtn');
+const statusEl=document.getElementById('status');
+
+function setStatus(text,type){
+  statusEl.textContent=text;statusEl.className='status show '+type;
+}
+
+btn.onclick=async()=>{
+  // 1. 进入加载态
+  btn.disabled=true;btn.classList.add('loading');
+  setStatus('⏳ 正在连接刷新服务…','info');
+
+  try{
+    // 2. POST 刷新请求
+    const r=await fetch('/api/fan-refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ts:Date.now()})});
+
+    if(r.ok){
+      setStatus('✅ 请求已提交！后台正在读取 IG / FB / YTB / X…','ok');
+
+      // 3. 轮询等待结果（最多 90 秒）
+      let pollCount=0;
+      const prevUpdate=lastData?lastData.updated_at:'';
+      const pollTimer=setInterval(async()=>{
+        pollCount++;
+        try{
+          const cr=await fetch('/fan_data.json?t='+Date.now(),{cache:'no-store'});
+          if(cr.ok){
+            const newData=await cr.json();
+            if(newData.updated_at!==prevUpdate){
+              // 数据已更新！
+              clearInterval(pollTimer);
+              lastData=newData;renderFans(newData);
+              btn.disabled=false;btn.classList.remove('loading');
+              setStatus('✅ 刷新成功！已更新至 '+newData.updated_at,'ok');
+              showToast('✅ 粉丝数据刷新成功\nIG: '+fmt(newData.platforms.instagram.value)+
+                ' | FB: '+fmt(newData.platforms.facebook.value)+
+                ' | YTB: '+fmt(newData.platforms.youtube.value),'ok');
+            }
+          }
+        }catch(e){/* ignore */}
+        // 超时（已等待约 3.5 分钟）
+        if(pollCount>70){
+          clearInterval(pollTimer);
+          btn.disabled=false;btn.classList.remove('loading');
+          setStatus('⏱ 后台仍在读取中（通常几分钟内完成）。稍后切回本页即可看到更新；或直接在对话里让我「刷新粉丝数」立即更新','warn');
+          showToast('⏱ 刷新请求已提交，后台读取中\n通常几分钟内完成，可稍后查看','err');
+        }
+      },3000);
+
+    }else{
+      throw new Error('HTTP '+r.status);
+    }
+
+  }catch(e){
+    // 服务未连接 / file:// 直接打开：不跳走，仅提示正确打开方式
+    btn.disabled=false;btn.classList.remove('loading');
+    if(isFile){
+      setStatus('请双击「Gangstar看板.app」打开看板，刷新按钮才能连接后台','warn');
+    }else{
+      setStatus('刷新服务未连接 — 请双击「Gangstar看板.app」重新打开','warn');
+    }
+  }
+};
+
+// ===== 初始加载 =====
+loadFans();
+// 粉丝视图激活时重新拉取
+setInterval(()=>{if(views.fan.classList.contains('active'))loadFans();},30000);
+
+// ===== 南亚社群排期（HQ 公线 + 区域自产 合并视图）=====
+const SA_FILTERS=[
+  {key:'kol',label:'网红'},
+  {key:'koc',label:'KOC'},
+  {key:'meme',label:'Meme'},
+  {key:'poster',label:'海报'},
+  {key:'copost',label:'copost'},
+  {key:'hq',label:'HQ公线素材'},
+  {key:'gameplay',label:'区域玩法素材'}
+];
+// 区域素材类型 → 标签映射（与筛选开关一一对应，直接映射）
+const REGION_TAGS={
+  hq:['hq'],
+  copost:['copost'],
+  kol:['kol'],
+  koc:['koc'],
+  meme:['meme'],
+  poster:['poster'],
+  gameplay:['gameplay']
+};
+let saActive=new Set(SA_FILTERS.map(f=>f.key)); // 默认全开
+let saUndoStack=[]; // 撤销栈
+let saDetailMap={}; // HQ 详情映射
+let saEditMap={}; // 编辑覆盖映射（pid -> 当前可编辑值）
+
+// 素材是否命中当前筛选（tags 任一在 active 集合中即显示）
+function saMatch(tags){
+  if(!tags||!tags.length) return true;
+  return tags.some(t=>saActive.has(t));
+}
+
+
+function renderSouthAsia(){
+  const el=document.getElementById('southAsiaView');
+  if(!el) return;
+  if(typeof HQ_DATA==='undefined'){
+    el.innerHTML='<p style="color:var(--muted);padding:40px;text-align:center">HQ 数据未加载（hq_data.js）</p>';
+    return;
+  }
+  saDetailMap={};saEditMap={}; // 每次渲染重置
+
+  // 类型显示信息
+  const TYPE_INFO={};
+  (CONTENT_TYPES||[]).forEach(t=>TYPE_INFO[t.key]=t);
+  TYPE_INFO['hq']={key:'hq',name:'HQ公线',color:'#7c5cd6'};
+  const HQ_BADGE={name:'HQ公线',color:'#7c5cd6'};
+
+  // 区域素材按日期索引（含 localStorage 自定义）
+  const regByDate={};
+  ((REGIONAL_DATA&&REGIONAL_DATA.weeks)||[]).forEach(w=>{
+    Object.entries(w.items||{}).forEach(([date,arr])=>{
+      if(!regByDate[date]) regByDate[date]=[];
+      arr.forEach(it=>regByDate[date].push(it));
+    });
+  });
+  // 合并 localStorage 自定义素材
+  try{
+    const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
+    Object.entries(custom).forEach(([date,arr])=>{
+      if(!regByDate[date]) regByDate[date]=[];
+      arr.forEach(it=>regByDate[date].push({...it,custom:true}));
+    });
+  }catch(e){}
+  // 加载隐藏/取消状态
+  const hidden=new Set();
+  const cancelledSet=new Set();
+  try{
+    JSON.parse(localStorage.getItem('gangstar_hidden')||'[]').forEach(id=>hidden.add(id));
+    JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]').forEach(id=>cancelledSet.add(id));
+  }catch(e){}
+  // 加载编辑覆盖
+  const edits={};
+  try{Object.assign(edits,JSON.parse(localStorage.getItem('gangstar_edits')||'{}'));}catch(e){}
+
+  // 统计
+  let hqCnt=0, regCnt=0;
+
+  // 筛选开关
+  const chipsHtml=`<div class="sa-filters">
+    <span class="f-label">筛选：</span>
+    <span class="chip all ${saActive.size===SA_FILTERS.length?'on':''}" data-f="all">全部</span>
+    ${SA_FILTERS.map(f=>`<span class="chip ${saActive.has(f.key)?'on':''}" data-f="${f.key}">${f.label}</span>`).join('')}
+  </div>`;
+
+  // 图例
+  const legendHtml=`<div class="sa-legend">
+    <span class="lg"><span class="lgd" style="background:${HQ_BADGE.color}"></span>HQ公线</span>
+    ${(CONTENT_TYPES||[]).map(t=>`<span class="lg"><span class="lgd" style="background:${t.color}"></span>${t.name}</span>`).join('')}
+  </div>`;
+
+  const today=todayStr();
+  const hq=HQ_DATA;
+  const allWeeks=hq.july.concat(hq.august);
+  allWeeks.forEach((w,i)=>w._idx=i);
+  const current=allWeeks.find(w=>w.monday<=today&&today<=w.sunday)||(today<allWeeks[0].monday?allWeeks[0]:allWeeks[allWeeks.length-1]);
+  const future=allWeeks.filter(w=>w!==current&&w.monday>today).sort((a,b)=>a._idx-b._idx);
+  const past=allWeeks.filter(w=>w!==current&&w.sunday<today).sort((a,b)=>a._idx-b._idx);
+  const order=[current,...future,...past];
+
+  const weeksHtml=order.map((w)=>{
+    const isCur=(w===current);
+    const expanded=!(w.sunday<today); // 当前周+未来周展开，历史周折叠
+    const band=`<div class="sa-wband" style="background:${w.color}">
+      <span class="wk">第${w._idx+1}周</span>
+      <span class="rng">${w.range}</span>
+      <span class="th">📌 ${esc(w.theme)}</span>
+      ${isCur?'<span class="cur">🔸 本周</span>':''}
+      <button class="toggle" type="button">${expanded?'收起 ▴':'展开 ▾'}</button>
+    </div>`;
+    const cells=w.cells.map(c=>{
+      const isLaunch=c.date===hq.launch;
+      const isToday=(c.date===today);
+      const posts=[];
+      // HQ 公线素材
+      if(saActive.has('hq')){
+        c.posts.forEach(p=>{
+          const pid='hq|'+c.date+'|'+p.brief;
+          if(hidden.has(pid)) return;
+          let brief=p.brief, plat=p.plat||'';
+          const ov=edits[pid];
+          if(ov){ if(ov.title) brief=ov.title; if(ov.partner!==undefined) plat=ov.partner; }
+          saDetailMap[pid]={fullBrief:(ov&&ov.title)||p.fullBrief||p.brief,fullTime:p.fullTime||p.time,plat:plat};
+          saEditMap[pid]={isHQ:true,title:brief,partner:plat};
+          posts.push({pid,badge:HQ_BADGE,time:p.time,brief,plat,sub:'',cancelled:cancelledSet.has(pid),hasDetail:true});
+          hqCnt++;
+        });
+      }
+      // 区域自产素材（按日期匹配，含自定义）
+      (regByDate[c.date]||[]).forEach(it=>{
+        const pid=it._id?('cus|'+it._id):('reg|'+c.date+'|'+it.type+'|'+it.title);
+        if(hidden.has(pid)) return;
+        const ov=edits[pid];
+        let title=it.title, type=it.type, partner=it.partner||'', desc=it.desc||'';
+        if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; }
+        const tag=(REGION_TAGS[type]||[])[0];
+        if(saActive.has(tag)){
+          const ti=TYPE_INFO[type]||{name:type,color:'#888'};
+          saEditMap[pid]={isHQ:false,title,type,partner,desc};
+          posts.push({pid,badge:ti,time:'',brief:title,plat:partner,sub:desc,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(pid)});
+          regCnt++;
+        }
+      });
+      const body=posts.length?posts.map(p=>{
+        const badge=`<span class="t" style="background:${p.badge.color}">${esc(p.badge.name)}</span>`;
+        const timeHtml=p.time?`<span class="sa-mtime">${esc(p.time)}</span>`:'';
+        const platHtml=p.plat?`<div class="p">${esc(p.plat)}</div>`:'';
+        const subHtml=p.sub?`<div class="p" style="color:var(--ink)">${esc(p.sub)}</div>`:'';
+        const cls=p.cancelled?' cancelled':'';
+        const cancelCls=p.cancelled?'act cancel on':'act cancel';
+        const detailAttr=p.hasDetail?` data-detail="${p.pid}" style="cursor:pointer"`:'';
+        return `<div class="sa-post${cls}"${detailAttr}><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}</div>`;
+      }).join(''):'<div class="sa-empty-tip">—</div>';
+      return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}">
+        <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
+    }).join('');
+    return `<div class="sa-week"><div class="sa-wband-wrap">${band}</div><div class="sa-wbody${expanded?'':' collapsed'}"><div class="sa-cells">${cells}</div></div></div>`;
+  }).join('');
+
+  const gridHtml=`<div class="sa-section">
+    <div class="sa-banner hq">📋 南亚社群排期 <span class="cnt">HQ ${hqCnt} 条 · 区域 ${regCnt} 条</span>${hidden.size?`<span class="sa-restore" id="restoreBtn">↩ 恢复已删除(${hidden.size})</span>`:''}</div>
+    <div class="sa-grid">${weeksHtml}</div>
+  </div>`;
+
+  const capHtml=`<div class="sa-cap">
+    <span class="ca-t">🔧 团队产能 / 天</span>
+    <span class="cap" style="--c:#58a83c">🖼️ 复用海报素材 <b>3</b></span>
+    <span class="cap" style="--c:#2f80ed">🎬 复用视频剪辑 <b>1</b></span>
+    <span class="cap" style="--c:#7c5cd6">🎨 原创KV <b>1</b></span>
+    <span class="cap" style="--c:#e05299">🎥 原创视频 <b>1</b></span>
+  </div>`;
+
+  el.innerHTML=`${capHtml}
+    <h2>📋 南亚社群排期</h2>
+    <div class="sub">HQ 公线素材 + 区域自产素材 · 同表展示 · 筛选开关可单独查看某类</div>
+    ${chipsHtml}
+    ${legendHtml}
+    ${gridHtml}`;
+
+  // 绑定筛选开关
+  el.querySelectorAll('.chip').forEach(ch=>{
+    ch.onclick=()=>{
+      const f=ch.dataset.f;
+      if(f==='all'){
+        if(saActive.size===SA_FILTERS.length) saActive.clear();
+        else saActive=new Set(SA_FILTERS.map(x=>x.key));
+      }else{
+        if(saActive.has(f)) saActive.delete(f); else saActive.add(f);
+      }
+      renderSouthAsia();
+    };
+  });
+  // 绑定周折叠
+  el.querySelectorAll('.sa-wband .toggle').forEach(btn=>{
+    btn.onclick=()=>{
+      const body=btn.closest('.sa-week').querySelector('.sa-wbody');
+      const col=body.classList.toggle('collapsed');
+      btn.textContent=col?'展开 ▾':'收起 ▴';
+    };
+  });
+  // 绑定添加按钮
+  el.querySelectorAll('.sa-add-btn').forEach(btn=>{
+    btn.onclick=()=>openAddModal(btn.dataset.date);
+  });
+  // 绑定 HQ 详情点击
+  el.querySelectorAll('.sa-post[data-detail]').forEach(post=>{
+    post.onclick=e=>{
+      if(e.target.classList.contains('act')) return; // 点按钮不触发
+      openDetailModal(post.dataset.detail, post);
+    };
+  });
+  // 恢复已删除
+  const restoreBtn=el.querySelector('#restoreBtn');
+  if(restoreBtn){
+    restoreBtn.onclick=()=>{
+      localStorage.removeItem('gangstar_hidden');
+      saUndoStack=[];
+      renderSouthAsia();
+      saToast('已恢复全部删除项');
+    };
+  }
+  // 绑定删除按钮（所有帖子）
+  el.querySelectorAll('.sa-post .act.del').forEach(btn=>{
+    btn.onclick=()=>{
+      const pid=btn.dataset.pid;
+      try{
+        const arr=JSON.parse(localStorage.getItem('gangstar_hidden')||'[]');
+        if(!arr.includes(pid)){
+          arr.push(pid);
+          localStorage.setItem('gangstar_hidden',JSON.stringify(arr));
+          saUndoStack.push({type:'hide',pid});
+        }
+      }catch(e){}
+      renderSouthAsia();
+    };
+  });
+  // 绑定划线按钮（取消/恢复）
+  el.querySelectorAll('.sa-post .act.cancel').forEach(btn=>{
+    btn.onclick=()=>{
+      const pid=btn.dataset.pid;
+      try{
+        let arr=JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]');
+        if(arr.includes(pid)){arr=arr.filter(x=>x!==pid);}
+        else{arr.push(pid);saUndoStack.push({type:'cancel',pid});}
+        localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
+      }catch(e){}
+      renderSouthAsia();
+    };
+  });
+  // 绑定编辑按钮（所有帖子）
+  el.querySelectorAll('.sa-post .act.edit').forEach(btn=>{
+    btn.onclick=e=>{e.stopPropagation();openEditModal(btn.dataset.pid);};
+  });
+}
+
+// 撤销
+function saUndo(){
+  if(!saUndoStack.length){saToast('没有可撤销的操作');return;}
+  const action=saUndoStack.pop();
+  try{
+    if(action.type==='hide'){
+      let arr=JSON.parse(localStorage.getItem('gangstar_hidden')||'[]');
+      arr=arr.filter(x=>x!==action.pid);
+      localStorage.setItem('gangstar_hidden',JSON.stringify(arr));
+    }else if(action.type==='cancel'){
+      let arr=JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]');
+      arr=arr.filter(x=>x!==action.pid);
+      localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
+    }else if(action.type==='edit'){
+      let all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');
+      if(action.prev) all[action.pid]=action.prev; else delete all[action.pid];
+      localStorage.setItem('gangstar_edits',JSON.stringify(all));
+    }
+  }catch(e){}
+  renderSouthAsia();
+  saToast('已撤回 ⌘Z');
+}
+function saToast(msg){
+  const old=document.querySelector('.sa-toast');
+  if(old) old.remove();
+  const t=document.createElement('div');
+  t.className='sa-toast';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),1500);
+}
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='z'){e.preventDefault();saUndo();}
+});
+
+// 添加素材模态框
+function openAddModal(date){
+  const old=document.querySelector('.sa-modal-bg');
+  if(old) old.remove();
+  const opts=`<option value="hq">HQ公线素材</option>`+(CONTENT_TYPES||[]).map(t=>`<option value="${t.key}">${t.name}</option>`).join('');
+  const bg=document.createElement('div');
+  bg.className='sa-modal-bg';
+  bg.innerHTML=`<div class="sa-modal">
+    <h3>添加素材 · ${date}</h3>
+    <label>标题</label>
+    <input type="text" id="m-title" placeholder="素材标题" autofocus>
+    <label>类别</label>
+    <select id="m-type">${opts}</select>
+    <label>合作方（选填）</label>
+    <input type="text" id="m-partner" placeholder="合作方">
+    <label>描述（选填）</label>
+    <input type="text" id="m-desc" placeholder="补充描述">
+    <div class="sa-modal-btns">
+      <button class="btn-cancel" type="button">取消</button>
+      <button class="btn-save" type="button">保存</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
+  bg.onclick=e=>{if(e.target===bg) bg.remove();};
+  const saveFn=()=>{
+    const title=document.getElementById('m-title').value.trim();
+    if(!title) return;
+    const type=document.getElementById('m-type').value;
+    const partner=document.getElementById('m-partner').value.trim();
+    const desc=document.getElementById('m-desc').value.trim();
+    try{
+      const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
+      if(!custom[date]) custom[date]=[];
+      custom[date].push({_id:Date.now()+''+Math.random().toString(36).slice(2,6),type,title,partner,desc});
+      localStorage.setItem('gangstar_custom',JSON.stringify(custom));
+    }catch(e){}
+    bg.remove();
+    renderSouthAsia();
+  };
+  bg.querySelector('.btn-save').onclick=saveFn;
+  document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter') saveFn();};
+}
+
+// 编辑已有素材（覆盖层写入 localStorage gangstar_edits，不破坏源数据）
+function openEditModal(pid){
+  const old=document.querySelector('.sa-modal-bg');
+  if(old) old.remove();
+  const cur=saEditMap[pid]||{};
+  const isHQ=!!cur.isHQ;
+  const opts=`<option value="hq">HQ公线素材</option>`+(CONTENT_TYPES||[]).map(t=>`<option value="${t.key}">${t.name}</option>`).join('');
+  const bg=document.createElement('div');
+  bg.className='sa-modal-bg';
+  bg.innerHTML=`<div class="sa-modal">
+    <h3>编辑素材</h3>
+    <label>标题</label>
+    <input type="text" id="m-title" value="${esc(cur.title||'')}" autofocus>
+    <label>类别${isHQ?'（HQ公线不可改）':''}</label>
+    <select id="m-type">${opts}</select>
+    <label>合作方 / 平台（选填）</label>
+    <input type="text" id="m-partner" value="${esc(cur.partner||'')}" placeholder="合作方 / 平台">
+    <label>描述（选填）</label>
+    <input type="text" id="m-desc" value="${esc(cur.desc||'')}" placeholder="补充描述">
+    <div class="sa-modal-btns">
+      <button class="btn-cancel" type="button">取消</button>
+      <button class="btn-save" type="button">保存</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  const typeSel=bg.querySelector('#m-type');
+  if(isHQ){ typeSel.value='hq'; typeSel.disabled=true; }
+  else if(cur.type){ typeSel.value=cur.type; }
+  bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
+  bg.onclick=e=>{if(e.target===bg) bg.remove();};
+  const saveFn=()=>{
+    const title=document.getElementById('m-title').value.trim();
+    if(!title) return;
+    const type=document.getElementById('m-type').value;
+    const partner=document.getElementById('m-partner').value.trim();
+    const desc=document.getElementById('m-desc').value.trim();
+    try{
+      const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');
+      const prev=all[pid]||null;
+      all[pid]={title,type,partner,desc};
+      localStorage.setItem('gangstar_edits',JSON.stringify(all));
+      saUndoStack.push({type:'edit',pid,prev});
+    }catch(e){}
+    bg.remove();
+    renderSouthAsia();
+  };
+  bg.querySelector('.btn-save').onclick=saveFn;
+  document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter') saveFn();};
+}
+
+// HQ 详情查看（帖子旁浮窗）
+function openDetailModal(pid, anchorEl){
+  const d=saDetailMap[pid];
+  if(!d||!anchorEl) return;
+  const old=document.querySelector('.sa-popover');
+  if(old) old.remove();
+  const pop=document.createElement('div');
+  pop.className='sa-popover';
+  pop.innerHTML=`<span class="pop-close">×</span><div class="pop-meta">📅 ${esc(d.fullTime||'--')}${d.plat?' · 📡 '+esc(d.plat):''}</div><div class="pop-body">${esc(d.fullBrief)}</div>`;
+  document.body.appendChild(pop);
+  const rect=anchorEl.getBoundingClientRect();
+  const pw=pop.offsetWidth, ph=pop.offsetHeight;
+  let left=rect.left;
+  let top=rect.bottom+6;
+  if(left+pw>window.innerWidth-10) left=window.innerWidth-pw-10;
+  if(left<10) left=10;
+  if(top+ph>window.innerHeight-10) top=rect.top-ph-6;
+  if(top<10) top=10;
+  pop.style.left=left+'px';
+  pop.style.top=top+'px';
+  pop.querySelector('.pop-close').onclick=()=>pop.remove();
+  setTimeout(()=>{
+    document.addEventListener('click',function close(e){
+      if(!pop.contains(e.target)&&!anchorEl.contains(e.target)){pop.remove();document.removeEventListener('click',close);}
+    });
+  },10);
+}
+
+
+// ===== 区域素材周历 =====
+// 区域素材类型定义（与筛选开关一一对应）
+const CONTENT_TYPES=[
+  {key:'copost',name:'copost',color:'#2f80ed',icon:'🤝'},
+  {key:'kol',name:'网红',color:'#e05299',icon:'⭐'},
+  {key:'koc',name:'KOC',color:'#12a594',icon:'💬'},
+  {key:'meme',name:'Meme',color:'#f2994a',icon:'😂'},
+  {key:'poster',name:'海报',color:'#58a83c',icon:'🎨'},
+  {key:'gameplay',name:'区域玩法素材',color:'#e14b4b',icon:'🎮'}
+];
+
+// 本周（Week 5: 07/27 ~ 08/02）已发素材数据 —— 从用户截图录入
+const REGIONAL_DATA={
+  weeks:[
+    {
+      label:'Week 5',
+      range:'07/27 ~ 08/02',
+      days:[
+        {date:'2026-07-27',dow:'Monday',num:'7/27'},
+        {date:'2026-07-28',dow:'Tuesday',num:'7/28'},
+        {date:'2026-07-29',dow:'Wednesday',num:'7/29'},
+        {date:'2026-07-30',dow:'Thursday',num:'7/30'},
+        {date:'2026-07-31',dow:'Friday',num:'7/31'},
+        {date:'2026-08-01',dow:'Saturday',num:'8/1'},
+        {date:'2026-08-02',dow:'Sunday',num:'8/2'}
+      ],
+      items:{
+        '2026-07-27':[
+          {type:'copost',title:'电竞 copost',partner:'Glazer Games'},
+          {type:'copost',title:'电竞 copost',partner:'godlike'}
+        ],
+        '2026-07-28':[
+          {type:'copost',title:'电竞 copost',partner:'OneGame Esports'},
+          {type:'meme',title:'回复玩家疑问',desc:'8月20日正式上线'}
+        ],
+        '2026-07-29':[
+          {type:'copost',title:'电竞 copost',partner:'Univ Esports'},
+          {type:'meme',title:'我和我的朋友策划合抢'}
+        ],
+        '2026-07-30':[
+          {type:'meme',title:'我和我的朋友完成了预注册'},
+          {type:'poster',title:'社区关注涨粉海报'}
+        ],
+        '2026-07-31':[
+          {type:'meme',title:'meme'},
+          {type:'poster',title:'兔子立绘关注社群海报'},
+          {type:'kol',title:'1分钟网红混剪视频'}
+        ],
+        '2026-08-02':[
+          {type:'kol',title:'1分钟网红混剪视频'}
+        ]
+      }
+    },
+    {
+      label:'Week 6',
+      range:'08/03 ~ 08/09',
+      days:[
+        {date:'2026-08-03',dow:'Monday',num:'8/3'},
+        {date:'2026-08-04',dow:'Tuesday',num:'8/4'},
+        {date:'2026-08-05',dow:'Wednesday',num:'8/5'},
+        {date:'2026-08-06',dow:'Thursday',num:'8/6'},
+        {date:'2026-08-07',dow:'Friday',num:'8/7'},
+        {date:'2026-08-08',dow:'Saturday',num:'8/8'},
+        {date:'2026-08-09',dow:'Sunday',num:'8/9'}
+      ],
+      items:{
+        '2026-08-03':[
+          {type:'koc',title:'KOC官宣计划',desc:'承接HQ Creation Challenge（8/1起3周），官宣南亚KOC共创计划，引导本地创作者报名'},
+          {type:'koc',title:'KOC Creator Hub 注册一图流教程',desc:'一图讲清注册流程，降低本地创作者参与门槛，为Challenge投稿蓄水'},
+          {type:'gameplay',title:'真实玩家第一视角·跟着Bobby落地Rooklyn',desc:'HQ是官方导览，区域补真人打卡，把城市探索预热落到真实玩家体验；承接Meme「我第一次来到Rooklyn」形成闭环'},
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'系列开篇·新手落地视角呼应Bobby导览，做真实接地气的玩家共鸣'}
+        ],
+        '2026-08-04':[
+          {type:'gameplay',title:'第二人生·换一种身份活（幽灵族/赛车向）',desc:'HQ第二人生海报8/14才出，区域先用真实玩家换身份玩片段预热；幽灵族delay但赛车玩法可提前铺'},
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'系列延续·聚焦在Rooklyn变成了另一个自己'}
+        ],
+        '2026-08-05':[
+          {type:'gameplay',title:'在Rooklyn怎么搞钱·本地玩家经营实录',desc:'用真实接活/盘店/街边生意片段呼应新闻台产业繁荣反讽梗，为周四HQ经营快剪预热'},
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'系列延续·视角切入在Rooklyn的第一桶金'}
+        ],
+        '2026-08-06':[
+          {type:'gameplay',title:'经营爽点·从街头小子到老板（本地化混剪）',desc:'HQ讲通用商业帝国叙事，区域补本地玩家真实经营画面，把经营变成我也能在Rooklyn当老板的代入感'},
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'系列延续·落在我也在Rooklyn开了第一间店'}
+        ],
+        '2026-08-07':[
+          {type:'gameplay',title:'区域玩家经营图鉴·Creation Challenge精选',desc:'直接用Challenge玩家投稿→官方精选链路做社区共创素材，既跟HQ主线又强化双向社区'},
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'系列周五篇·视角我在Rooklyn的第二人生初体验'}
+        ],
+        '2026-08-08':[
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'周末轻松向·视角周末和帮派兄弟在Rooklyn浪'}
+        ],
+        '2026-08-09':[
+          {type:'meme',title:'我第一次来到了Rooklyn',desc:'系列周末篇·视角我在Rooklyn的第一周'}
+        ]
+      }
+    }
+  ]
+};
+
+// ===== 区域素材独立看板（周历格式，保留独立入口）=====
+function renderRegional(){
+  const el=document.getElementById('regionalView');
+  const today=new Date().toISOString().slice(0,10);
+  const weeks=(REGIONAL_DATA&&REGIONAL_DATA.weeks)||[];
+  if(!weeks.length){el.innerHTML='<p style="color:var(--muted);padding:40px;text-align:center">暂无素材数据</p>';return;}
+
+  const weeksHtml=weeks.map(week=>{
+    let totalItems=0;
+    const typeCount={};
+    CONTENT_TYPES.forEach(t=>typeCount[t.key]=0);
+    Object.values(week.items||{}).forEach(dayItems=>{
+      (dayItems||[]).forEach(it=>{totalItems++;if(typeCount[it.type]!==undefined)typeCount[it.type]++;});
+    });
+
+    const headHtml=`<div class="cal-head">
+      <div>类型 \\ 日期</div>
+      ${week.days.map(d=>{
+        const isToday=d.date===today;
+        return `<div class="${isToday?'today-ring':''}"><span class="date-num">${d.num}</span><span class="dow">${d.dow}</span></div>`;
+      }).join('')}
+    </div>`;
+
+    const usedTypes=CONTENT_TYPES.filter(t=>typeCount[t.key]>0);
+    const rowsHtml=usedTypes.map(t=>{
+      const cells=week.days.map(d=>{
+        const dayItems=(week.items[d.date]||[]).filter(it=>it.type===t.key);
+        const cellContent=dayItems.map(it=>{
+          const typeCls='t-'+it.type;
+          const partnerHtml=it.partner?`<div class="partner">合作方：<u>${esc(it.partner)}</u></div>`:'';
+          const descHtml=it.desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(it.desc)}</div>`:'';
+          return `<div class="item ${typeCls}"><span class="tag">${t.name}</span><div class="title">${esc(it.title)}</div>${partnerHtml}${descHtml}</div>`;
+        }).join('');
+        return `<div class="cell">${cellContent}</div>`;
+      }).join('');
+      return `<div class="cal-row">
+        <div class="type-label"><span class="dot" style="background:${t.color}"></span>${t.icon} ${t.name}<span style="margin-left:auto;color:var(--muted);font-size:11px;font-weight:700">${typeCount[t.key]}</span></div>
+        ${cells}
+      </div>`;
+    }).join('');
+
+    const statsHtml=`<div class="regional-stats">
+      <div class="rstat"><div class="rk">周期</div><div class="rv">${week.range}</div></div>
+      <div class="rstat"><div class="rk">素材</div><div class="rv">${totalItems} 条</div></div>
+      ${usedTypes.map(t=>`<div class="rstat"><div class="rk" style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:24%;background:${t.color};flex:none"></span>${t.name}</div><div class="rv">${typeCount[t.key]}</div></div>`).join('')}
+    </div>`;
+
+    return `<div class="regional-week"><h3>${week.label} · ${week.range}</h3>${statsHtml}${headHtml}<div class="cal-body">${rowsHtml}</div></div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <h2>📝 区域素材周历</h2>
+    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材</div>
+    ${weeksHtml}
+  `;
+}
+
+// 页面加载后如果当前是 regional 视图则渲染
+if(views.regional.classList.contains('active')) renderRegional();
+// 南亚社群排期（默认激活）初始渲染
+if(views.sa.classList.contains('active')) renderSouthAsia();
+</script>
+</body>
+</html>

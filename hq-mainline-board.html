@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gangstar HQ 内容主线看板</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --panel:#ffffff; --line:#e6e8f0; --text:#1f2430; --muted:#667085;
+      --purple:#6f5cff; --purple-weak:#efedff; --green:#16a34a; --green-weak:#ebfaef;
+      --blue:#2f80ed; --blue-weak:#eaf3ff; --orange:#f59e0b; --orange-weak:#fff5df;
+      --red:#ef4444; --red-weak:#feefef; --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1440px;margin:0 auto;padding:24px}
+    .hero{background:linear-gradient(135deg,#ffffff 0%,#f2efff 100%);border:1px solid var(--line);border-radius:24px;padding:24px 24px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12px;color:var(--muted);margin-bottom:12px}
+    h1{margin:0 0 10px;font-size:30px;line-height:1.15}
+    .sub{font-size:15px;line-height:1.75;color:var(--muted);max-width:880px}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+    .metric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .metric .k{font-size:28px;font-weight:800;margin-bottom:6px}
+    .metric .l{font-size:12px;color:var(--muted)}
+    .hero-right{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+    .mini{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .mini h3{margin:0 0 10px;font-size:14px}
+    .mini ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.7}
+
+    .topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:18px 0 14px;flex-wrap:wrap}
+    .tabs,.filters{display:flex;gap:10px;flex-wrap:wrap}
+    .tab,.filter{border:none;background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:999px;font-size:13px;cursor:pointer;color:var(--muted)}
+    .tab.active{background:var(--purple);border-color:var(--purple);color:#fff}
+    .filter.active{background:var(--purple-weak);border-color:#cdc6ff;color:#4c3ed9}
+    .hint{font-size:13px;color:var(--muted)}
+
+    .main{display:grid;grid-template-columns:340px minmax(420px,1fr) 360px;gap:16px;align-items:start}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}
+    .panel h2{font-size:16px;margin:0 0 12px}
+    .phase-card{padding:14px 14px 10px;border-radius:16px;background:#fafafe;border:1px solid var(--line);margin-bottom:14px}
+    .phase-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .phase-pill{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;background:var(--purple-weak);color:#4c3ed9}
+    .phase-copy{font-size:13px;color:var(--muted);line-height:1.7;margin-top:10px}
+    .taglist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .tag{padding:6px 10px;border-radius:999px;font-size:12px;background:#f5f6fb;color:#596174;border:1px solid var(--line)}
+
+    .week-list{display:flex;flex-direction:column;gap:10px}
+    .week{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px;cursor:pointer;transition:.15s transform,.15s border-color,.15s box-shadow}
+    .week:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(27,39,94,.06)}
+    .week.active{border-color:#cfc8ff;background:#f8f7ff}
+    .week-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}
+    .week .date{font-size:12px;color:var(--muted)}
+    .week .title{font-size:15px;font-weight:800;line-height:1.35}
+    .count{padding:6px 9px;border-radius:999px;background:#f5f6fb;font-size:12px;color:var(--muted)}
+    .week .desc{font-size:12px;color:var(--muted);line-height:1.65}
+    .balance{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .bal{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center}
+    .bal strong{display:block;font-size:14px}
+    .bal span{font-size:11px;color:var(--muted)}
+
+    .detail-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px}
+    .detail-title{font-size:22px;font-weight:900;line-height:1.2;margin-bottom:6px}
+    .detail-sub{font-size:14px;color:var(--muted);line-height:1.7;max-width:760px}
+    .badge{padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .badge.pre{background:var(--blue-weak);color:#1c5db6}
+    .badge.post{background:var(--green-weak);color:#15753e}
+
+    .sections{display:grid;grid-template-columns:1.08fr .92fr;gap:14px;margin-top:14px}
+    .card{border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}
+    .card h3{margin:0 0 10px;font-size:14px}
+    .card ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted);line-height:1.75}
+
+    .items{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .item{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:#fcfcff}
+    .item-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .item-title{font-size:14px;font-weight:700;line-height:1.55;white-space:pre-wrap}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+    .chip{padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700}
+    .chip.cog{background:var(--blue-weak);color:#1c5db6}
+    .chip.proof{background:#f4ebff;color:#7a38cc}
+    .chip.conv{background:var(--orange-weak);color:#9a6200}
+    .chip.topic{background:#f5f6fb;color:#596174;border:1px solid var(--line);font-weight:600}
+
+    .focus-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+    .focus-box{border-radius:16px;padding:12px;border:1px solid var(--line)}
+    .focus-box strong{display:block;margin-bottom:6px;font-size:13px}
+    .focus-box p{margin:0;font-size:12px;line-height:1.65;color:var(--muted)}
+    .focus-box.blue{background:var(--blue-weak)}
+    .focus-box.purple{background:var(--purple-weak)}
+    .focus-box.green{background:var(--green-weak)}
+    .focus-box.orange{background:var(--orange-weak)}
+
+    .map{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px}
+    .slot{border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff}
+    .slot .name{font-size:12px;font-weight:800;margin-bottom:6px}
+    .slot .prio{font-size:11px;margin-bottom:7px;color:#4c3ed9;background:var(--purple-weak);display:inline-block;padding:4px 7px;border-radius:999px}
+    .slot .txt{font-size:12px;line-height:1.65;color:var(--muted)}
+
+    .empty{padding:18px;border:1px dashed var(--line);border-radius:14px;font-size:13px;color:var(--muted);text-align:center}
+
+    @media (max-width: 1280px){
+      .main{grid-template-columns:320px 1fr}
+      .side{grid-column:1/-1}
+    }
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr}
+      .summary,.hero-right,.sections,.focus-grid,.map{grid-template-columns:1fr}
+      .main{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Gangstar Mirage City · HQ 内容主线交互看板</div>
+        <h1>HQ 负责讲清游戏，区域负责讲热、讲真、讲像印度市场正在发生</h1>
+        <div class="sub">
+          这个看板不是在复述排期，而是在把 HQ 素材拆成可执行的叙事主线。你可以切换上线前 / 上线后、逐周点击查看 HQ 在讲什么、哪些地方该由区域补位，以及 7 类区域素材每周应该承担的角色。
+        </div>
+        <div class="summary">
+          <div class="metric"><div class="k">53</div><div class="l">HQ 有效发布总数</div></div>
+          <div class="metric"><div class="k">33</div><div class="l">上线前发布（7/2 - 8/19）</div></div>
+          <div class="metric"><div class="k">20</div><div class="l">上线后发布（8/20 - 9/8）</div></div>
+          <div class="metric"><div class="k">8/20</div><div class="l">正式上线分水岭</div></div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="mini">
+          <h3>HQ 强项</h3>
+          <ul>
+            <li>世界观、角色、玩法卖点说得清楚</li>
+            <li>倒计时节点和上线节奏明确</li>
+            <li>上线后能快速切到玩法运营与活动预热</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>区域必须补的空位</h3>
+          <ul>
+            <li>本地文化感、India meme 语境</li>
+            <li>KOL / KOC / 社群的真实热度证明</li>
+            <li>大量游戏内录素材带来的持续填充感</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>你真正的工作重心</h3>
+          <ul>
+            <li>不是重复 HQ，而是放大 HQ</li>
+            <li>不是按素材类型排，而是按每周战役主题排</li>
+            <li>游戏内录素材应作为所有区域线的母素材池</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>建议使用方式</h3>
+          <ul>
+            <li>先切阶段，再点周卡，最后看区域承接</li>
+            <li>看 HQ 本周在讲什么，再决定区域补什么</li>
+            <li>把每周主线做成团队对齐的依据</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="topbar">
+      <div class="tabs" id="phaseTabs"></div>
+      <div class="filters" id="roleFilters"></div>
+      <div class="hint">点左侧周卡查看本周 HQ 主线、内容明细与区域补位方案</div>
+    </div>
+
+    <section class="main">
+      <div class="panel">
+        <h2>阶段与周战役</h2>
+        <div id="phaseCard"></div>
+        <div class="week-list" id="weekList"></div>
+      </div>
+
+      <div class="panel">
+        <div class="detail-head">
+          <div>
+            <div class="detail-title" id="detailTitle">—</div>
+            <div class="detail-sub" id="detailSub">—</div>
+          </div>
+          <div class="badge" id="detailBadge">—</div>
+        </div>
+
+        <div class="sections">
+          <div class="card">
+            <h3>HQ 本周在说什么</h3>
+            <ul id="hqSays"></ul>
+          </div>
+          <div class="card">
+            <h3>区域本周应该补什么</h3>
+            <ul id="regionAdds"></ul>
+          </div>
+        </div>
+
+        <div class="focus-grid" id="focusGrid"></div>
+        <div class="items" id="itemList"></div>
+      </div>
+
+      <div class="panel side">
+        <h2>7 类区域素材承接地图</h2>
+        <div class="phase-copy" id="slotLead"></div>
+        <div class="map" id="slotMap"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const DATA = {
+      meta: { total: 53, pre: 33, post: 20, launchDate: "2026-08-20" },
+      phases: {
+        pre: {
+          label: "上线前 · 7/2 - 8/19",
+          short: "上线前",
+          badgeClass: "pre",
+          narrative: "认知建立 → 世界观 / 玩法蓄热 → 倒计时转化",
+          thesis: "HQ 上线前的内容骨架很清楚：先开门、再讲城、再把爽点和倒计时推到临门一脚。区域不需要再重复官方说明书，而要把这条线讲得更本地、更热、更像真的有人在等它。",
+          strong: ["角色 / 阵营", "玩法卖点", "城市世界观", "倒计时节点"],
+          gaps: ["India meme", "KOL/KOC 社交证明", "社群热度", "持续游戏内录填充", "本地话题化"],
+          weeks: [
+            {
+              id: "pre-1",
+              range: "7/2 - 7/7",
+              title: "预注册开门：先把门打开，让用户知道这游戏是谁",
+              desc: "预注册启动、实机 teaser、Don Phil 首图和角色介绍一起上，HQ 的第一目标是开门，不是深聊。",
+              summary: "本周 HQ 正在做认知启动：告诉用户 Mirage City 来了，预注册开了，而且这个世界里已经有人、有城、有第一波故事线。",
+              hqSays: [
+                "游戏来了，现在可以开始预注册 / 预约。",
+                "Don Phil 和联系人角色是第一波叙事抓手。",
+                "实机 teaser 在给“这不是空壳”的第一层证明。"
+              ],
+              regionAdds: [
+                "把“预约开启”做成本地社媒事件，而不是一张海报公告。",
+                "用游戏内录+角色反应素材，把官方角色露出翻成更好传播的短内容。",
+                "尽快建立第一波本地玩家感和评论区讨论感。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "让用户知道：游戏是谁、门开了、现在可以开始关注。", "blue"],
+                ["区域最该补位", "把预约节点转成可转发的本地热度，而不是纯公告。", "purple"],
+                ["最缺的证明", "真实玩家 / 网红 / 普通用户反应几乎没有。", "orange"],
+                ["母素材重点", "角色镜头、城市第一印象、实机 teaser 切片。", "green"]
+              ],
+              slots: [
+                ["网红素材", "高", "第一波“这是什么游戏”反应视频，角色 / Don Phil / 城市感受。"],
+                ["市场活动素材", "中", "如有预约开启节点，可做本地预约露出与入城概念包装。"],
+                ["KOC素材", "高", "普通玩家口吻：我会先选谁、我对这座城的第一印象。"],
+                ["India meme素材", "中", "把“入城 / 排队 / 抢先上车”做成本地梗。"],
+                ["区域端内活动素材", "低", "上线前弱化，先以预告姿态存在。"],
+                ["社群活动素材", "高", "预约倒计时、角色站队、先认谁投票。"],
+                ["游戏内录素材", "最高", "首波城市镜头、Don Phil、角色出场、teaser 切片。"]
+              ],
+              balance: { cognition: 70, proof: 20, conversion: 10 },
+              items: [
+                { date: "7/2", title: "预注册启动KV（研发预注册海报）（后发）", role: "认知", topic: "预注册" },
+                { date: "7/2", title: "游戏实机录屏 Teaser（先发）", role: "证明", topic: "实机" },
+                { date: "7/2", title: "金库海报 / Don Phil 预注册主线首张海报", role: "认知", topic: "角色/主线" },
+                { date: "7/3", title: "都市乐园导览手册", role: "认知", topic: "世界观" },
+                { date: "7/4", title: "角色介绍：查理（联系人委托）", role: "认知", topic: "角色" },
+                { date: "7/5", title: "角色介绍：奈杰尔（车辆改装）", role: "认知", topic: "角色" },
+                { date: "7/5", title: "角色介绍：娜塔莉（街头竞速）", role: "认知", topic: "角色" },
+                { date: "7/7", title: "App Store 预注册开启的公告内容", role: "转化", topic: "预约节点" },
+                { date: "7/7", title: "角色介绍：C10UD（合作抢劫）", role: "认知", topic: "角色/玩法" }
+              ]
+            },
+            {
+              id: "pre-2",
+              range: "8/1",
+              title: "轻量试水：用阵营日常保持火种不灭",
+              desc: "HQ 在 7 月中下旬明显稀疏，8/1 只放出一条趣味帮派日常。",
+              summary: "这一周 HQ 没有形成完整波次，说明区域必须主动补位，不然社媒会出现体感上的真空期。",
+              hqSays: [
+                "用轻内容维持世界观温度。",
+                "阵营 / 日常是低成本保持存在感的工具。",
+                "HQ 这周没有足够内容支撑整周讨论。"
+              ],
+              regionAdds: [
+                "这是最适合区域抢镜的一周，必须主动补满热度。",
+                "用 India meme、KOC、社群小活动，把“世界在活着”的感觉撑起来。",
+                "把游戏内录拆成更轻的梗图、翻车瞬间、角色语境切片。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "维持存在感，不让内容完全断档。", "blue"],
+                ["区域最该补位", "这周不是配合 HQ，而是区域要扛主输出。", "purple"],
+                ["最缺的证明", "没有够多的玩法、节点、转化内容支撑。", "orange"],
+                ["母素材重点", "趣味帮派、阵营梗、翻车 / 抽象瞬间。", "green"]
+              ],
+              slots: [
+                ["网红素材", "中", "不必重制作，做轻反应和抽象梗更合适。"],
+                ["市场活动素材", "低", "这周不适合重活动叙事。"],
+                ["KOC素材", "高", "用普通玩家语气填补内容稀疏感。"],
+                ["India meme素材", "最高", "拿下体感热度最有效。"],
+                ["区域端内活动素材", "中", "如果有预热任务，可用来补节奏。"],
+                ["社群活动素材", "高", "话题征集、阵营站队、抽象截图征集。"],
+                ["游戏内录素材", "高", "轻量可剪素材池必须提前多备。"]
+              ],
+              balance: { cognition: 35, proof: 45, conversion: 20 },
+              items: [
+                { date: "8/1", title: "趣味帮派日常——幽灵族 路灯维修工最痛恨的一批人", role: "证明", topic: "阵营/日常" }
+              ]
+            },
+            {
+              id: "pre-3",
+              range: "8/3 - 8/8",
+              title: "城市与玩法蓄热：让用户觉得这座城真的有料",
+              desc: "Rooklyn 新闻台、地图导览、经营玩法、Don Phil 日常、阵营日常一起推进，HQ 开始把“城市是活的”说清楚。",
+              summary: "本周 HQ 进入真正的蓄热期：不是单讲预约，而是在讲“这城很完整、玩法很多、人设很鲜活”。",
+              hqSays: [
+                "Mirage City 不是抽象设定，而是一个有新闻、有地图、有生活感的地方。",
+                "经营玩法和第二人生在补“开放世界里除了打打杀杀还有什么”。",
+                "Don Phil 和阵营日常让人设开始有记忆点。"
+              ],
+              regionAdds: [
+                "区域应把 HQ 的城市设定翻译成更本地、更具代入感的话题。",
+                "用 KOL/KOC 和录屏证明：这些玩法不是 PPT，而是真能看、能玩、能笑。",
+                "这是做游戏内录素材库最关键的一周，后面冲刺期会大量复用。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "把世界观、城市感和玩法厚度讲出来。", "blue"],
+                ["区域最该补位", "把“设定”翻译成“印度玩家能秒懂的场景感”。", "purple"],
+                ["最缺的证明", "缺少本地真实反应和文化语境。", "orange"],
+                ["母素材重点", "地图导览、城市街景、经营玩法、Rooklyn 新闻台、日常梗。", "green"]
+              ],
+              slots: [
+                ["网红素材", "高", "做“带你逛城 / 我最想先玩的玩法”类视频。"],
+                ["市场活动素材", "中", "可围绕城市设定做线下视觉 / 场景包装。"],
+                ["KOC素材", "高", "普通玩家视角的城市探索 / 经营想象。"],
+                ["India meme素材", "高", "城市混乱、新闻台、打工/发财梗非常适合本地化。"],
+                ["区域端内活动素材", "中", "如有运营预埋活动，可开始透风。"],
+                ["社群活动素材", "高", "地图区域投票、最想先住哪、最想先开什么业务。"],
+                ["游戏内录素材", "最高", "地图导览、经营成长、街景、抽象城市事件。"]
+              ],
+              balance: { cognition: 55, proof: 30, conversion: 15 },
+              items: [
+                { date: "8/3", title: "在 Rooklyn 体验别样人生 海报（第二人生玩法向）", role: "认知", topic: "玩法/世界观" },
+                { date: "8/4", title: "Rooklyn 新闻台 第四期：城市产业欣欣向荣", role: "证明", topic: "城市/新闻台" },
+                { date: "8/6", title: "经营玩法快剪视频：商业帝国构建", role: "证明", topic: "玩法" },
+                { date: "8/6", title: "Don Phil 日常进度图五", role: "认知", topic: "角色/日常" },
+                { date: "8/7", title: "导游波比带你游 Rooklyn 游戏完整地图介绍+人设展示视频", role: "认知", topic: "地图/角色" },
+                { date: "8/7", title: "经营玩法一图流（社区）", role: "认知", topic: "玩法" },
+                { date: "8/8", title: "趣味帮派日常——极光 意思下就得了，谁上班玩命啊", role: "证明", topic: "阵营/日常" }
+              ]
+            },
+            {
+              id: "pre-4",
+              range: "8/11 - 8/16",
+              title: "预注册冲刺起跑：Don Phil、机型下探、倒计时开始合流",
+              desc: "Don Phil 核心视频把主角线拉满，机型推荐解决实际门槛，倒计时和玩法切片开始真正进入冲刺模式。",
+              summary: "HQ 从“讲得清楚”转向“逼近行动”：一边强化核心人设，一边降低门槛，一边把倒计时节奏打起来。",
+              hqSays: [
+                "Don Phil 是上线前最后一段的人设抓手。",
+                "机型推荐在做“你能玩”的门槛清理。",
+                "倒计时+15秒玩法切片开始强力灌输爽点。"
+              ],
+              regionAdds: [
+                "区域要把倒计时做得更像市场已经在等，而不是官方自己在数数。",
+                "KOL/KOC 需要开始接近“我准备好了 / 我准备进城了”的情绪。",
+                "游戏内录要快速变成短切条、竖版、meme 版、社群转发版。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "从蓄热切到冲刺，把行动意愿拉起来。", "blue"],
+                ["区域最该补位", "把官方倒计时变成市场倒计时。", "purple"],
+                ["最缺的证明", "缺网红 / 玩家层面的“我会进场”。", "orange"],
+                ["母素材重点", "Don Phil、机型表现、玩法短切片、倒计时版包装。", "green"]
+              ],
+              slots: [
+                ["网红素材", "高", "“如果你只看一条 Don Phil 内容 / 我最期待的玩法”类。"],
+                ["市场活动素材", "中", "倒计时线下包装和到店物料可开始发声。"],
+                ["KOC素材", "高", "低门槛、能玩、值得等——最适合普通人视角。"],
+                ["India meme素材", "中", "倒计时焦躁感、等不及、预备入城梗。"],
+                ["区域端内活动素材", "中", "如有上线前预埋活动，可先释放机制感。"],
+                ["社群活动素材", "高", "倒计时接力、玩法站队、我开服第一件事。"],
+                ["游戏内录素材", "最高", "15秒强爽感切片必须批量生产。"]
+              ],
+              balance: { cognition: 30, proof: 30, conversion: 40 },
+              items: [
+                { date: "8/11", title: "DonPhil 预注册核心视频", role: "转化", topic: "角色/核心视频" },
+                { date: "8/13", title: "Don Phil 日常进度图六", role: "认知", topic: "角色/日常" },
+                { date: "8/14", title: "机型推荐图文公告（社区）", role: "转化", topic: "机型/门槛降低" },
+                { date: "8/15", title: "YDHDT 洗脑广告——无需遵守秩序，随意破坏", role: "证明", topic: "爽点" },
+                { date: "8/15", title: "开服倒计时海报 5 天", role: "转化", topic: "倒计时" },
+                { date: "8/15", title: "15 秒视频 - IP 演变", role: "证明", topic: "玩法切片" },
+                { date: "8/16", title: "15 秒视频 - 大世界", role: "证明", topic: "玩法切片" },
+                { date: "8/16", title: "开服倒计时海报 4 天", role: "转化", topic: "倒计时" }
+              ]
+            },
+            {
+              id: "pre-5",
+              range: "8/17 - 8/19",
+              title: "最后三天：把爽点灌进去，把进场决心催出来",
+              desc: "连续的倒计时海报、YDHDT 洗脑广告、PVP/合抢/高火力/经营等切片，HQ 目标已经非常纯粹。",
+              summary: "最后三天 HQ 基本不再解释游戏，而是在反复强化“这游戏真的很爽，而且明天就开”。",
+              hqSays: [
+                "不用再认识游戏了，现在就是进场前冲刺。",
+                "多种玩法爽点在短平快切片里被集中灌输。",
+                "倒计时是统一节拍器。"
+              ],
+              regionAdds: [
+                "区域要把这三天做成社媒最热三天，而不是 HQ 单向播报三天。",
+                "大量网红 / KOC / meme / 社群倒计时接力必须一起上。",
+                "所有内容都应该指向“明天见 / 我已经准备好了”。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "临门一脚，把“想玩”压成“准备进”。", "blue"],
+                ["区域最该补位", "制造全民在等的气氛和社交压力。", "purple"],
+                ["最缺的证明", "缺“别人已经准备好了”的集体感。", "orange"],
+                ["母素材重点", "PVP、合抢、高火力、经营、破坏爽感的高频切条。", "green"]
+              ],
+              slots: [
+                ["网红素材", "最高", "最后三天必须有统一动作：倒计时、我准备好了、我明天先玩什么。"],
+                ["市场活动素材", "中", "做上线前最后的实景/场景强化。"],
+                ["KOC素材", "高", "普通玩家参与感最能放大“大家都在等”。"],
+                ["India meme素材", "高", "等不及、上头、抢先入城、明天开冲。"],
+                ["区域端内活动素材", "中", "为上线首周活动提前放钩子。"],
+                ["社群活动素材", "最高", "最后 72 小时冲刺接力、开服第一目标、组队招募。"],
+                ["游戏内录素材", "最高", "要有足够多的竖版、短版、口播配合版。"]
+              ],
+              balance: { cognition: 10, proof: 35, conversion: 55 },
+              items: [
+                { date: "8/17", title: "YDHDT 洗脑广告——无需氪金才能获得体验", role: "证明", topic: "爽点" },
+                { date: "8/17", title: "15 秒视频 - PVP&合抢", role: "证明", topic: "玩法切片" },
+                { date: "8/17", title: "开服倒计时海报 3 天", role: "转化", topic: "倒计时" },
+                { date: "8/18", title: "15 秒视频 - 高火力装备", role: "证明", topic: "玩法切片" },
+                { date: "8/18", title: "开服倒计时海报 2 天", role: "转化", topic: "倒计时" },
+                { date: "8/19", title: "YDHDT 洗脑广告——不必在竞技排位中受挫", role: "证明", topic: "爽点" },
+                { date: "8/19", title: "15 秒视频 - 商业帝国经营", role: "证明", topic: "玩法切片" },
+                { date: "8/19", title: "开服倒计时海报 1 天", role: "转化", topic: "倒计时" }
+              ]
+            }
+          ]
+        },
+        post: {
+          label: "上线后 · 8/20 - 9/8",
+          short: "上线后",
+          badgeClass: "post",
+          narrative: "开服爆点 → 首周承接 → 活动栏目化运营 → 帮派战争预热",
+          thesis: "HQ 上线后不再重点讲“这是什么游戏”，而是马上切到“已经开了、福利在、玩法在、活动在”，再逐渐转成首周栏目化内容和后续活动预热。区域要承担的重点从‘建期待’切到‘放大真实玩家高光与社交证明’。",
+          strong: ["开服节点", "福利 / 榜单海报", "栏目化玩法运营", "活动预热"],
+          gaps: ["玩家实拍热度", "KOL 实玩传播", "社区共玩感", "真实 UGC 循环", "本地热点二创"],
+          weeks: [
+            {
+              id: "post-1",
+              range: "8/20 - 8/21",
+              title: "开服爆点：从“等开门”切到“已经开城了”",
+              desc: "开服当天 HQ 直接给出玩法总视频、制作人访谈、主线 KV、福利一览、上线海报和榜单海报。",
+              summary: "HQ 开服首日的目标很直接：把上线事实、玩法爽点、福利信息和平台热度一口气讲出去。",
+              hqSays: [
+                "游戏已经正式开了，不是预热了。",
+                "开服不是只有下载，而是马上就有爽点、福利和热度。",
+                "榜单和官方声量是在做第一波社会证明。"
+              ],
+              regionAdds: [
+                "区域首日必须快速上真实玩家和网红反应，不能只转 HQ 海报。",
+                "把“别人已经在玩”做成最强社交证明。",
+                "社群内容要从倒计时立刻切成开服集结和首日高光。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "宣布开服，并给到首日进场理由。", "blue"],
+                ["区域最该补位", "让“上线了”变成“身边的人已经玩起来了”。", "purple"],
+                ["最缺的证明", "真实玩家热度和本地化开服氛围。", "orange"],
+                ["母素材重点", "首日爽感混剪、好友组队、福利入口、开服反应。", "green"]
+              ],
+              slots: [
+                ["网红素材", "最高", "首日实玩反应、首小时体验、最爽瞬间。"],
+                ["市场活动素材", "高", "开服现场、线下露出、店面/活动即时反馈。"],
+                ["KOC素材", "高", "普通玩家第一天上头瞬间、下载截图、首个高光。"],
+                ["India meme素材", "高", "开服炸场、服务器冲进去、排队/熬夜/拉朋友一起。"],
+                ["区域端内活动素材", "高", "开服福利、首日活动入口、首周目标。"],
+                ["社群活动素材", "最高", "开服签到、组队招募、首日高光投稿。"],
+                ["游戏内录素材", "最高", "当天高频更新，把热内容实时切出来。"]
+              ],
+              balance: { cognition: 15, proof: 40, conversion: 45 },
+              items: [
+                { date: "8/20", title: "混沌都市爽感玩法演示视频——肆意破坏、好友组队干票大的", role: "证明", topic: "开服玩法总片" },
+                { date: "8/20", title: "LIB 制作人访谈", role: "认知", topic: "官方背书" },
+                { date: "8/20", title: "主线 KV（有枪版）", role: "认知", topic: "世界设定" },
+                { date: "8/20", title: "新市民安置福利——开服福利一览（社区）", role: "转化", topic: "福利" },
+                { date: "8/20", title: "上线内宣海报", role: "转化", topic: "上线节点" },
+                { date: "8/21", title: "苹果榜单海报 / 谷歌榜单海报", role: "证明", topic: "榜单热度" }
+              ]
+            },
+            {
+              id: "post-2",
+              range: "8/22 - 8/30",
+              title: "首周承接：从开服公告切到栏目化玩法运营",
+              desc: "commercial 专栏、合作抢劫 KV、黄牌反攻 KV、新闻台首周新闻、出租车故事，说明 HQ 已开始从节点传播切到内容栏目。",
+              summary: "HQ 在首周后的逻辑不是继续大喊“上线了”，而是通过栏目、活动和趣味内容，让世界继续动起来。",
+              hqSays: [
+                "开服之后还有很多可聊的玩法与事件。",
+                "合作抢劫、黄牌反攻等活动 / 玩法在构成首周承接。",
+                "新闻台和 commercial 专栏在把运营内容产品化。"
+              ],
+              regionAdds: [
+                "区域应该立刻用玩家高光、KOL 实玩、KOC 模仿来放大这些栏目内容。",
+                "这周最重要的是把“HQ 讲玩法”变成“玩家真的在玩这个玩法”。",
+                "社群和 meme 要围绕首周真实场景快速接力。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "让首周不掉热，开始内容栏目化。", "blue"],
+                ["区域最该补位", "把栏目内容接到真人、真局、真梗上。", "purple"],
+                ["最缺的证明", "缺大量来自玩家和本地 KOL 的玩法案例。", "orange"],
+                ["母素材重点", "首周玩家高光、活动玩法、出租车事件、商业广告梗。", "green"]
+              ],
+              slots: [
+                ["网红素材", "最高", "实玩黄牌反攻、合作抢劫、首周最离谱时刻。"],
+                ["市场活动素材", "中", "线下活动可承接开服后一周热度。"],
+                ["KOC素材", "高", "玩家投稿、翻车、首周奇闻最值得放大。"],
+                ["India meme素材", "高", "新闻台、商业广告专栏很适合二创本地梗。"],
+                ["区域端内活动素材", "高", "结合黄牌反攻等内容做活动感。"],
+                ["社群活动素材", "高", "首周新闻征集、骚操作征集、任务挑战。"],
+                ["游戏内录素材", "最高", "活动玩法、玩家奇葩事件、故事向片段。"]
+              ],
+              balance: { cognition: 20, proof: 50, conversion: 30 },
+              items: [
+                { date: "8/22", title: "commercial 专栏：洛克林创业广告片", role: "认知", topic: "栏目/世界观" },
+                { date: "8/24", title: "commercial 专栏：全世界小狗都想要的项链", role: "认知", topic: "栏目/世界观" },
+                { date: "8/25", title: "合作抢劫 KV", role: "证明", topic: "玩法/活动" },
+                { date: "8/26", title: "commercial 专栏：脑黄金“一口成仙”", role: "认知", topic: "栏目/世界观" },
+                { date: "8/26", title: "SL3 黄牌反攻 KV", role: "转化", topic: "活动" },
+                { date: "8/27", title: "Rooklyn 新闻台 第五期：首周新闻", role: "证明", topic: "首周事件" },
+                { date: "8/28", title: "出租车故事视频", role: "证明", topic: "故事事件" },
+                { date: "8/29", title: "commercial 专栏：AllRide，你的生活出行管家", role: "认知", topic: "栏目/世界观" },
+                { date: "8/30", title: "Rooklyn 新闻台 第六期：出租车事件快报", role: "证明", topic: "活动/事件" }
+              ]
+            },
+            {
+              id: "post-3",
+              range: "8/31 - 9/8",
+              title: "中期延续：帮派日常与帮派战争预热开始接管叙事",
+              desc: "Don Phil 日常、黄牌反攻爽点视频、帮派战争预热海报，说明 HQ 已经往后续内容生命周期推进。",
+              summary: "HQ 在开服后第二阶段开始把内容从“首发热度”切到“活动延续 + 下一波预热”，防止首发后断流。",
+              hqSays: [
+                "首发热度要顺着活动和帮派内容继续往后推。",
+                "黄牌反攻还在延续，帮派战争开始埋钩子。",
+                "趣味帮派日常还在维持世界的人味。"
+              ],
+              regionAdds: [
+                "区域这时不能只做官号复读，要把玩家故事和社群参与接进下一波。",
+                "帮派战争预热非常适合做网红阵营站队、社群拉帮结派和 meme 对抗。",
+                "游戏内录需要开始偏向活动高光、帮派冲突、多人内容。"
+              ],
+              focusBoxes: [
+                ["HQ 本周主任务", "把首发期热度转给活动和后续玩法。", "blue"],
+                ["区域最该补位", "把“预热下一波”做成“大家已经开始站队了”。", "purple"],
+                ["最缺的证明", "缺社区规模感、玩家阵营感和对抗热度。", "orange"],
+                ["母素材重点", "黄牌反攻高光、帮派冲突、多人对抗、日常梗。", "green"]
+              ],
+              slots: [
+                ["网红素材", "高", "阵营站队、帮派战争预热、多人对抗高光。"],
+                ["市场活动素材", "中", "若有线下活动，可转入帮派主题。"],
+                ["KOC素材", "高", "我的帮派日常、活动高光、拉朋友开冲。"],
+                ["India meme素材", "高", "站队、团战、兄弟一起上、出租车/载具梗。"],
+                ["区域端内活动素材", "高", "帮派战争/黄牌反攻等活动感继续强化。"],
+                ["社群活动素材", "最高", "帮派招募、阵营对抗、周挑战、玩家故事征集。"],
+                ["游戏内录素材", "最高", "多人内容、帮派冲突、活动高光，后续还能长期复用。"]
+              ],
+              balance: { cognition: 20, proof: 45, conversion: 35 },
+              items: [
+                { date: "8/31", title: "趣味帮派日常——Don Phil 怎么接不到单了？", role: "证明", topic: "帮派/日常" },
+                { date: "9/1", title: "黄牌反攻爽点视频：出租车老司机都市狂飙", role: "证明", topic: "活动/爽点" },
+                { date: "9/4", title: "趣味帮派日常——吉普尼 兄弟再多也能载下", role: "证明", topic: "帮派/日常" },
+                { date: "9/6", title: "帮派战争预热 - 原材料运货车", role: "转化", topic: "帮派战争预热" },
+                { date: "9/8", title: "帮派战争预热 - 烧烤店后厨", role: "转化", topic: "帮派战争预热" }
+              ]
+            }
+          ]
+        }
+      }
+    };
+
+    const phaseTabs = document.getElementById('phaseTabs');
+    const roleFilters = document.getElementById('roleFilters');
+    const phaseCard = document.getElementById('phaseCard');
+    const weekList = document.getElementById('weekList');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailSub = document.getElementById('detailSub');
+    const detailBadge = document.getElementById('detailBadge');
+    const hqSays = document.getElementById('hqSays');
+    const regionAdds = document.getElementById('regionAdds');
+    const focusGrid = document.getElementById('focusGrid');
+    const itemList = document.getElementById('itemList');
+    const slotLead = document.getElementById('slotLead');
+    const slotMap = document.getElementById('slotMap');
+
+    const state = { phase: 'pre', weekId: 'pre-1', role: '全部' };
+    const roleNames = ['全部','认知','证明','转化'];
+
+    function toLi(arr){ return arr.map(x => `<li>${x}</li>`).join(''); }
+    function roleClass(role){ return role === '认知' ? 'cog' : role === '证明' ? 'proof' : 'conv'; }
+    function roleKey(role){ return role === '认知' ? 'cognition' : role === '证明' ? 'proof' : 'conversion'; }
+
+    function renderTabs(){
+      phaseTabs.innerHTML = Object.entries(DATA.phases).map(([key,phase]) =>
+        `<button class="tab ${state.phase===key?'active':''}" data-phase="${key}">${phase.label}</button>`).join('');
+      phaseTabs.querySelectorAll('.tab').forEach(btn => btn.onclick = () => {
+        state.phase = btn.dataset.phase;
+        state.weekId = DATA.phases[state.phase].weeks[0].id;
+        render();
+      });
+    }
+
+    function renderFilters(){
+      roleFilters.innerHTML = roleNames.map(name => `<button class="filter ${state.role===name?'active':''}" data-role="${name}">${name}</button>`).join('');
+      roleFilters.querySelectorAll('.filter').forEach(btn => btn.onclick = () => { state.role = btn.dataset.role; renderDetail(); renderFilters(); });
+    }
+
+    function renderPhaseCard(){
+      const phase = DATA.phases[state.phase];
+      phaseCard.innerHTML = `
+        <div class="phase-card">
+          <div class="phase-head">
+            <div>
+              <div class="phase-pill">${phase.short}</div>
+              <div style="font-size:18px;font-weight:900;margin-top:8px;line-height:1.35">${phase.narrative}</div>
+            </div>
+          </div>
+          <div class="phase-copy">${phase.thesis}</div>
+          <div class="taglist">
+            ${phase.strong.map(x=>`<span class="tag">HQ 强项 · ${x}</span>`).join('')}
+            ${phase.gaps.map(x=>`<span class="tag">区域补位 · ${x}</span>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    function renderWeekList(){
+      const phase = DATA.phases[state.phase];
+      weekList.innerHTML = phase.weeks.map(week => `
+        <div class="week ${state.weekId===week.id?'active':''}" data-week="${week.id}">
+          <div class="week-top">
+            <div>
+              <div class="date">${week.range}</div>
+              <div class="title">${week.title}</div>
+            </div>
+            <div class="count">${week.items.length} 条</div>
+          </div>
+          <div class="desc">${week.desc}</div>
+          <div class="balance">
+            <div class="bal"><strong>${week.balance.cognition}%</strong><span>认知</span></div>
+            <div class="bal"><strong>${week.balance.proof}%</strong><span>证明</span></div>
+            <div class="bal"><strong>${week.balance.conversion}%</strong><span>转化</span></div>
+          </div>
+        </div>
+      `).join('');
+      weekList.querySelectorAll('.week').forEach(el => el.onclick = () => { state.weekId = el.dataset.week; render(); });
+    }
+
+    function currentWeek(){
+      return DATA.phases[state.phase].weeks.find(w => w.id === state.weekId) || DATA.phases[state.phase].weeks[0];
+    }
+
+    function renderDetail(){
+      const phase = DATA.phases[state.phase];
+      const week = currentWeek();
+      detailTitle.textContent = week.title;
+      detailSub.textContent = week.summary;
+      detailBadge.textContent = phase.label;
+      detailBadge.className = `badge ${phase.badgeClass}`;
+      hqSays.innerHTML = toLi(week.hqSays);
+      regionAdds.innerHTML = toLi(week.regionAdds);
+      focusGrid.innerHTML = week.focusBoxes.map(([title,copy,cls]) => `
+        <div class="focus-box ${cls}"><strong>${title}</strong><p>${copy}</p></div>
+      `).join('');
+      const filtered = state.role === '全部' ? week.items : week.items.filter(x => x.role === state.role);
+      itemList.innerHTML = filtered.length ? filtered.map(item => `
+        <div class="item">
+          <div class="item-meta"><span>${item.date}</span><span>${phase.short}</span></div>
+          <div class="item-title">${item.title}</div>
+          <div class="chips">
+            <span class="chip ${roleClass(item.role)}">${item.role}</span>
+            <span class="chip topic">${item.topic}</span>
+          </div>
+        </div>
+      `).join('') : `<div class="empty">当前筛选下没有内容</div>`;
+      slotLead.textContent = `这一周建议把 HQ 当作“主叙事”，把区域当作“热度、证明、本地化和素材放大层”。下面是这周 7 类区域素材的角色分工。`;
+      slotMap.innerHTML = week.slots.map(([name,prio,txt]) => `
+        <div class="slot"><div class="name">${name}</div><div class="prio">优先级：${prio}</div><div class="txt">${txt}</div></div>
+      `).join('');
+    }
+
+    function render(){
+      renderTabs();
+      renderFilters();
+      renderPhaseCard();
+      renderWeekList();
+      renderDetail();
+    }
+
+    render();
+  </script>
+</body>
+</html>

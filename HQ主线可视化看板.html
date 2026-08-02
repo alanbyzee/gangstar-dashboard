@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gangstar HQ 内容主线 · 可视化看板</title>
+<style>
+:root{
+  --bg:#f5f6fb; --panel:#fff; --line:#e7e9f2; --text:#1f2430; --muted:#667085;
+  --cog:#2f80ed; --cog-bg:#eaf3ff; --proof:#16a34a; --proof-bg:#ebfaef; --conv:#f59e0b; --conv-bg:#fff5df;
+  --gap:#ef4444; --gap-bg:#feeaea;
+  --s1:#6d28d9; --s2:#2563eb; --s3:#d97706; --s4:#0d9488; --s5:#0891b2; --s6:#64748b;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Segoe UI",sans-serif}
+.wrap{max-width:1480px;margin:0 auto;padding:22px}
+.hero{background:linear-gradient(135deg,#fff 0%,#f1edff 100%);border:1px solid var(--line);border-radius:24px;padding:22px;position:relative;overflow:hidden}
+.hero .eyebrow{display:inline-flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted)}
+h1{margin:12px 0 8px;font-size:28px;line-height:1.2}
+.sub{color:var(--muted);font-size:14px;line-height:1.7;max-width:920px}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.mc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+.mc .k{font-size:24px;font-weight:800}
+.mc .l{font-size:12px;color:var(--muted);margin-top:4px}
+.cd{display:flex;align-items:baseline;gap:8px}
+.cd .big{font-size:30px;font-weight:900;color:var(--s1)}
+.rolebar{display:flex;height:10px;border-radius:6px;overflow:hidden;margin-top:8px}
+.rolebar span{display:block;height:100%}
+
+/* 阶段时间轴 */
+.timeline{display:flex;gap:0;margin:18px 0 6px;overflow-x:auto;padding-bottom:6px}
+.tnode{flex:1;min-width:150px;border-top:4px solid var(--c);background:#fff;border-radius:0 0 14px 14px;padding:12px;cursor:pointer;position:relative;transition:.15s}
+.tnode:hover{transform:translateY(-2px)}
+.tnode.active{box-shadow:0 8px 22px rgba(40,30,90,.12);outline:2px solid var(--c)}
+.tnode .tn{font-size:13px;font-weight:800}
+.tnode .tr{font-size:11px;color:var(--muted);margin-top:4px}
+.tnode .tc{font-size:11px;color:var(--c);font-weight:700;margin-top:6px}
+
+.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0 10px}
+.tabs,.filters{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer;color:var(--muted)}
+.btn.active{background:var(--s1);border-color:var(--s1);color:#fff}
+.fbtn{border:1px solid var(--line);background:#fff;padding:7px 12px;border-radius:999px;font-size:12px;cursor:pointer;color:var(--muted)}
+.fbtn.active{background:#efeaff;border-color:#cabfff;color:#4c3ed9}
+.hint{font-size:12px;color:var(--muted)}
+
+/* 时间线周区块 */
+.weeks{display:flex;flex-direction:column;gap:16px}
+.week{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}
+.banner{display:flex;align-items:center;gap:14px;padding:14px 18px;color:#fff}
+.banner .bk{font-size:15px;font-weight:900}
+.banner .br{font-size:12px;opacity:.92}
+.banner .bt{font-size:13px;font-weight:700;margin-left:auto;max-width:60%;text-align:right}
+.banner.gap{background:var(--gap)}
+.gapnote{padding:12px 18px;font-size:13px;color:var(--gap);background:var(--gap-bg);font-weight:600}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;padding:14px 18px 18px}
+.it{border:1px solid var(--line);border-left:5px solid var(--rc);border-radius:12px;padding:11px 13px;cursor:pointer;background:#fcfcff;transition:.12s}
+.it:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(30,40,90,.07)}
+.it .top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:6px}
+.it .tt{font-size:13.5px;font-weight:700;line-height:1.5}
+.it .chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.chip{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px}
+.chip.form{background:#f1f2f7;color:#55607a}
+.chip.role-cog{background:var(--cog-bg);color:#1c5db6}
+.chip.role-proof{background:var(--proof-bg);color:#15753e}
+.chip.role-conv{background:var(--conv-bg);color:#9a6200}
+.empty{padding:30px;text-align:center;color:var(--muted);font-size:14px}
+
+/* 抽屉 */
+.overlay{position:fixed;inset:0;background:rgba(20,22,40,.4);display:none;z-index:50}
+.overlay.show{display:block}
+.drawer{position:fixed;top:0;right:0;height:100%;width:460px;max-width:92vw;background:#fff;box-shadow:-12px 0 40px rgba(20,22,40,.18);transform:translateX(100%);transition:.25s;z-index:51;display:flex;flex-direction:column}
+.drawer.show{transform:translateX(0)}
+.dhead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.dhead .dt{font-size:18px;font-weight:900;line-height:1.35}
+.dhead .dm{font-size:12px;color:var(--muted);margin-top:6px}
+.x{border:none;background:#f1f2f7;width:32px;height:32px;border-radius:10px;cursor:pointer;font-size:16px;color:#55607a;flex:none}
+.dbody{padding:18px 20px;overflow:auto}
+.dsec{margin-bottom:18px}
+.dsec h4{margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.metab{background:#f5f6fb;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px}
+.metab b{display:block;font-size:13px;margin-top:2px}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fcfcff}
+.slot.hit{border-color:#cdc6ff;background:#f7f5ff}
+.slot .sn{font-size:12px;font-weight:800;display:flex;align-items:center;gap:5px}
+.slot .st{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.slot .snone{font-size:11px;color:#aab;font-style:italic}
+
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,1fr)}.drawer{width:100%}}
+@media(max-width:760px){.tnode{min-width:130px}.items{grid-template-columns:1fr}.slots{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">📊 Gangstar Mirage City · HQ 内容主线可视化看板</div>
+    <h1>HQ 负责讲清游戏，区域负责讲热、讲真、讲像印度市场正在发生</h1>
+    <div class="sub">把 53 条 HQ 素材拆成可执行的叙事主线：阶段时间轴 → 周战役横幅 → 内容角色分色 → 点开任意素材看 7 类区域素材怎么接。数据完整来自《HQ主线排期表》。</div>
+    <div class="metrics" id="metrics"></div>
+  </section>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div class="topbar">
+    <div class="tabs" id="phaseTabs"></div>
+    <div class="filters" id="roleFilters"></div>
+    <div class="hint">点周战役节点筛选 · 点素材卡片看 7 类区域承接方案</div>
+  </div>
+
+  <div class="weeks" id="weeks"></div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="dhead">
+    <div>
+      <div class="dt" id="dTitle"></div>
+      <div class="dm" id="dMeta"></div>
+    </div>
+    <button class="x" id="dClose">✕</button>
+  </div>
+  <div class="dbody" id="dBody"></div>
+</aside>
+
+<script>
+const DATA = {"launch": "2026-08-20", "overview": {"stages": [{"name": "① 预注册启动期", "range": "7/2 - 7/12", "narrative": "先把门打开：我是谁、这是什么游戏、现在可以预约了", "main": "预注册KV、实机Teaser、角色介绍×5、商店公告", "region": "跟发预约引导；开始搭内录素材池"}, {"name": "⚠️ HQ 空窗期", "range": "7/13 - 7/31", "narrative": "HQ 基本停更（仅 8/1 前 1 条）", "main": "—", "region": "⭐区域独扛：内录集中生产、meme 日更、社群保温、KOL/KOC 铺量"}, {"name": "② 世界观/玩法蓄热期", "range": "8/1 - 8/14", "narrative": "不只有预约页：这座城真的活着，玩法真的有料", "main": "帮派日常、新闻台、经营玩法、地图导览、Don Phil", "region": "把官方卖点翻译成本地爽点：对照实拍、搞钱梗、找彩蛋"}, {"name": "③ 倒计时冲刺期", "range": "8/15 - 8/19", "narrative": "别再认识游戏了，赶紧准备进场", "main": "倒计时海报/15s视频×5、YDHDT洗脑广告×3", "region": "全线联动冲预约：翻拍挑战、打卡、meme 刷屏"}, {"name": "④ 开服爆点期", "range": "8/20 - 8/23", "narrative": "不是快上线了，是已经开城了", "main": "爽感演示、制作人访谈、开服福利、榜单海报", "region": "首周高光疯狂产出、KOL 实况、开服集结、登顶庆祝"}, {"name": "⑤ 栏目化运营期", "range": "8/22 - 8/31", "narrative": "城市每周还有新鲜事和新玩法可聊", "main": "commercial专栏×4、合抢/黄牌KV、新闻台、出租车故事", "region": "组队挑战赛、高光/翻车合集、仿广告二创"}, {"name": "⑥ 活动延续期", "range": "9/1 - 9/8+", "narrative": "从开服热度切到活动生命周期", "main": "爽点视频、帮派日常、帮派战争预热", "region": "UGC 循环 + 版本悬念互动"}], "stats": {"pre": {"认知": 14, "证明": 1, "转化": 18}, "post": {"认知": 12, "证明": 4, "转化": 4}}}, "pre": [{"stage": "① 预注册启动期", "range": "06/29-07/05", "theme": "开门亮相：游戏是什么 + 现在可以预约了", "note": "", "items": [{"date": "2026/07/02", "weekday": "周四", "dlabel": "D-49", "content": "游戏实机录屏 Teaser（先发）", "form": "视频", "role": "认知", "platform": "X（twitter）,FB,Reddit,INS, YT 12:00", "region": "内录：拆成3-5条竖屏切片；网红：发反应视频(Reaction)；meme：名场面截图做梗", "slots": {"游戏内录": "内录：拆成3-5条竖屏切片", "网红": "网红：发反应视频(Reaction)", "市场活动": null, "KOC": null, "India meme": "meme：名场面截图做梗", "区域端内活动": null, "社群活动": null}}, {"date": "2026/07/02", "weekday": "周四", "dlabel": "D-49", "content": "金库海报 / Don Phil 预注册主线首张海报", "form": "图文", "role": "认知", "platform": "FB 19:00", "region": "meme：Don Phil人设梗；社群：剧情猜想互动", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：Don Phil人设梗", "区域端内活动": null, "社群活动": "社群：剧情猜想互动"}}, {"date": "2026/07/02", "weekday": "周四", "dlabel": "D-49", "content": "预注册启动KV(研发预注册海报)（后发）", "form": "图文", "role": "转化", "platform": "X（twitter）,FB,Reddit,INS 12:00", "region": "社群：预约教程帖+入群引导；KOC：晒预约截图；meme：预约梗图；内录：真实画面佐证\"值得约\"", "slots": {"游戏内录": "内录：真实画面佐证\"值得约\"", "网红": null, "市场活动": null, "KOC": "KOC：晒预约截图", "India meme": "meme：预约梗图", "区域端内活动": null, "社群活动": "社群：预约教程帖+入群引导"}}, {"date": "2026/07/03", "weekday": "周五", "dlabel": "D-48", "content": "都市乐园导览手册", "form": "图文", "role": "认知", "platform": "19:00", "region": "内录：实机跑图对照视频；meme：地图彩蛋梗；社群：找彩蛋活动", "slots": {"游戏内录": "内录：实机跑图对照视频", "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：地图彩蛋梗", "区域端内活动": null, "社群活动": "社群：找彩蛋活动"}}, {"date": "2026/07/04", "weekday": "周六", "dlabel": "D-47", "content": "角色介绍：查理（联系人委托）", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：角色本地化梗图；社群：角色人气投票；KOC：角色向二创；网红：cos/配音短视频", "slots": {"游戏内录": null, "网红": "网红：cos/配音短视频", "市场活动": null, "KOC": "KOC：角色向二创", "India meme": "meme：角色本地化梗图", "区域端内活动": null, "社群活动": "社群：角色人气投票"}}, {"date": "2026/07/05", "weekday": "周日", "dlabel": "D-46", "content": "角色介绍：奈杰尔（车辆改装）", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：角色本地化梗图；社群：角色人气投票；KOC：角色向二创；网红：cos/配音短视频", "slots": {"游戏内录": null, "网红": "网红：cos/配音短视频", "市场活动": null, "KOC": "KOC：角色向二创", "India meme": "meme：角色本地化梗图", "区域端内活动": null, "社群活动": "社群：角色人气投票"}}, {"date": "2026/07/05", "weekday": "周日", "dlabel": "D-46", "content": "角色介绍：娜塔莉（街头竞速）", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：角色本地化梗图；社群：角色人气投票；KOC：角色向二创；网红：cos/配音短视频", "slots": {"游戏内录": null, "网红": "网红：cos/配音短视频", "市场活动": null, "KOC": "KOC：角色向二创", "India meme": "meme：角色本地化梗图", "区域端内活动": null, "社群活动": "社群：角色人气投票"}}], "phase": "pre"}, {"stage": "① 预注册启动期", "range": "07/06-07/12", "theme": "角色线收尾 + 商店预注册入口打通", "note": "", "items": [{"date": "2026/07/07", "weekday": "周二", "dlabel": "D-44", "content": "角色介绍：C10UD（合作抢劫） / 通过角色介绍的形式，在释放角色设定和世界观的同时，展示对应联系人对应的核心玩法", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：角色本地化梗图；社群：角色人气投票；KOC：角色向二创；网红：cos/配音短视频", "slots": {"游戏内录": null, "网红": "网红：cos/配音短视频", "市场活动": null, "KOC": "KOC：角色向二创", "India meme": "meme：角色本地化梗图", "区域端内活动": null, "社群活动": "社群：角色人气投票"}}, {"date": "2026/07/07", "weekday": "周二", "dlabel": "D-44", "content": "App Store预注册开启的公告内容", "form": "图文", "role": "转化", "platform": "11:00", "region": "社群：预约教程帖+入群引导；KOC：晒预约截图；meme：预约梗图；内录：真实画面佐证\"值得约\"", "slots": {"游戏内录": "内录：真实画面佐证\"值得约\"", "网红": null, "市场活动": null, "KOC": "KOC：晒预约截图", "India meme": "meme：预约梗图", "区域端内活动": null, "社群活动": "社群：预约教程帖+入群引导"}}], "phase": "pre"}, {"stage": "⚠️ HQ 空窗期", "range": "07/13-07/31", "theme": "HQ 基本停更 —— 区域必须撑场子", "note": "本段 HQ 无排期 → 全部由区域素材填充（详见区域素材规划）", "items": [], "phase": "pre"}, {"stage": "② 世界观/玩法蓄热期", "range": "08/01-08/02", "theme": "阵营日常开启：城市开始\"活\"起来", "note": "", "items": [{"date": "2026/08/01", "weekday": "周六", "dlabel": "D-19", "content": "“趣味帮派日常”—— 幽灵族 路灯维修工最痛恨的一批人 / 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点", "form": "视频", "role": "认知", "platform": "19:00", "region": "meme：阵营梗图二创；社群：阵营站队活动；KOC：阵营向短视频", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：阵营向短视频", "India meme": "meme：阵营梗图二创", "区域端内活动": null, "社群活动": "社群：阵营站队活动"}}], "phase": "pre"}, {"stage": "② 世界观/玩法蓄热期", "range": "08/03-08/09", "theme": "这座城真的活着：世界观 + 经营玩法双线释出", "note": "", "items": [{"date": "2026/08/03", "weekday": "周一", "dlabel": "D-17", "content": "在Rooklyn体验别样人生 海报 / 第二人生玩法向海报", "form": "图文", "role": "认知", "platform": "19:00", "region": "内录：配套实机画面；社群：话题互动；meme：本地化二创", "slots": {"游戏内录": "内录：配套实机画面", "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：本地化二创", "区域端内活动": null, "社群活动": "社群：话题互动"}}, {"date": "2026/08/04", "weekday": "周二", "dlabel": "D-16", "content": "“Rooklyn新闻台” 第四期 城市产业欣欣向荣 / 暗含反讽性质在内的抽象采访，通过介绍城市产业增长（实则是由于混乱造成的修缮等成本增加）如“全民射击锻炼热潮”“路灯制造产业增长”等，来反映城市的混乱", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：新闻台风格本地化仿写；KOC：玩家\"爆料\"投稿；社群：新闻线索征集", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：玩家\"爆料\"投稿", "India meme": "meme：新闻台风格本地化仿写", "区域端内活动": null, "社群活动": "社群：新闻线索征集"}}, {"date": "2026/08/06", "weekday": "周四", "dlabel": "D-14", "content": "“Don Phil日常”进度图五 / 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素", "form": "图文", "role": "转化", "platform": "19:00", "region": "meme：Don Phil人设梗；社群：剧情猜想互动", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：Don Phil人设梗", "区域端内活动": null, "社群活动": "社群：剧情猜想互动"}}, {"date": "2026/08/06", "weekday": "周四", "dlabel": "D-14", "content": "经营玩法快剪视频 / 商业帝国构建——从街头小子到社会顶层", "form": "视频", "role": "认知", "platform": "19:00", "region": "内录：经营玩法实录切片；网红：搞钱主题实况；meme：印度\"搞钱\"梗结合", "slots": {"游戏内录": "内录：经营玩法实录切片", "网红": "网红：搞钱主题实况", "市场活动": null, "KOC": null, "India meme": "meme：印度\"搞钱\"梗结合", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/07", "weekday": "周五", "dlabel": "D-13", "content": "经营玩法一图流（社区） / 信息向的内容，快速介绍游戏的多种玩法", "form": "图文", "role": "认知", "platform": "19:00", "region": "内录：经营玩法实录切片；网红：搞钱主题实况；meme：印度\"搞钱\"梗结合", "slots": {"游戏内录": "内录：经营玩法实录切片", "网红": "网红：搞钱主题实况", "市场活动": null, "KOC": null, "India meme": "meme：印度\"搞钱\"梗结合", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/07", "weekday": "周五", "dlabel": "D-13", "content": "导游波比带你游Rooklyn游戏完整地图介绍+人设展示视频，会以一种导游带完的形式，让波比在城市街头逐一介绍城市景色，同时在过程中展现市民的“自由”以及波比嘴欠的人物形象。", "form": "视频", "role": "认知", "platform": "19:00", "region": "内录：实机跑图对照视频；meme：地图彩蛋梗；社群：找彩蛋活动", "slots": {"游戏内录": "内录：实机跑图对照视频", "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：地图彩蛋梗", "区域端内活动": null, "社群活动": "社群：找彩蛋活动"}}, {"date": "2026/08/08", "weekday": "周六", "dlabel": "D-12", "content": "“趣味帮派日常”—— 极光 意思下就得了，谁上班玩命啊 / 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点", "form": "视频", "role": "认知", "platform": "19:00", "region": "meme：阵营梗图二创；社群：阵营站队活动；KOC：阵营向短视频", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：阵营向短视频", "India meme": "meme：阵营梗图二创", "区域端内活动": null, "社群活动": "社群：阵营站队活动"}}], "phase": "pre"}, {"stage": "③ 倒计时冲刺期", "range": "08/10-08/16", "theme": "转化启动：预注册核心视频 + 倒计时开跑", "note": "", "items": [{"date": "2026/08/11", "weekday": "周二", "dlabel": "D-9", "content": "DonPhil预注册核心视频", "form": "视频", "role": "转化", "platform": "19:00", "region": "内录：配套实机画面；社群：话题互动；meme：本地化二创", "slots": {"游戏内录": "内录：配套实机画面", "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：本地化二创", "区域端内活动": null, "社群活动": "社群：话题互动"}}, {"date": "2026/08/13", "weekday": "周四", "dlabel": "D-7", "content": "“Don Phil日常”进度图六 / 以DonPhil的随手拍形式分享的日常朋友圈类型的内容，同时将会在其中包含预注册进度以及展现抽象有趣人设的元素", "form": "图文", "role": "转化", "platform": "19:00", "region": "meme：Don Phil人设梗；社群：剧情猜想互动", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": null, "India meme": "meme：Don Phil人设梗", "区域端内活动": null, "社群活动": "社群：剧情猜想互动"}}, {"date": "2026/08/14", "weekday": "周五", "dlabel": "D-6", "content": "机型推荐图文公告（社区） / 核心展现机型下探+游戏小包体优化", "form": "图文", "role": "证明", "platform": "19:00", "region": "KOC：中低端机实测视频；社群：机型答疑帖；网红：千元机流畅实测", "slots": {"游戏内录": null, "网红": "网红：千元机流畅实测", "市场活动": null, "KOC": "KOC：中低端机实测视频", "India meme": null, "区域端内活动": null, "社群活动": "社群：机型答疑帖"}}, {"date": "2026/08/15", "weekday": "周六", "dlabel": "D-5", "content": "YDHDT洗脑广告——无需遵守秩序，随意破坏 / 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）", "form": "视频", "role": "转化", "platform": "19:00", "region": "网红：翻拍挑战；meme：广告语本地化梗；KOC：跟拍前后对比", "slots": {"游戏内录": null, "网红": "网红：翻拍挑战", "市场活动": null, "KOC": "KOC：跟拍前后对比", "India meme": "meme：广告语本地化梗", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/15", "weekday": "周六", "dlabel": "D-5", "content": "开服倒计时海报5天", "form": "图文", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/15", "weekday": "周六", "dlabel": "D-5", "content": "开服倒计时15秒视频-IP演变 / 结合倒计时海报，以固定主题展示游戏内对应玩法爽点", "form": "视频", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/16", "weekday": "周日", "dlabel": "D-4", "content": "开服倒计时15秒视频-大世界 / 结合倒计时海报，以固定主题展示游戏内对应玩法爽点", "form": "视频", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/16", "weekday": "周日", "dlabel": "D-4", "content": "开服倒计时海报4天", "form": "图文", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}], "phase": "pre"}, {"stage": "③ 倒计时冲刺期", "range": "08/17-08/19", "theme": "最后 3 天：爽点连发 + 洗脑广告临门一脚", "note": "", "items": [{"date": "2026/08/17", "weekday": "周一", "dlabel": "D-3", "content": "YDHDT洗脑广告——无需氪金才能获得体验 / 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）", "form": "视频", "role": "转化", "platform": "19:00", "region": "网红：翻拍挑战；meme：广告语本地化梗；KOC：跟拍前后对比", "slots": {"游戏内录": null, "网红": "网红：翻拍挑战", "市场活动": null, "KOC": "KOC：跟拍前后对比", "India meme": "meme：广告语本地化梗", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/17", "weekday": "周一", "dlabel": "D-3", "content": "开服倒计时海报3天", "form": "图文", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/17", "weekday": "周一", "dlabel": "D-3", "content": "开服倒计时15秒视频-PVP&合抢 / 结合倒计时海报，以固定主题展示游戏内对应玩法爽点", "form": "视频", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/18", "weekday": "周二", "dlabel": "D-2", "content": "开服倒计时15秒视频-高火力装备 / 结合倒计时海报，以固定主题展示游戏内对应玩法爽点", "form": "视频", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/18", "weekday": "周二", "dlabel": "D-2", "content": "开服倒计时海报2天", "form": "图文", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/19", "weekday": "周三", "dlabel": "D-1", "content": "YDHDT洗脑广告——不必在竞技排位中受挫 / 类似UA广告向的洗脑视频内容，不过做的更加趣味向，视频内容中形成前后对比，展现游戏无需遵守规矩的爽感觉（You dont have to do this）", "form": "视频", "role": "转化", "platform": "19:00", "region": "网红：翻拍挑战；meme：广告语本地化梗；KOC：跟拍前后对比", "slots": {"游戏内录": null, "网红": "网红：翻拍挑战", "市场活动": null, "KOC": "KOC：跟拍前后对比", "India meme": "meme：广告语本地化梗", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/19", "weekday": "周三", "dlabel": "D-1", "content": "开服倒计时海报1天", "form": "图文", "role": "转化", "platform": "19:00", "region": "社群：倒计时打卡+福利；网红：同步倒计时口播；meme：倒计时梗图；端内活动：预约冲刺激励", "slots": {"游戏内录": null, "网红": "网红：同步倒计时口播", "市场活动": null, "KOC": null, "India meme": "meme：倒计时梗图", "区域端内活动": "端内活动：预约冲刺激励", "社群活动": "社群：倒计时打卡+福利"}}, {"date": "2026/08/19", "weekday": "周三", "dlabel": "D-1", "content": "开服倒计时15秒视频-商业帝国经营 / 结合倒计时海报，以固定主题展示游戏内对应玩法爽点", "form": "视频", "role": "转化", "platform": "19:00", "region": "内录：经营玩法实录切片；网红：搞钱主题实况；meme：印度\"搞钱\"梗结合", "slots": {"游戏内录": "内录：经营玩法实录切片", "网红": "网红：搞钱主题实况", "市场活动": null, "KOC": null, "India meme": "meme：印度\"搞钱\"梗结合", "区域端内活动": null, "社群活动": null}}], "phase": "pre"}], "post": [{"stage": "④ 开服爆点期", "range": "08/20-08/23", "theme": "已经开城了，快进来：爆点 + 福利 + 榜单", "note": "", "items": [{"date": "2026/08/20", "weekday": "周四", "dlabel": "上线日", "content": "主线KV（有枪版） / 有枪版本的KV,展示游戏的世界设定和玩法场景", "form": "图文", "role": "认知", "platform": "19:00", "region": "内录：开服首日高光实录；网红：首日实况直播/短视频；社群：开服集结活动；KOC：首日体验帖", "slots": {"游戏内录": "内录：开服首日高光实录", "网红": "网红：首日实况直播/短视频", "市场活动": null, "KOC": "KOC：首日体验帖", "India meme": null, "区域端内活动": null, "社群活动": "社群：开服集结活动"}}, {"date": "2026/08/20", "weekday": "周四", "dlabel": "上线日", "content": "混沌都市爽感玩法演示视频 / ——肆意破坏、好友组队干票大的 / 游戏整体的玩法向的卖点视频，用于开服第一天，展示玩家通过逐渐养成账号能够享受到的不同的爽点玩法", "form": "视频", "role": "认知", "platform": "19:00", "region": "内录：开服首日高光实录；网红：首日实况直播/短视频；社群：开服集结活动；KOC：首日体验帖", "slots": {"游戏内录": "内录：开服首日高光实录", "网红": "网红：首日实况直播/短视频", "市场活动": null, "KOC": "KOC：首日体验帖", "India meme": null, "区域端内活动": null, "社群活动": "社群：开服集结活动"}}, {"date": "2026/08/20", "weekday": "周四", "dlabel": "上线日", "content": "“新市民安置福利”——开服福利一览（社区） / 信息向的内容，快速介绍游戏的多种玩法", "form": "图文", "role": "转化", "platform": "19:00", "region": "内录：开服首日高光实录；网红：首日实况直播/短视频；社群：开服集结活动；KOC：首日体验帖", "slots": {"游戏内录": "内录：开服首日高光实录", "网红": "网红：首日实况直播/短视频", "市场活动": null, "KOC": "KOC：首日体验帖", "India meme": null, "区域端内活动": null, "社群活动": "社群：开服集结活动"}}, {"date": "2026/08/20", "weekday": "周四", "dlabel": "上线日", "content": "LIB 制作人访谈", "form": "视频", "role": "证明", "platform": "19:00", "region": "社群：访谈金句切片+问答；KOC：观后感讨论帖", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：观后感讨论帖", "India meme": null, "区域端内活动": null, "社群活动": "社群：访谈金句切片+问答"}}, {"date": "2026/08/20", "weekday": "周四", "dlabel": "上线日", "content": "上线内宣海报", "form": "图文", "role": "转化", "platform": "19:00", "region": "内录：开服首日高光实录；网红：首日实况直播/短视频；社群：开服集结活动；KOC：首日体验帖", "slots": {"游戏内录": "内录：开服首日高光实录", "网红": "网红：首日实况直播/短视频", "市场活动": null, "KOC": "KOC：首日体验帖", "India meme": null, "区域端内活动": null, "社群活动": "社群：开服集结活动"}}, {"date": "2026/08/21", "weekday": "周五", "dlabel": "D+1", "content": "苹果榜单海报 / 2.谷歌榜单海报 / 商店登顶的海报", "form": "图文", "role": "证明", "platform": "19:00", "region": "社群：登顶庆祝活动；meme：榜单梗图；网红：转发助推声量", "slots": {"游戏内录": null, "网红": "网红：转发助推声量", "市场活动": null, "KOC": null, "India meme": "meme：榜单梗图", "区域端内活动": null, "社群活动": "社群：登顶庆祝活动"}}, {"date": "2026/08/22", "weekday": "周六", "dlabel": "D+2", "content": "commercial专栏 / 洛克林创业广告片 / 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：仿广告风二创；KOC：同款道具/场景实拍；内录：对应玩法真实切片", "slots": {"游戏内录": "内录：对应玩法真实切片", "网红": null, "市场活动": null, "KOC": "KOC：同款道具/场景实拍", "India meme": "meme：仿广告风二创", "区域端内活动": null, "社群活动": null}}], "phase": "post"}, {"stage": "⑤ 栏目化运营期", "range": "08/24-08/30", "theme": "城市每周有新鲜事：commercial 专栏 + 活动KV", "note": "", "items": [{"date": "2026/08/24", "weekday": "周一", "dlabel": "D+4", "content": "commercial专栏 / 全世界小狗都想要的项链 / 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：仿广告风二创；KOC：同款道具/场景实拍；内录：对应玩法真实切片", "slots": {"游戏内录": "内录：对应玩法真实切片", "网红": null, "市场活动": null, "KOC": "KOC：同款道具/场景实拍", "India meme": "meme：仿广告风二创", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/25", "weekday": "周二", "dlabel": "D+5", "content": "合作抢劫KV / 合作抢劫玩法的KV", "form": "图文", "role": "认知", "platform": "19:00", "region": "内录：活动玩法高光/翻车合集；社群：组队挑战赛；网红：组队实况；端内活动：区域榜单激励", "slots": {"游戏内录": "内录：活动玩法高光/翻车合集", "网红": "网红：组队实况", "市场活动": null, "KOC": null, "India meme": null, "区域端内活动": "端内活动：区域榜单激励", "社群活动": "社群：组队挑战赛"}}, {"date": "2026/08/26", "weekday": "周三", "dlabel": "D+6", "content": "SL3 黄牌反攻 KV / 游戏内活动玩法黄牌反攻的KV", "form": "图文", "role": "认知", "platform": "19:00", "region": "内录：活动玩法高光/翻车合集；社群：组队挑战赛；网红：组队实况；端内活动：区域榜单激励", "slots": {"游戏内录": "内录：活动玩法高光/翻车合集", "网红": "网红：组队实况", "市场活动": null, "KOC": null, "India meme": null, "区域端内活动": "端内活动：区域榜单激励", "社群活动": "社群：组队挑战赛"}}, {"date": "2026/08/26", "weekday": "周三", "dlabel": "D+6", "content": "commercial专栏 脑黄金 “一口成仙” / 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：仿广告风二创；KOC：同款道具/场景实拍；内录：对应玩法真实切片", "slots": {"游戏内录": "内录：对应玩法真实切片", "网红": null, "市场活动": null, "KOC": "KOC：同款道具/场景实拍", "India meme": "meme：仿广告风二创", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/27", "weekday": "周四", "dlabel": "D+7", "content": "“Rooklyn新闻台” 第五期 首周新闻 / 通过展现开服首周的游戏内趣味场景，来帮助社区提供游戏内容分享的案例（如开放第一天火烈鸟酒吧门口全是车），给玩家“官方在关注游戏内的事件”，和玩家一起玩的感觉在", "form": "图文", "role": "证明", "platform": "19:00", "region": "meme：新闻台风格本地化仿写；KOC：玩家\"爆料\"投稿；社群：新闻线索征集", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：玩家\"爆料\"投稿", "India meme": "meme：新闻台风格本地化仿写", "区域端内活动": null, "社群活动": "社群：新闻线索征集"}}, {"date": "2026/08/28", "weekday": "周五", "dlabel": "D+8", "content": "出租车故事视频 / （基于研发游戏内版本修改）", "form": "视频", "role": "认知", "platform": "19:00", "region": "meme：仿广告风二创；KOC：同款道具/场景实拍；内录：对应玩法真实切片", "slots": {"游戏内录": "内录：对应玩法真实切片", "网红": null, "市场活动": null, "KOC": "KOC：同款道具/场景实拍", "India meme": "meme：仿广告风二创", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/29", "weekday": "周六", "dlabel": "D+9", "content": "commercial专栏 / AllRide，你的生活出行管家 / 制作类似商品宣传片的素材内容，帮助玩家对游戏内有的道具/合抢设定/版本故事/设定背景故事进行了解，并主动释放趣味元素给玩法进行了解", "form": "图文", "role": "认知", "platform": "19:00", "region": "meme：仿广告风二创；KOC：同款道具/场景实拍；内录：对应玩法真实切片", "slots": {"游戏内录": "内录：对应玩法真实切片", "网红": null, "市场活动": null, "KOC": "KOC：同款道具/场景实拍", "India meme": "meme：仿广告风二创", "区域端内活动": null, "社群活动": null}}, {"date": "2026/08/30", "weekday": "周日", "dlabel": "D+10", "content": "“Rooklyn新闻台” 第六期 出租车事件快报 / 通过新闻台包装的形式，展现游戏首个运营活动的趣味的点，帮助玩家认识游戏玩法以及挖掘玩法趣味性", "form": "图文", "role": "证明", "platform": "19:00", "region": "meme：新闻台风格本地化仿写；KOC：玩家\"爆料\"投稿；社群：新闻线索征集", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：玩家\"爆料\"投稿", "India meme": "meme：新闻台风格本地化仿写", "区域端内活动": null, "社群活动": "社群：新闻线索征集"}}], "phase": "post"}, {"stage": "⑥ 活动延续期", "range": "08/31-09/06", "theme": "热度过渡：爽点视频 + 帮派日常延续", "note": "", "items": [{"date": "2026/08/31", "weekday": "周一", "dlabel": "D+11", "content": "“趣味帮派日常”—— / DonPhil 怎么接不到单了？ / 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点", "form": "视频", "role": "认知", "platform": "19:00", "region": "meme：阵营梗图二创；社群：阵营站队活动；KOC：阵营向短视频", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：阵营向短视频", "India meme": "meme：阵营梗图二创", "区域端内活动": null, "社群活动": "社群：阵营站队活动"}}, {"date": "2026/09/01", "weekday": "周二", "dlabel": "D+12", "content": "黄牌反攻爽点视频 / 出租车老司机都市狂飙，展现黄牌反攻玩法的爽点和趣味的点", "form": "视频", "role": "认知", "platform": "19:00", "region": "内录：活动玩法高光/翻车合集；社群：组队挑战赛；网红：组队实况；端内活动：区域榜单激励", "slots": {"游戏内录": "内录：活动玩法高光/翻车合集", "网红": "网红：组队实况", "市场活动": null, "KOC": null, "India meme": null, "区域端内活动": "端内活动：区域榜单激励", "社群活动": "社群：组队挑战赛"}}, {"date": "2026/09/04", "weekday": "周五", "dlabel": "D+15", "content": "“趣味帮派日常”——吉普尼 兄弟再多也能载下 / 通过Q版日常向动画的形式，展现游戏内不同阵营的特点以及游戏活动的趣味卖点", "form": "视频", "role": "认知", "platform": "19:00", "region": "meme：阵营梗图二创；社群：阵营站队活动；KOC：阵营向短视频", "slots": {"游戏内录": null, "网红": null, "市场活动": null, "KOC": "KOC：阵营向短视频", "India meme": "meme：阵营梗图二创", "区域端内活动": null, "社群活动": "社群：阵营站队活动"}}, {"date": "2026/09/06", "weekday": "周日", "dlabel": "D+17", "content": "帮派战争预热-原材料运货车 / 帮派战争预热悬念向的海报", "form": "图文", "role": "转化", "platform": "19:00", "region": "内录：活动玩法高光/翻车合集；社群：组队挑战赛；网红：组队实况；端内活动：区域榜单激励", "slots": {"游戏内录": "内录：活动玩法高光/翻车合集", "网红": "网红：组队实况", "市场活动": null, "KOC": null, "India meme": null, "区域端内活动": "端内活动：区域榜单激励", "社群活动": "社群：组队挑战赛"}}], "phase": "post"}, {"stage": "⑥ 活动延续期", "range": "09/07-09/14", "theme": "帮派战争预热：下一个版本叙事启动", "note": "", "items": [{"date": "2026/09/08", "weekday": "周二", "dlabel": "D+19", "content": "帮派战争预热-烧烤店后厨 / 帮派战争预热悬念向的海报", "form": "图文", "role": "转化", "platform": "19:00", "region": "内录：活动玩法高光/翻车合集；社群：组队挑战赛；网红：组队实况；端内活动：区域榜单激励", "slots": {"游戏内录": "内录：活动玩法高光/翻车合集", "网红": "网红：组队实况", "市场活动": null, "KOC": null, "India meme": null, "区域端内活动": "端内活动：区域榜单激励", "社群活动": "社群：组队挑战赛"}}], "phase": "post"}]};
+
+const STAGE_COLOR = {
+  "① 预注册启动期":"var(--s1)","② 世界观/玩法蓄热期":"var(--s2)","③ 倒计时冲刺期":"var(--s3)",
+  "④ 开服爆点期":"var(--s4)","⑤ 栏目化运营期":"var(--s5)","⑥ 活动延续期":"var(--s6)","⚠️ HQ 空窗期":"var(--gap)"
+};
+const ROLE_CLASS = {"认知":"role-cog","证明":"role-proof","转化":"role-conv"};
+const ROLE_COLOR = {"认知":"var(--cog)","证明":"var(--proof)","转化":"var(--conv)"};
+const SLOT_EMOJI = {"游戏内录":"🎮","网红":"🌟","市场活动":"📣","KOC":"👥","India meme":"😂","区域端内活动":"🏙️","社群活动":"💬"};
+
+const state = { top:'all', stage:null, role:'全部' };
+
+function allWeeks(){ return DATA.pre.concat(DATA.post); }
+function roleCount(phase){
+  const s = DATA.overview.stats[phase];
+  const total = s['认知']+s['证明']+s['转化'];
+  return {s, total};
+}
+
+/* 倒计时 */
+function renderMetrics(){
+  const launch = new Date(DATA.launch + 'T00:00:00');
+  const today = new Date();
+  const days = Math.round((launch - today)/86400000);
+  const preT = DATA.pre.reduce((a,w)=>a+w.items.length,0);
+  const postT = DATA.post.reduce((a,w)=>a+w.items.length,0);
+  const total = preT+postT;
+  const rp = roleCount('pre'), ro = roleCount('post');
+  const prePct = Math.round(rp.s['认知']/rp.total*100), preProof=Math.round(rp.s['证明']/rp.total*100), preConv=100-prePct-preProof;
+  document.getElementById('metrics').innerHTML = `
+    <div class="mc"><div class="cd"><span class="big">${days}</span><span style="color:var(--muted);font-size:13px">天</span></div><div class="l">距上线 ${DATA.launch}</div></div>
+    <div class="mc"><div class="k">${total}</div><div class="l">HQ 有效素材总数</div></div>
+    <div class="mc"><div class="k">${preT}</div><div class="l">上线前（7/2–8/19）</div></div>
+    <div class="mc"><div class="k">${postT}</div><div class="l">上线后（8/20–9/8）</div></div>
+    <div class="mc"><div class="k" style="font-size:14px;line-height:1.5">上线前<br><span style="color:var(--cog)">认知${rp.s['认知']}</span> · <span style="color:var(--proof)">证明${rp.s['证明']}</span> · <span style="color:var(--conv)">转化${rp.s['转化']}</span></div><div class="l">内容角色分布</div>
+      <div class="rolebar"><span style="width:${prePct}%;background:var(--cog)"></span><span style="width:${preProof}%;background:var(--proof)"></span><span style="width:${preConv}%;background:var(--conv)"></span></div>
+    </div>`;
+}
+
+/* 阶段时间轴 */
+function renderTimeline(){
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = DATA.overview.stages.map(st=>{
+    const c = STAGE_COLOR[st.name]||'var(--s1)';
+    const cnt = allWeeks().filter(w=>w.stage===st.name).reduce((a,w)=>a+w.items.length,0);
+    const active = state.stage===st.name ? 'active':'';
+    return `<div class="tnode ${active}" style="--c:${c}" data-stage="${st.name}">
+      <div class="tn">${st.name}</div>
+      <div class="tr">${st.range}</div>
+      <div class="tc">${cnt} 条 · ${st.narrative.slice(0,18)}…</div>
+    </div>`;
+  }).join('');
+  tl.querySelectorAll('.tnode').forEach(n=>n.onclick=()=>{
+    state.stage = (state.stage===n.dataset.stage)?null:n.dataset.stage;
+    renderTimeline(); renderWeeks();
+  });
+}
+
+function renderTabs(){
+  const tabs=[['all','全部'],['pre','上线前'],['post','上线后']];
+  document.getElementById('phaseTabs').innerHTML = tabs.map(([k,l])=>
+    `<button class="btn ${state.top===k?'active':''}" data-top="${k}">${l}</button>`).join('');
+  document.querySelectorAll('#phaseTabs .btn').forEach(b=>b.onclick=()=>{state.top=b.dataset.top;renderTabs();renderWeeks();});
+  const roles=['全部','认知','证明','转化'];
+  document.getElementById('roleFilters').innerHTML = roles.map(r=>
+    `<button class="fbtn ${state.role===r?'active':''}" data-role="${r}">${r}</button>`).join('');
+  document.querySelectorAll('#roleFilters .fbtn').forEach(b=>b.onclick=()=>{state.role=b.dataset.role;renderTabs();renderWeeks();});
+}
+
+function filteredWeeks(){
+  return allWeeks().filter(w=>{
+    if(state.top!=='all' && w.phase!==state.top) return false;
+    if(state.stage && w.stage!==state.stage) return false;
+    return true;
+  });
+}
+
+function renderWeeks(){
+  const wrap=document.getElementById('weeks');
+  const weeks=filteredWeeks();
+  if(!weeks.length){ wrap.innerHTML=`<div class="empty">当前筛选下没有内容</div>`; return; }
+  wrap.innerHTML = weeks.map(w=>{
+    const isGap = w.stage.includes('空窗');
+    const color = STAGE_COLOR[w.stage]||'var(--s1)';
+    const items = state.role==='全部' ? w.items : w.items.filter(it=>it.role===state.role);
+    const itemsHtml = items.length ? items.map((it,i)=>{
+      const rc = ROLE_COLOR[it.role]||'var(--line)';
+      const rc2 = ROLE_CLASS[it.role]||'';
+      return `<div class="it" style="--rc:${rc}" data-w="${w.stage}" data-i="${i}">
+        <div class="top"><span>${it.date.slice(5)} · ${it.weekday}</span><span>${it.dlabel}</span></div>
+        <div class="tt">${it.content}</div>
+        <div class="chips">
+          <span class="chip form">${it.form||'—'}</span>
+          <span class="chip ${rc2}">${it.role}</span>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty">本周无「${state.role}」类素材</div>`;
+    const bannerHtml = `<div class="banner ${isGap?'gap':''}" style="background:${isGap?'':color}">
+        <div><div class="bk">${w.stage}</div><div class="br">${w.range}</div></div>
+        <div class="bt">📌 周主题：${w.theme||'—'}</div>
+      </div>`;
+    const noteHtml = w.note ? `<div class="gapnote">⚠️ ${w.note}</div>` : '';
+    return `<div class="week">${bannerHtml}${noteHtml}<div class="items">${itemsHtml}</div></div>`;
+  }).join('');
+  // 事件委托在 render() 后统一绑定，兼容自动化测试 click
+}
+
+function openDrawer(it){
+  document.getElementById('dTitle').textContent = it.content;
+  document.getElementById('dMeta').textContent = `${it.date.slice(5)} ${it.weekday} · ${it.dlabel} · ${it.form}`;
+  const slotsHtml = Object.keys(it.slots).map(k=>{
+    const v = it.slots[k];
+    const hit = v ? 'hit':'';
+    const body = v ? `<div class="st">${v}</div>` : `<div class="snone">本素材未指定</div>`;
+    return `<div class="slot ${hit}"><div class="sn">${SLOT_EMOJI[k]} ${k}</div>${body}</div>`;
+  }).join('');
+  document.getElementById('dBody').innerHTML = `
+    <div class="dsec">
+      <h4>基本信息</h4>
+      <div class="meta-row">
+        <div class="metab">内容角色<b>${it.role}</b></div>
+        <div class="metab">形态<b>${it.form||'—'}</b></div>
+        <div class="metab">距上线<b>${it.dlabel}</b></div>
+      </div>
+      <div class="metab" style="width:100%">平台 / 时间<b style="font-weight:600;color:var(--text)">${it.platform||'未标注'}</b></div>
+    </div>
+    <div class="dsec">
+      <h4>7 类区域素材承接方案</h4>
+      <div class="slots">${slotsHtml}</div>
+    </div>`;
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('drawer').classList.add('show');
+}
+function closeDrawer(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('drawer').classList.remove('show');
+}
+document.getElementById('overlay').onclick=closeDrawer;
+document.getElementById('dClose').onclick=closeDrawer;
+
+renderMetrics();
+renderTimeline();
+renderTabs();
+renderWeeks();
+
+// 事件委托：点击素材卡片打开抽屉（兼容 agent-browser / Playwright click）
+document.getElementById('weeks').addEventListener('click', e => {
+  const it = e.target.closest('.it');
+  if (!it) return;
+  const w = allWeeks().find(x => x.stage === it.dataset.w);
+  const item = w?.items[+it.dataset.i];
+  if (item) openDrawer(item);
+});
+</script>
+</body>
+</html>

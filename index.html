@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gangstar 跨模块操盘台 · 周报看板</title>
+<style>
+  :root{
+    --bg:#f1f3f5; --card:#ffffff; --ink:#1f2933; --muted:#7b8794; --line:#e4e7eb;
+    --accent:#3b5bdb; --accent-soft:#edf0fe;
+    --green:#2b8a3e; --green-bg:#ebfbee;
+    --yellow:#e67700; --yellow-bg:#fff9db;
+    --red:#c92a2a; --red-bg:#fff5f5;
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+       background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+         border-bottom:1px solid var(--line);padding:12px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{font-weight:700;font-size:16px;letter-spacing:.3px}
+  .brand b{color:var(--accent)}
+  .week-input{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--ink)}
+  .spacer{flex:1}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--ink);transition:.15s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.primary:hover{background:#2f4fc4}
+  .saved{font-size:12px;color:var(--muted)}
+  main{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+  .section-title{display:flex;align-items:center;gap:8px;margin:26px 0 14px;font-size:15px;font-weight:700}
+  .section-title .tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);position:relative}
+  .card-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .dot.green{background:var(--green)} .dot.yellow{background:var(--yellow)} .dot.red{background:var(--red)}
+  .mod-name{font-weight:700;font-size:14px}
+  .status-sel{border:1px solid var(--line);border-radius:6px;padding:3px 6px;font-size:12px;margin-left:auto;background:#fff}
+  .metrics{display:flex;flex-direction:column;gap:7px}
+  .metric{display:flex;align-items:center;gap:8px}
+  .metric label{width:78px;color:var(--muted);font-size:12px;flex:none}
+  .metric input{flex:1;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:13px;background:#fcfcfd;color:var(--ink)}
+  .metric input:focus{outline:none;border-color:var(--accent);background:#fff}
+  .mod-note{margin-top:10px;width:100%;border:1px dashed var(--line);border-radius:8px;padding:6px 8px;font-size:12px;resize:vertical;min-height:34px;background:#fcfcfd;color:var(--ink)}
+  .mod-note:focus{outline:none;border-color:var(--accent);background:#fff}
+  .card.red{border-color:#f3c2c2;background:var(--red-bg)}
+  .card.yellow{border-color:#ffe8a3;background:var(--yellow-bg)}
+  .card.green{border-color:#b2f2bb;background:var(--green-bg)}
+
+  /* Signal hub */
+  .signal-layout{display:grid;grid-template-columns:340px 1fr;gap:16px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
+  .panel h4{margin:0 0 10px;font-size:13px}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13px;background:#fcfcfd;color:var(--ink);font-family:inherit}
+  .field textarea{resize:vertical;min-height:54px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:3px 10px;cursor:pointer;user-select:none;background:#fff}
+  .chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .seg{display:flex;gap:6px}
+  .seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px;font-size:12px;cursor:pointer;color:var(--ink)}
+  .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .signal-list{display:flex;flex-direction:column;gap:9px;max-height:520px;overflow:auto}
+  .sig{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;position:relative}
+  .sig .top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .sig .type{font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px}
+  .type.舆情{background:#e7f5ff;color:#1971c2} .type.痛点{background:var(--red-bg);color:var(--red)} .type.需求{background:var(--green-bg);color:var(--green)}
+  .sig .urg{font-size:11px;color:var(--muted)}
+  .sig .txt{font-size:13px;margin:2px 0 6px}
+  .sig .tags{display:flex;flex-wrap:wrap;gap:5px}
+  .sig .tags span{font-size:11px;background:var(--accent-soft);color:var(--accent);padding:1px 7px;border-radius:20px}
+  .sig .del{position:absolute;top:8px;right:10px;cursor:pointer;color:var(--muted);font-size:13px;border:none;background:none}
+  .sig .del:hover{color:var(--red)}
+  .filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+  .filter-row .chip.on{background:var(--ink);border-color:var(--ink)}
+
+  /* Strategy */
+  .strat-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:12px}
+  .strat-card h4{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:6px}
+  .strat-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .strat-item:last-child{border-bottom:none}
+  .strat-item .arrow{color:var(--accent);font-weight:700}
+  .pill{font-size:11px;padding:1px 8px;border-radius:20px;font-weight:600}
+  .pill.red{background:var(--red-bg);color:var(--red)} .pill.yellow{background:var(--yellow-bg);color:var(--yellow)} .pill.green{background:var(--green-bg);color:var(--green)}
+
+  /* Actions */
+  .action-add{display:flex;gap:8px;margin-bottom:10px}
+  .action-add input{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:#fcfcfd;color:var(--ink)}
+  .action-add input.owner{width:120px;flex:none}
+  .act{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff}
+  .act input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+  .act .body{flex:1}
+  .act .body .t{font-size:13px}
+  .act .body .o{font-size:11px;color:var(--muted)}
+  .act.done .t{text-decoration:line-through;color:var(--muted)}
+  .act .x{cursor:pointer;color:var(--muted);border:none;background:none;font-size:14px}
+  .act .x:hover{color:var(--red)}
+  .empty{color:var(--muted);font-size:12px;padding:8px 2px}
+  .hint{font-size:12px;color:var(--muted);margin:4px 0 0}
+  @media(max-width:760px){.signal-layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Gangstar <b>跨模块操盘台</b> · 周报看板</div>
+  <input class="week-input" id="weekLabel" placeholder="周次，如 2026-W31" />
+  <div class="spacer"></div>
+  <span class="saved" id="savedTip">自动保存</span>
+  <button class="btn" id="btnExport">导出JSON</button>
+  <button class="btn" id="btnImport">导入</button>
+  <button class="btn" id="btnPrint">打印</button>
+  <button class="btn primary" id="btnReset">清空本周</button>
+  <input type="file" id="fileInput" accept="application/json" style="display:none">
+</header>
+
+<main>
+  <!-- MODULE OVERVIEW -->
+  <div class="section-title"><span>① 模块总览</span><span class="tag">社群为信号中枢</span></div>
+  <div class="grid" id="moduleGrid"></div>
+
+  <!-- SIGNAL HUB -->
+  <div class="section-title"><span>② 社群信号中枢</span><span class="tag">舆情 / 痛点 / 需求 → 反哺各模块</span></div>
+  <div class="signal-layout">
+    <div class="panel">
+      <h4>录入一条信号</h4>
+      <div class="field">
+        <label>类型</label>
+        <div class="seg" id="sigType">
+          <button data-v="舆情" class="on">舆情</button>
+          <button data-v="痛点">痛点</button>
+          <button data-v="需求">需求</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>信号内容</label>
+        <textarea id="sigText" placeholder="例如：玩家集中在吐槽新版本匹配机制，要求出排位保护"></textarea>
+      </div>
+      <div class="field">
+        <label>关联模块（信号应反哺谁）</label>
+        <div class="chips" id="sigMods"></div>
+      </div>
+      <div class="field">
+        <label>紧急度</label>
+        <div class="seg" id="sigUrg">
+          <button data-v="高">高</button>
+          <button data-v="中" class="on">中</button>
+          <button data-v="低">低</button>
+        </div>
+      </div>
+      <button class="btn primary" id="btnAddSig" style="width:100%">+ 加入信号池</button>
+      <p class="hint">信号池只存本周；每周用「导出JSON」留档，再「清空本周」。</p>
+    </div>
+    <div class="panel">
+      <h4>信号池（点击类型筛选）</h4>
+      <div class="filter-row" id="sigFilter">
+        <span class="chip on" data-f="all">全部</span>
+        <span class="chip" data-f="舆情">舆情</span>
+        <span class="chip" data-f="痛点">痛点</span>
+        <span class="chip" data-f="需求">需求</span>
+      </div>
+      <div class="signal-list" id="sigList"></div>
+    </div>
+  </div>
+
+  <!-- STRATEGY -->
+  <div class="section-title"><span>③ 策略建议（自动生成）</span><span class="tag">红灯预警 + 信号→行动</span></div>
+  <div id="strategyBox"></div>
+
+  <!-- ACTIONS -->
+  <div class="section-title"><span>④ 本周策略 & 行动清单</span><span class="tag">从策略建议一键带入</span></div>
+  <div class="panel">
+    <div class="action-add">
+      <input id="actText" placeholder="行动项，例如：短剧下周追加3集匹配机制吐槽向选题" />
+      <input class="owner" id="actOwner" placeholder="负责人" />
+      <button class="btn primary" id="btnAddAct">+ 添加</button>
+    </div>
+    <div id="actList"></div>
+    <button class="btn" id="btnPull" style="margin-top:6px">↧ 把策略建议带入行动清单</button>
+  </div>
+
+  <p class="hint" style="margin-top:24px">说明：本看板为 MVP 单文件版，数据保存在本地浏览器（localStorage）。模块指标为 gangstar 发行通用模板，可直接在卡片上改数值/备注。需要多人协同或接自动化时，可再迁移到云端。</p>
+</main>
+
+<script>
+const MODULES = [
+  {id:"community", name:"社群运营", metrics:[
+    {k:"active",l:"活跃用户"},{k:"newJoin",l:"新增入群"},{k:"msgDay",l:"日均消息"},{k:"retain",l:"7日留存"}]},
+  {id:"drama", name:"短剧内容", metrics:[
+    {k:"eps",l:"本周集数"},{k:"views",l:"总播放"},{k:"cpa",l:"单集成本"},{k:"conv",l:"引流转化"}]},
+  {id:"ua", name:"买量投放", metrics:[
+    {k:"spend",l:"消耗"},{k:"act",l:"新增激活"},{k:"cpa",l:"CPA"},{k:"roi",l:"ROI"}]},
+  {id:"kol", name:"KOL/达人", metrics:[
+    {k:"count",l:"合作数"},{k:"reach",l:"覆盖量"},{k:"eng",l:"互动率"},{k:"conv",l:"引流转化"}]},
+  {id:"store", name:"渠道商店", metrics:[
+    {k:"rating",l:"评分"},{k:"reviews",l:"评论量"},{k:"dl",l:"下载量"},{k:"rank",l:"榜单排名"}]},
+  {id:"vendor", name:"供应商成本", metrics:[
+    {k:"budget",l:"本周预算"},{k:"settle",l:"待结算"},{k:"trend",l:"成本趋势"},{k:"pending",l:"待批付款"}]},
+  {id:"rnd", name:"研发对接", metrics:[
+    {k:"ver",l:"版本进度"},{k:"bug",l:"已知Bug"},{k:"req",l:"需求处理中"},{k:"milestone",l:"上线节点"}]},
+];
+
+const KEY = "gangstarOpsHub_v1";
+let state = load();
+let sigType = "舆情", sigUrg = "中", sigMods = new Set(), sigFilter = "all";
+
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(KEY));if(s)return s;}catch(e){}
+  return {week:"", modules:{}, signals:[], actions:[]};
+}
+function save(){
+  localStorage.setItem(KEY, JSON.stringify(state));
+  document.getElementById("savedTip").textContent = "已保存 "+new Date().toLocaleTimeString();
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+/* ---- Module grid ---- */
+function renderModules(){
+  const grid = document.getElementById("moduleGrid");
+  grid.innerHTML = "";
+  MODULES.forEach(m=>{
+    const st = (state.modules[m.id]&&state.modules[m.id].status)||"green";
+    const data = (state.modules[m.id]&&state.modules[m.id].data)||{};
+    const note = (state.modules[m.id]&&state.modules[m.id].note)||"";
+    const card = document.createElement("div");
+    card.className = "card "+st;
+    let metricsHtml = m.metrics.map(mt=>`
+      <div class="metric">
+        <label>${mt.l}</label>
+        <input data-mod="${m.id}" data-k="${mt.k}" value="${data[mt.k]||""}" placeholder="—">
+      </div>`).join("");
+    card.innerHTML = `
+      <div class="card-head">
+        <span class="dot ${st}"></span>
+        <span class="mod-name">${m.name}</span>
+        <select class="status-sel" data-mod="${m.id}">
+          <option value="green"${st==="green"?" selected":""}>● 绿 正常</option>
+          <option value="yellow"${st==="yellow"?" selected":""}>● 黄 关注</option>
+          <option value="red"${st==="red"?" selected":""}>● 红 预警</option>
+        </select>
+      </div>
+      <div class="metrics">${metricsHtml}</div>
+      <textarea class="mod-note" data-mod="${m.id}" placeholder="本周一句话备注…">${note}</textarea>`;
+    grid.appendChild(card);
+  });
+  // bind
+  grid.querySelectorAll("input[data-k]").forEach(inp=>{
+    inp.addEventListener("input",e=>{
+      const mid=e.target.dataset.mod, k=e.target.dataset.k;
+      state.modules[mid]=state.modules[mid]||{status:"green",data:{},note:""};
+      state.modules[mid].data[k]=e.target.value; save();
+    });
+  });
+  grid.querySelectorAll("select[data-mod]").forEach(sel=>{
+    sel.addEventListener("change",e=>{
+      const mid=e.target.dataset.mod;
+      state.modules[mid]=state.modules[mid]||{status:"green",data:{},note:""};
+      state.modules[mid].status=e.target.value; save(); renderModules(); renderStrategy();
+    });
+  });
+  grid.querySelectorAll("textarea[data-mod]").forEach(tx=>{
+    tx.addEventListener("input",e=>{
+      const mid=e.target.dataset.mod;
+      state.modules[mid]=state.modules[mid]||{status:"green",data:{},note:""};
+      state.modules[mid].note=e.target.value; save();
+    });
+  });
+}
+
+/* ---- Signal chips ---- */
+function renderSigMods(){
+  const box=document.getElementById("sigMods");
+  box.innerHTML = MODULES.map(m=>`<span class="chip${sigMods.has(m.id)?" on":""}" data-m="${m.id}">${m.name}</span>`).join("");
+  box.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+    const id=c.dataset.m; if(sigMods.has(id))sigMods.delete(id);else sigMods.add(id); renderSigMods();
+  }));
+}
+
+/* ---- Signals ---- */
+function addSignal(){
+  const text=document.getElementById("sigText").value.trim();
+  if(!text){alert("请填写信号内容");return;}
+  if(sigMods.size===0){alert("至少关联一个模块");return;}
+  state.signals.unshift({id:uid(),type:sigType,text,mods:[...sigMods],urg:sigUrg});
+  document.getElementById("sigText").value=""; sigMods.clear(); renderSigMods(); renderSignals(); renderStrategy(); save();
+}
+function renderSignals(){
+  const list=document.getElementById("sigList");
+  const arr = state.signals.filter(s=>sigFilter==="all"||s.type===sigFilter);
+  if(arr.length===0){list.innerHTML='<div class="empty">暂无信号。从左侧录入社群舆情/痛点/需求。</div>';return;}
+  list.innerHTML = arr.map(s=>`
+    <div class="sig">
+      <button class="del" data-id="${s.id}">✕</button>
+      <div class="top"><span class="type ${s.type}">${s.type}</span><span class="urg">紧急度：${s.urg}</span></div>
+      <div class="txt">${escapeHtml(s.text)}</div>
+      <div class="tags">${s.mods.map(mid=>{const m=MODULES.find(x=>x.id===mid);return m?`<span>${m.name}</span>`:"";}).join("")}</div>
+    </div>`).join("");
+  list.querySelectorAll(".del").forEach(b=>b.addEventListener("click",()=>{
+    state.signals=state.signals.filter(s=>s.id!==b.dataset.id); renderSignals(); renderStrategy(); save();
+  }));
+}
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---- Strategy (auto) ---- */
+function renderStrategy(){
+  const box=document.getElementById("strategyBox");
+  let html="";
+  // red/yellow alerts
+  const alerts = MODULES.filter(m=>{const st=state.modules[m.id]&&state.modules[m.id].status;return st==="red"||st==="yellow";});
+  if(alerts.length){
+    html+=`<div class="strat-card"><h4>🚦 模块预警</h4>`;
+    alerts.forEach(m=>{
+      const st=state.modules[m.id].status; const note=state.modules[m.id].note||"";
+      html+=`<div class="strat-item"><span class="pill ${st}">${st==="red"?"红灯":"黄灯"}</span><span><b>${m.name}</b>${note?` — ${escapeHtml(note)}`:""}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+  // signal -> action mapping
+  if(state.signals.length){
+    html+=`<div class="strat-card"><h4>🔁 社群信号 → 模块行动</h4>`;
+    state.signals.forEach(s=>{
+      const mods=s.mods.map(mid=>{const m=MODULES.find(x=>x.id===mid);return m?m.name:mid;}).join(" / ");
+      const cls=s.urg==="高"?"red":s.urg==="中"?"yellow":"green";
+      html+=`<div class="strat-item"><span class="pill ${cls}">${s.type}·${s.urg}</span><span>${escapeHtml(s.text)} <span class="arrow">→</span> 反哺：<b>${mods}</b></span></div>`;
+    });
+    html+=`</div>`;
+  }
+  if(!html) html=`<div class="strat-card"><div class="empty">填写模块状态或录入信号后，这里会自动生成策略建议。</div></div>`;
+  box.innerHTML=html;
+}
+
+/* ---- Actions ---- */
+function addAction(){
+  const t=document.getElementById("actText").value.trim();
+  const o=document.getElementById("actOwner").value.trim();
+  if(!t){alert("请填写行动项");return;}
+  state.actions.push({id:uid(),text:t,owner:o,done:false});
+  document.getElementById("actText").value=""; document.getElementById("actOwner").value="";
+  renderActions(); save();
+}
+function renderActions(){
+  const list=document.getElementById("actList");
+  if(state.actions.length===0){list.innerHTML='<div class="empty">暂无行动项。手动添加，或点下方按钮从策略建议带入。</div>';return;}
+  list.innerHTML=state.actions.map(a=>`
+    <div class="act${a.done?" done":""}">
+      <input type="checkbox" data-id="${a.id}" ${a.done?"checked":""}>
+      <div class="body"><div class="t">${escapeHtml(a.text)}</div>${a.owner?`<div class="o">负责人：${escapeHtml(a.owner)}</div>`:""}</div>
+      <button class="x" data-id="${a.id}">✕</button>
+    </div>`).join("");
+  list.querySelectorAll('input[type=checkbox]').forEach(c=>c.addEventListener("change",()=>{
+    const a=state.actions.find(x=>x.id===c.dataset.id); a.done=c.checked; renderActions(); save();
+  }));
+  list.querySelectorAll(".x").forEach(b=>b.addEventListener("click",()=>{
+    state.actions=state.actions.filter(x=>x.id!==b.dataset.id); renderActions(); save();
+  }));
+}
+function pullFromStrategy(){
+  // derive candidate actions from red modules + signals
+  const cands=[];
+  MODULES.forEach(m=>{const st=state.modules[m.id]&&state.modules[m.id].status;
+    if(st==="red")cands.push({t:`${m.name} 亮红灯，立即介入排查并制定恢复动作`,o:""});
+    else if(st==="yellow")cands.push({t:`${m.name} 黄灯关注，本周跟进备注项`,o:""});
+  });
+  state.signals.forEach(s=>{
+    const mods=s.mods.map(id=>{const m=MODULES.find(x=>x.id===id);return m?m.name:id;}).join("/");
+    cands.push({t:`社群${s.type}：${s.text} → 推动 ${mods} 响应`,o:""});
+  });
+  cands.forEach(c=>{if(!state.actions.some(a=>a.text===c.t))state.actions.push({id:uid(),...c,done:false});});
+  renderActions(); save();
+}
+
+/* ---- Header / toolbar ---- */
+document.getElementById("weekLabel").value=state.week||"";
+document.getElementById("weekLabel").addEventListener("input",e=>{state.week=e.target.value;save();});
+document.getElementById("btnAddSig").addEventListener("click",addSignal);
+document.getElementById("btnAddAct").addEventListener("click",addAction);
+document.getElementById("btnPull").addEventListener("click",pullFromStrategy);
+document.getElementById("sigType").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#sigType button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); sigType=b.dataset.v;
+}));
+document.getElementById("sigUrg").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#sigUrg button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); sigUrg=b.dataset.v;
+}));
+document.getElementById("sigFilter").querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+  document.querySelectorAll("#sigFilter .chip").forEach(x=>x.classList.remove("on"));
+  c.classList.add("on"); sigFilter=c.dataset.f; renderSignals();
+}));
+document.getElementById("btnExport").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download=`gangstar-ops-${state.week||"week"}.json`; a.click();
+});
+document.getElementById("btnImport").addEventListener("click",()=>document.getElementById("fileInput").click());
+document.getElementById("fileInput").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=()=>{try{state=JSON.parse(r.result);save();fullRender();}catch(err){alert("导入失败：JSON 格式错误");}};
+  r.readAsText(f);
+});
+document.getElementById("btnPrint").addEventListener("click",()=>window.print());
+document.getElementById("btnReset").addEventListener("click",()=>{
+  if(confirm("确认清空本周全部数据（模块/信号/行动）？建议先导出留档。")){
+    state={week:state.week,modules:{},signals:[],actions:[]}; save(); fullRender();
+  }
+});
+
+function fullRender(){renderModules();renderSigMods();renderSignals();renderStrategy();renderActions();}
+fullRender();
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+{
+  "updated_at": "2026-08-02",
+  "launch_date": "2026-08-20",
+  "platforms": {
+    "instagram": {
+      "name": "Instagram",
+      "handle": "@gangstarmiragecityindia",
+      "url": "https://www.instagram.com/gangstarmiragecityindia/",
+      "value": 2244,
+      "label": "粉丝",
+      "color": "#E1306C",
+      "note": "数据来源：用户截图校准（2026-08-01 晚）；本轮增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
+      "history": [
+        {
+          "date": "2026-07-02",
+          "value": 1450
+        },
+        {
+          "date": "2026-07-05",
+          "value": 1478
+        },
+        {
+          "date": "2026-07-08",
+          "value": 1505
+        },
+        {
+          "date": "2026-07-11",
+          "value": 1580
+        },
+        {
+          "date": "2026-07-15",
+          "value": 1610
+        },
+        {
+          "date": "2026-07-18",
+          "value": 1640
+        },
+        {
+          "date": "2026-07-22",
+          "value": 1665
+        },
+        {
+          "date": "2026-07-25",
+          "value": 1682
+        },
+        {
+          "date": "2026-07-30",
+          "value": 1696
+        },
+        {
+          "date": "2026-08-01",
+          "value": 1808
+        },
+        {
+          "date": "2026-08-02",
+          "value": 2244
+        }
+      ]
+    },
+    "facebook": {
+      "name": "Facebook",
+      "handle": "Gangstar Mirage City India",
+      "url": "https://www.facebook.com/profile.php?id=61572148744773",
+      "value": 45,
+      "label": "关注者",
+      "color": "#1877F2",
+      "note": "数据来源：用户截图校准",
+      "history": [
+        {
+          "date": "2026-07-02",
+          "value": 4
+        },
+        {
+          "date": "2026-07-05",
+          "value": 8
+        },
+        {
+          "date": "2026-07-08",
+          "value": 15
+        },
+        {
+          "date": "2026-07-11",
+          "value": 22
+        },
+        {
+          "date": "2026-07-15",
+          "value": 30
+        },
+        {
+          "date": "2026-07-18",
+          "value": 35
+        },
+        {
+          "date": "2026-07-22",
+          "value": 38
+        },
+        {
+          "date": "2026-07-25",
+          "value": 39
+        },
+        {
+          "date": "2026-07-30",
+          "value": 42
+        },
+        {
+          "date": "2026-07-31",
+          "value": 42
+        },
+        {
+          "date": "2026-08-01",
+          "value": 44
+        },
+        {
+          "date": "2026-08-02",
+          "value": 45
+        }
+      ]
+    },
+    "youtube": {
+      "name": "YouTube",
+      "handle": "@GangstarMirageCityIndia",
+      "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
+      "value": 761,
+      "label": "订阅者",
+      "color": "#FF0000",
+      "note": "数据来源：用户截图校准（2026-08-01 晚）",
+      "history": [
+        {
+          "date": "2026-07-02",
+          "value": 5
+        },
+        {
+          "date": "2026-07-03",
+          "value": 6
+        },
+        {
+          "date": "2026-07-04",
+          "value": 7
+        },
+        {
+          "date": "2026-07-06",
+          "value": 8
+        },
+        {
+          "date": "2026-07-08",
+          "value": 10
+        },
+        {
+          "date": "2026-07-09",
+          "value": 12
+        },
+        {
+          "date": "2026-07-10",
+          "value": 13
+        },
+        {
+          "date": "2026-07-11",
+          "value": 58
+        },
+        {
+          "date": "2026-07-12",
+          "value": 83
+        },
+        {
+          "date": "2026-07-13",
+          "value": 100
+        },
+        {
+          "date": "2026-07-14",
+          "value": 135
+        },
+        {
+          "date": "2026-07-15",
+          "value": 161
+        },
+        {
+          "date": "2026-07-16",
+          "value": 180
+        },
+        {
+          "date": "2026-07-17",
+          "value": 216
+        },
+        {
+          "date": "2026-07-18",
+          "value": 244
+        },
+        {
+          "date": "2026-07-19",
+          "value": 257
+        },
+        {
+          "date": "2026-07-20",
+          "value": 273
+        },
+        {
+          "date": "2026-07-21",
+          "value": 290
+        },
+        {
+          "date": "2026-07-22",
+          "value": 299
+        },
+        {
+          "date": "2026-07-23",
+          "value": 313
+        },
+        {
+          "date": "2026-07-24",
+          "value": 324
+        },
+        {
+          "date": "2026-07-25",
+          "value": 344
+        },
+        {
+          "date": "2026-07-26",
+          "value": 372
+        },
+        {
+          "date": "2026-07-27",
+          "value": 425
+        },
+        {
+          "date": "2026-07-28",
+          "value": 451
+        },
+        {
+          "date": "2026-07-29",
+          "value": 481
+        },
+        {
+          "date": "2026-07-30",
+          "value": 494
+        },
+        {
+          "date": "2026-07-31",
+          "value": 519
+        },
+        {
+          "date": "2026-08-01",
+          "value": 658
+        },
+        {
+          "date": "2026-08-02",
+          "value": 761
+        }
+      ]
+    },
+    "x": {
+      "name": "X (Twitter)",
+      "handle": "@GangstarMCIndia",
+      "url": "https://x.com/GangstarMCIndia",
+      "value": 24,
+      "label": "粉丝",
+      "color": "#1DA1F2",
+      "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
+      "history": [
+        {
+          "date": "2026-07-30",
+          "value": 23
+        },
+        {
+          "date": "2026-07-31",
+          "value": 24
+        },
+        {
+          "date": "2026-08-01",
+          "value": 24
+        },
+        {
+          "date": "2026-08-02",
+          "value": 24
+        }
+      ]
+    }
+  }
+}

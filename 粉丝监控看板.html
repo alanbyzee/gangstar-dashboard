@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>区域社媒粉丝监控看板</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#1f2430; --mut:#7a8290; --line:#e6e8ec;
+  --ig:#E1306C; --fb:#1877F2; --ytb:#FF0000; --x:#1d1d1f;
+  --up:#16a34a; --down:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:24px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+h1{font-size:22px;font-weight:700}
+.sub{color:var(--mut);font-size:13px;margin-top:2px}
+.topchips{display:flex;gap:10px;align-items:center}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}
+.chip.red{color:#b91c1c;border-color:#f3c0c0;background:#fef2f2}
+.totals{display:flex;gap:28px;margin:4px 0 22px;flex-wrap:wrap}
+.total b{font-size:26px}
+.total span{color:var(--mut);font-size:12px;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden}
+.card .bar{position:absolute;top:0;left:0;width:4px;height:100%}
+.card.ig .bar{background:var(--ig)} .card.fb .bar{background:var(--fb)} .card.ytb .bar{background:var(--ytb)} .card.x .bar{background:var(--x)}
+.pname{font-weight:700;font-size:15px}
+.phandle{color:var(--mut);font-size:12px;margin-top:2px}
+.big{font-size:30px;font-weight:700;margin:14px 0 2px;letter-spacing:-0.5px}
+.unit{color:var(--mut);font-size:12px}
+.delta{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:6px}
+.delta.up{color:var(--up);background:#e7f6ec}
+.delta.down{color:var(--down);background:#fdeaea}
+.delta.flat{color:var(--mut);background:#f0f1f3}
+.spark{margin:14px 0 4px;display:block}
+.note{color:var(--mut);font-size:11px;margin-top:4px}
+.btn{margin-top:12px;width:100%;border:1px solid var(--line);background:#fafbfc;color:var(--ink);border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:#f0f1f3}
+.hist{color:var(--mut);font-size:11px;margin-top:8px}
+footer{color:var(--mut);font-size:11px;margin-top:24px;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>区域社媒粉丝监控看板</h1>
+    <div class="sub">Gangstar Mirage City · India · 预注册期涨粉监控</div>
+  </div>
+  <div class="topchips">
+    <div class="chip red" id="countdown">上线倒计时 —</div>
+  </div>
+</header>
+<div class="totals">
+  <div class="total"><b id="totalFans">—</b><span>总粉丝/订阅 (IG + FB + YTB)</span></div>
+  <div class="total"><b id="totalPosts">—</b><span>X 帖子数</span></div>
+</div>
+<div class="grid" id="grid"></div>
+<footer>数据存于本机浏览器（localStorage），仅本地可见。<br>点击「更新数据」记录最新读数，即可自动生成各平台增长曲线。</footer>
+</div>
+<script>
+const LAUNCH = new Date('2026-08-20T00:00:00');
+const PLATFORMS = [
+  {key:'ig',  cls:'ig',  name:'Instagram', handle:'@gangstarmiragecityindia', unit:'粉丝',   baseline:1697, color:'#E1306C'},
+  {key:'fb',  cls:'fb',  name:'Facebook',  handle:'Gangstar Mirage City India', unit:'关注者', baseline:42,  color:'#1877F2'},
+  {key:'ytb', cls:'ytb', name:'YouTube',   handle:'@GangstarMirageCityIndia', unit:'订阅者', baseline:485, color:'#FF0000'},
+  {key:'x',   cls:'x',   name:'X (Twitter)', handle:'@GangstarMCIndia', unit:'粉丝', baseline:null, posts:55, color:'#1d1d1f', note:'粉丝数登录墙不可见 · 帖子 55'},
+];
+
+function load(key){
+  try{ return JSON.parse(localStorage.getItem('fan_'+key)) || null; }catch(e){ return null; }
+}
+function save(key, arr){
+  localStorage.setItem('fan_'+key, JSON.stringify(arr));
+}
+// 首次加载写入基线读数（2026-07-30 实测）
+PLATFORMS.forEach(p=>{
+  let h = load(p.key);
+  if(!h){
+    h = [];
+    if(p.baseline!=null) h.push({date:'2026-07-30', value:p.baseline});
+    if(p.posts!=null) h.push({date:'2026-07-30', value:null, posts:p.posts});
+    save(p.key, h);
+  }
+});
+
+function fmt(n){ return n==null?'—':n.toLocaleString('en-US'); }
+
+function sparkline(valHist, color){
+  const vals = valHist.map(d=>d.value);
+  if(vals.length===0) return '<div class="note">暂无足够数据点画曲线</div>';
+  const w=220, hgt=46, pad=6;
+  const min=Math.min(...vals), max=Math.max(...vals);
+  const range=(max-min)||1;
+  const step = vals.length>1 ? (w-2*pad)/(vals.length-1) : 0;
+  const coords = vals.map((v,i)=>{
+    const x = pad + i*step;
+    const y = hgt-pad - ((v-min)/range)*(hgt-2*pad);
+    return [x,y];
+  });
+  const pts = coords.map(c=>c[0].toFixed(1)+','+c[1].toFixed(1)).join(' ');
+  if(vals.length===1){
+    const c=coords[0];
+    return `<svg class="spark" width="100%" height="${hgt}" viewBox="0 0 ${w} ${hgt}" preserveAspectRatio="none">
+      <circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="3.5" fill="${color}"/></svg>
+      <div class="note">再更新一次即可画出曲线</div>`;
+  }
+  const lastX = (pad+(vals.length-1)*step).toFixed(1);
+  const areaPts = `${pad},${hgt-pad} ${pts} ${lastX},${hgt-pad}`;
+  return `<svg class="spark" width="100%" height="${hgt}" viewBox="0 0 ${w} ${hgt}" preserveAspectRatio="none">
+    <polygon points="${areaPts}" fill="${color}22"/>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${lastX}" cy="${coords[coords.length-1][1].toFixed(1)}" r="3" fill="${color}"/>
+  </svg>`;
+}
+
+function render(){
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  let totalFans=0, xPosts=null;
+  PLATFORMS.forEach(p=>{
+    const h=load(p.key)||[];
+    const valHist=h.filter(d=>d.value!=null);
+    const cur = valHist.length? valHist[valHist.length-1].value : null;
+    const prev = valHist.length>1? valHist[valHist.length-2].value : null;
+    let delta=null, dcls='flat', dtxt='持平';
+    if(cur!=null && prev!=null && cur!==prev){
+      delta=cur-prev; dcls=delta>0?'up':'down'; dtxt=(delta>0?'▲ +':'▼ ')+delta.toLocaleString('en-US');
+    } else if(cur==null){ dtxt='—'; }
+    if(p.key!=='x' && cur!=null) totalFans+=cur;
+    if(p.key==='x'){ const ph=h.find(d=>d.posts!=null); xPosts = ph?ph.posts:null; }
+    const card=document.createElement('div');
+    card.className='card '+p.cls;
+    card.innerHTML=`
+      <div class="bar"></div>
+      <div class="pname">${p.name}</div>
+      <div class="phandle">${p.handle}</div>
+      <div class="big">${fmt(cur)}</div>
+      <div class="unit">${p.unit}${cur==null?'（未公开）':''}</div>
+      <div class="delta ${dcls}">${dtxt}</div>
+      ${sparkline(valHist, p.color)}
+      ${p.note?`<div class="note">${p.note}</div>`:''}
+      <button class="btn" onclick="update('${p.key}')">更新数据</button>
+      <div class="hist">已记录 ${valHist.length} 个读数</div>
+    `;
+    grid.appendChild(card);
+  });
+  document.getElementById('totalFans').textContent=totalFans.toLocaleString('en-US');
+  document.getElementById('totalPosts').textContent= xPosts!=null? xPosts : '—';
+  const days=Math.ceil((LAUNCH-new Date())/86400000);
+  document.getElementById('countdown').textContent='上线倒计时 D-'+days;
+}
+
+function update(key){
+  const p=PLATFORMS.find(x=>x.key===key);
+  const input=prompt('输入 '+p.name+' 最新'+p.unit+'数（仅填数字）：');
+  if(input==null) return;
+  const v=parseInt(input.replace(/[^0-9]/g,''),10);
+  if(isNaN(v)){ alert('请输入有效数字'); return; }
+  const h=load(key)||[];
+  const today=new Date().toISOString().slice(0,10);
+  const existing=h.findIndex(d=>d.date===today && d.value!=null);
+  if(existing>=0) h[existing].value=v; else h.push({date:today, value:v});
+  save(key,h);
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
