@@ -169,6 +169,10 @@
   .item .title{font-weight:600;color:var(--ink)}
   .item .partner{color:var(--muted);font-size:11px;margin-top:2px}
   .item .partner u{color:var(--brand2);text-decoration:none;font-weight:600}
+  .item .req-row{margin-top:5px}
+  .req-box{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid #d0d5dd;border-radius:7px;background:#f7f8fa;color:#667085;font-size:11px;font-weight:600;cursor:pointer;user-select:none;-webkit-user-select:none;transition:.12s}
+  .req-box:hover{border-color:#58a83c;color:#3f8a2a}
+  .req-box.on{background:#e8f6e6;border-color:#58a83c;color:#2f7d1e}
   /* 类型色 */
   .t-copost{border-left:3px solid #2f80ed}.t-copost .tag{background:#dbeafe;color:#1d4ed8}
   .t-meme{border-left:3px solid #f2994a}.t-meme .tag{background:#fdebd7;color:#b45309}
@@ -2328,6 +2332,7 @@ function renderSouthAsia(){
     JSON.parse(localStorage.getItem('gangstar_hidden')||'[]').forEach(id=>hidden.add(id));
     JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]').forEach(id=>cancelledSet.add(id));
   }catch(e){}
+  const reqs=getReqSubmitted();
   // 加载编辑覆盖
   const edits={};
   try{Object.assign(edits,JSON.parse(localStorage.getItem('gangstar_edits')||'{}'));}catch(e){}
@@ -2406,7 +2411,7 @@ function renderSouthAsia(){
         if(saActive.has(tag)){
           const ti=TYPE_INFO[type]||{name:type,color:'#888'};
           saEditMap[opId]={isHQ:false,title,type,partner,desc};
-          posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId)});
+          posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId),isRegion:true});
           regCnt++;
         }
       });
@@ -2418,7 +2423,9 @@ function renderSouthAsia(){
         const cls=p.cancelled?' cancelled':'';
         const cancelCls=p.cancelled?'act cancel on':'act cancel';
         const detailAttr=p.hasDetail?` data-detail="${p.pid}" style="cursor:pointer"`:'';
-        return `<div class="sa-post${cls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}</div>`;
+        const reqOn=p.isRegion?!!p.pid&&!!reqs[p.pid]:false;
+        const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求">${reqOn?'✓':'☐'} 已提制作需求</span>`:'';
+        return `<div class="sa-post${cls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${reqHtml}</div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
         <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
@@ -2516,6 +2523,7 @@ function renderSouthAsia(){
   el.querySelectorAll('.sa-post .act.edit').forEach(btn=>{
     btn.onclick=e=>{e.stopPropagation();openEditModal(btn.dataset.pid);};
   });
+  el.querySelectorAll('.sa-post .req-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReq(b.dataset.uid);});
 }
 
 // 全局撤销见 doUndo()（快照整个本地状态，覆盖所有表的所有操作）
@@ -2766,9 +2774,11 @@ function getRegionHidden(){try{return new Set(JSON.parse(localStorage.getItem('g
 function getRegionCancelled(){try{return new Set(JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]'));}catch(e){return new Set();}}
 function getRegionEdits(){try{return JSON.parse(localStorage.getItem('gangstar_edits')||'{}');}catch(e){return {};}}
 function getRegionCustom(){try{return JSON.parse(localStorage.getItem('gangstar_custom')||'{}');}catch(e){return {};}}
+function getReqSubmitted(){try{return JSON.parse(localStorage.getItem('gangstar_req_submitted')||'{}');}catch(e){return {};}}
+function toggleReq(uid){pushUndo();const m=getReqSubmitted();if(m[uid])delete m[uid];else m[uid]=true;localStorage.setItem('gangstar_req_submitted',JSON.stringify(m));renderSouthAsia();renderRegional();}
 
 // ===== 全局撤销：快照整个本地状态，覆盖所有表的所有操作 =====
-const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target'];
+const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target','gangstar_req_submitted'];
 function snapshotApp(){const o={};UNDO_KEYS.forEach(k=>{try{o[k]=localStorage.getItem(k);}catch(e){o[k]=null;}});return o;}
 function pushUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}s.push(snapshotApp());if(s.length>50)s=s.slice(-50);localStorage.setItem('gangstar_undo',JSON.stringify(s));}
 function doUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}if(!s.length){saToast('没有可撤销的操作');return;}const snap=s.pop();localStorage.setItem('gangstar_undo',JSON.stringify(s));UNDO_KEYS.forEach(k=>{if(snap[k]===null||snap[k]===undefined)localStorage.removeItem(k);else try{localStorage.setItem(k,snap[k]);}catch(e){}});renderSouthAsia();renderRegional();saToast('已撤销 ⌘Z');}
@@ -2814,6 +2824,7 @@ function renderRegional(){
   const cancelled=getRegionCancelled();
   const edits=getRegionEdits();
   const custom=getRegionCustom();
+  const reqs=getReqSubmitted();
   regEditMap={};
   const dateWeek={};
   weeks.forEach((w,wi)=>w.days.forEach(d=>dateWeek[d.date]=wi));
@@ -2880,7 +2891,9 @@ function renderRegional(){
           const partnerHtml=partner?`<div class="partner">合作方：<u>${esc(partner)}</u></div>`:'';
           const descHtml=desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(desc)}</div>`:'';
           const cancelCls=can?'iact cancel on':'iact cancel';
-          return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}</div>`;
+          const reqOn=reqs[uid];
+          const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求">${reqOn?'✓':'☐'} 已提制作需求</span></div>`;
+          return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${reqBox}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
@@ -2919,6 +2932,7 @@ function renderRegional(){
     localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
     renderRegional();
   });
+  el.querySelectorAll('.item .req-box').forEach(b=>b.onclick=()=>toggleReq(b.dataset.uid));
   el.querySelectorAll('.reg-add').forEach(b=>b.onclick=()=>openAddModal(b.dataset.date));
 }
 
