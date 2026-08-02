@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 2244,
+      "value": 2473,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-01 晚）；本轮增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
@@ -53,7 +53,7 @@
         },
         {
           "date": "2026-08-02",
-          "value": 2244
+          "value": 2473
         }
       ]
     },
@@ -61,7 +61,7 @@
       "name": "Facebook",
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 45,
+      "value": 46,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准",
@@ -112,7 +112,7 @@
         },
         {
           "date": "2026-08-02",
-          "value": 45
+          "value": 46
         }
       ]
     },
@@ -120,7 +120,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 761,
+      "value": 994,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-01 晚）",
@@ -243,7 +243,7 @@
         },
         {
           "date": "2026-08-02",
-          "value": 761
+          "value": 994
         }
       ]
     },
