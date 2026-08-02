@@ -20,6 +20,9 @@
   .tab.active{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 3px 10px rgba(109,40,217,.25)}
   .spacer{flex:1}
   .upd{font-size:12px;color:var(--muted)}
+  .undo-btn{margin-left:10px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:5px}
+  .undo-btn:hover{border-color:var(--brand);color:var(--brand);background:#f8f5ff}
+  .undo-btn:active{transform:translateY(1px)}
 
   /* ===== 内容区 ===== */
   .stage{flex:1;position:relative;overflow:hidden}
@@ -144,7 +147,7 @@
   .cell{padding:7px 8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:48px;background:#fff;font-size:12px;position:relative}
   .cell:last-child{border-right:none}
   /* 素材卡片 */
-  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 26px 7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;transition:box-shadow .15s;position:relative}
+  .item{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 56px 7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45;transition:box-shadow .15s;position:relative}
   .item .drag-handle{position:absolute;top:5px;right:5px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e5ea;border-radius:5px;background:#eef0f4;color:#9aa1ac;font-size:11px;line-height:1;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;transition:.12s}
   .item .drag-handle:hover{background:#f59e0b;border-color:#f59e0b;color:#fff;transform:scale(1.08)}
   .item .drag-handle:active{cursor:grabbing}
@@ -152,6 +155,16 @@
   .drag-ghost{position:fixed !important;margin:0 !important;pointer-events:none;z-index:9999;opacity:.96;box-shadow:0 12px 28px rgba(0,0,0,.2);transform:rotate(-1.5deg);background:#fff}
   .cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-3px}
   .item:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .item .item-acts{position:absolute;top:3px;right:26px;display:flex;gap:1px;opacity:0;transition:.12s;z-index:3}
+  .item:hover .item-acts{opacity:1}
+  .item .iact{cursor:pointer;font-size:10px;line-height:1.4;color:#9aa1ac;padding:1px 3px;border-radius:3px;user-select:none;-webkit-user-select:none}
+  .item .iact:hover{background:#eef0f4;color:#64748b}
+  .item .iact.del:hover{color:#ef4444}
+  .item .iact.cancel.on{color:#e14b4b;background:#fbdddd}
+  .item.cancelled .title,.item.cancelled .tag,.item.cancelled .partner{text-decoration:line-through;opacity:.6}
+  .reg-add{cursor:pointer;margin-left:5px;font-weight:800;opacity:.55;color:#fff}
+  .reg-add:hover{opacity:1}
+  .cal-head>div{position:relative}
   .item .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;margin-bottom:3px}
   .item .title{font-weight:600;color:var(--ink)}
   .item .partner{color:var(--muted);font-size:11px;margin-top:2px}
@@ -312,6 +325,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:14px}
     <div class="tab" data-view="fan">📊 粉丝监控</div>
     <div class="tab" data-view="regional">📝 区域素材</div>
   </div>
+  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）">↩ 撤销</button>
   <div class="spacer"></div>
   <div class="upd" id="upd">数据更新于 —</div>
 </div>
@@ -1565,6 +1579,7 @@ tabs.forEach(t=>t.onclick=()=>{
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
 });
+document.getElementById('undoBtn').onclick=doUndo;
 
 // ===== 工具函数 =====
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -1779,7 +1794,7 @@ function renderInsights(data){
   const saveBtn=document.getElementById('targetSave');
   if(saveBtn) saveBtn.onclick=()=>{
     const v=Number(document.getElementById('targetInput').value);
-    if(v>0){lsSet('gangstar_fan_target',v);renderInsights(lastData);}
+    if(v>0){pushUndo();lsSet('gangstar_fan_target',v);renderInsights(lastData);}
   };
 }
 
@@ -2163,9 +2178,10 @@ const REGION_TAGS={
   gameplay:['gameplay']
 };
 let saActive=new Set(SA_FILTERS.map(f=>f.key)); // 默认全开
-let saUndoStack=[]; // 撤销栈
+let saUndoStack=null; // 已弃用，全局撤销见 doUndo()
 let saDetailMap={}; // HQ 详情映射
 let saEditMap={}; // 编辑覆盖映射（pid -> 当前可编辑值）
+let regEditMap={}; // 区域周历编辑映射（uid -> 当前值）
 
 // 素材是否命中当前筛选（tags 任一在 active 集合中即显示）
 function saMatch(tags){
@@ -2242,6 +2258,7 @@ function getSaMoves(){
     if(!cell||!moved) return;
     const target=cell.getAttribute('data-date');
     if(!target) return;
+    pushUndo();
     if(ruid){
       // 区域素材：与「区域素材周历」共用同一份移动记录，两个视图保持一致
       const orig=(ruid.split('|')[1])||'';
@@ -2249,18 +2266,13 @@ function getSaMoves(){
       if(target===orig) delete rm[ruid]; else rm[ruid]=target;
       localStorage.setItem('gangstar_regional_moves',JSON.stringify(rm));
     }else if(pid.indexOf('cus|')===0){
-      // 自定义素材：直接改 gangstar_custom 的日期归属
+      // 自定义素材：与区域周历共用 gangstar_regional_moves（cus|<id> -> 目标日期），两表同步
       const cid=pid.slice(4);
-      try{
-        const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
-        let found=null;
-        Object.keys(custom).forEach(d=>{
-          const arr=custom[d]||[];
-          const i=arr.findIndex(x=>String(x._id)===cid);
-          if(i>=0){ found=arr.splice(i,1)[0]; if(!arr.length) delete custom[d]; }
-        });
-        if(found){ (custom[target]=custom[target]||[]).push(found); localStorage.setItem('gangstar_custom',JSON.stringify(custom)); }
-      }catch(err){}
+      let orig='';
+      try{const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');for(const d in custom){if((custom[d]||[]).some(x=>String(x._id)===cid)){orig=d;break;}}}catch(e){}
+      const rm=getRegionMoves();
+      if(target===orig) delete rm[pid]; else rm[pid]=target;
+      localStorage.setItem('gangstar_regional_moves',JSON.stringify(rm));
     }else{
       const orig=(pid.split('|')[1])||'';
       const moves=getSaMoves();
@@ -2306,7 +2318,7 @@ function renderSouthAsia(){
   try{
     const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
     Object.entries(custom).forEach(([date,arr])=>{
-      (arr||[]).forEach(it=>pushReg(date,{...it,custom:true},it._id?('cus|'+it._id):('reg|'+date+'|'+it.type+'|'+it.title),''));
+      (arr||[]).forEach(it=>pushReg(date,{...it,custom:true},it._id?('cus|'+it._id):('reg|'+date+'|'+it.type+'|'+it.title),it._id?('cus|'+it._id):''));
     });
   }catch(e){}
   // 加载隐藏/取消状态
@@ -2385,15 +2397,16 @@ function renderSouthAsia(){
       // 区域自产素材（按日期匹配，含自定义）
       (regByDate[c.date]||[]).forEach(it=>{
         const pid=it._pid||(it._id?('cus|'+it._id):('reg|'+c.date+'|'+it.type+'|'+it.title));
-        if(hidden.has(pid)) return;
-        const ov=edits[pid];
+        const opId=it._ruid||pid;
+        if(hidden.has(opId)) return;
+        const ov=edits[opId];
         let title=it.title, type=it.type, partner=it.partner||'', desc=it.desc||'';
         if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; }
         const tag=(REGION_TAGS[type]||[])[0];
         if(saActive.has(tag)){
           const ti=TYPE_INFO[type]||{name:type,color:'#888'};
-          saEditMap[pid]={isHQ:false,title,type,partner,desc};
-          posts.push({pid,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(pid)});
+          saEditMap[opId]={isHQ:false,title,type,partner,desc};
+          posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId)});
           regCnt++;
         }
       });
@@ -2469,9 +2482,9 @@ function renderSouthAsia(){
   const restoreBtn=el.querySelector('#restoreBtn');
   if(restoreBtn){
     restoreBtn.onclick=()=>{
+      pushUndo();
       localStorage.removeItem('gangstar_hidden');
-      saUndoStack=[];
-      renderSouthAsia();
+      renderSouthAsia(); renderRegional();
       saToast('已恢复全部删除项');
     };
   }
@@ -2479,28 +2492,24 @@ function renderSouthAsia(){
   el.querySelectorAll('.sa-post .act.del').forEach(btn=>{
     btn.onclick=()=>{
       const pid=btn.dataset.pid;
-      try{
-        const arr=JSON.parse(localStorage.getItem('gangstar_hidden')||'[]');
-        if(!arr.includes(pid)){
-          arr.push(pid);
-          localStorage.setItem('gangstar_hidden',JSON.stringify(arr));
-          saUndoStack.push({type:'hide',pid});
-        }
-      }catch(e){}
-      renderSouthAsia();
+      pushUndo();
+      const arr=JSON.parse(localStorage.getItem('gangstar_hidden')||'[]');
+      if(!arr.includes(pid)){ arr.push(pid); localStorage.setItem('gangstar_hidden',JSON.stringify(arr)); }
+      renderSouthAsia(); renderRegional();
     };
   });
   // 绑定划线按钮（取消/恢复）
   el.querySelectorAll('.sa-post .act.cancel').forEach(btn=>{
     btn.onclick=()=>{
       const pid=btn.dataset.pid;
+      pushUndo();
       try{
         let arr=JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]');
         if(arr.includes(pid)){arr=arr.filter(x=>x!==pid);}
-        else{arr.push(pid);saUndoStack.push({type:'cancel',pid});}
+        else{arr.push(pid);}
         localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
       }catch(e){}
-      renderSouthAsia();
+      renderSouthAsia(); renderRegional();
     };
   });
   // 绑定编辑按钮（所有帖子）
@@ -2509,28 +2518,7 @@ function renderSouthAsia(){
   });
 }
 
-// 撤销
-function saUndo(){
-  if(!saUndoStack.length){saToast('没有可撤销的操作');return;}
-  const action=saUndoStack.pop();
-  try{
-    if(action.type==='hide'){
-      let arr=JSON.parse(localStorage.getItem('gangstar_hidden')||'[]');
-      arr=arr.filter(x=>x!==action.pid);
-      localStorage.setItem('gangstar_hidden',JSON.stringify(arr));
-    }else if(action.type==='cancel'){
-      let arr=JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]');
-      arr=arr.filter(x=>x!==action.pid);
-      localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
-    }else if(action.type==='edit'){
-      let all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');
-      if(action.prev) all[action.pid]=action.prev; else delete all[action.pid];
-      localStorage.setItem('gangstar_edits',JSON.stringify(all));
-    }
-  }catch(e){}
-  renderSouthAsia();
-  saToast('已撤回 ⌘Z');
-}
+// 全局撤销见 doUndo()（快照整个本地状态，覆盖所有表的所有操作）
 function saToast(msg){
   const old=document.querySelector('.sa-toast');
   if(old) old.remove();
@@ -2541,7 +2529,7 @@ function saToast(msg){
   setTimeout(()=>t.remove(),1500);
 }
 document.addEventListener('keydown',e=>{
-  if((e.metaKey||e.ctrlKey)&&e.key==='z'){e.preventDefault();saUndo();}
+  if((e.metaKey||e.ctrlKey)&&e.key==='z'){e.preventDefault();doUndo();}
 });
 
 // 添加素材模态框
@@ -2575,6 +2563,7 @@ function openAddModal(date){
     const type=document.getElementById('m-type').value;
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
+    pushUndo();
     try{
       const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
       if(!custom[date]) custom[date]=[];
@@ -2582,7 +2571,7 @@ function openAddModal(date){
       localStorage.setItem('gangstar_custom',JSON.stringify(custom));
     }catch(e){}
     bg.remove();
-    renderSouthAsia();
+    renderSouthAsia(); renderRegional();
   };
   bg.querySelector('.btn-save').onclick=saveFn;
   document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter') saveFn();};
@@ -2626,10 +2615,9 @@ function openEditModal(pid){
     const desc=document.getElementById('m-desc').value.trim();
     try{
       const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');
-      const prev=all[pid]||null;
+      pushUndo();
       all[pid]={title,type,partner,desc};
       localStorage.setItem('gangstar_edits',JSON.stringify(all));
-      saUndoStack.push({type:'edit',pid,prev});
     }catch(e){}
     bg.remove();
     renderSouthAsia();
@@ -2773,26 +2761,90 @@ function getRegionMoves(){
 }
 function regionUid(range,date,it,i){return range+'|'+date+'|'+it.type+'|'+it.title+'|'+(i||0);}
 
+// ===== 区域素材统一状态（两表共享）=====
+function getRegionHidden(){try{return new Set(JSON.parse(localStorage.getItem('gangstar_hidden')||'[]'));}catch(e){return new Set();}}
+function getRegionCancelled(){try{return new Set(JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]'));}catch(e){return new Set();}}
+function getRegionEdits(){try{return JSON.parse(localStorage.getItem('gangstar_edits')||'{}');}catch(e){return {};}}
+function getRegionCustom(){try{return JSON.parse(localStorage.getItem('gangstar_custom')||'{}');}catch(e){return {};}}
+
+// ===== 全局撤销：快照整个本地状态，覆盖所有表的所有操作 =====
+const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target'];
+function snapshotApp(){const o={};UNDO_KEYS.forEach(k=>{try{o[k]=localStorage.getItem(k);}catch(e){o[k]=null;}});return o;}
+function pushUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}s.push(snapshotApp());if(s.length>50)s=s.slice(-50);localStorage.setItem('gangstar_undo',JSON.stringify(s));}
+function doUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}if(!s.length){saToast('没有可撤销的操作');return;}const snap=s.pop();localStorage.setItem('gangstar_undo',JSON.stringify(s));UNDO_KEYS.forEach(k=>{if(snap[k]===null||snap[k]===undefined)localStorage.removeItem(k);else try{localStorage.setItem(k,snap[k]);}catch(e){}});renderSouthAsia();renderRegional();saToast('已撤销 ⌘Z');}
+
+// 区域素材编辑弹窗（写入 gangstar_edits[uid]，与南亚社群排期同一份）
+function openRegionEditModal(uid){
+  const old=document.querySelector('.sa-modal-bg');if(old)old.remove();
+  const cur=regEditMap[uid]||{};
+  const opts=(CONTENT_TYPES||[]).map(t=>`<option value="${t.key}">${t.name}</option>`).join('');
+  const bg=document.createElement('div');bg.className='sa-modal-bg';
+  bg.innerHTML=`<div class="sa-modal"><h3>编辑区域素材</h3>
+    <label>标题</label><input type="text" id="m-title" value="${esc(cur.title||'')}" autofocus>
+    <label>类别</label><select id="m-type">${opts}</select>
+    <label>合作方（选填）</label><input type="text" id="m-partner" value="${esc(cur.partner||'')}">
+    <label>描述（选填）</label><input type="text" id="m-desc" value="${esc(cur.desc||'')}">
+    <div class="sa-modal-btns"><button class="btn-cancel" type="button">取消</button><button class="btn-save" type="button">保存</button></div></div>`;
+  document.body.appendChild(bg);
+  const typeSel=bg.querySelector('#m-type');if(cur.type)typeSel.value=cur.type;
+  bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
+  bg.onclick=e=>{if(e.target===bg)bg.remove();};
+  const saveFn=()=>{
+    const title=document.getElementById('m-title').value.trim();if(!title)return;
+    const type=document.getElementById('m-type').value;
+    const partner=document.getElementById('m-partner').value.trim();
+    const desc=document.getElementById('m-desc').value.trim();
+    pushUndo();
+    try{const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');all[uid]={title,type,partner,desc};localStorage.setItem('gangstar_edits',JSON.stringify(all));}catch(e){}
+    bg.remove();renderRegional();
+  };
+  bg.querySelector('.btn-save').onclick=saveFn;
+  document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter')saveFn();};
+}
+
 function renderRegional(){
   const el=document.getElementById('regionalView');
   const today=new Date().toISOString().slice(0,10);
   const weeks=(REGIONAL_DATA&&REGIONAL_DATA.weeks)||[];
   if(!weeks.length){el.innerHTML='<p style="color:var(--muted);padding:40px;text-align:center">暂无素材数据</p>';return;}
 
-  // 应用拖拽移动：构建每个 week 的显示 items
+  // 统一状态（与南亚社群排期共享：移动/隐藏/划线/编辑/自定义）
   const moves=getRegionMoves();
+  const hidden=getRegionHidden();
+  const cancelled=getRegionCancelled();
+  const edits=getRegionEdits();
+  const custom=getRegionCustom();
+  regEditMap={};
   const dateWeek={};
   weeks.forEach((w,wi)=>w.days.forEach(d=>dateWeek[d.date]=wi));
   const dispItems=weeks.map(()=>({}));
+  const addItem=(effDate,obj)=>{
+    const ti=dateWeek[effDate];
+    if(ti===undefined) return;
+    (dispItems[ti][effDate]=dispItems[ti][effDate]||[]).push(obj);
+  };
+  // 源素材
   weeks.forEach((w,wi)=>{
     Object.entries(w.items||{}).forEach(([od,arr])=>{
       (arr||[]).forEach((it,ii)=>{
         const uid=regionUid(w.range,od,it,ii);
+        if(hidden.has(uid)) return;
         const eff=moves[uid]||od;
-        const ti=dateWeek[eff];
-        if(ti===undefined) return;
-        (dispItems[ti][eff]=dispItems[ti][eff]||[]).push({...it,_uid:uid});
+        const ov=edits[uid]||null;
+        regEditMap[uid]={type:ov?ov.type||it.type:it.type,title:ov?ov.title||it.title:it.title,partner:ov?ov.partner!==undefined?ov.partner:it.partner:it.partner,desc:ov?ov.desc!==undefined?ov.desc:it.desc:it.desc,isCustom:false};
+        addItem(eff,{it,uid,isCustom:false,can:cancelled.has(uid),ov});
       });
+    });
+  });
+  // 自定义素材（与南亚社群排期同一份 gangstar_custom，移动用 gangstar_regional_moves）
+  Object.entries(custom).forEach(([od,arr])=>{
+    (arr||[]).forEach(it=>{
+      const uid='cus|'+it._id;
+      if(hidden.has(uid)) return;
+      const eff=moves[uid]||od;
+      const ov=edits[uid]||null;
+      regEditMap[uid]={type:ov?ov.type||it.type:it.type,title:ov?ov.title||it.title:it.title,partner:ov?ov.partner!==undefined?ov.partner:it.partner:it.partner,desc:ov?ov.desc!==undefined?ov.desc:it.desc:it.desc,isCustom:true};
+      addItem(eff,{it,uid,isCustom:true,can:cancelled.has(uid),ov});
     });
   });
 
@@ -2802,27 +2854,33 @@ function renderRegional(){
     const typeCount={};
     CONTENT_TYPES.forEach(t=>typeCount[t.key]=0);
     Object.values(items||{}).forEach(dayItems=>{
-      (dayItems||[]).forEach(it=>{totalItems++;if(typeCount[it.type]!==undefined)typeCount[it.type]++;});
+      (dayItems||[]).forEach(x=>{const tp=(x.ov&&x.ov.type)?x.ov.type:x.it.type;totalItems++;if(typeCount[tp]!==undefined)typeCount[tp]++;});
     });
 
     const headHtml=`<div class="cal-head">
       <div>类型 \\ 日期</div>
       ${week.days.map(d=>{
         const isToday=d.date===today;
-        return `<div class="${isToday?'today-ring':''}"><span class="date-num">${d.num}</span><span class="dow">${d.dow}</span></div>`;
+        return `<div class="${isToday?'today-ring':''}"><span class="date-num">${d.num}</span><span class="dow">${d.dow}</span><span class="reg-add" data-date="${d.date}" title="添加素材到此日">+</span></div>`;
       }).join('')}
     </div>`;
 
     const usedTypes=CONTENT_TYPES.filter(t=>typeCount[t.key]>0);
     const rowsHtml=usedTypes.map(t=>{
       const cells=week.days.map(d=>{
-        const dayItems=(items[d.date]||[]).filter(it=>it.type===t.key);
-        const cellContent=dayItems.map(it=>{
-          const typeCls='t-'+it.type;
-          const partnerHtml=it.partner?`<div class="partner">合作方：<u>${esc(it.partner)}</u></div>`:'';
-          const descHtml=it.desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(it.desc)}</div>`:'';
-          const uid=it._uid||regionUid(week.range,d.date,it,0);
-          return `<div class="item ${typeCls}" data-uid="${esc(uid)}"><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${t.name}</span><div class="title">${esc(it.title)}</div>${partnerHtml}${descHtml}</div>`;
+        const dayItems=(items[d.date]||[]).filter(x=>{const tp=(x.ov&&x.ov.type)?x.ov.type:x.it.type;return tp===t.key;});
+        const cellContent=dayItems.map(x=>{
+          const o=x.it, ov=x.ov, uid=x.uid, can=x.can, isCustom=x.isCustom;
+          const tp=(ov&&ov.type)?ov.type:o.type;
+          const title=(ov&&ov.title)?ov.title:o.title;
+          const partner=(ov&&ov.partner!==undefined)?ov.partner:(o.partner||'');
+          const desc=(ov&&ov.desc!==undefined)?ov.desc:(o.desc||'');
+          const typeCls='t-'+tp;
+          const ti=(CONTENT_TYPES.find(c=>c.key===tp))||{name:tp};
+          const partnerHtml=partner?`<div class="partner">合作方：<u>${esc(partner)}</u></div>`:'';
+          const descHtml=desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(desc)}</div>`:'';
+          const cancelCls=can?'iact cancel on':'iact cancel';
+          return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
@@ -2843,9 +2901,25 @@ function renderRegional(){
 
   el.innerHTML=`
     <h2>📝 区域素材周历</h2>
-    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材 · 卡片可拖拽改日期</div>
+    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材 · 卡片可拖拽改日期 · 增删 / 移动 / 划线 / 编辑 与「南亚社群排期」实时同步</div>
     ${weeksHtml}
   `;
+  // 绑定区域素材操作（编辑 / 划线 / 删除 / 添加）—— 与南亚社群排期共用同一份本地状态
+  el.querySelectorAll('.item .iact.edit').forEach(b=>b.onclick=()=>openRegionEditModal(b.dataset.uid));
+  el.querySelectorAll('.item .iact.del').forEach(b=>b.onclick=()=>{
+    pushUndo();
+    const arr=JSON.parse(localStorage.getItem('gangstar_hidden')||'[]');
+    if(!arr.includes(b.dataset.uid)){arr.push(b.dataset.uid);localStorage.setItem('gangstar_hidden',JSON.stringify(arr));}
+    renderRegional();
+  });
+  el.querySelectorAll('.item .iact.cancel').forEach(b=>b.onclick=()=>{
+    pushUndo();
+    let arr=JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]');
+    if(arr.includes(b.dataset.uid)) arr=arr.filter(x=>x!==b.dataset.uid); else arr.push(b.dataset.uid);
+    localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
+    renderRegional();
+  });
+  el.querySelectorAll('.reg-add').forEach(b=>b.onclick=()=>openAddModal(b.dataset.date));
 }
 
 // 区域素材拖拽改日期（按住卡片右上角手柄 · Pointer Events 实现，兼容性更好）
@@ -2914,6 +2988,7 @@ function renderRegional(){
     if(!cell||!moved) return;
     const target=cell.getAttribute('data-date');
     if(!target) return;
+    pushUndo();
     const orig=(uid.split('|')[1])||'';
     const moves=getRegionMoves();
     if(target===orig) delete moves[uid]; else moves[uid]=target;
