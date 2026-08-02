@@ -170,9 +170,11 @@
   .item .partner{color:var(--muted);font-size:11px;margin-top:2px}
   .item .partner u{color:var(--brand2);text-decoration:none;font-weight:600}
   .item .req-row{margin-top:5px}
-  .req-box{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid #d0d5dd;border-radius:7px;background:#f7f8fa;color:#667085;font-size:11px;font-weight:600;cursor:pointer;user-select:none;-webkit-user-select:none;transition:.12s}
-  .req-box:hover{border-color:#58a83c;color:#3f8a2a}
-  .req-box.on{background:#e8f6e6;border-color:#58a83c;color:#2f7d1e}
+  .req-box{display:inline-flex;align-items:center;gap:4px;margin-top:6px;cursor:pointer;user-select:none;-webkit-user-select:none;font-size:10px;color:#aeb6c2;transition:.12s}
+  .req-box:hover{color:#8a94a4}
+  .req-box .mk{width:13px;height:13px;border:1.3px solid #cdd4de;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;line-height:1;color:transparent;transition:.12s}
+  .req-box.on{color:#5a9e3f}
+  .req-box.on .mk{background:#58a83c;border-color:#58a83c;color:#fff}
   /* 类型色 */
   .t-copost{border-left:3px solid #2f80ed}.t-copost .tag{background:#dbeafe;color:#1d4ed8}
   .t-meme{border-left:3px solid #f2994a}.t-meme .tag{background:#fdebd7;color:#b45309}
@@ -1224,7 +1226,7 @@ function renderSouthAsia(){
         const cancelCls=p.cancelled?'act cancel on':'act cancel';
         const detailAttr=p.hasDetail?` data-detail="${p.pid}" style="cursor:pointer"`:'';
         const reqOn=p.isRegion?!!p.pid&&!!reqs[p.pid]:false;
-        const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求">${reqOn?'✓':'☐'} 已提制作需求</span>`:'';
+        const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span>`:'';
         return `<div class="sa-post${cls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${reqHtml}</div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
@@ -1692,7 +1694,7 @@ function renderRegional(){
           const descHtml=desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(desc)}</div>`:'';
           const cancelCls=can?'iact cancel on':'iact cancel';
           const reqOn=reqs[uid];
-          const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求">${reqOn?'✓':'☐'} 已提制作需求</span></div>`;
+          const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span></div>`;
           return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${reqBox}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
