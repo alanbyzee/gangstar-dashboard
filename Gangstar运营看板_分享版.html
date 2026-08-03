@@ -2666,15 +2666,27 @@ function saToast(msg){
   document.body.appendChild(t);
   setTimeout(()=>t.remove(),1500);
 }
-// 弹窗关闭守卫：一旦有过任何输入，禁止靠点遮罩误关（防编辑中途误点背景丢内容）；
-// 只有完全没改动过点遮罩才允许直接关闭（保留顺手关空弹窗）。保存/取消始终可用。
+// 弹窗关闭守卫：只要用户在任一输入框按下/聚焦/选中/输入，就视为已介入，点遮罩不再能误关
+// （防编辑标题/描述时选中文字、拖选松手落背景等把弹窗秒关丢内容）。只有「完全没碰过」且
+// 点击手势确实从背景开始（排除框内拖选松手到背景），点遮罩才允许直接关。保存/取消始终可用。
 function modalChangedGuard(bg){
-  let changed=false;
-  bg.querySelectorAll('input,select,textarea').forEach(el=>{
-    el.addEventListener('input',()=>changed=true);
-    el.addEventListener('change',()=>changed=true);
+  let engaged=false;
+  const fields=bg.querySelectorAll('input,select,textarea');
+  fields.forEach(el=>{
+    el.addEventListener('input',()=>engaged=true);
+    el.addEventListener('change',()=>engaged=true);
+    el.addEventListener('focus',()=>engaged=true);
+    el.addEventListener('pointerdown',()=>engaged=true);
+    el.addEventListener('mousedown',()=>engaged=true);
   });
-  bg.onclick=e=>{ if(e.target===bg){ if(changed) return; bg.remove(); } };
+  let downOnBg=false;
+  bg.addEventListener('pointerdown',e=>{ downOnBg=(e.target===bg); });
+  bg.addEventListener('click',e=>{
+    if(e.target!==bg) return;        // 只处理点到背景遮罩
+    if(!downOnBg) return;            // 手势不是从背景开始（如框内拖选松手到背景）→ 忽略
+    if(engaged) return;             // 已介入过 → 必须点 取消/保存
+    bg.remove();
+  });
 }
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='z'){e.preventDefault();doUndo();}
