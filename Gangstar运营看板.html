@@ -1466,6 +1466,16 @@ function saToast(msg){
   document.body.appendChild(t);
   setTimeout(()=>t.remove(),1500);
 }
+// 弹窗关闭守卫：一旦有过任何输入，禁止靠点遮罩误关（防编辑中途误点背景丢内容）；
+// 只有完全没改动过点遮罩才允许直接关闭（保留顺手关空弹窗）。保存/取消始终可用。
+function modalChangedGuard(bg){
+  let changed=false;
+  bg.querySelectorAll('input,select,textarea').forEach(el=>{
+    el.addEventListener('input',()=>changed=true);
+    el.addEventListener('change',()=>changed=true);
+  });
+  bg.onclick=e=>{ if(e.target===bg){ if(changed) return; bg.remove(); } };
+}
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='z'){e.preventDefault();doUndo();}
 });
@@ -1494,7 +1504,7 @@ function openAddModal(date){
   </div>`;
   document.body.appendChild(bg);
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
-  bg.onclick=e=>{if(e.target===bg) bg.remove();};
+  modalChangedGuard(bg);
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();
     if(!title) return;
@@ -1544,7 +1554,7 @@ function openEditModal(pid){
   if(isHQ){ typeSel.value='hq'; typeSel.disabled=true; }
   else if(cur.type){ typeSel.value=cur.type; }
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
-  bg.onclick=e=>{if(e.target===bg) bg.remove();};
+  modalChangedGuard(bg);
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();
     if(!title) return;
@@ -1732,7 +1742,7 @@ function openRegionEditModal(uid){
   document.body.appendChild(bg);
   const typeSel=bg.querySelector('#m-type');if(cur.type)typeSel.value=cur.type;
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
-  bg.onclick=e=>{if(e.target===bg)bg.remove();};
+  modalChangedGuard(bg);
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();if(!title)return;
     const type=document.getElementById('m-type').value;
