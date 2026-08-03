@@ -2758,7 +2758,6 @@ function openAddModal(date){
     renderSouthAsia(); renderRegional();
   };
   bg.querySelector('.btn-save').onclick=saveFn;
-  document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter') saveFn();};
 }
 
 // 编辑已有素材（覆盖层写入 localStorage gangstar_edits，不破坏源数据）
@@ -2807,7 +2806,6 @@ function openEditModal(pid){
     renderSouthAsia();
   };
   bg.querySelector('.btn-save').onclick=saveFn;
-  document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter') saveFn();};
 }
 
 // HQ 详情查看（帖子旁浮窗）
@@ -2989,7 +2987,6 @@ function openRegionEditModal(uid){
     bg.remove();renderRegional();
   };
   bg.querySelector('.btn-save').onclick=saveFn;
-  document.getElementById('m-title').onkeydown=e=>{if(e.key==='Enter')saveFn();};
 }
 
 function renderRegional(){
