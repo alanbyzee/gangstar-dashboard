@@ -76,7 +76,13 @@ body{
 .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 19px;min-width:152px;box-shadow:var(--shadow-sm);transition:.2s}
 .stat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .stat .k{font-size:12px;color:var(--muted)}
-.stat .v{font-size:23px;font-weight:800;margin-top:3px}
+.stat .v{font-size:23px;font-weight:800;margin-top:3px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+
+/* 本周涨粉标签 */
+.wk-up{font-size:11px;font-weight:700;color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
+.wk-down{font-size:11px;font-weight:700;color:var(--err);background:#fef2f2;border:1px solid #fecaca;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
+.wk-flat{font-size:11px;font-weight:600;color:var(--muted);background:#f9fafb;border:1px solid var(--line);padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
+.wk-total{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:2px 9px;border-radius:8px;margin-left:4px}
 
 /* 工具栏 + 刷新状态 */
 .toolbar{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
@@ -1756,11 +1762,29 @@ function renderFans(data){
   const igHist=p.instagram?.history||[];
   const igBase=igHist.length?igHist[0].value:0;
   const igGain=(p.instagram?.value||0)-igBase;
+
+  // 本周涨粉（周一为节点，用 weeklyGrowth 算）
+  const igWg=weeklyGrowth(p.instagram);
+  const ytWg=weeklyGrowth(p.youtube);
+  const fbWg=weeklyGrowth(p.facebook);
+  const xWg=weeklyGrowth(p.x);
+  const totalWg=(igWg?.diff||0)+(ytWg?.diff||0)+(fbWg?.diff||0)+(xWg?.diff||0);
+
+  function wkTag(wg){
+    if(!wg) return '';
+    const v=wg.diff;
+    if(v>0) return `<span class="wk-up">本周 ▲+${fmt(v)}</span>`;
+    if(v<0) return `<span class="wk-down">本周 ▼${fmt(v)}</span>`;
+    return '<span class="wk-flat">本周 ±0</span>';
+  }
+
   document.getElementById('summary').innerHTML=`
     <div class="stat"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-    <div class="stat"><div class="k">社区总粉丝（4 平台）</div><div class="v">${fmt(totalAll)}</div></div>
-    <div class="stat"><div class="k">Instagram</div><div class="v">${fmt(p.instagram?.value||0)}<small style="font-size:11px;color:var(--ok)">▲ +${fmt(igGain)}</small></div></div>
-    <div class="stat"><div class="k">YouTube 订阅</div><div class="v">${fmt(p.youtube?.value||0)}</div></div>`;
+    <div class="stat"><div class="k">社区总粉丝（4 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+    <div class="stat"><div class="k">Instagram</div><div class="v">${fmt(p.instagram?.value||0)}${wkTag(igWg)}</div></div>
+    <div class="stat"><div class="k">YouTube 订阅</div><div class="v">${fmt(p.youtube?.value||0)}${wkTag(ytWg)}</div></div>
+    <div class="stat"><div class="k">Facebook</div><div class="v">${fmt(p.facebook?.value||0)}${wkTag(fbWg)}</div></div>
+    <div class="stat"><div class="k">X (Twitter)</div><div class="v">${fmt(p.x?.value||0)}${wkTag(xWg)}</div></div>`;
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
