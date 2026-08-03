@@ -330,6 +330,10 @@ body{
 .sa-post .act.sa-drag:hover{background:#f59e0b;color:#fff}
 .sa-post .act.sa-drag:active{cursor:grabbing}
 .sa-post.dragging{opacity:.3}
+.sa-post.rb{box-shadow:inset 0 3px 0 -1px #f59e0b!important}
+.sa-post.ra{box-shadow:inset 0 -3px 0 -1px #f59e0b!important}
+.item.rb{box-shadow:inset 0 3px 0 -1px #f59e0b!important}
+.item.ra{box-shadow:inset 0 -3px 0 -1px #f59e0b!important}
 .sa-cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-2px}
 /* 模态框 */
 .sa-modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.4);backdrop-filter:blur(2px);z-index:9999;display:flex;align-items:center;justify-content:center;animation:sa-fade .15s}
@@ -1069,6 +1073,10 @@ function saMatch(tags){
 function getSaMoves(){
   try{return JSON.parse(localStorage.getItem('gangstar_sa_moves')||'{}');}catch(e){return {};}
 }
+// 单日排序：南亚排期按「日期 -> [pid 序列]」记忆，pid 即卡片 data-pid（HQ/区域/自定义统一标识）
+function getSaOrder(){try{return JSON.parse(localStorage.getItem('gangstar_sa_order')||'{}');}catch(e){return {};}}
+function setSaOrder(date,pids){const o=getSaOrder();if(!pids||!pids.length)delete o[date];else o[date]=pids;localStorage.setItem('gangstar_sa_order',JSON.stringify(o));}
+function sortSaPosts(posts,date){const ord=getSaOrder()[date];if(!ord||!ord.length)return posts;const idx={};ord.forEach((p,i)=>idx[p]=i);return posts.slice().sort((a,b)=>{const ia=(a.pid in idx)?idx[a.pid]:1e9;const ib=(b.pid in idx)?idx[b.pid]:1e9;return ia-ib;});}
 (function bindSaDrag(){
   const root=document.getElementById('southAsiaView');
   if(!root) return;
@@ -1101,12 +1109,14 @@ function getSaMoves(){
     const item=h.closest('.sa-post');
     if(!item||!item.getAttribute('data-pid')) return;
     e.preventDefault(); e.stopPropagation();
+    const cell0=item.closest('.sa-cell')?item.closest('.sa-cell'):null;
+    const originDate=cell0?cell0.getAttribute('data-date'):'';
     const rect=item.getBoundingClientRect();
     const ghost=item.cloneNode(true);
     ghost.classList.add('drag-ghost');
     ghost.style.width=rect.width+'px';
     document.body.appendChild(ghost);
-    drag={pid:item.getAttribute('data-pid'),ruid:item.getAttribute('data-ruid')||'',item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
+    drag={pid:item.getAttribute('data-pid'),ruid:item.getAttribute('data-ruid')||'',date:originDate,item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
     item.classList.add('dragging');
     document.body.style.userSelect='none';
     moveGhost(e.clientX,e.clientY);
@@ -1123,14 +1133,35 @@ function getSaMoves(){
     if(drag.cell&&drag.cell!==cell) drag.cell.classList.remove('drop-over');
     if(cell) cell.classList.add('drop-over');
     drag.cell=cell;
+    if(cell && cell.getAttribute('data-date')===drag.date){
+      cell.querySelectorAll('.sa-post.rb,.sa-post.ra').forEach(x=>x.classList.remove('rb','ra'));
+      const sp=[...cell.querySelectorAll('.sa-post')].filter(x=>x!==drag.item);
+      let tgt=null;
+      for(const p of sp){const r=p.getBoundingClientRect();if(e.clientY<r.top+r.height/2){tgt=p;break;}}
+      if(tgt) tgt.classList.add('rb'); else if(sp.length){sp[sp.length-1].classList.add('ra');}
+    }else{
+      root.querySelectorAll('.sa-post.rb,.sa-post.ra').forEach(x=>x.classList.remove('rb','ra'));
+    }
   },{passive:false});
 
   document.addEventListener('pointerup',e=>{
     if(!drag) return;
-    const cell=drag.cell, pid=drag.pid, ruid=drag.ruid, moved=drag.moved;
+    const cell=drag.cell, pid=drag.pid, ruid=drag.ruid, moved=drag.moved, od=drag.date, di=drag.item;
     cleanup();
     if(!cell||!moved) return;
     const target=cell.getAttribute('data-date');
+    if(target===od){
+      pushUndo();
+      const c=root.querySelector('.sa-cell[data-date="'+target+'"]');
+      const sp=[...c.querySelectorAll('.sa-post')].filter(x=>x!==di);
+      let beforePid=null;
+      for(const p of sp){const r=p.getBoundingClientRect();if(e.clientY<r.top+r.height/2){beforePid=p.getAttribute('data-pid');break;}}
+      let seq=sp.map(x=>x.getAttribute('data-pid'));
+      if(beforePid===null) seq.push(pid); else{const i=seq.indexOf(beforePid);if(i<0)seq.push(pid);else seq.splice(i,0,pid);}
+      setSaOrder(target,seq);
+      renderSouthAsia();
+      return;
+    }
     if(!target) return;
     pushUndo();
     if(ruid){
@@ -1254,7 +1285,7 @@ function renderSouthAsia(){
     const cells=w.cells.map(c=>{
       const isLaunch=c.date===hq.launch;
       const isToday=(c.date===today);
-      const posts=[];
+      let posts=[];
       // HQ 公线素材
       if(saActive.has('hq')){
         (hqByDate[c.date]||[]).forEach(hp=>{
@@ -1285,6 +1316,7 @@ function renderSouthAsia(){
           regCnt++;
         }
       });
+      posts=sortSaPosts(posts,c.date);
       const body=posts.length?posts.map(p=>{
         const badge=`<span class="t" style="background:${p.badge.color}">${esc(p.badge.name)}</span>`;
         const timeHtml=p.time?`<span class="sa-mtime">${esc(p.time)}</span>`:'';
@@ -1650,6 +1682,10 @@ function getRegionMoves(){
   try{return JSON.parse(localStorage.getItem('gangstar_regional_moves')||'{}');}catch(e){return {};}
 }
 function regionUid(range,date,it,i){return range+'|'+date+'|'+it.type+'|'+it.title+'|'+(i||0);}
+// 单日排序：区域周历按「日期 -> [uid 序列]」记忆（跨类型行完整序列）
+function getRegOrder(){try{return JSON.parse(localStorage.getItem('gangstar_regional_order')||'{}');}catch(e){return {};}}
+function setRegOrder(date,pids){const o=getRegOrder();if(!pids||!pids.length)delete o[date];else o[date]=pids;localStorage.setItem('gangstar_regional_order',JSON.stringify(o));}
+function sortRegItems(arr,date){const ord=getRegOrder()[date];if(!ord||!ord.length)return arr;const idx={};ord.forEach((u,i)=>idx[u]=i);return arr.slice().sort((a,b)=>{const ia=(a.uid in idx)?idx[a.uid]:1e9;const ib=(b.uid in idx)?idx[b.uid]:1e9;return ia-ib;});}
 
 // ===== 区域素材统一状态（两表共享）=====
 function getRegionHidden(){try{return new Set(JSON.parse(localStorage.getItem('gangstar_hidden')||'[]'));}catch(e){return new Set();}}
@@ -1660,7 +1696,7 @@ function getReqSubmitted(){try{return JSON.parse(localStorage.getItem('gangstar_
 function toggleReq(uid){pushUndo();const m=getReqSubmitted();if(m[uid])delete m[uid];else m[uid]=true;localStorage.setItem('gangstar_req_submitted',JSON.stringify(m));renderSouthAsia();renderRegional();}
 
 // ===== 全局撤销：快照整个本地状态，覆盖所有表的所有操作 =====
-const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target','gangstar_req_submitted'];
+const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target','gangstar_req_submitted','gangstar_sa_order','gangstar_regional_order'];
 function snapshotApp(){const o={};UNDO_KEYS.forEach(k=>{try{o[k]=localStorage.getItem(k);}catch(e){o[k]=null;}});return o;}
 function pushUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}s.push(snapshotApp());if(s.length>50)s=s.slice(-50);localStorage.setItem('gangstar_undo',JSON.stringify(s));}
 function doUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}if(!s.length){saToast('没有可撤销的操作');return;}const snap=s.pop();localStorage.setItem('gangstar_undo',JSON.stringify(s));UNDO_KEYS.forEach(k=>{if(snap[k]===null||snap[k]===undefined)localStorage.removeItem(k);else try{localStorage.setItem(k,snap[k]);}catch(e){}});renderSouthAsia();renderRegional();saToast('已撤销 ⌘Z');}
@@ -1761,7 +1797,8 @@ function renderRegional(){
     const usedTypes=CONTENT_TYPES.filter(t=>typeCount[t.key]>0);
     const rowsHtml=usedTypes.map(t=>{
       const cells=week.days.map(d=>{
-        const dayItems=(items[d.date]||[]).filter(x=>{const tp=(x.ov&&x.ov.type)?x.ov.type:x.it.type;return tp===t.key;});
+        let dayItems=(items[d.date]||[]).filter(x=>{const tp=(x.ov&&x.ov.type)?x.ov.type:x.it.type;return tp===t.key;});
+        dayItems=sortRegItems(dayItems,d.date);
         const cellContent=dayItems.map(x=>{
           const o=x.it, ov=x.ov, uid=x.uid, can=x.can, isCustom=x.isCustom;
           const tp=(ov&&ov.type)?ov.type:o.type;
@@ -1796,7 +1833,7 @@ function renderRegional(){
 
   el.innerHTML=`
     <h2>📝 区域素材周历</h2>
-    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材 · 卡片可拖拽改日期 · 增删 / 移动 / 划线 / 编辑 与「南亚社群排期」实时同步</div>
+    <div class="sub">区域社媒素材排期追踪 · 电竞 / meme / KOC / 社群等 7 类素材 · 卡片可拖拽改日期 · 同日内可拖拽重排 · 增删 / 移动 / 划线 / 编辑 与「南亚社群排期」实时同步</div>
     ${weeksHtml}
   `;
   // 绑定区域素材操作（编辑 / 划线 / 删除 / 添加）—— 与南亚社群排期共用同一份本地状态
@@ -1853,12 +1890,14 @@ function renderRegional(){
     const item=h.closest('.item');
     if(!item||!item.getAttribute('data-uid')) return;
     e.preventDefault();
+    const cell0=item.closest('.cell');
+    const originDate=cell0?cell0.getAttribute('data-date'):'';
     const rect=item.getBoundingClientRect();
     const ghost=item.cloneNode(true);
     ghost.classList.add('drag-ghost');
     ghost.style.width=rect.width+'px';
     document.body.appendChild(ghost);
-    drag={uid:item.getAttribute('data-uid'),item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
+    drag={uid:item.getAttribute('data-uid'),date:originDate,item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
     item.classList.add('dragging');
     document.body.style.userSelect='none';
     moveGhost(e.clientX,e.clientY);
@@ -1875,14 +1914,40 @@ function renderRegional(){
     if(drag.cell&&drag.cell!==cell) drag.cell.classList.remove('drop-over');
     if(cell) cell.classList.add('drop-over');
     drag.cell=cell;
+    if(cell && cell.getAttribute('data-date')===drag.date){
+      cell.querySelectorAll('.item.rb,.item.ra').forEach(x=>x.classList.remove('rb','ra'));
+      const sp=[...cell.querySelectorAll('.item')].filter(x=>x!==drag.item);
+      let tgt=null;
+      for(const p of sp){const r=p.getBoundingClientRect();if(e.clientY<r.top+r.height/2){tgt=p;break;}}
+      if(tgt) tgt.classList.add('rb'); else if(sp.length){sp[sp.length-1].classList.add('ra');}
+    }else{
+      rv.querySelectorAll('.item.rb,.item.ra').forEach(x=>x.classList.remove('rb','ra'));
+    }
   },{passive:false});
 
   document.addEventListener('pointerup',e=>{
     if(!drag) return;
-    const cell=drag.cell, uid=drag.uid, moved=drag.moved;
+    const cell=drag.cell, uid=drag.uid, moved=drag.moved, od=drag.date, di=drag.item;
     cleanup();
     if(!cell||!moved) return;
     const target=cell.getAttribute('data-date');
+    if(target===od){
+      pushUndo();
+      const c=rv.querySelector('.cell[data-date="'+target+'"]');
+      const it=[...c.querySelectorAll('.item')].filter(x=>x.getAttribute('data-uid')!==uid);
+      let beforeUid=null;
+      for(const p of it){const r=p.getBoundingClientRect();if(e.clientY<r.top+r.height/2){beforeUid=p.getAttribute('data-uid');break;}}
+      let seq=[];
+      rv.querySelectorAll('.cal-row').forEach(row=>{
+        const cc=row.querySelector('.cell[data-date="'+target+'"]');
+        if(!cc) return;
+        cc.querySelectorAll('.item').forEach(x=>{const u=x.getAttribute('data-uid');if(u!==uid) seq.push(u);});
+      });
+      if(beforeUid===null) seq.push(uid); else{const i=seq.indexOf(beforeUid);if(i<0)seq.push(uid);else seq.splice(i,0,uid);}
+      setRegOrder(target,seq);
+      renderRegional();
+      return;
+    }
     if(!target) return;
     pushUndo();
     const orig=(uid.split('|')[1])||'';
