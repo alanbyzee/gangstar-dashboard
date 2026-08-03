@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 2791,
+      "value": 2795,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-03）；8/1–8/3 增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
@@ -57,7 +57,7 @@
         },
         {
           "date": "2026-08-03",
-          "value": 2791
+          "value": 2795
         }
       ]
     },
@@ -249,7 +249,10 @@
           "date": "2026-08-01",
           "value": 658
         },
-        {"date": "2026-08-02", "value": 1040},
+        {
+          "date": "2026-08-02",
+          "value": 1040
+        },
         {
           "date": "2026-08-03",
           "value": 1220
@@ -279,6 +282,10 @@
         },
         {
           "date": "2026-08-02",
+          "value": 24
+        },
+        {
+          "date": "2026-08-03",
           "value": 24
         }
       ]
