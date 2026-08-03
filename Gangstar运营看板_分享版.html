@@ -193,7 +193,7 @@ body{
 .item .drag-handle:hover{background:#f59e0b;border-color:#f59e0b;color:#fff;transform:scale(1.08)}
 .item .drag-handle:active{cursor:grabbing}
 .item.dragging{opacity:.3}
-.drag-ghost{position:fixed !important;margin:0 !important;pointer-events:none;z-index:9999;opacity:.96;box-shadow:0 12px 28px rgba(0,0,0,.2);transform:rotate(-1.5deg);background:#fff}
+.drag-ghost{position:fixed !important;left:0;top:0;margin:0 !important;pointer-events:none;z-index:9999;opacity:.96;box-shadow:0 12px 28px rgba(0,0,0,.2);transform:rotate(-1.5deg);background:#fff;transition:none !important;will-change:transform}
 .cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-3px}
 .item:hover{box-shadow:0 4px 14px rgba(16,24,40,.09);transform:translateY(-1px)}
 .item .item-acts{position:absolute;top:3px;right:26px;display:flex;gap:1px;opacity:0;transition:.12s;z-index:3}
@@ -2289,12 +2289,18 @@ function sortSaPosts(posts,date){const ord=getSaOrder()[date];if(!ord||!ord.leng
   }
   function moveGhost(x,y){
     if(!drag) return;
-    drag.ghost.style.left=(x-drag.dx)+'px';
-    drag.ghost.style.top=(y-drag.dy)+'px';
+    drag.gx=x-drag.dx; drag.gy=y-drag.dy;
+    if(!drag.raf){
+      drag.raf=requestAnimationFrame(function(){
+        drag.raf=0;
+        drag.ghost.style.transform='translate3d('+drag.gx+'px,'+drag.gy+'px,0) rotate(-1.5deg)';
+      });
+    }
   }
   function cleanup(){
     if(!drag) return;
     const d=drag; drag=null;
+    if(d.raf) cancelAnimationFrame(d.raf);
     if(d.ghost&&d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
     d.item.classList.remove('dragging');
     if(d.cell) d.cell.classList.remove('drop-over');
@@ -2315,9 +2321,13 @@ function sortSaPosts(posts,date){const ord=getSaOrder()[date];if(!ord||!ord.leng
     const ghost=item.cloneNode(true);
     ghost.classList.add('drag-ghost');
     ghost.style.width=rect.width+'px';
+    ghost.style.left='0px'; ghost.style.top='0px';
+    ghost.style.transform='translate3d(0,0,0)';
+    ghost.style.willChange='transform';
     document.body.appendChild(ghost);
-    drag={pid:item.getAttribute('data-pid'),ruid:item.getAttribute('data-ruid')||'',date:originDate,item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
+    drag={pid:item.getAttribute('data-pid'),ruid:item.getAttribute('data-ruid')||'',date:originDate,item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false,raf:0,gx:0,gy:0};
     item.classList.add('dragging');
+    try{h.setPointerCapture(e.pointerId);}catch(_){}
     document.body.style.userSelect='none';
     moveGhost(e.clientX,e.clientY);
   });
@@ -2327,9 +2337,7 @@ function sortSaPosts(posts,date){const ord=getSaOrder()[date];if(!ord||!ord.leng
     e.preventDefault();
     drag.moved=true;
     moveGhost(e.clientX,e.clientY);
-    drag.ghost.style.visibility='hidden';
     const cell=cellAt(e.clientX,e.clientY);
-    drag.ghost.style.visibility='';
     if(drag.cell&&drag.cell!==cell) drag.cell.classList.remove('drop-over');
     if(cell) cell.classList.add('drop-over');
     drag.cell=cell;
@@ -3070,12 +3078,18 @@ function renderRegional(){
   }
   function moveGhost(x,y){
     if(!drag) return;
-    drag.ghost.style.left=(x-drag.dx)+'px';
-    drag.ghost.style.top=(y-drag.dy)+'px';
+    drag.gx=x-drag.dx; drag.gy=y-drag.dy;
+    if(!drag.raf){
+      drag.raf=requestAnimationFrame(function(){
+        drag.raf=0;
+        drag.ghost.style.transform='translate3d('+drag.gx+'px,'+drag.gy+'px,0) rotate(-1.5deg)';
+      });
+    }
   }
   function cleanup(){
     if(!drag) return;
     const d=drag; drag=null;
+    if(d.raf) cancelAnimationFrame(d.raf);
     if(d.ghost&&d.ghost.parentNode) d.ghost.parentNode.removeChild(d.ghost);
     d.item.classList.remove('dragging');
     if(d.cell) d.cell.classList.remove('drop-over');
@@ -3096,9 +3110,13 @@ function renderRegional(){
     const ghost=item.cloneNode(true);
     ghost.classList.add('drag-ghost');
     ghost.style.width=rect.width+'px';
+    ghost.style.left='0px'; ghost.style.top='0px';
+    ghost.style.transform='translate3d(0,0,0)';
+    ghost.style.willChange='transform';
     document.body.appendChild(ghost);
-    drag={uid:item.getAttribute('data-uid'),date:originDate,item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false};
+    drag={uid:item.getAttribute('data-uid'),date:originDate,item:item,ghost:ghost,dx:e.clientX-rect.left,dy:e.clientY-rect.top,cell:null,moved:false,raf:0,gx:0,gy:0};
     item.classList.add('dragging');
+    try{h.setPointerCapture(e.pointerId);}catch(_){}
     document.body.style.userSelect='none';
     moveGhost(e.clientX,e.clientY);
   });
@@ -3108,9 +3126,7 @@ function renderRegional(){
     e.preventDefault();
     drag.moved=true;
     moveGhost(e.clientX,e.clientY);
-    drag.ghost.style.visibility='hidden';
     const cell=cellFromPoint(e.clientX,e.clientY);
-    drag.ghost.style.visibility='';
     if(drag.cell&&drag.cell!==cell) drag.cell.classList.remove('drop-over');
     if(cell) cell.classList.add('drop-over');
     drag.cell=cell;
