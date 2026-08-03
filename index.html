@@ -1633,6 +1633,7 @@ window.HQ_DATA = {
 ;
 
 </script>
+<script src="./hq_data.js"></script>
 <script>
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
@@ -2205,7 +2206,28 @@ function setStatus(text,type){
   statusEl.textContent=text;statusEl.className='status show '+type;
 }
 
+const SHARED = location.hostname.endsWith('github.io');
 btn.onclick=async()=>{
+  btn.disabled=true;btn.classList.add('loading');
+  // 公网版（GitHub Pages）：无本地爬虫，刷新 = 重新拉取仓库内最新 fan_data.json
+  if(SHARED){
+    setStatus('⏳ 正在拉取最新粉丝数据…','info');
+    try{
+      const r=await fetch('./fan_data.json?t='+Date.now(),{cache:'no-store'});
+      if(r.ok){
+        const nd=await r.json();
+        lastData=nd;renderFans(nd);
+        btn.disabled=false;btn.classList.remove('loading');
+        setStatus('✅ 已同步至 '+nd.updated_at,'ok');
+        showToast('✅ 粉丝数据已同步\nIG: '+fmt(nd.platforms.instagram.value)+' | FB: '+fmt(nd.platforms.facebook.value)+' | YTB: '+fmt(nd.platforms.youtube.value),'ok');
+      }else{ throw new Error('HTTP '+r.status); }
+    }catch(e){
+      btn.disabled=false;btn.classList.remove('loading');
+      setStatus('⚠️ 拉取失败，请稍后重试','err');
+    }
+    return;
+  }
+  // ===== 以下为本地版（连接后台爬虫）逻辑 =====
   // 1. 进入加载态
   btn.disabled=true;btn.classList.add('loading');
   setStatus('⏳ 正在连接刷新服务…','info');
