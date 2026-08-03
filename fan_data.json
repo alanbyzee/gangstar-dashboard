@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-08-03",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
@@ -120,10 +120,10 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1040,
+      "value": 1220,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-02 晚）",
+      "note": "数据来源：用户截图校准（2026-08-03）",
       "history": [
         {
           "date": "2026-07-02",
@@ -241,9 +241,10 @@
           "date": "2026-08-01",
           "value": 658
         },
+        {"date": "2026-08-02", "value": 1040},
         {
-          "date": "2026-08-02",
-          "value": 1040
+          "date": "2026-08-03",
+          "value": 1220
         }
       ]
     },

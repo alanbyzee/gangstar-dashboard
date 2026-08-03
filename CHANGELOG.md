@@ -161,3 +161,12 @@
 - **拖到别的日期**：仍走原「改日期」逻辑，行为不变
 - **测试**：无头浏览器双测 PASS（逻辑排序生效+跨重渲染保持；真实手柄拖拽→localStorage 写入一致；0 报错）
 - 主看板 + 分享版同步
+
+### 2026-08-03 ｜ 拖拽跟手优化
+- 用户反馈拖拽「不跟手」，定位三处根因并修复：
+  1. `pointermove` 每帧 `ghost.style.visibility` 来回切换 + `elementsFromPoint` 触发整页同步重排 → 主线程掉帧；改为依赖 ghost `pointer-events:none` 直接命中，去掉 reflow
+  2. ghost 原用 `left/top` 定位（每次改值触发 layout）→ 改为 `transform: translate3d(...)` GPU 合成层，并加 `transition:none !important; will-change:transform` 杜绝继承过渡拖影
+  3. 位置更新包 `requestAnimationFrame` 合并；`pointerdown` 加 `setPointerCapture(e.pointerId)` 兜底快速拖动丢事件；`cleanup` 取消挂起 rAF 防幽灵回调
+- 验证：无头浏览器真实鼠标拖拽 → ghost 用 translate3d 跟手、同日内重排顺序正确写入 localStorage 且 DOM 同步、0 报错
+- 主看板 + 分享版同步（两文件 JS 一致），已 commit
+- 已知边界：拖到可视区之外的目标单元格因 `elementsFromPoint` 视口限制暂不命中；如需「拖到屏幕边缘自动滚动」可后续追加（本次未做，避免功能膨胀）
