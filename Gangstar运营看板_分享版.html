@@ -2779,7 +2779,10 @@ function openAddModal(date){
   modalChangedGuard(bg);
   // hashtag 芯片点击切换
   bg.querySelector('.ht-row').addEventListener('click',e=>{
-    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+    if(e.target.classList.contains('ht-chip')){
+      if(e.target.classList.contains('ht-active')) e.target.remove();
+      else e.target.classList.add('ht-active');
+    }
   });
   // 自定义标签：回车即时变成可点选 chip
   const htInput=bg.querySelector('#ht-custom');
@@ -2850,7 +2853,10 @@ function openEditModal(pid){
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
   bg.querySelector('.ht-row').addEventListener('click',e=>{
-    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+    if(e.target.classList.contains('ht-chip')){
+      if(e.target.classList.contains('ht-active')) e.target.remove();
+      else e.target.classList.add('ht-active');
+    }
   });
   // 自定义标签：回车即时变成可点选 chip
   const htInput=bg.querySelector('#ht-custom');
@@ -3122,7 +3128,10 @@ function openRegionEditModal(uid){
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
   bg.querySelector('.ht-row').addEventListener('click',e=>{
-    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+    if(e.target.classList.contains('ht-chip')){
+      if(e.target.classList.contains('ht-active')) e.target.remove();
+      else e.target.classList.add('ht-active');
+    }
   });
   // 自定义标签：回车即时变成可点选 chip
   const htInput=bg.querySelector('#ht-custom');
