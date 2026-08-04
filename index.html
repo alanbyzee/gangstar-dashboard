@@ -1916,17 +1916,17 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-08-04",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 2791,
+      "value": 2925,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-01 晚 / 2026-08-02）；8/1–8/3 增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
+      "note": "数据来源：用户截图校准（2026-08-04 下午）；80帖子；8/1–8/4 增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
       "history": [
         {
           "date": "2026-07-02",
@@ -1974,7 +1974,11 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-03",
-          "value": 2791
+          "value": 2829
+        },
+        {
+          "date": "2026-08-04",
+          "value": 2925
         }
       ]
     },
@@ -1982,10 +1986,10 @@ const FALLBACK_DATA = {
       "name": "Facebook",
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 48,
+      "value": 107,
       "label": "关注者",
       "color": "#1877F2",
-      "note": "数据来源：用户截图校准",
+      "note": "数据来源：用户截图校准（2026-08-04 下午）",
       "history": [
         {
           "date": "2026-07-02",
@@ -2037,7 +2041,11 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-03",
-          "value": 48
+          "value": 80
+        },
+        {
+          "date": "2026-08-04",
+          "value": 107
         }
       ]
     },
@@ -2045,10 +2053,10 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1220,
+      "value": 1240,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-01 晚）",
+      "note": "数据来源：用户截图校准（2026-08-04 下午）；32个视频",
       "history": [
         {
           "date": "2026-07-02",
@@ -2168,7 +2176,15 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-02",
+          "value": 1040
+        },
+        {
+          "date": "2026-08-03",
           "value": 1220
+        },
+        {
+          "date": "2026-08-04",
+          "value": 1240
         }
       ]
     },
@@ -2176,7 +2192,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 24,
+      "value": 25,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -2196,11 +2212,19 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-02",
           "value": 24
+        },
+        {
+          "date": "2026-08-03",
+          "value": 25
+        },
+        {
+          "date": "2026-08-04",
+          "value": 25
         }
       ]
     }
   }
-};;;;
+};;;;;
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
