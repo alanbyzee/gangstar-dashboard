@@ -2788,6 +2788,7 @@ function openAddModal(date){
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
     const hashtags=collectHashtags();
+          recordHashtagUsage(hashtags);
     pushUndo();
     try{
       const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
@@ -2842,6 +2843,7 @@ function openEditModal(pid){
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
     const hashtags=collectHashtags();
+          recordHashtagUsage(hashtags);
     try{
       const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');
       pushUndo();
@@ -2904,12 +2906,27 @@ const HASHTAG_PRESETS=[
 // 构建 Hashtag 选择器 HTML（返回 HTML 字符串，existing=已选数组）
 function buildHashtagPicker(existing){
   const sel=new Set((existing||[]).map(h=>h.toLowerCase()));
+  // 最近使用（7天内）置顶区
+  let recentHtml='';
+  try{
+    const KEY='gangstar_hashtag_history';
+    const hist=JSON.parse(localStorage.getItem(KEY)||'[]');
+    const cutoff=Date.now()-7*24*3600*1000;
+    const recent=hist.filter(h=>h.ts>=cutoff).sort((a,b)=>b.ts-a.ts).map(h=>h.tag);
+    if(recent.length){
+      const rc=recent.map(h=>{
+        const active=sel.has(h.toLowerCase())?' ht-active':'';
+        return `<span class="ht-chip${active}" data-tag="${esc(h)}">${esc(h)}</span>`;
+      }).join('');
+      recentHtml=`<label class="ht-recent-label">最近使用（7天内）</label><div class="ht-chips ht-recent" id="ht-recent">${rc}</div>`;
+    }
+  }catch(e){}
   const chips=HASHTAG_PRESETS.map(h=>{
     const active=sel.has(h.toLowerCase())?' ht-active':'';
-    return `<span class="ht-chip${active}" data-tag="${h}">${h}</span>`;
+    return `<span class="ht-chip${active}" data-tag="${esc(h)}">${esc(h)}</span>`;
   }).join('');
   const vals=(existing||[]).filter(h=>!HASHTAG_PRESETS.some(p=>p.toLowerCase()===h.toLowerCase())).join(', ');
-  return `<div class="ht-row"><label>Hashtag（选填，点击选择）</label>
+  return `<div class="ht-row">${recentHtml}<label>Hashtag（选填，点击选择）</label>
     <div class="ht-chips" id="ht-pool">${chips}</div>
     <input type="text" id="ht-custom" placeholder="自定义标签，回车添加" value="${esc(vals)}">
   </div>`;
@@ -2917,10 +2934,29 @@ function buildHashtagPicker(existing){
 
 // 从弹窗 DOM 收集已选 Hashtags（返回数组）
 function collectHashtags(){
-  const chips=[...document.querySelectorAll('#ht-pool .ht-active')].map(el=>el.dataset.tag);
+  const chips=[...document.querySelectorAll('#ht-pool .ht-active, #ht-recent .ht-active')].map(el=>el.dataset.tag);
   const custom=document.getElementById('ht-custom').value.trim();
   if(custom) custom.split(/[,，]/).forEach(h=>{ h=h.trim(); if(h){ if(!h.startsWith('#'))h='#'+h; chips.push(h); }});
   return chips;
+}
+
+// 记录使用过的 hashtag（写入 localStorage，自动经 Firebase 同步多端；保留 7 天）
+function recordHashtagUsage(tags){
+  try{
+    const KEY='gangstar_hashtag_history';
+    let hist=[];
+    try{ hist=JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ hist=[]; }
+    const now=Date.now();
+    (tags||[]).forEach(t=>{
+      t=(t||'').trim(); if(!t) return;
+      if(!t.startsWith('#')) t='#'+t;
+      const i=hist.findIndex(h=>h.tag.toLowerCase()===t.toLowerCase());
+      if(i>=0) hist[i].ts=now; else hist.push({tag:t,ts:now});
+    });
+    const cutoff=now-7*24*3600*1000;
+    hist=hist.filter(h=>h.ts>=cutoff);
+    localStorage.setItem(KEY,JSON.stringify(hist));
+  }catch(e){}
 }
 
 // 本周（Week 5: 07/27 ~ 08/02）已发素材数据 —— 从用户截图录入
@@ -3062,6 +3098,7 @@ function openRegionEditModal(uid){
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
     const hashtags=collectHashtags();
+          recordHashtagUsage(hashtags);
     pushUndo();
     try{const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');all[uid]={title,type,partner,desc,hashtags};localStorage.setItem('gangstar_edits',JSON.stringify(all));}catch(e){}
     bg.remove();renderRegional();
@@ -3321,7 +3358,7 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
   "use strict";
   var FB_CFG={apiKey:"AIzaSyCU4pqZzcGM13zR-Yc0I-2qhDYNIbASAkI",authDomain:"gstmin.firebaseapp.com",databaseURL:"https://gstmin-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"gstmin",storageBucket:"gstmin.firebasestorage.app",messagingSenderId:"163766920498",appId:"1:163766920498:web:c27803c6d5fdb96663232b",measurementId:"G-DMKRPT1Z2H"};
   var SYNC_PATH="gangstar/state";
-  var SYNC_KEYS=["gangstar_sa_moves","gangstar_regional_moves","gangstar_hidden","gangstar_cancelled","gangstar_edits","gangstar_custom","gangstar_fan_target","gangstar_req_submitted","gangstar_sa_order","gangstar_regional_order"];
+  var SYNC_KEYS=["gangstar_sa_moves","gangstar_regional_moves","gangstar_hidden","gangstar_cancelled","gangstar_edits","gangstar_custom","gangstar_fan_target","gangstar_req_submitted","gangstar_sa_order","gangstar_regional_order","gangstar_hashtag_history"];
   var MY_ID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   var fbRef=null,fbReady=false,saveTimer=null;
   var _set=localStorage.setItem.bind(localStorage);

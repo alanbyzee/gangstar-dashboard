@@ -11,6 +11,15 @@
 - **校验**：提取内联 JS 语法检查 PASS（SYNTAX_OK）；部署 GitHub Pages 后公网已确认上线（raw 源 + Pages 均含 HASHTAG_PRESETS 代码）
 - 主看板 + 分享版均已 git commit
 
+### 2026-08-04 ｜ 新增 hashtag「7天最近使用」记忆（多端同步）
+- **需求**：用过的 hashtag（尤其自定义输入）在接下来 7 天内保留，在添加/编辑素材弹窗顶部「最近使用」区直接点选，免重复手打
+- **实现**：新增 `recordHashtagUsage(tags)` —— 每次保存素材时把用过的 tag（带时间戳）写入 `gangstar_hashtag_history`；`buildHashtagPicker` 读取并按时间倒序在顶部渲染「最近使用（7天内）」区；`collectHashtags` 同时收集预设池(#ht-pool)与最近使用池(#ht-recent)
+- **7天过期**：写入和读取时都按 `now-7d` 过滤，超期自动剔除
+- **多端同步**：将 `gangstar_hashtag_history` 加入 Firebase 同步键 `SYNC_KEYS`（经现有 setItem 包装自动上云、多端秒级同步）；**未**加入 `UNDO_KEYS`，避免 ⌘Z 撤销素材时误伤常用 tag 历史
+- **样式**：新增 `.ht-recent`（浅紫虚线框）+ `.ht-recent-label`（紫色小标题）
+- **校验**：两文件 JS 语法 PASS；无头浏览器测试 PASS（函数已定义 / 最近使用区渲染 / 记录写入与合并 / 7天过期过滤均正确）；已部署 GitHub Pages 公网生效（公网 HTML 含 gangstar_hashtag_history 代码）
+- 主看板 + 分享版同步、已 git commit
+
 ### 2026-08-03 ｜ 看板接入 Firebase 实时同步（所有编辑状态多端秒级同步）
 - **背景**：此前「同步」只推送了排期源文件(hq_data.js)和粉丝(fan_data.json)；用户真正手改的东西（链接/排序/描述/隐藏划线/确认格子/自定义素材等）全在各自浏览器 localStorage，从不上传 → 多端不同步
 - **方案**：接入 Firebase Realtime Database（项目 `gstmin`，路径 `gangstar/state`）
