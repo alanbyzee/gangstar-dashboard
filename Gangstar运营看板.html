@@ -175,7 +175,7 @@ body{
 .m-up{color:var(--ok)}.m-down{color:var(--err)}.m-flat{color:#9ca3af}
 
 /* ===== 区域素材周历 ===== */
-.regional{padding:22px 24px 44px;max-width:1280px;margin:0 auto}
+.regional{padding:22px 24px 44px;max-width:1280px;margin:0 auto;position:relative}
 .regional h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .regional .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
 /* 周历表头 */
@@ -254,7 +254,16 @@ body{
 
 /* ===== 区域素材周历 · 响应式（随窗口尺寸自适应排版）===== */
 /* 周历容器常开横向滚动：小窗口保持固定列宽，允许左右滑动查看 */
-.regional-week{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.regional-week{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:thin;scrollbar-color:#cbd5e0 transparent}
+.regional-week::-webkit-scrollbar{height:11px}
+.regional-week::-webkit-scrollbar-track{background:#f1f5f9;border-radius:6px}
+.regional-week::-webkit-scrollbar-thumb{background:#cbd5e0;border-radius:6px;border:2px solid #f1f5f9}
+.regional-week::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+/* 横滑箭头：鼠标点击左右滑动（小窗口查看当周被裁切的日期） */
+.cal-arrows{position:absolute;right:16px;bottom:16px;z-index:9;display:flex;gap:6px}
+.cal-arrow{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow-md);font-size:20px;line-height:1;color:#475569;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.cal-arrow:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.cal-arrow:active{transform:scale(.94)}
 .cal-head,.cal-body{grid-template-columns:140px repeat(7,minmax(122px,1fr));min-width:1024px}
 @media (max-width:1080px){
   .regional{padding:18px 16px 36px}
@@ -2144,6 +2153,20 @@ function renderRegional(){
   el.querySelectorAll('.item .req-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReq(b.dataset.uid);});
   el.querySelectorAll('.item .iact.delay').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDelay(b.dataset.uid);});
   el.querySelectorAll('.reg-add').forEach(b=>b.onclick=()=>openAddModal(b.dataset.date));
+  // 横滑箭头：鼠标点击左右滑动周历（小窗口查看当周被裁切的日期）
+  let arrows=el.querySelector('.cal-arrows');
+  if(!arrows){
+    arrows=document.createElement('div');
+    arrows.className='cal-arrows';
+    arrows.innerHTML='<button class="cal-arrow" data-dir="-1" title="向左滑动">‹</button><button class="cal-arrow" data-dir="1" title="向右滑动">›</button>';
+    el.appendChild(arrows);
+    arrows.querySelectorAll('.cal-arrow').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const w=el.querySelector('.regional-week');
+        if(w) w.scrollBy({left:(parseInt(btn.dataset.dir)||1)*Math.max(300,w.clientWidth*0.6),behavior:'smooth'});
+      });
+    });
+  }
 }
 
 // 区域素材拖拽改日期（按住卡片右上角手柄 · Pointer Events 实现，兼容性更好）
