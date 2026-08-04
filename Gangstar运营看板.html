@@ -223,9 +223,8 @@ body{
 .req-box.on{color:#6aab54}
 .req-box.on .mk{background:#58a83c;border-color:#58a83c;color:#fff}
 /* 延期 / Delay：整卡高亮 + 半透明脉动覆盖层（点右上角「延」按钮触发） */
-.sa-post.delayed,.item.delayed{border:1.5px solid #b6bcc6 !important;background:rgba(140,140,140,.12) !important;box-shadow:0 0 0 1px rgba(140,140,140,.20)}
-.sa-post.delayed::after,.item.delayed::after{content:"DELAY";position:absolute;inset:0;border-radius:inherit;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;letter-spacing:3px;color:rgba(60,60,60,.92);background:rgba(140,140,140,.38);pointer-events:none;z-index:2;animation:delayPulse 1.8s ease-in-out infinite}
-@keyframes delayPulse{0%,100%{background:rgba(140,140,140,.30);opacity:.9}50%{background:rgba(140,140,140,.45);opacity:1}}
+.sa-post.delayed,.item.delayed{border:1.5px solid #e53e3e !important;background:rgba(229,62,62,.08) !important}
+.delay-badge{display:inline-block;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:1px;line-height:1.4;vertical-align:middle;margin-right:5px}
 /* 卡片右上角「延」按钮，置于「划」旁 */
 .sa-post .act.delay{color:#cdb28a}
 .sa-post .act.delay:hover{color:#e8971f;background:#fbeedd}
@@ -1400,7 +1399,8 @@ function renderSouthAsia(){
         const delOn=!!p.pid&&!!dels[p.pid];
         const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span>`:'';
         const delCls=delOn?' delayed':'';
-        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act delay ${delOn?'on':''}" data-pid="${p.pid}" title="标记此素材为延期 / Delay">延</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
+        const delayBadge=delOn?'<span class="delay-badge">DELAY</span>':'';
+        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}>${delayBadge}<span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act delay ${delOn?'on':''}" data-pid="${p.pid}" title="标记此素材为延期 / Delay">延</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
         <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
@@ -2058,7 +2058,8 @@ function renderRegional(){
           const delOn=!!dels[uid];
           const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span></div>`;
           const delCls=delOn?' delayed':'';
-          return `<div class="item ${typeCls}${can?' cancelled':''}${delCls}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact delay ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay">延</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
+          const delayBadge=delOn?'<span class="delay-badge">DELAY</span>':'';
+          return `<div class="item ${typeCls}${can?' cancelled':''}${delCls}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts">${delayBadge}<span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact delay ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay">延</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
