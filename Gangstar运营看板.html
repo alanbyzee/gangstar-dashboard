@@ -342,7 +342,7 @@ body{
 .item.ra{box-shadow:inset 0 -3px 0 -1px #f59e0b!important}
 .sa-cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-2px}
 /* 模态框 */
-.sa-modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.4);backdrop-filter:blur(2px);z-index:9999;display:flex;align-items:center;justify-content:center;animation:sa-fade .15s}
+.sa-modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.4);backdrop-filter:blur(2px);z-index:9999;display:flex;align-items:center;justify-content:center;animation:sa-bg-in .15s ease}
 .sa-modal{background:#fff;border-radius:16px;padding:25px 29px;width:380px;max-width:90vw;box-shadow:var(--shadow-lg);animation:sa-pop .14s}
 .sa-modal h3{font-size:16px;font-weight:800;margin-bottom:16px;color:var(--ink)}
 .sa-modal label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;margin-top:12px}
@@ -372,6 +372,7 @@ body{
 @keyframes sa-fade{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .sa-popover{position:fixed;z-index:9999;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:15px 17px;width:330px;max-width:90vw;font-size:13px;line-height:1.7;color:var(--ink);animation:sa-pop .12s}
 @keyframes sa-pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sa-bg-in{from{opacity:0}to{opacity:1}}
 .sa-popover .pop-close{float:right;cursor:pointer;color:#cbd5e1;font-size:16px;line-height:1;margin-left:8px}
 .sa-popover .pop-close:hover{color:#64748b}
 .sa-popover .pop-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
