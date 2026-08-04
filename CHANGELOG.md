@@ -322,3 +322,10 @@
   - `renderSouthAsia` 模板用 `.sa-grid-wrap`(position:relative) 包 `.sa-grid` 并注入 `.sa-arrows`(‹ › 两按钮)，点击 `scrollBy(±max(300,clientWidth*0.6))` 平滑横滑。
 - 无头验证(Playwright 拦截 Firebase)：区域tab display:none；800px scrollW=980>clientW=748(可滑232)、箭头2个、点›scrollLeft 0→232；1300px overflow=0 铺满；仅2个拦截的ERR_FAILED(预期)。
 - 已部署公网+Pages重建(201)并轮询确认线上区域隐藏+SA箭头就位；git commit。
+
+### fix：SA周历右侧露白补齐（2026-08-05）
+- 用户反馈：缩小窗口横滑后，周历右侧箭头所指区域色块/边框未补齐（露白）。
+- 根因：`.sa-cells` 用 `minmax(140px,1fr)` 撑到 980px，但 `.sa-wband`（日期标题行 flex 布局）和 `.sa-week` 无 min-width 约束 → 标题行比格子窄 → 右侧露白。
+- 修复（两文件）：① `.sa-wband` 加 `min-width:max-content`；② `.sa-week` 加 `min-width:min-content`；③ `.sa-grid` 不加 min-width（避免容器自撑而不滚动）。
+- 无头验证：800px 下 week/wband/cells 三者宽度均为 980px（完全对齐）；grid scrollW=980>clientW=748（可横滑232px）；滚到最右 scrollLeft=232。
+- 已部署+Pages重建(201)并轮询确认线上含 min-width:max-content；git commit。
