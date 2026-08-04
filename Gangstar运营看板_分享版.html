@@ -223,9 +223,9 @@ body{
 .req-box.on{color:#6aab54}
 .req-box.on .mk{background:#58a83c;border-color:#58a83c;color:#fff}
 /* 延期 / Delay：整卡高亮标记（点右上角「延」按钮触发） */
-.sa-post.delayed,.item.delayed{border:1.5px solid #e8971f !important;background:rgba(232,151,31,.10) !important;box-shadow:0 0 0 1px rgba(232,151,31,.25)}
-.sa-post.delayed::after,.item.delayed::after{content:"DELAY";position:absolute;inset:0;border-radius:inherit;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;letter-spacing:3px;color:rgba(232,151,31,.92);background:rgba(232,151,31,.12);pointer-events:none;z-index:2;animation:delayPulse 1.8s ease-in-out infinite}
-@keyframes delayPulse{0%,100%{background:rgba(232,151,31,.08);opacity:.9}50%{background:rgba(232,151,31,.20);opacity:1}}
+.sa-post.delayed,.item.delayed{border:1.5px solid #b6bcc6 !important;background:rgba(140,140,140,.12) !important;box-shadow:0 0 0 1px rgba(140,140,140,.20)}
+.sa-post.delayed::after,.item.delayed::after{content:"DELAY";position:absolute;inset:0;border-radius:inherit;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;letter-spacing:3px;color:rgba(60,60,60,.92);background:rgba(140,140,140,.38);pointer-events:none;z-index:2;animation:delayPulse 1.8s ease-in-out infinite}
+@keyframes delayPulse{0%,100%{background:rgba(140,140,140,.30);opacity:.9}50%{background:rgba(140,140,140,.45);opacity:1}}
 /* 卡片右上角「延」按钮，置于「划」旁 */
 .sa-post .act.delay{color:#cdb28a}
 .sa-post .act.delay:hover{color:#e8971f;background:#fbeedd}
@@ -324,7 +324,7 @@ body{
 .sa-cell.is-today .sa-dhead>span:first-child{background:#c0896a;color:#fff;border-radius:5px;padding:1px 6px;font-size:12px;box-shadow:0 1px 4px rgba(192,137,106,.4)}
 .sa-cell.is-today .sa-dhead .dow{color:#c0896a;font-weight:800}
 .sa-cell.is-today .sa-add-btn:hover{background:#f3ddd0;color:#9c6b4f}
-.sa-post{border:1px solid #eef0f4;border-radius:10px;padding:9px 12px 9px 10px;background:#fff;margin-bottom:7px;box-shadow:0 1px 2px rgba(16,24,40,.03);transition:box-shadow .15s,.18s}
+.sa-post{border:1px solid #eef0f4;border-radius:10px;padding:9px 12px 9px 10px;background:#fff;margin-bottom:7px;box-shadow:0 1px 2px rgba(16,24,40,.03);transition:box-shadow .15s,.18s;position:relative}
 .sa-post:hover{box-shadow:0 3px 10px rgba(16,24,40,.08);transform:translateY(-1px)}
 .sa-post .t{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#94a3b8;border-radius:4px;padding:0 5px;margin-right:4px;vertical-align:1px}
 .sa-post .b{font-size:12.5px;color:var(--ink);word-break:break-word;font-weight:600;line-height:1.45}
