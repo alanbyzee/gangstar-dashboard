@@ -312,3 +312,13 @@
 - 无头验证（Playwright 拦截 Firebase）：800px 视口箭头存在、scrollW=1024>clientW=766；点 › scrollLeft 0→258（滑到最右），点 ‹ 回 0；0 报错。
 - 已部署公网+Pages重建(201)并轮询确认线上含 cal-arrow；git commit。
 - 说明：横滑是看**当周**被裁切的 7 天列；切换"更早/更晚的周"请用顶部「上一周/下一周」按钮（非横滑）。
+
+### fix：重新隐藏区域素材tab + 南亚社群排期横向滑动（2026-08-05）
+- 用户诉求：① 区域素材标签又显示出来了，要重新隐藏；② 第一个页面"南亚社群排期"缩小窗口后仍无法左右滑动查看日期。
+- 区域tab：两文件 `<div class="tab" data-view="regional">` 重新加 `style="display:none"`（注释可恢复）。
+- 南亚社群排期横滑（镜像区域页验证过的方案，两文件）：
+  - `.sa-grid` 由 `overflow:hidden` 改 `overflow-x:auto` + 常显横滚动条(scrollbar-width:thin + webkit 11px)。
+  - `.sa-cells` 由 `repeat(7,1fr)` 改 `repeat(7,minmax(140px,1fr))`，窄屏整体超出容器→横滚、保持固定日列宽。
+  - `renderSouthAsia` 模板用 `.sa-grid-wrap`(position:relative) 包 `.sa-grid` 并注入 `.sa-arrows`(‹ › 两按钮)，点击 `scrollBy(±max(300,clientWidth*0.6))` 平滑横滑。
+- 无头验证(Playwright 拦截 Firebase)：区域tab display:none；800px scrollW=980>clientW=748(可滑232)、箭头2个、点›scrollLeft 0→232；1300px overflow=0 铺满；仅2个拦截的ERR_FAILED(预期)。
+- 已部署公网+Pages重建(201)并轮询确认线上区域隐藏+SA箭头就位；git commit。
