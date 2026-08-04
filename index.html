@@ -362,6 +362,9 @@ body{
 .ht-chip:hover{background:#e8ecf1;border-color:#cbd5e1}
 .ht-chip.ht-active{background:#7c5cd6;color:#fff;border-color:#7c5cd6}
 #ht-custom{font-size:11px!important;padding:6px 9px!important}
+.ht-sel{min-height:28px}
+.ht-chip .ht-x{margin-left:5px;font-weight:800;opacity:.6;cursor:pointer}
+.ht-chip .ht-x:hover{opacity:1}
 /* 卡片上的 Hashtag 标签 */
 .ht-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
 .ht-tag{display:inline-block;font-size:9.5px;font-weight:600;color:#7c5cd6;background:#f3effa;border-radius:8px;padding:1px 6px;line-height:1.6;white-space:nowrap}
@@ -2779,7 +2782,12 @@ function openAddModal(date){
   modalChangedGuard(bg);
   // hashtag 芯片点击切换
   bg.querySelector('.ht-row').addEventListener('click',e=>{
-    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+    if(e.target.classList.contains('ht-x')){ const c=e.target.closest('.ht-chip'); if(c)c.remove(); return; }
+    if(e.target.classList.contains('ht-chip')){
+      const chip=e.target.closest('.ht-chip');
+      if(chip.closest('#ht-selected')){ chip.remove(); return; }   // 已选里点一下=移除
+      toggleHashtagSelected(bg, chip.dataset.tag);                  // 池/最近里点一下=加入
+    }
   });
   // 自定义标签：回车即时变成可点选 chip
   const htInput=bg.querySelector('#ht-custom');
@@ -2788,13 +2796,10 @@ function openAddModal(date){
     e.preventDefault();
     const v=htInput.value.trim(); if(!v) return;
     let t=v; if(!t.startsWith('#')) t='#'+t;
-    const pool=bg.querySelector('#ht-pool');
-    const rec=bg.querySelector('#ht-recent');
-    const existed=[...pool.querySelectorAll('.ht-chip'),...(rec?rec.querySelectorAll('.ht-chip'):[])].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
+    const sel=bg.querySelector('#ht-selected');
+    const existed=sel && [...sel.querySelectorAll('.ht-chip')].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
     if(existed){ htInput.value=''; return; }
-    const sp=document.createElement('span');
-    sp.className='ht-chip ht-active'; sp.dataset.tag=t; sp.textContent=t;
-    pool.appendChild(sp);
+    toggleHashtagSelected(bg, t);
     htInput.value='';
   });
   const saveFn=()=>{
@@ -2850,7 +2855,12 @@ function openEditModal(pid){
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
   bg.querySelector('.ht-row').addEventListener('click',e=>{
-    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+    if(e.target.classList.contains('ht-x')){ const c=e.target.closest('.ht-chip'); if(c)c.remove(); return; }
+    if(e.target.classList.contains('ht-chip')){
+      const chip=e.target.closest('.ht-chip');
+      if(chip.closest('#ht-selected')){ chip.remove(); return; }   // 已选里点一下=移除
+      toggleHashtagSelected(bg, chip.dataset.tag);                  // 池/最近里点一下=加入
+    }
   });
   // 自定义标签：回车即时变成可点选 chip
   const htInput=bg.querySelector('#ht-custom');
@@ -2859,13 +2869,10 @@ function openEditModal(pid){
     e.preventDefault();
     const v=htInput.value.trim(); if(!v) return;
     let t=v; if(!t.startsWith('#')) t='#'+t;
-    const pool=bg.querySelector('#ht-pool');
-    const rec=bg.querySelector('#ht-recent');
-    const existed=[...pool.querySelectorAll('.ht-chip'),...(rec?rec.querySelectorAll('.ht-chip'):[])].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
+    const sel=bg.querySelector('#ht-selected');
+    const existed=sel && [...sel.querySelectorAll('.ht-chip')].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
     if(existed){ htInput.value=''; return; }
-    const sp=document.createElement('span');
-    sp.className='ht-chip ht-active'; sp.dataset.tag=t; sp.textContent=t;
-    pool.appendChild(sp);
+    toggleHashtagSelected(bg, t);
     htInput.value='';
   });
   const saveFn=()=>{
@@ -2946,29 +2953,37 @@ function buildHashtagPicker(existing){
     const cutoff=Date.now()-7*24*3600*1000;
     const recent=hist.filter(h=>h.ts>=cutoff).sort((a,b)=>b.ts-a.ts).map(h=>h.tag);
     if(recent.length){
-      const rc=recent.map(h=>{
-        const active=sel.has(h.toLowerCase())?' ht-active':'';
-        return `<span class="ht-chip${active}" data-tag="${esc(h)}">${esc(h)}</span>`;
-      }).join('');
+      const rc=recent.map(h=>`<span class="ht-chip" data-tag="${esc(h)}">${esc(h)}</span>`).join('');
       recentHtml=`<label class="ht-recent-label">最近使用（7天内）</label><div class="ht-chips ht-recent" id="ht-recent">${rc}</div>`;
     }
   }catch(e){}
-  const chips=HASHTAG_PRESETS.map(h=>{
-    const active=sel.has(h.toLowerCase())?' ht-active':'';
-    return `<span class="ht-chip${active}" data-tag="${esc(h)}">${esc(h)}</span>`;
-  }).join('');
-  const vals=(existing||[]).filter(h=>!HASHTAG_PRESETS.some(p=>p.toLowerCase()===h.toLowerCase())).join(', ');
-  return `<div class="ht-row">${recentHtml}<label>Hashtag（选填，点击选择）</label>
+  const chips=HASHTAG_PRESETS.map(h=>`<span class="ht-chip" data-tag="${esc(h)}">${esc(h)}</span>`).join('');
+  const selHtml=(existing||[]).map(h=>`<span class="ht-chip ht-active" data-tag="${esc(h)}">${esc(h)}<b class="ht-x" title="移除">×</b></span>`).join('');
+  return `<div class="ht-row">${recentHtml}
+    <label>已选 Hashtag（点下方标签或输入回车添加；点 × 或点已选标签移除）</label>
+    <div class="ht-chips ht-sel" id="ht-selected">${selHtml}</div>
+    <label>推荐 / 最近标签</label>
     <div class="ht-chips" id="ht-pool">${chips}</div>
-    <input type="text" id="ht-custom" placeholder="自定义标签，回车添加" value="${esc(vals)}">
+    <input type="text" id="ht-custom" placeholder="自定义标签，回车添加">
   </div>`;
 }
+// 在「已选」行中加入/移出某个 hashtag（按标签去重）
+function toggleHashtagSelected(bg, tag){
+  if(!bg||!tag) return;
+  const sel=bg.querySelector('#ht-selected'); if(!sel) return;
+  const found=[...sel.querySelectorAll('.ht-chip')].find(c=>c.dataset.tag.toLowerCase()===tag.toLowerCase());
+  if(found){ found.remove(); return; }
+  const sp=document.createElement('span');
+  sp.className='ht-chip ht-active'; sp.dataset.tag=tag;
+  sp.innerHTML=esc(tag)+'<b class="ht-x" title="移除">×</b>';
+  sel.appendChild(sp);
+}
 
-// 从弹窗 DOM 收集已选 Hashtags（返回数组）
+// 从弹窗 DOM 收集已选 Hashtags（返回数组）——「已选」行为唯一数据源
 function collectHashtags(){
-  const chips=[...document.querySelectorAll('#ht-pool .ht-active, #ht-recent .ht-active')].map(el=>el.dataset.tag);
+  const chips=[...document.querySelectorAll('#ht-selected .ht-chip')].map(el=>el.dataset.tag);
   const custom=document.getElementById('ht-custom').value.trim();
-  if(custom) custom.split(/[,，]/).forEach(h=>{ h=h.trim(); if(h){ if(!h.startsWith('#'))h='#'+h; chips.push(h); }});
+  if(custom) custom.split(/[,，]/).forEach(h=>{ h=h.trim(); if(h){ if(!h.startsWith('#'))h='#'+h; if(!chips.some(c=>c.toLowerCase()===h.toLowerCase())) chips.push(h); }});
   return chips;
 }
 
@@ -3122,7 +3137,12 @@ function openRegionEditModal(uid){
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
   bg.querySelector('.ht-row').addEventListener('click',e=>{
-    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+    if(e.target.classList.contains('ht-x')){ const c=e.target.closest('.ht-chip'); if(c)c.remove(); return; }
+    if(e.target.classList.contains('ht-chip')){
+      const chip=e.target.closest('.ht-chip');
+      if(chip.closest('#ht-selected')){ chip.remove(); return; }   // 已选里点一下=移除
+      toggleHashtagSelected(bg, chip.dataset.tag);                  // 池/最近里点一下=加入
+    }
   });
   // 自定义标签：回车即时变成可点选 chip
   const htInput=bg.querySelector('#ht-custom');
@@ -3131,13 +3151,10 @@ function openRegionEditModal(uid){
     e.preventDefault();
     const v=htInput.value.trim(); if(!v) return;
     let t=v; if(!t.startsWith('#')) t='#'+t;
-    const pool=bg.querySelector('#ht-pool');
-    const rec=bg.querySelector('#ht-recent');
-    const existed=[...pool.querySelectorAll('.ht-chip'),...(rec?rec.querySelectorAll('.ht-chip'):[])].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
+    const sel=bg.querySelector('#ht-selected');
+    const existed=sel && [...sel.querySelectorAll('.ht-chip')].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
     if(existed){ htInput.value=''; return; }
-    const sp=document.createElement('span');
-    sp.className='ht-chip ht-active'; sp.dataset.tag=t; sp.textContent=t;
-    pool.appendChild(sp);
+    toggleHashtagSelected(bg, t);
     htInput.value='';
   });
   const saveFn=()=>{
