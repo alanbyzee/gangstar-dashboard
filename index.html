@@ -3406,19 +3406,41 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
   "use strict";
   var FB_CFG={apiKey:"AIzaSyCU4pqZzcGM13zR-Yc0I-2qhDYNIbASAkI",authDomain:"gstmin.firebaseapp.com",databaseURL:"https://gstmin-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"gstmin",storageBucket:"gstmin.firebasestorage.app",messagingSenderId:"163766920498",appId:"1:163766920498:web:c27803c6d5fdb96663232b",measurementId:"G-DMKRPT1Z2H"};
   var SYNC_PATH="gangstar/state";
+  var BACKUP_PATH="gangstar/backups";
+  var DEL="__GST_DEL__";
   var SYNC_KEYS=["gangstar_sa_moves","gangstar_regional_moves","gangstar_hidden","gangstar_cancelled","gangstar_edits","gangstar_custom","gangstar_fan_target","gangstar_req_submitted","gangstar_sa_order","gangstar_regional_order","gangstar_hashtag_history"];
   var MY_ID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-  var fbRef=null,fbReady=false,saveTimer=null;
+  var fbRef=null,fbReady=false,saveTimer=null,pending={},backupTimer=null;
   var _set=localStorage.setItem.bind(localStorage);
   var _rm=localStorage.removeItem.bind(localStorage);
-  localStorage.setItem=function(k,v){var r=_set(k,v);if(SYNC_KEYS.indexOf(k)>=0)schedule();return r;};
-  localStorage.removeItem=function(k){var r=_rm(k);if(SYNC_KEYS.indexOf(k)>=0)schedule();return r;};
-  function schedule(){if(!fbReady)return;if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(push,400);}
-  function push(){
-    if(!fbReady||!fbRef){toast("未连接云端，无法上传");return;}
-    var data={};
-    for(var i=0;i<SYNC_KEYS.length;i++){var k=SYNC_KEYS[i];try{data[k]=localStorage.getItem(k);}catch(e){data[k]=null;}}
-    fbRef.set({data:data,meta:{writer:MY_ID,ts:Date.now()}}).then(function(){toast("已上传本地改动 ⇧");}).catch(function(e){console.warn("[sync] push failed",e);toast("上传失败");});
+  localStorage.setItem=function(k,v){var r=_set(k,v);if(SYNC_KEYS.indexOf(k)>=0)schedule(k,false);return r;};
+  localStorage.removeItem=function(k){var r=_rm(k);if(SYNC_KEYS.indexOf(k)>=0)schedule(k,true);return r;};
+  function schedule(k,remove){if(!fbReady||!fbRef)return;pending[k]=!!remove;if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(flush,400);}
+  function flush(){
+    if(!fbReady||!fbRef)return;
+    var pk=pending;pending={};var keys=Object.keys(pk);if(!keys.length)return;
+    var ops=keys.map(function(k){return pk[k]?fbRef.child(k).set(DEL):fbRef.child(k).set(localStorage.getItem(k));});
+    writeMeta();
+    Promise.all(ops).then(function(){backupSnapshot();}).catch(function(e){console.warn("[sync] push failed",e);});
+  }
+  function writeMeta(){try{fbRef.child("__meta").set({writer:MY_ID,ts:Date.now()});}catch(e){}}
+  function pushAll(){
+    if(!fbReady||!fbRef){toast("未连接云端，改动仅存本地");return;}
+    var ops=[];
+    SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);ops.push(v===null?fbRef.child(k).set(DEL):fbRef.child(k).set(v));});
+    writeMeta();
+    Promise.all(ops).then(function(){backupSnapshot();toast("已上传本地改动 ⇧");}).catch(function(e){console.warn("[sync] pushAll failed",e);toast("上传失败");});
+  }
+  function applyRemote(val){
+    if(!val)return;
+    var changed=false;
+    for(var i=0;i<SYNC_KEYS.length;i++){var k=SYNC_KEYS[i];var rv=val[k];
+      if(rv===undefined)continue;
+      if(rv===DEL){try{_rm(k);}catch(e){}changed=true;continue;}
+      var lv=localStorage.getItem(k);
+      if(lv!==rv){try{_set(k,rv);}catch(e){}changed=true;}
+    }
+    if(changed)rerender();
   }
   function rerender(){
     try{
@@ -3426,12 +3448,12 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
       if(typeof views!=="undefined"&&views.regional&&views.regional.classList.contains("active")&&typeof renderRegional==="function")renderRegional();
     }catch(e){}
   }
-  function applyRemote(payload){
-    if(!payload||!payload.data)return;
-    var d=payload.data;
-    for(var i=0;i<SYNC_KEYS.length;i++){var k=SYNC_KEYS[i];if(d[k]===undefined||d[k]===null){try{_rm(k);}catch(e){}}else{try{_set(k,d[k]);}catch(e){}}}
-    try{_rm("gangstar_undo");}catch(e){}
-    rerender();
+  function backupSnapshot(){
+    if(!fbReady||!fbRef)return;
+    var data={};SYNC_KEYS.forEach(function(k){try{data[k]=localStorage.getItem(k);}catch(e){data[k]=null;}});
+    var ts=Date.now();
+    try{firebase.database().ref(BACKUP_PATH+"/"+ts).set({data:data,meta:{writer:MY_ID,ts:ts}});}catch(e){console.warn("[backup] failed",e);}
+    try{firebase.database().ref(BACKUP_PATH).once("value",function(snap){var o=snap.val()||{};var ks=Object.keys(o).map(Number).sort(function(a,b){return a-b;});if(ks.length>60){ks.slice(0,ks.length-60).forEach(function(old){try{firebase.database().ref(BACKUP_PATH+"/"+old).remove();}catch(e){}});}});}catch(e){}
   }
   function toast(msg){
     try{
@@ -3454,8 +3476,12 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
     var up=document.createElement("button");
     up.textContent="⇧ 上传本地改动";
     up.style.cssText="border:none;cursor:pointer;padding:5px 10px;border-radius:8px;background:#4f46e5;color:#fff;font:12px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.18);";
-    up.onclick=function(){push();};
-    box.appendChild(badge);box.appendChild(up);
+    up.onclick=function(){pushAll();};
+    var bk=document.createElement("button");
+    bk.textContent="🕘 备份";
+    bk.style.cssText="border:none;cursor:pointer;padding:5px 10px;border-radius:8px;background:#0ea5e9;color:#fff;font:12px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.18);";
+    bk.onclick=function(){openBackups();};
+    box.appendChild(badge);box.appendChild(up);box.appendChild(bk);
     document.body.appendChild(box);
   }
   function setBadge(ok){
@@ -3464,6 +3490,22 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
     b.textContent=ok?"● 实时同步中":"○ 仅本地 · 未同步";
     b.style.background=ok?"rgba(16,185,129,.95)":"rgba(120,120,128,.92)";
   }
+  function openBackups(){
+    if(!fbReady){toast("未连接云端，无法读取备份");return;}
+    try{firebase.database().ref(BACKUP_PATH).once("value",function(snap){
+      var o=snap.val()||{};var ks=Object.keys(o).map(Number).sort(function(a,b){return b-a;});
+      var html='<div id="bkMask" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10001;display:flex;align-items:center;justify-content:center" onclick="if(event.target.id===\'bkMask\')this.remove()"><div style="background:#fff;border-radius:14px;width:380px;max-height:72vh;overflow:auto;padding:18px;font:13px system-ui;color:#111"><h3 style="margin:0 0 10px">云端备份（最近 '+Math.min(ks.length,30)+' 条）</h3><div id="bkList">';
+      if(!ks.length)html+='<p style="color:#888">暂无备份</p>';
+      ks.slice(0,30).forEach(function(ts){var d=new Date(ts);var t=d.toLocaleString();var data=(o[ts]&&o[ts].data)||{};var cnt=Object.keys(data).filter(function(k){return data[k]!=null&&data[k]!==DEL;}).length;html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #eee"><span>'+t+'<br><span style="color:#888;font-size:11px">'+cnt+' 个数据块</span></span><button data-ts="'+ts+'" style="border:none;background:#4f46e5;color:#fff;border-radius:8px;padding:5px 10px;cursor:pointer">恢复</button></div>';});
+      html+='</div><p style="color:#888;font-size:11px;margin-top:10px">恢复会把该时间点数据写回云端并同步到所有设备</p></div></div>';
+      document.body.insertAdjacentHTML('beforeend',html);
+      var list=document.getElementById('bkList');
+      list.addEventListener('click',function(e){var b=e.target.closest('button[data-ts]');if(!b)return;var ts=b.getAttribute('data-ts');var data=(o[ts]&&o[ts].data)||{};SYNC_KEYS.forEach(function(k){if(data[k]!==undefined&&data[k]!==null&&data[k]!==DEL)fbRef.child(k).set(data[k]);else fbRef.child(k).set(DEL);});writeMeta();backupSnapshot();var m=document.getElementById('bkMask');if(m)m.remove();toast('已恢复备份 '+new Date(Number(ts)).toLocaleString());});
+    });}catch(e){toast("读取备份失败");}
+  }
+  function migrateOld(){
+    try{fbRef.once("value",function(snap){var v=snap.val();if(v&&v.data&&typeof v.data==="object"){var d=v.data;SYNC_KEYS.forEach(function(k){if(d[k]!==undefined&&d[k]!==null)fbRef.child(k).set(d[k]);});fbRef.child("data").remove();if(v.meta)fbRef.child("meta").remove();fbRef.child("__meta").set({writer:MY_ID,ts:Date.now(),migrated:true});}});}catch(e){}
+  }
   function init(){
     ui();
     try{
@@ -3471,13 +3513,15 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
       firebase.initializeApp(FB_CFG);
       fbRef=firebase.database().ref(SYNC_PATH);
       fbReady=true;
+      migrateOld();
       fbRef.on("value",function(snap){
         var val=snap.val();
         if(!val)return;
-        if(val.meta&&val.meta.writer===MY_ID)return;
+        if(val.__meta&&val.__meta.writer===MY_ID)return;
         applyRemote(val);
       });
       setBadge(true);
+      try{backupTimer=setInterval(backupSnapshot,5*60*1000);window.addEventListener("beforeunload",backupSnapshot);}catch(e){}
     }catch(e){
       fbReady=false;
       console.warn("[sync] 降级本地模式：",e&&e.message);
