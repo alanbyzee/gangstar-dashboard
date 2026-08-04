@@ -305,3 +305,10 @@
 - 修复（两文件）：`.regional-week` 常开 `overflow-x:auto`；`.cal-head,.cal-body` 改 `grid-template-columns:140px repeat(7,minmax(122px,1fr));min-width:1024px`（窄屏整体超出容器→横滚，保持固定列比例）；≤760px 改 `min-width:920px` 紧凑列。
 - 无头验证（Playwright 拦截 Firebase）：800px 视口 scrollWidth=1024>clientWidth=766（可横滑），1300px overflow=0（铺满不滚），0 报错。
 - 已部署公网+Pages重建(201)并轮询确认线上含 min-width:1024px；git commit。
+
+### feat：区域周历横滚动条常显 + 左右箭头按钮（2026-08-05）
+- 用户诉求：缩小窗口后仍无法左右横滑查看日期（技术上 `.regional-week` 已可滚，但 Mac 横滚动条默认隐藏 + 鼠标无横向滚轮，导致"看不见条、触发不了滑"）。
+- 修复（两文件）：① `.regional-week` 加常显横滚动条样式（scrollbar-width:thin + webkit scrollbar 11px）；② `.regional` 加 position:relative，在渲染函数末尾注入 `.cal-arrows`（‹ › 两个按钮，absolute 浮于右下），点击 `scrollBy(±max(300,clientWidth*0.6))` 平滑横滑；③ 保持网格 min-width:1024px 固定列宽。
+- 无头验证（Playwright 拦截 Firebase）：800px 视口箭头存在、scrollW=1024>clientW=766；点 › scrollLeft 0→258（滑到最右），点 ‹ 回 0；0 报错。
+- 已部署公网+Pages重建(201)并轮询确认线上含 cal-arrow；git commit。
+- 说明：横滑是看**当周**被裁切的 7 天列；切换"更早/更晚的周"请用顶部「上一周/下一周」按钮（非横滑）。
