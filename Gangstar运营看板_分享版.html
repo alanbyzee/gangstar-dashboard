@@ -2778,8 +2778,24 @@ function openAddModal(date){
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
   // hashtag 芯片点击切换
-  bg.querySelector('#ht-pool').addEventListener('click',e=>{
+  bg.querySelector('.ht-row').addEventListener('click',e=>{
     if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+  });
+  // 自定义标签：回车即时变成可点选 chip
+  const htInput=bg.querySelector('#ht-custom');
+  if(htInput) htInput.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;
+    e.preventDefault();
+    const v=htInput.value.trim(); if(!v) return;
+    let t=v; if(!t.startsWith('#')) t='#'+t;
+    const pool=bg.querySelector('#ht-pool');
+    const rec=bg.querySelector('#ht-recent');
+    const existed=[...pool.querySelectorAll('.ht-chip'),...(rec?rec.querySelectorAll('.ht-chip'):[])].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
+    if(existed){ htInput.value=''; return; }
+    const sp=document.createElement('span');
+    sp.className='ht-chip ht-active'; sp.dataset.tag=t; sp.textContent=t;
+    pool.appendChild(sp);
+    htInput.value='';
   });
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();
@@ -2833,8 +2849,24 @@ function openEditModal(pid){
   else if(cur.type){ typeSel.value=cur.type; }
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
-  bg.querySelector('#ht-pool').addEventListener('click',e=>{
+  bg.querySelector('.ht-row').addEventListener('click',e=>{
     if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+  });
+  // 自定义标签：回车即时变成可点选 chip
+  const htInput=bg.querySelector('#ht-custom');
+  if(htInput) htInput.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;
+    e.preventDefault();
+    const v=htInput.value.trim(); if(!v) return;
+    let t=v; if(!t.startsWith('#')) t='#'+t;
+    const pool=bg.querySelector('#ht-pool');
+    const rec=bg.querySelector('#ht-recent');
+    const existed=[...pool.querySelectorAll('.ht-chip'),...(rec?rec.querySelectorAll('.ht-chip'):[])].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
+    if(existed){ htInput.value=''; return; }
+    const sp=document.createElement('span');
+    sp.className='ht-chip ht-active'; sp.dataset.tag=t; sp.textContent=t;
+    pool.appendChild(sp);
+    htInput.value='';
   });
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();
@@ -3089,8 +3121,24 @@ function openRegionEditModal(uid){
   const typeSel=bg.querySelector('#m-type');if(cur.type)typeSel.value=cur.type;
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
-  bg.querySelector('#ht-pool').addEventListener('click',e=>{
+  bg.querySelector('.ht-row').addEventListener('click',e=>{
     if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+  });
+  // 自定义标签：回车即时变成可点选 chip
+  const htInput=bg.querySelector('#ht-custom');
+  if(htInput) htInput.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;
+    e.preventDefault();
+    const v=htInput.value.trim(); if(!v) return;
+    let t=v; if(!t.startsWith('#')) t='#'+t;
+    const pool=bg.querySelector('#ht-pool');
+    const rec=bg.querySelector('#ht-recent');
+    const existed=[...pool.querySelectorAll('.ht-chip'),...(rec?rec.querySelectorAll('.ht-chip'):[])].some(c=>c.dataset.tag.toLowerCase()===t.toLowerCase());
+    if(existed){ htInput.value=''; return; }
+    const sp=document.createElement('span');
+    sp.className='ht-chip ht-active'; sp.dataset.tag=t; sp.textContent=t;
+    pool.appendChild(sp);
+    htInput.value='';
   });
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();if(!title)return;
