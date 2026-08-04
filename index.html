@@ -340,7 +340,11 @@ body{
 .sa-cap .cap i{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:var(--c);border-radius:5px;padding:1px 5px;margin-left:3px}
 .sa-cap .cap-budget{margin-left:auto;font-size:11.5px;color:#b06a00;font-weight:800;background:#fff3e0;border:1px solid #ffd9a0;border-radius:8px;padding:4px 11px;white-space:nowrap}
 /* HQ 周历网格 */
-.sa-grid{border:1px solid var(--line);border-radius:0 0 14px 14px;overflow:hidden;background:#fff;box-shadow:var(--shadow-sm)}
+.sa-grid-wrap{position:relative}
+.sa-grid{border:1px solid var(--line);border-radius:0 0 14px 14px;overflow-x:auto;overflow-y:hidden;background:#fff;box-shadow:var(--shadow-sm);scrollbar-width:thin;scrollbar-color:#cbd5e1 transparent}
+.sa-grid::-webkit-scrollbar{height:11px}
+.sa-grid::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:6px}
+.sa-grid::-webkit-scrollbar-track{background:transparent}
 .sa-week{border-bottom:1px solid var(--line)}
 .sa-week:last-child{border-bottom:none}
 .sa-wband{display:flex;align-items:center;gap:12px;padding:11px 17px;font-weight:700;font-size:13px;color:#fff}
@@ -351,7 +355,11 @@ body{
 .sa-wband .toggle{margin-left:auto;cursor:pointer;border:none;background:rgba(255,255,255,.28);color:#fff;font-size:12px;font-weight:700;padding:5px 13px;border-radius:9px;white-space:nowrap}
 .sa-wband .toggle:hover{background:rgba(255,255,255,.45)}
 .sa-wbody.collapsed{display:none}
-.sa-cells{display:grid;grid-template-columns:repeat(7,1fr)}
+.sa-cells{display:grid;grid-template-columns:repeat(7,minmax(140px,1fr))}
+/* 南亚社群排期 · 横滑箭头（小窗口左右滑动周历） */
+.sa-arrows{position:absolute;right:14px;bottom:14px;display:flex;gap:8px;z-index:5}
+.sa-arrow{width:34px;height:34px;border-radius:50%;border:none;background:rgba(99,102,241,.92);color:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;transition:.15s}
+.sa-arrow:hover{background:#6366f1;transform:translateY(-1px)}
 .sa-cell{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:9px 9px;min-height:68px;background:#fcfcfd;font-size:12px;transition:background .12s}
 .sa-cell:hover{background:#f7f8fc}
 .sa-cell:first-child{border-left:none}
@@ -464,7 +472,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   <div class="tabs">
     <div class="tab active" data-view="sa">📅 南亚社群排期</div>
     <div class="tab" data-view="fan">📊 粉丝监控</div>
-    <div class="tab" data-view="regional">📝 区域素材</div>
+    <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
+    <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
   </div>
   <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）">↩ 撤销</button>
   <div class="spacer"></div>
@@ -2703,7 +2712,10 @@ function renderSouthAsia(){
 
   const gridHtml=`<div class="sa-section">
     <div class="sa-banner hq">📋 南亚社群排期 <span class="cnt">HQ ${hqCnt} 条 · 区域 ${regCnt} 条</span>${hidden.size?`<span class="sa-restore" id="restoreBtn">↩ 恢复已删除(${hidden.size})</span>`:''}</div>
-    <div class="sa-grid">${weeksHtml}</div>
+    <div class="sa-grid-wrap">
+      <div class="sa-grid">${weeksHtml}</div>
+      <div class="sa-arrows"><button class="sa-arrow sa-left" title="向左滑动">‹</button><button class="sa-arrow sa-right" title="向右滑动">›</button></div>
+    </div>
   </div>`;
 
   const capHtml=`<div class="sa-cap">
@@ -2774,6 +2786,15 @@ function renderSouthAsia(){
       renderSouthAsia(); renderRegional();
       saToast('已恢复全部删除项');
     };
+  }
+  // 横滑箭头：小窗口时点击左右滑动周历（保持固定日列宽）
+  const saGrid=el.querySelector('.sa-grid');
+  const saLeft=el.querySelector('.sa-arrow.sa-left');
+  const saRight=el.querySelector('.sa-arrow.sa-right');
+  if(saGrid&&saLeft&&saRight){
+    const saStep=()=>Math.max(300, saGrid.clientWidth*0.6);
+    saLeft.onclick=()=>saGrid.scrollBy({left:-saStep(),behavior:'smooth'});
+    saRight.onclick=()=>saGrid.scrollBy({left:saStep(),behavior:'smooth'});
   }
   // 绑定删除按钮（所有帖子）
   el.querySelectorAll('.sa-post .act.del').forEach(btn=>{
