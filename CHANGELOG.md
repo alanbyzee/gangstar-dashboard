@@ -290,3 +290,11 @@
   - 主文件本地测试曾"正常"，是因为其内联 `FALLBACK_DATA`（x 块仍含 name、值旧）兜底了；分享版内联 `FALLBACK_DATA` 的 x 块也缺 name，且线上走真实 fetch，故必崩。
 - 修复：①`fan_data.json` 的 `x` 块补回 `"name": "X (Twitter)"`；②分享版内联 `FALLBACK_DATA` 的 `x` 块补 name；③主文件内联 `FALLBACK_DATA` 的 `x` 块同步到最新值(25)并保持 name；④两文件 `renderFans` 的 `pl.name.replace` 改为 `(pl.name||'')` 防御性兜底，杜绝缺字段再整体崩。
 - 验证：本地 HTTP 起服务模拟真实 fetch，主文件/分享版均 `CHART_AREA=4 SVG=4 CARD=4`、数据 2026-08-04、0 运行时报错；已部署 GitHub Pages（index.html + fan_data.json 已 PUT，并已 POST `/pages/builds` 强制重建清 CDN）。
+
+### feat：区域素材周历响应式 + 取消隐藏（2026-08-05）
+- 用户诉求：区域素材页面无法随窗口大小自适应排版（原 7 列+140px 标签固定网格，窄屏挤压变形）。
+- 优化（两文件 CSS 区块末尾新增响应式媒体查询）：
+  - ≤1080px：标签列缩至 120px、7 列改 `minmax(0,1fr)` 收缩、卡片/统计条缩字号内边距。
+  - ≤760px：`.regional-week` 开启 `overflow-x:auto` 横向滚动，周历网格 `min-width:740px`（标题/统计条不滚动、仅周历滚动）；`.week-nav` 换行、按钮缩小。
+- 取消隐藏：区域素材标签此前按"怕误删"要求 `display:none`，因用户实际在用并要优化，已去掉隐藏（加回 `style="display:none"` 即可重新隐藏）。
+- 已部署公网+Pages重建(201)并轮询确认线上标签可见+响应式规则就位；git commit。
