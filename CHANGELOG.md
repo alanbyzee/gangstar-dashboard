@@ -4,6 +4,13 @@
 > 每次增删改都追加一条记录，并对应一次 git 版本提交 —— 任何被删的内容都能精确找回，更新其他数据时不会丢。
 >
 
+### 2026-08-04 ｜ 修复分享版区域素材周历 hashtag 渲染崩溃（+ 收尾 hashtag 选项）
+- **现象**：分享版「区域素材周历」一栏整体报错/不渲染，hashtag 选项虽在添加弹窗里但区域卡片不显示已选标签
+- **根因**：区域周历渲染循环里使用了 `htHtml` 变量（显示已选 hashtag），但该作用域从未声明它（只取出了 `hashtags` 数组却没转成 `htHtml`）→ ReferenceError 中断整块渲染。主看板此前已补好，分享版漏了这一行
+- **修复**：区域周历单元格渲染补上 `const htHtml=(hashtags&&hashtags.length)?...:''`（与主看板一致）。**其他所有更新原样保留**：添加/编辑素材弹窗的 hashtag 选择器、本周涨粉、Firebase 实时同步等均未改动
+- **校验**：提取内联 JS 语法检查 PASS（SYNTAX_OK）；部署 GitHub Pages 后公网已确认上线（raw 源 + Pages 均含 HASHTAG_PRESETS 代码）
+- 主看板 + 分享版均已 git commit
+
 ### 2026-08-03 ｜ 看板接入 Firebase 实时同步（所有编辑状态多端秒级同步）
 - **背景**：此前「同步」只推送了排期源文件(hq_data.js)和粉丝(fan_data.json)；用户真正手改的东西（链接/排序/描述/隐藏划线/确认格子/自定义素材等）全在各自浏览器 localStorage，从不上传 → 多端不同步
 - **方案**：接入 Firebase Realtime Database（项目 `gstmin`，路径 `gangstar/state`）

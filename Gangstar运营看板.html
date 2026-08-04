@@ -355,6 +355,16 @@ body{
 .sa-modal .btn-save:hover{box-shadow:0 4px 12px rgba(109,40,217,.28)}
 .sa-modal .btn-cancel{background:#f1f5f9;color:#64748b}
 .sa-modal .btn-cancel:hover{background:#e2e8f0}
+/* Hashtag 选择器 */
+.ht-row{margin-top:12px}
+.ht-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.ht-chip{display:inline-block;padding:3px 9px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:.15s;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;line-height:1.5}
+.ht-chip:hover{background:#e8ecf1;border-color:#cbd5e1}
+.ht-chip.ht-active{background:#7c5cd6;color:#fff;border-color:#7c5cd6}
+#ht-custom{font-size:11px!important;padding:6px 9px!important}
+/* 卡片上的 Hashtag 标签 */
+.ht-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.ht-tag{display:inline-block;font-size:9.5px;font-weight:600;color:#7c5cd6;background:#f3effa;border-radius:8px;padding:1px 6px;line-height:1.6;white-space:nowrap}
 .sa-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(16,24,40,.82);color:#fff;padding:9px 23px;border-radius:22px;font-size:13px;font-weight:600;z-index:10000;animation:sa-fade .15s;backdrop-filter:blur(4px)}
 @keyframes sa-fade{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .sa-popover{position:fixed;z-index:9999;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:15px 17px;width:330px;max-width:90vw;font-size:13px;line-height:1.7;color:var(--ink);animation:sa-pop .12s}
@@ -1348,13 +1358,13 @@ function renderSouthAsia(){
         const opId=it._ruid||pid;
         if(hidden.has(opId)) return;
         const ov=edits[opId];
-        let title=it.title, type=it.type, partner=it.partner||'', desc=it.desc||'';
-        if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; }
+        let title=it.title, type=it.type, partner=it.partner||'', desc=it.desc||'', hashtags=[];
+        if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; if(ov.hashtags) hashtags=ov.hashtags; }
         const tag=(REGION_TAGS[type]||[])[0];
         if(saActive.has(tag)){
           const ti=TYPE_INFO[type]||{name:type,color:'#888'};
-          saEditMap[opId]={isHQ:false,title,type,partner,desc};
-          posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId),isRegion:true});
+          saEditMap[opId]={isHQ:false,title,type,partner,desc,hashtags};
+          posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,hashtags,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId),isRegion:true});
           regCnt++;
         }
       });
@@ -1364,12 +1374,13 @@ function renderSouthAsia(){
         const timeHtml=p.time?`<span class="sa-mtime">${esc(p.time)}</span>`:'';
         const platHtml=p.plat?`<div class="p">${esc(p.plat)}</div>`:'';
         const subHtml=p.sub?`<div class="p" style="color:var(--ink)">${esc(p.sub)}</div>`:'';
+        const htHtml=(p.hashtags&&p.hashtags.length)?`<div class="p ht-tags">${p.hashtags.map(h=>`<span class="ht-tag">${esc(h)}</span>`).join('')}</div>`:'';
         const cls=p.cancelled?' cancelled':'';
         const cancelCls=p.cancelled?'act cancel on':'act cancel';
         const detailAttr=p.hasDetail?` data-detail="${p.pid}" style="cursor:pointer"`:'';
         const reqOn=p.isRegion?!!p.pid&&!!reqs[p.pid]:false;
         const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span>`:'';
-        return `<div class="sa-post${cls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${reqHtml}</div>`;
+        return `<div class="sa-post${cls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
         <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
@@ -1535,6 +1546,7 @@ function openAddModal(date){
     <input type="text" id="m-partner" placeholder="合作方">
     <label>描述（选填）</label>
     <input type="text" id="m-desc" placeholder="补充描述">
+    ${buildHashtagPicker([])}
     <div class="sa-modal-btns">
       <button class="btn-cancel" type="button">取消</button>
       <button class="btn-save" type="button">保存</button>
@@ -1543,17 +1555,22 @@ function openAddModal(date){
   document.body.appendChild(bg);
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
+  // hashtag 芯片点击切换
+  bg.querySelector('#ht-pool').addEventListener('click',e=>{
+    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+  });
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();
     if(!title) return;
     const type=document.getElementById('m-type').value;
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
+    const hashtags=collectHashtags();
     pushUndo();
     try{
       const custom=JSON.parse(localStorage.getItem('gangstar_custom')||'{}');
       if(!custom[date]) custom[date]=[];
-      custom[date].push({_id:Date.now()+''+Math.random().toString(36).slice(2,6),type,title,partner,desc});
+      custom[date].push({_id:Date.now()+''+Math.random().toString(36).slice(2,6),type,title,partner,desc,hashtags});
       localStorage.setItem('gangstar_custom',JSON.stringify(custom));
     }catch(e){}
     bg.remove();
@@ -1581,6 +1598,7 @@ function openEditModal(pid){
     <input type="text" id="m-partner" value="${esc(cur.partner||'')}" placeholder="合作方 / 平台">
     <label>描述（选填）</label>
     <input type="text" id="m-desc" value="${esc(cur.desc||'')}" placeholder="补充描述">
+    ${buildHashtagPicker(cur.hashtags)}
     <div class="sa-modal-btns">
       <button class="btn-cancel" type="button">取消</button>
       <button class="btn-save" type="button">保存</button>
@@ -1592,16 +1610,20 @@ function openEditModal(pid){
   else if(cur.type){ typeSel.value=cur.type; }
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
+  bg.querySelector('#ht-pool').addEventListener('click',e=>{
+    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+  });
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();
     if(!title) return;
     const type=document.getElementById('m-type').value;
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
+    const hashtags=collectHashtags();
     try{
       const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');
       pushUndo();
-      all[pid]={title,type,partner,desc};
+      all[pid]={title,type,partner,desc,hashtags};
       localStorage.setItem('gangstar_edits',JSON.stringify(all));
     }catch(e){}
     bg.remove();
@@ -1649,6 +1671,35 @@ const CONTENT_TYPES=[
   {key:'poster',name:'海报',color:'#58a83c',icon:'🎨'},
   {key:'gameplay',name:'区域玩法素材',color:'#e14b4b',icon:'🎮'}
 ];
+
+// 预设 Hashtag（编辑弹窗可选，点击切换）
+const HASHTAG_PRESETS=[
+  '#Gangstar','#MirageCity','#OpenWorld','#MobileGame',
+  '#Gaming','#ActionGame','#Sandbox','#IndiaGaming',
+  '#FreeToPlay','#GameDev'
+];
+
+// 构建 Hashtag 选择器 HTML（返回 HTML 字符串，existing=已选数组）
+function buildHashtagPicker(existing){
+  const sel=new Set((existing||[]).map(h=>h.toLowerCase()));
+  const chips=HASHTAG_PRESETS.map(h=>{
+    const active=sel.has(h.toLowerCase())?' ht-active':'';
+    return `<span class="ht-chip${active}" data-tag="${h}">${h}</span>`;
+  }).join('');
+  const vals=(existing||[]).filter(h=>!HASHTAG_PRESETS.some(p=>p.toLowerCase()===h.toLowerCase())).join(', ');
+  return `<div class="ht-row"><label>Hashtag（选填，点击选择）</label>
+    <div class="ht-chips" id="ht-pool">${chips}</div>
+    <input type="text" id="ht-custom" placeholder="自定义标签，回车添加" value="${esc(vals)}">
+  </div>`;
+}
+
+// 从弹窗 DOM 收集已选 Hashtags（返回数组）
+function collectHashtags(){
+  const chips=[...document.querySelectorAll('#ht-pool .ht-active')].map(el=>el.dataset.tag);
+  const custom=document.getElementById('ht-custom').value.trim();
+  if(custom) custom.split(/[,，]/).forEach(h=>{ h=h.trim(); if(h){ if(!h.startsWith('#'))h='#'+h; chips.push(h); }});
+  return chips;
+}
 
 // 本周（Week 5: 07/27 ~ 08/02）已发素材数据 —— 从用户截图录入
 const REGIONAL_DATA={
@@ -1774,18 +1825,23 @@ function openRegionEditModal(uid){
     <label>类别</label><select id="m-type">${opts}</select>
     <label>合作方（选填）</label><input type="text" id="m-partner" value="${esc(cur.partner||'')}">
     <label>描述（选填）</label><input type="text" id="m-desc" value="${esc(cur.desc||'')}">
+    ${buildHashtagPicker(cur.hashtags)}
     <div class="sa-modal-btns"><button class="btn-cancel" type="button">取消</button><button class="btn-save" type="button">保存</button></div></div>`;
   document.body.appendChild(bg);
   const typeSel=bg.querySelector('#m-type');if(cur.type)typeSel.value=cur.type;
   bg.querySelector('.btn-cancel').onclick=()=>bg.remove();
   modalChangedGuard(bg);
+  bg.querySelector('#ht-pool').addEventListener('click',e=>{
+    if(e.target.classList.contains('ht-chip')) e.target.classList.toggle('ht-active');
+  });
   const saveFn=()=>{
     const title=document.getElementById('m-title').value.trim();if(!title)return;
     const type=document.getElementById('m-type').value;
     const partner=document.getElementById('m-partner').value.trim();
     const desc=document.getElementById('m-desc').value.trim();
+    const hashtags=collectHashtags();
     pushUndo();
-    try{const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');all[uid]={title,type,partner,desc};localStorage.setItem('gangstar_edits',JSON.stringify(all));}catch(e){}
+    try{const all=JSON.parse(localStorage.getItem('gangstar_edits')||'{}');all[uid]={title,type,partner,desc,hashtags};localStorage.setItem('gangstar_edits',JSON.stringify(all));}catch(e){}
     bg.remove();renderRegional();
   };
   bg.querySelector('.btn-save').onclick=saveFn;
@@ -1821,7 +1877,7 @@ function renderRegional(){
         if(hidden.has(uid)) return;
         const eff=moves[uid]||od;
         const ov=edits[uid]||null;
-        regEditMap[uid]={type:ov?ov.type||it.type:it.type,title:ov?ov.title||it.title:it.title,partner:ov?ov.partner!==undefined?ov.partner:it.partner:it.partner,desc:ov?ov.desc!==undefined?ov.desc:it.desc:it.desc,isCustom:false};
+        regEditMap[uid]={type:ov?ov.type||it.type:it.type,title:ov?ov.title||it.title:it.title,partner:ov?ov.partner!==undefined?ov.partner:it.partner:it.partner,desc:ov?ov.desc!==undefined?ov.desc:it.desc:it.desc,hashtags:ov?ov.hashtags||[]:[],isCustom:false};
         addItem(eff,{it,uid,isCustom:false,can:cancelled.has(uid),ov});
       });
     });
@@ -1833,7 +1889,7 @@ function renderRegional(){
       if(hidden.has(uid)) return;
       const eff=moves[uid]||od;
       const ov=edits[uid]||null;
-      regEditMap[uid]={type:ov?ov.type||it.type:it.type,title:ov?ov.title||it.title:it.title,partner:ov?ov.partner!==undefined?ov.partner:it.partner:it.partner,desc:ov?ov.desc!==undefined?ov.desc:it.desc:it.desc,isCustom:true};
+      regEditMap[uid]={type:ov?ov.type||it.type:it.type,title:ov?ov.title||it.title:it.title,partner:ov?ov.partner!==undefined?ov.partner:it.partner:it.partner,desc:ov?ov.desc!==undefined?ov.desc:it.desc:it.desc,hashtags:ov?ov.hashtags||[]:[],isCustom:true};
       addItem(eff,{it,uid,isCustom:true,can:cancelled.has(uid),ov});
     });
   });
@@ -1866,14 +1922,16 @@ function renderRegional(){
           const title=(ov&&ov.title)?ov.title:o.title;
           const partner=(ov&&ov.partner!==undefined)?ov.partner:(o.partner||'');
           const desc=(ov&&ov.desc!==undefined)?ov.desc:(o.desc||'');
+          const hashtags=(ov&&ov.hashtags)?ov.hashtags:(o.hashtags||[]);
           const typeCls='t-'+tp;
           const ti=(CONTENT_TYPES.find(c=>c.key===tp))||{name:tp};
           const partnerHtml=partner?`<div class="partner">合作方：<u>${esc(partner)}</u></div>`:'';
           const descHtml=desc?`<div class="partner" style="color:var(--ink);font-size:11px;margin-top:2px">${esc(desc)}</div>`:'';
+          const htHtml=(hashtags&&hashtags.length)?`<div class="ht-tags">${hashtags.map(h=>`<span class="ht-tag">${esc(h)}</span>`).join('')}</div>`:'';
           const cancelCls=can?'iact cancel on':'iact cancel';
           const reqOn=reqs[uid];
           const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span></div>`;
-          return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${reqBox}</div>`;
+          return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
