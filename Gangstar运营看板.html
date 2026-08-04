@@ -194,16 +194,18 @@ body{
 .cell:hover{background:#fcfcff}
 .cell:last-child{border-right:none}
 /* 素材卡片 */
-.item{background:#fafbfd;border:1px solid #eef0f4;border-radius:10px;padding:9px 56px 9px 50px;margin-bottom:7px;font-size:12px;line-height:1.5;transition:box-shadow .15s,transform .12s;position:relative}
-.item .drag-handle{position:absolute;top:5px;right:5px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e5ea;border-radius:5px;background:#eef0f4;color:#9aa1ac;font-size:11px;line-height:1;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;transition:.12s}
-.item .drag-handle:hover{background:#f59e0b;border-color:#f59e0b;color:#fff;transform:scale(1.08)}
-.item .drag-handle:active{cursor:grabbing}
+.item{background:#fafbfd;border:1px solid #eef0f4;border-radius:10px;padding:10px 12px;margin-bottom:7px;font-size:12px;line-height:1.5;transition:box-shadow .15s,transform .12s;position:relative}
 .item.dragging{opacity:.3}
 .drag-ghost{position:fixed !important;left:0;top:0;margin:0 !important;pointer-events:none;z-index:9999;opacity:.96;box-shadow:0 12px 28px rgba(0,0,0,.2);transform:rotate(-1.5deg);background:#fff;transition:none !important;will-change:transform}
 .cell.drop-over{background:#fff7ed;outline:2px dashed #f59e0b;outline-offset:-3px}
 .item:hover{box-shadow:0 4px 14px rgba(16,24,40,.09);transform:translateY(-1px)}
-.item .item-acts{position:absolute;top:3px;right:26px;display:flex;gap:1px;opacity:0;transition:.12s;z-index:3}
-.item:hover .item-acts{opacity:1}
+/* 头部：DELAY + 类别 + 操作按钮（含拖拽手柄），flex 分层排布，互不重叠 */
+.it-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.it-acts{margin-left:auto;display:flex;align-items:center;gap:1px;flex:none}
+.item .drag-handle{width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e2e5ea;border-radius:5px;background:#eef0f4;color:#9aa1ac;font-size:11px;line-height:1;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;transition:.12s;flex:none}
+.item .drag-handle:hover{background:#f59e0b;border-color:#f59e0b;color:#fff;transform:scale(1.08)}
+.item .drag-handle:active{cursor:grabbing}
+.it-body{display:flex;flex-direction:column;gap:3px}
 .item .iact{cursor:pointer;font-size:10px;line-height:1.4;color:#9aa1ac;padding:1px 3px;border-radius:3px;user-select:none;-webkit-user-select:none}
 .item .iact:hover{background:#eef0f4;color:#64748b}
 .item .iact.del:hover{color:#ef4444}
@@ -212,7 +214,7 @@ body{
 .reg-add{cursor:pointer;margin-left:5px;font-weight:800;opacity:.4;color:#fff;transition:.15s}
 .reg-add:hover{opacity:1}
 .cal-head>div{position:relative}
-.item .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;margin-bottom:2px;margin-right:4px}
+.item .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;outline:none}
 .item .title{font-weight:600;color:var(--ink);font-size:12.5px;line-height:1.45}
 .item .partner{color:var(--muted);font-size:10.5px;margin-top:3px;line-height:1.4}
 .item .partner u{color:var(--brand2);text-decoration:none;font-weight:600}
@@ -224,7 +226,7 @@ body{
 .req-box.on .mk{background:#58a83c;border-color:#58a83c;color:#fff}
 /* 延期 / Delay：整卡高亮 + 半透明脉动覆盖层（点右上角「延」按钮触发） */
 .sa-post.delayed,.item.delayed{border:1.5px solid #e53e3e !important;background:rgba(229,62,62,.08) !important}
-.delay-badge{position:absolute;top:6px;left:9px;z-index:3;pointer-events:none;background:#e53e3e;color:#fff;font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 5px;border-radius:4px}
+.delay-badge{display:inline-block;flex:none;background:#e53e3e;color:#fff;font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 6px;border-radius:4px;line-height:1.4}
 /* 卡片右上角「延」按钮，置于「划」旁 */
 .sa-post .act.delay{color:#cdb28a}
 .sa-post .act.delay:hover{color:#e8971f;background:#fbeedd}
@@ -323,8 +325,10 @@ body{
 .sa-cell.is-today .sa-dhead>span:first-child{background:#c0896a;color:#fff;border-radius:5px;padding:1px 6px;font-size:12px;box-shadow:0 1px 4px rgba(192,137,106,.4)}
 .sa-cell.is-today .sa-dhead .dow{color:#c0896a;font-weight:800}
 .sa-cell.is-today .sa-add-btn:hover{background:#f3ddd0;color:#9c6b4f}
-.sa-post{border:1px solid #eef0f4;border-radius:10px;padding:9px 56px 9px 46px;background:#fff;margin-bottom:7px;box-shadow:0 1px 2px rgba(16,24,40,.03);transition:box-shadow .15s,.18s;position:relative}
-.sa-post:not(.delayed){padding-left:10px;padding-right:12px}
+.sa-post{border:1px solid #eef0f4;border-radius:10px;padding:10px 12px;background:#fff;margin-bottom:7px;box-shadow:0 1px 2px rgba(16,24,40,.03);transition:box-shadow .15s,.18s;position:relative}
+.sp-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.sp-body{display:flex;flex-direction:column;gap:3px}
+.sp-acts{margin-left:auto;display:flex;align-items:center;gap:1px;flex:none}
 .sa-post:hover{box-shadow:0 3px 10px rgba(16,24,40,.08);transform:translateY(-1px)}
 .sa-post .t{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#94a3b8;border-radius:4px;padding:0 5px;margin-right:4px;vertical-align:1px}
 .sa-post .b{font-size:12.5px;color:var(--ink);word-break:break-word;font-weight:600;line-height:1.45}
@@ -334,21 +338,17 @@ body{
 .sa-legend{display:flex;flex-wrap:wrap;gap:8px 16px;padding:8px 4px 14px;font-size:11px;color:var(--muted)}
 .sa-add-btn{display:block;text-align:center;font-size:14px;color:#d0d5de;cursor:pointer;padding:4px 0;border-radius:5px;transition:.15s;line-height:1}
 .sa-add-btn:hover{background:#f1f5f9;color:#64748b}
-/* 操作按钮行：绝对定位右上角，不占内容流 */
-.sa-post .act-bar{position:absolute;top:5px;right:7px;z-index:3;display:flex;align-items:center;gap:1px;opacity:0;transition:.15s}
-.sa-post:hover .act-bar{opacity:1}
-.sa-post .del{cursor:pointer;color:#d0d5de;font-size:13px;line-height:1;margin-left:4px;opacity:.35;transition:.2s}
-.sa-post:hover .del{opacity:1}.sa-post:hover .act{opacity:1}.sa-post .del:hover{color:#ef4444}
-.sa-post .act{cursor:pointer;font-size:11px;line-height:1.4;color:#d0d5de;transition:.2s;padding:0 3px;border-radius:4px;opacity:.35}
-.sa-post:hover .act{opacity:1}.sa-post .act:hover{color:#64748b;background:#f1f5f9}
-.sa-post .act.del:hover{color:#ef4444}
-.sa-post .act.cancel.on{color:#e14b4b;background:#fbdddd}
+/* 操作按钮：头部右侧内联，始终可见 */
+.sa-post .sp-acts .act{cursor:pointer;font-size:11px;line-height:1.4;color:#c0c5d0;transition:.2s;padding:1px 4px;border-radius:4px}
+.sa-post .sp-acts .act:hover{color:#64748b;background:#f1f5f9}
+.sa-post .sp-acts .act.del:hover{color:#ef4444}
+.sa-post .sp-acts .act.cancel.on{color:#e14b4b;background:#fbdddd}
+.sa-post .sp-acts .act.edit:hover{color:#2f80ed;background:#dbeafe}
+.sa-post .sp-acts .act.sa-drag{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:12px}
+.sa-post .sp-acts .act.sa-drag:hover{background:#f59e0b;color:#fff}
+.sa-post .sp-acts .act.sa-drag:active{cursor:grabbing}
 .sa-post.cancelled{opacity:.5}
 .suppost.cancelled .b,.sa-post.cancelled .b,.sa-post.cancelled .p,.sa-post.cancelled .t,.sa-post.cancelled .sa-mtime{text-decoration:line-through}
-.sa-post .act.edit:hover{color:#2f80ed;background:#dbeafe}
-.sa-post .act.sa-drag{cursor:grab;color:#c0c5d0;touch-action:none;user-select:none;-webkit-user-select:none;font-size:12px}
-.sa-post .act.sa-drag:hover{background:#f59e0b;color:#fff}
-.sa-post .act.sa-drag:active{cursor:grabbing}
 .sa-post.dragging{opacity:.3}
 .sa-post.rb{box-shadow:inset 0 3px 0 -1px #f59e0b!important}
 .sa-post.ra{box-shadow:inset 0 -3px 0 -1px #f59e0b!important}
@@ -1412,7 +1412,7 @@ function renderSouthAsia(){
         const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span>`:'';
         const delCls=delOn?' delayed':'';
         const delayBadge=delOn?'<span class="delay-badge">DELAY</span>':'';
-        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}>${delayBadge}<div class="act-bar"><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act delay ${delOn?'on':''}" data-pid="${p.pid}" title="标记此素材为延期 / Delay">延</span><span class="act del" data-pid="${p.pid}" title="删除">×</span></div>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
+        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><div class="sp-head">${delayBadge}${badge}${timeHtml}<span class="sp-acts"><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act delay ${delOn?'on':''}" data-pid="${p.pid}" title="标记此素材为延期 / Delay">延</span><span class="act del" data-pid="${p.pid}" title="删除">×</span></span></div><div class="sp-body"><div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div></div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
         <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
@@ -2071,7 +2071,7 @@ function renderRegional(){
           const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span></div>`;
           const delCls=delOn?' delayed':'';
           const delayBadge=delOn?'<span class="delay-badge">DELAY</span>':'';
-          return `<div class="item ${typeCls}${can?' cancelled':''}${delCls}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}">${delayBadge}<span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact delay ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay">延</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
+          return `<div class="item ${typeCls}${can?' cancelled':''}${delCls}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><div class="it-head">${delayBadge}<span class="tag">${esc(ti.name)}</span><span class="it-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact delay ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay">延</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span></div><div class="it-body"><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div></div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
