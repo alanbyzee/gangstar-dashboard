@@ -623,7 +623,7 @@ function renderFans(data){
     const diff=pl.value-prev;
     const dcls=diff>0?'up':(diff<0?'down':'flat');
     const dtxt=diff>0?`▲ +${fmt(diff)}`:(diff<0?`▼ ${fmt(diff)}`:'—');
-    const initial=pl.name.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
     const wg=weeklyGrowth(pl);
     const momentum=wg?`<div class="momentum">
       <div class="m"><span class="k">近 7 天</span><span class="v ${wg.diff>0?'m-up':wg.diff<0?'m-down':'m-flat'}">${wg.diff>0?'+':''}${fmt(wg.diff)}</span></div>
@@ -985,7 +985,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 24,
+      "value": 25,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -1005,6 +1005,14 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-02",
           "value": 24
+        },
+        {
+          "date": "2026-08-03",
+          "value": 25
+        },
+        {
+          "date": "2026-08-04",
+          "value": 25
         }
       ]
     }

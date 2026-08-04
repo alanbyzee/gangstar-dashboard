@@ -283,3 +283,10 @@
 - 修复：守卫升级 —— 任一输入框 `focus`/`pointerdown`/`mousedown`/`input`/`change` 任一发生即标记 `engaged`（即"已介入"），此后点背景不再能关（只能取消/保存）；并加 `downOnBg` 判定：仅当点击手势确实从背景遮罩起始（排除"框内拖选松手落背景"）才视为一次有效背景点击；只有「完全没碰过」且手势从背景开始，点遮罩才可关。
 - 覆盖：添加素材 / 编辑南亚素材 / 编辑区域素材 三处弹窗（统一 `modalChangedGuard`）
 - 验证：无头浏览器 4 用例全 PASS（点标题后点背景→仍开；未碰过点背景→关；输入后点背景→仍开；框内拖选松手到背景→仍开），0 报错；两文件同步、已 commit
+
+### 2026-08-04 晚 ｜ 修复粉丝监控页折线图整块消失
+- 现象：粉丝监控页所有平台卡片 + 折线图整块不渲染（CARD=0 / SVG=0），仅顶部汇总还在。
+- 根因：某次更新粉丝数据（IG 3259/YTB 1270/FB 124）重写 `fan_data.json` 的 `x`(X/Twitter) 平台块时，**漏写 `name` 字段**。线上 fetch 真实 `fan_data.json` 后 `renderFans` 执行 `pl.name.replace(...)` → `Cannot read properties of undefined (reading 'replace')` 抛错，导致后续所有卡片（含折线图）中断渲染。
+  - 主文件本地测试曾"正常"，是因为其内联 `FALLBACK_DATA`（x 块仍含 name、值旧）兜底了；分享版内联 `FALLBACK_DATA` 的 x 块也缺 name，且线上走真实 fetch，故必崩。
+- 修复：①`fan_data.json` 的 `x` 块补回 `"name": "X (Twitter)"`；②分享版内联 `FALLBACK_DATA` 的 `x` 块补 name；③主文件内联 `FALLBACK_DATA` 的 `x` 块同步到最新值(25)并保持 name；④两文件 `renderFans` 的 `pl.name.replace` 改为 `(pl.name||'')` 防御性兜底，杜绝缺字段再整体崩。
+- 验证：本地 HTTP 起服务模拟真实 fetch，主文件/分享版均 `CHART_AREA=4 SVG=4 CARD=4`、数据 2026-08-04、0 运行时报错；已部署 GitHub Pages（index.html + fan_data.json 已 PUT，并已 POST `/pages/builds` 强制重建清 CDN）。
