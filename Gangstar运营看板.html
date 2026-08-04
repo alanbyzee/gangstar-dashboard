@@ -222,6 +222,14 @@ body{
 .req-box .mk{width:12px;height:12px;border:1.2px solid #d0d5de;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:8.5px;line-height:1;color:transparent;transition:.12s}
 .req-box.on{color:#6aab54}
 .req-box.on .mk{background:#58a83c;border-color:#58a83c;color:#fff}
+/* 延期 / Delay 标记（与 req 对称，琥珀色） */
+.delay-box{display:inline-flex;align-items:center;gap:3px;margin-top:5px;margin-left:8px;cursor:pointer;user-select:none;-webkit-user-select:none;font-size:9.5px;color:#c0c7d2;transition:.15s}
+.delay-box:hover{color:#d99a3a}
+.delay-box .mk{width:12px;height:12px;border:1.2px solid #d0d5de;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:8.5px;line-height:1;color:transparent;transition:.12s}
+.delay-box.on{color:#d98a1e}
+.delay-box.on .mk{background:#e8971f;border-color:#e8971f;color:#fff}
+.sa-post.delayed{border-left:3px solid #e8971f !important;background:rgba(232,151,31,.06)}
+.item.delayed{border-left:3px solid #e8971f !important;background:rgba(232,151,31,.06)}
 /* 类型色 */
 .t-copost{border-left:3px solid #2f80ed}.t-copost .tag{background:#dbeafe;color:#1d4ed8}
 .t-meme{border-left:3px solid #f2994a}.t-meme .tag{background:#fdebd7;color:#b45309}
@@ -1290,6 +1298,7 @@ function renderSouthAsia(){
     JSON.parse(localStorage.getItem('gangstar_cancelled')||'[]').forEach(id=>cancelledSet.add(id));
   }catch(e){}
   const reqs=getReqSubmitted();
+  const dels=getDelayed();
   // 加载编辑覆盖
   const edits={};
   try{Object.assign(edits,JSON.parse(localStorage.getItem('gangstar_edits')||'{}'));}catch(e){}
@@ -1383,8 +1392,11 @@ function renderSouthAsia(){
         const cancelCls=p.cancelled?'act cancel on':'act cancel';
         const detailAttr=p.hasDetail?` data-detail="${p.pid}" style="cursor:pointer"`:'';
         const reqOn=p.isRegion?!!p.pid&&!!reqs[p.pid]:false;
+        const delOn=!!p.pid&&!!dels[p.pid];
         const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span>`:'';
-        return `<div class="sa-post${cls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
+        const delayHtml=`<span class="delay-box ${delOn?'on':''}" data-uid="${esc(p.pid)}" title="标记此素材为延期 / Delay"><span class="mk">${delOn?'!':''}</span>${delOn?'已延期':'延期'}</span>`;
+        const delCls=delOn?' delayed':'';
+        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}${delayHtml}</div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
         <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
@@ -1495,6 +1507,7 @@ function renderSouthAsia(){
     btn.onclick=e=>{e.stopPropagation();openEditModal(btn.dataset.pid);};
   });
   el.querySelectorAll('.sa-post .req-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReq(b.dataset.uid);});
+  el.querySelectorAll('.sa-post .delay-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDelay(b.dataset.uid);});
 }
 
 // 全局撤销见 doUndo()（快照整个本地状态，覆盖所有表的所有操作）
@@ -1891,9 +1904,11 @@ function getRegionEdits(){try{return JSON.parse(localStorage.getItem('gangstar_e
 function getRegionCustom(){try{return JSON.parse(localStorage.getItem('gangstar_custom')||'{}');}catch(e){return {};}}
 function getReqSubmitted(){try{return JSON.parse(localStorage.getItem('gangstar_req_submitted')||'{}');}catch(e){return {};}}
 function toggleReq(uid){pushUndo();const m=getReqSubmitted();if(m[uid])delete m[uid];else m[uid]=true;localStorage.setItem('gangstar_req_submitted',JSON.stringify(m));renderSouthAsia();renderRegional();}
+function getDelayed(){try{return JSON.parse(localStorage.getItem('gangstar_delayed')||'{}');}catch(e){return {};}}
+function toggleDelay(uid){pushUndo();const m=getDelayed();if(m[uid])delete m[uid];else m[uid]=true;localStorage.setItem('gangstar_delayed',JSON.stringify(m));renderSouthAsia();renderRegional();}
 
 // ===== 全局撤销：快照整个本地状态，覆盖所有表的所有操作 =====
-const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target','gangstar_req_submitted','gangstar_sa_order','gangstar_regional_order'];
+const UNDO_KEYS=['gangstar_sa_moves','gangstar_regional_moves','gangstar_hidden','gangstar_cancelled','gangstar_edits','gangstar_custom','gangstar_fan_target','gangstar_req_submitted','gangstar_delayed','gangstar_sa_order','gangstar_regional_order'];
 function snapshotApp(){const o={};UNDO_KEYS.forEach(k=>{try{o[k]=localStorage.getItem(k);}catch(e){o[k]=null;}});return o;}
 function pushUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}s.push(snapshotApp());if(s.length>50)s=s.slice(-50);localStorage.setItem('gangstar_undo',JSON.stringify(s));}
 function doUndo(){let s=[];try{s=JSON.parse(localStorage.getItem('gangstar_undo')||'[]');}catch(e){}if(!s.length){saToast('没有可撤销的操作');return;}const snap=s.pop();localStorage.setItem('gangstar_undo',JSON.stringify(s));UNDO_KEYS.forEach(k=>{if(snap[k]===null||snap[k]===undefined)localStorage.removeItem(k);else try{localStorage.setItem(k,snap[k]);}catch(e){}});renderSouthAsia();renderRegional();saToast('已撤销 ⌘Z');}
@@ -1963,6 +1978,7 @@ function renderRegional(){
   const edits=getRegionEdits();
   const custom=getRegionCustom();
   const reqs=getReqSubmitted();
+  const dels=getDelayed();
   regEditMap={};
   const dateWeek={};
   weeks.forEach((w,wi)=>w.days.forEach(d=>dateWeek[d.date]=wi));
@@ -2033,8 +2049,9 @@ function renderRegional(){
           const htHtml=(hashtags&&hashtags.length)?`<div class="ht-tags">${hashtags.map(h=>`<span class="ht-tag">${esc(h)}</span>`).join('')}</div>`:'';
           const cancelCls=can?'iact cancel on':'iact cancel';
           const reqOn=reqs[uid];
-          const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span></div>`;
-          return `<div class="item ${typeCls}${can?' cancelled':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
+          const delOn=!!dels[uid];
+          const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span><span class="delay-box ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay"><span class="mk">${delOn?'!':''}</span>${delOn?'已延期':'延期'}</span></div>`;
+          return `<div class="item ${typeCls}${can?' cancelled':''}${delOn?' delayed':''}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
@@ -2074,6 +2091,7 @@ function renderRegional(){
     renderRegional();
   });
   el.querySelectorAll('.item .req-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReq(b.dataset.uid);});
+  el.querySelectorAll('.item .delay-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDelay(b.dataset.uid);});
   el.querySelectorAll('.reg-add').forEach(b=>b.onclick=()=>openAddModal(b.dataset.date));
 }
 
@@ -2203,7 +2221,7 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
   var SYNC_PATH="gangstar/state";
   var BACKUP_PATH="gangstar/backups";
   var DEL="__GST_DEL__";
-  var SYNC_KEYS=["gangstar_sa_moves","gangstar_regional_moves","gangstar_hidden","gangstar_cancelled","gangstar_edits","gangstar_custom","gangstar_fan_target","gangstar_req_submitted","gangstar_sa_order","gangstar_regional_order","gangstar_hashtag_history"];
+  var SYNC_KEYS=["gangstar_sa_moves","gangstar_regional_moves","gangstar_hidden","gangstar_cancelled","gangstar_edits","gangstar_custom","gangstar_fan_target","gangstar_req_submitted","gangstar_delayed","gangstar_sa_order","gangstar_regional_order","gangstar_hashtag_history"];
   var MY_ID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   var fbRef=null,fbReady=false,saveTimer=null,pending={},backupTimer=null;
   var _set=localStorage.setItem.bind(localStorage);
