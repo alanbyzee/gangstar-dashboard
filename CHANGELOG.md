@@ -298,3 +298,10 @@
   - ≤760px：`.regional-week` 开启 `overflow-x:auto` 横向滚动，周历网格 `min-width:740px`（标题/统计条不滚动、仅周历滚动）；`.week-nav` 换行、按钮缩小。
 - 取消隐藏：区域素材标签此前按"怕误删"要求 `display:none`，因用户实际在用并要优化，已去掉隐藏（加回 `style="display:none"` 即可重新隐藏）。
 - 已部署公网+Pages重建(201)并轮询确认线上标签可见+响应式规则就位；git commit。
+
+### fix：区域素材周历横向滚动（2026-08-05）
+- 用户诉求：小窗口时区域素材页面完全固定、不能左右滑动。
+- 根因：① 容器 `.regional-week` 的 `overflow-x:auto` 仅 ≤760px 生效；② `.cal-head/.cal-body` 列用 `1fr/minmax(0,1fr)` 撑满容器不溢出，无内容可滚。
+- 修复（两文件）：`.regional-week` 常开 `overflow-x:auto`；`.cal-head,.cal-body` 改 `grid-template-columns:140px repeat(7,minmax(122px,1fr));min-width:1024px`（窄屏整体超出容器→横滚，保持固定列比例）；≤760px 改 `min-width:920px` 紧凑列。
+- 无头验证（Playwright 拦截 Firebase）：800px 视口 scrollWidth=1024>clientWidth=766（可横滑），1300px overflow=0（铺满不滚），0 报错。
+- 已部署公网+Pages重建(201)并轮询确认线上含 min-width:1024px；git commit。
