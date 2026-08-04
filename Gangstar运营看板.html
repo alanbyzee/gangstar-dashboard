@@ -194,7 +194,7 @@ body{
 .cell:hover{background:#fcfcff}
 .cell:last-child{border-right:none}
 /* 素材卡片 */
-.item{background:#fafbfd;border:1px solid #eef0f4;border-radius:10px;padding:9px 56px 9px 11px;margin-bottom:7px;font-size:12px;line-height:1.5;transition:box-shadow .15s,transform .12s;position:relative}
+.item{background:#fafbfd;border:1px solid #eef0f4;border-radius:10px;padding:9px 56px 9px 50px;margin-bottom:7px;font-size:12px;line-height:1.5;transition:box-shadow .15s,transform .12s;position:relative}
 .item .drag-handle{position:absolute;top:5px;right:5px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e5ea;border-radius:5px;background:#eef0f4;color:#9aa1ac;font-size:11px;line-height:1;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;transition:.12s}
 .item .drag-handle:hover{background:#f59e0b;border-color:#f59e0b;color:#fff;transform:scale(1.08)}
 .item .drag-handle:active{cursor:grabbing}
@@ -333,9 +333,11 @@ body{
 .sa-legend{display:flex;flex-wrap:wrap;gap:8px 16px;padding:8px 4px 14px;font-size:11px;color:var(--muted)}
 .sa-add-btn{display:block;text-align:center;font-size:14px;color:#d0d5de;cursor:pointer;padding:4px 0;border-radius:5px;transition:.15s;line-height:1}
 .sa-add-btn:hover{background:#f1f5f9;color:#64748b}
-.sa-post .del{float:right;cursor:pointer;color:#d0d5de;font-size:13px;line-height:1;margin-left:4px;opacity:.35;transition:.2s}
-.sa-post:hover .del{opacity:1}.sa-post .del:hover{color:#ef4444}
-.sa-post .act{float:right;cursor:pointer;font-size:11px;line-height:1.4;margin-left:4px;color:#d0d5de;transition:.2s;padding:0 3px;border-radius:4px;opacity:.35;position:relative;z-index:3}
+/* 操作按钮行：绝对定位右上角，不占内容流 */
+.sa-post .act-bar{position:absolute;top:5px;right:7px;z-index:3;display:flex;align-items:center;gap:1px}
+.sa-post .del{cursor:pointer;color:#d0d5de;font-size:13px;line-height:1;margin-left:4px;opacity:.35;transition:.2s}
+.sa-post:hover .del{opacity:1}.sa-post:hover .act{opacity:1}.sa-post .del:hover{color:#ef4444}
+.sa-post .act{cursor:pointer;font-size:11px;line-height:1.4;color:#d0d5de;transition:.2s;padding:0 3px;border-radius:4px;opacity:.35}
 .sa-post:hover .act{opacity:1}.sa-post .act:hover{color:#64748b;background:#f1f5f9}
 .sa-post .act.del:hover{color:#ef4444}
 .sa-post .act.cancel.on{color:#e14b4b;background:#fbdddd}
@@ -1408,7 +1410,7 @@ function renderSouthAsia(){
         const reqHtml=p.isRegion?`<span class="req-box ${reqOn?'on':''}" data-uid="${esc(p.pid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span>`:'';
         const delCls=delOn?' delayed':'';
         const delayBadge=delOn?'<span class="delay-badge">DELAY</span>':'';
-        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}>${delayBadge}<span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act delay ${delOn?'on':''}" data-pid="${p.pid}" title="标记此素材为延期 / Delay">延</span><span class="act del" data-pid="${p.pid}" title="删除">×</span>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
+        return `<div class="sa-post${cls}${delCls}" data-pid="${p.pid}"${p.ruid?` data-ruid="${p.ruid}"`:''}${detailAttr}>${delayBadge}<div class="act-bar"><span class="act sa-drag" title="按住拖拽改日期">⠿</span><span class="act edit" data-pid="${p.pid}" title="编辑">✎</span><span class="${cancelCls}" data-pid="${p.pid}" title="划线/恢复">划</span><span class="act delay ${delOn?'on':''}" data-pid="${p.pid}" title="标记此素材为延期 / Delay">延</span><span class="act del" data-pid="${p.pid}" title="删除">×</span></div>${badge}${timeHtml}<div class="b">${esc(p.brief)}</div>${platHtml}${subHtml}${htHtml}${reqHtml}</div>`;
       }).join(''):'<div class="sa-empty-tip">—</div>';
       return `<div class="sa-cell${isLaunch?' launch':''}${isToday?' is-today':''}${posts.length?'':' empty'}" data-date="${c.date}">
         <div class="sa-dhead"><span>${c.date.slice(5)}</span><span class="dow">${isToday?'今天':('周'+c.dow)}</span></div>${body}<span class="sa-add-btn" data-date="${c.date}" title="添加素材">+</span></div>`;
@@ -2067,7 +2069,7 @@ function renderRegional(){
           const reqBox=`<div class="req-row"><span class="req-box ${reqOn?'on':''}" data-uid="${esc(uid)}" title="点此确认：已提交制作需求"><span class="mk">${reqOn?'✓':''}</span>${reqOn?'已提需求':'提需求'}</span></div>`;
           const delCls=delOn?' delayed':'';
           const delayBadge=delOn?'<span class="delay-badge">DELAY</span>':'';
-          return `<div class="item ${typeCls}${can?' cancelled':''}${delCls}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}"><span class="item-acts">${delayBadge}<span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact delay ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay">延</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
+          return `<div class="item ${typeCls}${can?' cancelled':''}${delCls}" data-uid="${esc(uid)}" data-custom="${isCustom?1:0}">${delayBadge}<span class="item-acts"><span class="iact edit" data-uid="${esc(uid)}" title="编辑">✎</span><span class="${cancelCls}" data-uid="${esc(uid)}" title="划线/恢复">划</span><span class="iact delay ${delOn?'on':''}" data-uid="${esc(uid)}" title="标记此素材为延期 / Delay">延</span><span class="iact del" data-uid="${esc(uid)}" title="删除">×</span></span><span class="drag-handle" title="按住拖拽到其他日期">⠿</span><span class="tag">${esc(ti.name)}</span><div class="title">${esc(title)}</div>${partnerHtml}${descHtml}${htHtml}${reqBox}</div>`;
         }).join('');
         return `<div class="cell" data-date="${d.date}">${cellContent}</div>`;
       }).join('');
