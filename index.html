@@ -3277,7 +3277,7 @@ function renderRegional(){
     localStorage.setItem('gangstar_cancelled',JSON.stringify(arr));
     renderRegional();
   });
-  el.querySelectorAll('.item .req-box').forEach(b=>b.onclick=()=>toggleReq(b.dataset.uid));
+  el.querySelectorAll('.item .req-box').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReq(b.dataset.uid);});
   el.querySelectorAll('.reg-add').forEach(b=>b.onclick=()=>openAddModal(b.dataset.date));
 }
 
@@ -3444,8 +3444,11 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
   }
   function rerender(){
     try{
+      var activePop=document.querySelector('.sa-popover');
+      var activeModal=document.querySelector('.sa-modal');
       if(typeof views!=="undefined"&&views.sa&&views.sa.classList.contains("active")&&typeof renderSouthAsia==="function")renderSouthAsia();
       if(typeof views!=="undefined"&&views.regional&&views.regional.classList.contains("active")&&typeof renderRegional==="function")renderRegional();
+      if(activePop||activeModal) toast('数据已同步刷新');
     }catch(e){}
   }
   function backupSnapshot(){
