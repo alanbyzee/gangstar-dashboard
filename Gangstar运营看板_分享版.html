@@ -224,6 +224,8 @@ body{
 .req-box.on .mk{background:#58a83c;border-color:#58a83c;color:#fff}
 /* 延期 / Delay：整卡高亮标记（点右上角「延」按钮触发） */
 .sa-post.delayed,.item.delayed{border:1.5px solid #e8971f !important;background:rgba(232,151,31,.10) !important;box-shadow:0 0 0 1px rgba(232,151,31,.25)}
+.sa-post.delayed::after,.item.delayed::after{content:"DELAY";position:absolute;inset:0;border-radius:inherit;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;letter-spacing:3px;color:rgba(232,151,31,.92);background:rgba(232,151,31,.12);pointer-events:none;z-index:2;animation:delayPulse 1.8s ease-in-out infinite}
+@keyframes delayPulse{0%,100%{background:rgba(232,151,31,.08);opacity:.9}50%{background:rgba(232,151,31,.20);opacity:1}}
 /* 卡片右上角「延」按钮，置于「划」旁 */
 .sa-post .act.delay{color:#cdb28a}
 .sa-post .act.delay:hover{color:#e8971f;background:#fbeedd}
@@ -334,7 +336,7 @@ body{
 .sa-add-btn:hover{background:#f1f5f9;color:#64748b}
 .sa-post .del{float:right;cursor:pointer;color:#d0d5de;font-size:13px;line-height:1;margin-left:4px;opacity:.35;transition:.2s}
 .sa-post:hover .del{opacity:1}.sa-post .del:hover{color:#ef4444}
-.sa-post .act{float:right;cursor:pointer;font-size:11px;line-height:1.4;margin-left:4px;color:#d0d5de;transition:.2s;padding:0 3px;border-radius:4px;opacity:.35}
+.sa-post .act{float:right;cursor:pointer;font-size:11px;line-height:1.4;margin-left:4px;color:#d0d5de;transition:.2s;padding:0 3px;border-radius:4px;opacity:.35;position:relative;z-index:3}
 .sa-post:hover .act{opacity:1}.sa-post .act:hover{color:#64748b;background:#f1f5f9}
 .sa-post .act.del:hover{color:#ef4444}
 .sa-post .act.cancel.on{color:#e14b4b;background:#fbdddd}
@@ -2629,6 +2631,8 @@ function renderSouthAsia(){
         }
       });
       posts=sortSaPosts(posts,c.date);
+      // 延时项沉底（排到当天排期最后）
+      posts=posts.slice().sort((a,b)=>(dels[a.pid]?1:0)-(dels[b.pid]?1:0));
       const body=posts.length?posts.map(p=>{
         const badge=`<span class="t" style="background:${p.badge.color}">${esc(p.badge.name)}</span>`;
         const timeHtml=p.time?`<span class="sa-mtime">${esc(p.time)}</span>`:'';
@@ -3281,6 +3285,8 @@ function renderRegional(){
       const cells=week.days.map(d=>{
         let dayItems=(items[d.date]||[]).filter(x=>{const tp=(x.ov&&x.ov.type)?x.ov.type:x.it.type;return tp===t.key;});
         dayItems=sortRegItems(dayItems,d.date);
+        // 延时项沉底（排到当天排期最后）
+        dayItems=dayItems.slice().sort((a,b)=>(dels[a.uid]?1:0)-(dels[b.uid]?1:0));
         const cellContent=dayItems.map(x=>{
           const o=x.it, ov=x.ov, uid=x.uid, can=x.can, isCustom=x.isCustom;
           const tp=(ov&&ov.type)?ov.type:o.type;
