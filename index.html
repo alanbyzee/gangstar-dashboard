@@ -330,6 +330,8 @@ body{
 .sa-cap{display:flex;align-items:flex-start;gap:14px;padding:13px 17px;margin-bottom:16px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
 .sa-cap .ca-t{font-weight:800;color:var(--ink);white-space:nowrap;line-height:34px}
 .sa-cap .cap-col{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+.sa-cap .cap-month{margin-top:2px;font-size:13px;font-weight:600;color:var(--ink);background:linear-gradient(90deg,#fff7ed,#fffefb);border:1px dashed #f59e0b;border-radius:10px;padding:7px 12px}
+.sa-cap .cap-month b{color:#d97706}
 .sa-cap .cap-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .sa-cap .ca-lbl{font-size:12px;font-weight:800;padding:4px 11px;border-radius:8px;white-space:nowrap;margin-right:2px}
 .sa-cap .ca-lbl.cur{color:#4338ca;background:#ebe9fe}
@@ -2305,6 +2307,7 @@ const FALLBACK_DATA = {
 };
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -2749,6 +2752,7 @@ function renderSouthAsia(){
         <span class="cap" style="--c:#0f766e">👤 AM跟进 <b>1</b><i>新增</i></span>
         <span class="cap-budget">追加 $750/月</span>
       </div>
+      <div class="cap-month">📦 每月产能 ≈ 🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
     </div>
   </div>`;
 
