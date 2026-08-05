@@ -348,3 +348,10 @@
 - 修复：① 移除两行同步 gstatic 标签，改为 `loadFirebaseScripts()` **运行时异步加载 + 6 秒超时降级**——页面先秒出内容，后台再连 Firebase；拉不到就降级"仅本地"模式，绝不白屏。主文件/分享版双文件一致。② 部署到 github.io 并重建 CDN；额外提供 jsDelivr 镜像链接（国内通常有 CDN 节点、更通畅）：https://cdn.jsdelivr.net/gh/alanbyzee/gangstar-dashboard@main/index.html 。
 - 验证：Playwright 无头模拟"国内屏蔽 gstatic/Firebase"→ 页面正常渲染(团队产能/粉丝监控均在)、徽标"○ 仅本地·未同步"、零致命 JS 错误。jsDelivr 主页面+同域 fan_data.json 均 HTTP 200。
 - 说明：github.io / jsDelivr 在国内仍可能偶发不稳定。要 100% 国内无障碍，最稳妥是放到国内原生托管（腾讯云 EdgeOne Pages / COS+CDN，或自有服务器），或直接把 HTML 文件发微信/邮件（零网络、离线可开，手机电脑都能开）。如需部署到 EdgeOne Pages，连接该连接器后我可直接帮你部署。
+
+### feat：新增「玩家反馈收集」看板（2026-08-05）
+- 需求：在「粉丝监控」后新增一个看板，专门用于玩家反馈收集，分两块——① 官方账号后台反馈（IG/YTB/FB/X 等官方主页与私信后台）；② 玩家社区·群组反馈（WhatsApp/Discord/FB 群组/线下社群）。
+- 实现：新增 `feedback` 视图（Tab「💬 玩家反馈」置于 fan 之后），双栏布局（窄屏≤860px 自动堆叠），每栏含「＋ 添加反馈」按钮（弹窗录入：来源/渠道、类型 Bug/建议/吐槽/好评、处理状态、内容），卡片可删除；数据存 `localStorage('gangstar_feedback')`，并用内联 `FEEDBACK_DATA={official:[],community:[]}` 作种子（后续用户给内容时由助手写入种子并部署，全员一致）。
+- 样式：蓝点=官方后台(`#4338ca`)、橙点=社区群组(`#c2410c`)，与现有模块不撞色；类型/状态用浅色 chip。
+- 双文件（主/分享版）一致；无头测试 PASS（2 栏渲染、空状态、添加后出卡片、切粉丝 tab 无崩溃；仅有的 2 个 console error 为测试时主动拦截 Firebase 资源所致，非代码缺陷）。
+- 已部署 github.io + Pages 重建(201) + git commit。
