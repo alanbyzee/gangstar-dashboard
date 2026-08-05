@@ -2439,11 +2439,14 @@ var FEEDBACK_DATA={weeks:[
    trend:"社区情绪高度正面：多数玩家对上线兴奋、积极互动，已确认预约并庆祝 2500万+ 预约里程碑；管理员幽默互动、Meme、创作者合作与 Discord 上线共同推高参与度。建议集中在更频繁公布上线日期、抢先体验与更多玩法曝光；负面极少且多因信息缺口（上线时间/区域可用性/垃圾评论）。建议加强上线沟通、治理垃圾评论、澄清区域可用性。"}
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fbSeedSig(){var s=JSON.stringify(FEEDBACK_DATA.weeks||[]);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
 function getFeedback(){
-  try{var s=localStorage.getItem('gangstar_feedback');if(s){var d=JSON.parse(s);if(d&&Array.isArray(d.weeks))return d;}}catch(e){}
-  return {weeks:FEEDBACK_DATA.weeks.slice()};
+  var sig=fbSeedSig();
+  try{var s=localStorage.getItem('gangstar_feedback');if(s){var d=JSON.parse(s);if(d&&Array.isArray(d.weeks)&&d.__sig===sig)return d;}}catch(e){}
+  // 种子权威：本地无匹配签名的存储时，使用部署种子（并覆盖本地陈旧数据），保证所有人看到官方最新反馈
+  return {weeks:FEEDBACK_DATA.weeks.slice(),__sig:sig};
 }
-function setFeedback(d){try{localStorage.setItem('gangstar_feedback',JSON.stringify(d));}catch(e){}}
+function setFeedback(d){try{d.__sig=fbSeedSig();localStorage.setItem('gangstar_feedback',JSON.stringify(d));}catch(e){}}
 function attClass(a){a=a||'';if(a.indexOf('正面')>=0)return 'pos';if(a.indexOf('负面')>=0)return 'neg';if(a.indexOf('波动')>=0)return 'wave';return 'neu';}
 var FB_TM={bug:['bug','🐞 Bug'],sug:['sug','💡 建议'],bad:['bad','😤 吐槽'],good:['good','👍 好评'],oth:['oth','💬 其它']};
 function fbParseLines(txt){
