@@ -2407,6 +2407,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -3794,7 +3795,7 @@ function openWeekModal(){
     dd.weeks.unshift({
       week:week,attitude:bg.querySelector('#wk-att').value,
       summary:bg.querySelector('#wk-sum').value.trim(),
-      dims:{attitude:wrapDim(bg.querySelector('#wk-d1').value.trim()),comprehension:wrapDim(bg.querySelector('#wk-d2').value.trim()),reputation:wrapDim(bg.querySelector('#wk-d3').value.trim()),engagement:wrapDim(bg.querySelector('#wk-d4').value.trim())},,
+      dims:{attitude:wrapDim(bg.querySelector('#wk-d1').value.trim()),comprehension:wrapDim(bg.querySelector('#wk-d2').value.trim()),reputation:wrapDim(bg.querySelector('#wk-d3').value.trim()),engagement:wrapDim(bg.querySelector('#wk-d4').value.trim())},
       official:fbParseTheme(bg.querySelector('#wk-off').value),
       community:fbParseTheme(bg.querySelector('#wk-com').value),
       trend:bg.querySelector('#wk-trend').value.trim(),
