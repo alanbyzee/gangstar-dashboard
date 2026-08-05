@@ -461,8 +461,7 @@ body{
 footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-top:1px solid var(--line);background:rgba(255,255,255,.5)}
 
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
 <body>
 
@@ -2453,27 +2452,44 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
   function migrateOld(){
     try{fbRef.once("value",function(snap){var v=snap.val();if(v&&v.data&&typeof v.data==="object"){var d=v.data;SYNC_KEYS.forEach(function(k){if(d[k]!==undefined&&d[k]!==null)fbRef.child(k).set(d[k]);});fbRef.child("data").remove();if(v.meta)fbRef.child("meta").remove();fbRef.child("__meta").set({writer:MY_ID,ts:Date.now(),migrated:true});}});}catch(e){}
   }
+  function loadFirebaseScripts(cb){
+    if(typeof firebase!=="undefined"){cb(true);return;}
+    var urls=["https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js","https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"];
+    var loaded=0,done=false;
+    function finish(ok){if(done)return;done=true;cb(ok);}
+    var timer=setTimeout(function(){finish(false);},6000);
+    urls.forEach(function(u){
+      var s=document.createElement("script");
+      s.src=u;s.async=true;
+      s.onload=function(){if(++loaded===urls.length){clearTimeout(timer);finish(typeof firebase!=="undefined");}};
+      s.onerror=function(){clearTimeout(timer);finish(false);};
+      document.head.appendChild(s);
+    });
+  }
   function init(){
     ui();
-    try{
-      if(typeof firebase==="undefined")throw new Error("Firebase SDK 未加载(可能离线)");
-      firebase.initializeApp(FB_CFG);
-      fbRef=firebase.database().ref(SYNC_PATH);
-      fbReady=true;
-      migrateOld();
-      fbRef.on("value",function(snap){
-        var val=snap.val();
-        if(!val)return;
-        if(val.__meta&&val.__meta.writer===MY_ID)return;
-        applyRemote(val);
-      });
-      setBadge(true);
-      try{backupTimer=setInterval(backupSnapshot,5*60*1000);window.addEventListener("beforeunload",backupSnapshot);}catch(e){}
-    }catch(e){
-      fbReady=false;
-      console.warn("[sync] 降级本地模式：",e&&e.message);
-      setBadge(false);
-    }
+    loadFirebaseScripts(function(ok){
+      if(ok&&typeof firebase!=="undefined"){
+        try{
+          if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FB_CFG);
+          fbRef=firebase.database().ref(SYNC_PATH);
+          fbReady=true;
+          migrateOld();
+          fbRef.on("value",function(snap){
+            var val=snap.val();
+            if(!val)return;
+            if(val.__meta&&val.__meta.writer===MY_ID)return;
+            applyRemote(val);
+          });
+          setBadge(true);
+          try{backupTimer=setInterval(backupSnapshot,5*60*1000);window.addEventListener("beforeunload",backupSnapshot);}catch(e){}
+        }catch(e){
+          fbReady=false;console.warn("[sync] 降级本地模式：",e&&e.message);setBadge(false);
+        }
+      }else{
+        fbReady=false;console.warn("[sync] Firebase SDK 未能加载(国内网络/离线)，已降级本地模式");setBadge(false);
+      }
+    });
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);
   else init();
