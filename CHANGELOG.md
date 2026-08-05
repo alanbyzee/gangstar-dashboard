@@ -335,3 +335,9 @@
 - 根因：`loadFans()` 先 fetch fan_data.json，失败回退内联 FALLBACK_DATA。用户直接双击本地 HTML（file://）打开时 fetch 被禁→永远走 FALLBACK；而 FALLBACK 需手动同步 3 处（fan_data.json+主文件+分享版），经常漏改→看板永远旧数字。
 - 永久修复：新增 `sync_fallback.py` 从 fan_data.json 自动重写两 HTML 内联 FALLBACK_DATA（括号配对精确替换，保 JS 合法）；并接入 `sync_to_gh.py`（上传前自动注入分享版 FALLBACK）。此后更新粉丝数只需改 fan_data.json + 部署，内联兜底自动一致。
 - 无头实测（Playwright 拦截 Firebase）：http 加载(fetch成功) 与 file:// 加载(fetch失败→FALLBACK) 两种场景均显示 IG3372/YTB1280/FB138/X25，0 报错。已部署公网+Pages重建(201)并轮询确认线上 fan_data.json IG=3372/2026-08-05；git commit。
+
+### feat：团队产能条新增每月产能汇总（2026-08-05）
+- 用户要求「团队产能」处直观看到每月产能。
+- 在 `sa-cap` 产能条底部新增一行：`📦 每月产能 ≈ 🖼️ 120 张图片 + 🎬 60 支视频`（现产能图片 4/天 + 视频 2/天 ×30 天）。
+- 新增样式 `.cap-month`（橙系虚线高亮，与主看板/分享版双文件一致）。
+- 已部署公网 + Pages 重建(201) + 线上验证通过 + git commit。
