@@ -166,6 +166,7 @@ body{
 .wk-dim{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px}
 .wk-dim-l{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px}
 .wk-dim-v{display:inline-block;font-size:13.5px;font-weight:800;border-radius:8px;padding:3px 10px}
+.wk-dim-d{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--text);font-weight:400}
 .wk-dim-v.pos{background:#dcfce7;color:#15803d}
 .wk-dim-v.neg{background:#fee2e2;color:#b91c1c}
 .wk-dim-v.wave{background:#ffedd5;color:#c2410c}
@@ -2405,6 +2406,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -3670,7 +3672,10 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 var FEEDBACK_DATA={weeks:[
   {week:"7.27 - 8.2",attitude:"正面",
    summary:"印度玩家对 GST 期待极高，评论区情绪高度正面，自发庆祝 2500万+ 预约里程碑；核心诉求集中在「尽快明确上线日期」与「更多玩法曝光」。无重大负面，整体风评积极、玩法认知良好。",
-   dims:{attitude:"正面 · 高度期待",comprehension:"玩法认知良好",reputation:"风评积极",engagement:"互动活跃"},
+   dims:{attitude:{label:"正面 · 高度期待",detail:"66条官号反馈中62条为正面情绪，玩家自发倒计时+相约朋友同玩，零负面态度表达"},
+    comprehension:{label:"玩法认知良好",detail:"玩家能准确描述开放世界/载具/任务玩法，创作者合作内容获5条好评，无「看不懂」类反馈"},
+    reputation:{label:"风评积极",detail:"自发庆祝2500万+预约里程碑，主动分享给朋友/社群，无口碑崩塌或竞品对比负面信号"},
+    engagement:{label:"互动活跃",detail:"管理员帖均100+评论，Meme与表情包主导评论区，24条高互动 meme 好评"}},
    official:[
     {theme:"对上线日极度兴奋、自发倒计时并相约朋友同玩",count:14,type:"good"},
     {theme:"庆祝 2500万+ 预约里程碑、对品牌/武器曝光兴奋",count:4,type:"good"},
@@ -3700,6 +3705,7 @@ function attClass(a){a=a||'';
   if(a.indexOf('波动')>=0||a.indexOf('不定')>=0)return 'wave';
   return 'neu';
 }
+function wrapDim(v){return (v&&typeof v==='object')?v:{label:v||'—',detail:''};}
 var FB_TM={bug:['bug','🐞 Bug'],sug:['sug','💡 建议'],bad:['bad','😤 吐槽'],good:['good','👍 好评'],oth:['oth','💬 其它']};
 function fbParseTheme(txt){
   var mp={'🐞':'bug','💡':'sug','😤':'bad','👍':'good','bug':'bug','sug':'sug','bad':'bad','good':'good','建议':'sug','吐槽':'bad','好评':'good'};
@@ -3731,7 +3737,12 @@ function renderFeedback(){
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
 }
 function wkBlock(w,wi){
-  function dim(label,val){return '<div class="wk-dim"><span class="wk-dim-l">'+label+'</span><span class="wk-dim-v '+attClass(val)+'">'+fbEsc(val||'—')+'</span></div>';}
+  function dim(label,val){
+    var v=val&&(typeof val==='object')?val:{label:val||'—',detail:''};
+    var cls=attClass(v.label);
+    return '<div class="wk-dim"><span class="wk-dim-l">'+label+'</span><span class="wk-dim-v '+cls+'">'+fbEsc(v.label)+'</span>'+
+      (v.detail?'<span class="wk-dim-d">'+fbEsc(v.detail)+'</span>':'')+'</div>';
+  }
   function themes(key,title,dot){
     var items=w[key]||[];
     var total=items.reduce(function(s,it){return s+(Number(it.count)||0);},0);
@@ -3783,7 +3794,7 @@ function openWeekModal(){
     dd.weeks.unshift({
       week:week,attitude:bg.querySelector('#wk-att').value,
       summary:bg.querySelector('#wk-sum').value.trim(),
-      dims:{attitude:bg.querySelector('#wk-d1').value.trim(),comprehension:bg.querySelector('#wk-d2').value.trim(),reputation:bg.querySelector('#wk-d3').value.trim(),engagement:bg.querySelector('#wk-d4').value.trim()},
+      dims:{attitude:wrapDim(bg.querySelector('#wk-d1').value.trim()),comprehension:wrapDim(bg.querySelector('#wk-d2').value.trim()),reputation:wrapDim(bg.querySelector('#wk-d3').value.trim()),engagement:wrapDim(bg.querySelector('#wk-d4').value.trim())},,
       official:fbParseTheme(bg.querySelector('#wk-off').value),
       community:fbParseTheme(bg.querySelector('#wk-com').value),
       trend:bg.querySelector('#wk-trend').value.trim(),
