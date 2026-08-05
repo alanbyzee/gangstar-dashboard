@@ -159,6 +159,28 @@ body{
 .fb-card .fb-text{font-size:12.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap;word-break:break-word}
 .fb-card .fb-del{margin-left:auto;cursor:pointer;color:#cbd5e1;font-size:12px;border:none;background:none;padding:1px 3px}
 .fb-card .fb-del:hover{color:#e53e3e}
+/* 紧凑总结版（老板视角） */
+.wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
+.wk-dims{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
+@media(max-width:760px){.wk-dims{grid-template-columns:repeat(2,1fr)}}
+.wk-dim{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+.wk-dim-l{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.wk-dim-v{display:inline-block;font-size:13.5px;font-weight:800;border-radius:8px;padding:3px 10px}
+.wk-dim-v.pos{background:#dcfce7;color:#15803d}
+.wk-dim-v.neg{background:#fee2e2;color:#b91c1c}
+.wk-dim-v.wave{background:#ffedd5;color:#c2410c}
+.wk-dim-v.neu{background:#f1f5f9;color:#475569}
+.wk-themes{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.wk-themes{grid-template-columns:1fr}}
+.wk-sub{background:#fbfcfe;border:1px solid #eef2f7;border-radius:13px;padding:15px}
+.wk-sub-h{font-size:14px;font-weight:800;margin:0 0 11px;display:flex;align-items:center;gap:8px}
+.wk-sub-n{margin-left:auto;font-size:11px;color:var(--muted);font-weight:600}
+.wk-theme{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px dashed #eef2f7}
+.wk-theme:last-child{border-bottom:none}
+.wk-theme .fb-type{flex:none;margin-top:1px}
+.wk-theme-t{font-size:13px;line-height:1.55;color:var(--ink);flex:1}
+.wk-theme-c{flex:none;font-size:11px;font-weight:700;color:#64748b;background:#f1f5f9;border-radius:7px;padding:2px 8px;white-space:nowrap}
+.wk-invalid{margin-top:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;font-size:12px;color:#92400e;line-height:1.55}
 .fb-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;border:1px dashed #e2e8f0;border-radius:11px}
 .fb-empty.big{padding:40px 0;font-size:13.5px}
 .fb-modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:1200}
@@ -2382,6 +2404,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -3646,34 +3669,21 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA={weeks:[
   {week:"7.27 - 8.2",attitude:"正面",
+   summary:"印度玩家对 GST 期待极高，评论区情绪高度正面，自发庆祝 2500万+ 预约里程碑；核心诉求集中在「尽快明确上线日期」与「更多玩法曝光」。无重大负面，整体风评积极、玩法认知良好。",
+   dims:{attitude:"正面 · 高度期待",comprehension:"玩法认知良好",reputation:"风评积极",engagement:"互动活跃"},
    official:[
-    {src:"官号后台",type:"good",status:"",text:"玩家对上线日兴奋、急切等待发布（约 8 处提及）"},
-    {src:"官号后台",type:"good",status:"",text:"祝贺团队达成 2500万+ 预约里程碑（2 处）"},
-    {src:"官号后台",type:"good",status:"",text:"社区喜欢管理员的幽默、机智、互动式回复（5 处）"},
-    {src:"官号后台",type:"good",status:"",text:"评论区被正面表情包 🔥❤️😍😂🙌 主导（13 处）"},
-    {src:"官号后台",type:"good",status:"",text:"Meme 帖子带来高互动与笑声（6 处）"},
-    {src:"官号后台",type:"good",status:"",text:"玩家确认已预约、倒计时等上线（4 处）"},
-    {src:"官号后台",type:"good",status:"",text:"对官方 Discord 社区公告与服务器上线积极回应（3 处）"},
-    {src:"官号后台",type:"good",status:"",text:"创作者合作与玩法相关内容获强烈好评（5 处）"},
-    {src:"官号后台",type:"good",status:"",text:"武器/公司曝光与玩法预告引发兴奋（2 处）"},
-    {src:"官号后台",type:"good",status:"",text:"玩家讨论与朋友同玩、分享首日体验期待（2 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"更频繁公布官方上线日期（7 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"上线前提供抢先体验/测试机会（2 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"分享更多玩法视频、开发者更新、直播内容（2 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"增加更多 NPC 让游戏世界更鲜活（1 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"为活跃社区互动/评论提供奖励或激励（1 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"继续扩展推广 Discord 社区，提供专属更新与活动（2 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"明确 Play/App Store 可用性与国际区域（2 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"允许/鼓励创作者在上线前开始上传内容（1 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"询问最低设备要求、确认手机能否流畅运行（1 处）"},
-    {src:"官号后台",type:"sug",status:"",text:"尽快上线，很多玩家等不及了（3 处）"},
-    {src:"官号后台",type:"bad",status:"",text:"反复询问上线日期，说明玩家仍觉上线信息有限（7 处）"},
-    {src:"官号后台",type:"bad",status:"",text:"部分玩家在 App Store 难找到游戏/质疑区域可用性（如加拿大）（2 处）"},
-    {src:"官号后台",type:"bad",status:"",text:"推广虚假原版游戏链接的垃圾评论降低评论区质量（2 处）"},
-    {src:"官号后台",type:"bad",status:"",text:"一名用户报告某内容帖可能缺失音乐/音频故障（1 处）"}
+    {theme:"对上线日极度兴奋、自发倒计时并相约朋友同玩",count:14,type:"good"},
+    {theme:"庆祝 2500万+ 预约里程碑、对品牌/武器曝光兴奋",count:4,type:"good"},
+    {theme:"喜爱管理员幽默互动 + Meme 高互动，评论区正面表情包主导",count:24,type:"good"},
+    {theme:"创作者合作与玩法内容获强烈好评",count:5,type:"good"},
+    {theme:"呼吁更频繁公布上线日期 / 抢先体验",count:9,type:"sug"},
+    {theme:"希望更多玩法视频 / 开发者更新 / 直播",count:5,type:"sug"},
+    {theme:"明确 Play/App Store 与区域可用性（玩家反馈 App Store 难找 / 如加拿大）",count:4,type:"sug"},
+    {theme:"1 例内容帖疑似音频/音乐缺失故障（个案，已备注）",count:1,type:"bad"}
    ],
    community:[],
-   trend:"社区情绪高度正面：多数玩家对上线兴奋、积极互动，已确认预约并庆祝 2500万+ 预约里程碑；管理员幽默互动、Meme、创作者合作与 Discord 上线共同推高参与度。建议集中在更频繁公布上线日期、抢先体验与更多玩法曝光；负面极少且多因信息缺口（上线时间/区域可用性/垃圾评论）。建议加强上线沟通、治理垃圾评论、澄清区域可用性。"}
+   trend:"社区情绪高度正面：管理员幽默、Meme、创作者合作与 Discord 上线共同推高参与度；建议集中在上线沟通与玩法曝光；负面极少且多为信息缺口（区域可用性）。建议加强上线沟通、治理垃圾评论、澄清区域可用性。",
+   invalid:"已过滤无效反馈：2 条推广虚假「原版链接」的垃圾评论；另将重复刷「上线日期」的噪音并入「公布上线日期」诉求统计，未单列。"}
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fbSeedSig(){var s=JSON.stringify(FEEDBACK_DATA.weeks||[]);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
@@ -3684,20 +3694,27 @@ function getFeedback(){
   return {weeks:FEEDBACK_DATA.weeks.slice(),__sig:sig};
 }
 function setFeedback(d){try{d.__sig=fbSeedSig();localStorage.setItem('gangstar_feedback',JSON.stringify(d));}catch(e){}}
-function attClass(a){a=a||'';if(a.indexOf('正面')>=0)return 'pos';if(a.indexOf('负面')>=0)return 'neg';if(a.indexOf('波动')>=0)return 'wave';return 'neu';}
+function attClass(a){a=a||'';
+  if(a.indexOf('正面')>=0||a.indexOf('良好')>=0||a.indexOf('积极')>=0||a.indexOf('活跃')>=0||a.indexOf('佳')>=0||a.indexOf('懂')>=0||a.indexOf('高')>=0)return 'pos';
+  if(a.indexOf('负面')>=0||a.indexOf('困惑')>=0||a.indexOf('差')>=0||a.indexOf('低')>=0||a.indexOf('弱')>=0)return 'neg';
+  if(a.indexOf('波动')>=0||a.indexOf('不定')>=0)return 'wave';
+  return 'neu';
+}
 var FB_TM={bug:['bug','🐞 Bug'],sug:['sug','💡 建议'],bad:['bad','😤 吐槽'],good:['good','👍 好评'],oth:['oth','💬 其它']};
-function fbParseLines(txt){
+function fbParseTheme(txt){
+  var mp={'🐞':'bug','💡':'sug','😤':'bad','👍':'good','bug':'bug','sug':'sug','bad':'bad','good':'good','建议':'sug','吐槽':'bad','好评':'good'};
   return (txt||'').split('\n').map(function(l){return l.trim();}).filter(function(l){return l;}).map(function(l){
-    var m=l.match(/^(🐞|💡|😤|👍|bug|sug|bad|good|建议|吐槽|好评)\s*[:：]?\s*([\s\S]*)$/i);
-    var type='oth',text=l;
-    if(m){type=({'🐞':'bug','💡':'sug','😤':'bad','👍':'good','bug':'bug','sug':'sug','bad':'bad','good':'good','建议':'sug','吐槽':'bad','好评':'good'})[m[1]]||'oth';text=m[2];}
-    return {src:'—',type:type,text:text,status:''};
+    var m=l.match(/^(🐞|💡|😤|👍|bug|sug|bad|good|建议|吐槽|好评)\s*[:：]?\s*([\s\S]*?)(?:[（(](\d+)[）)])?\s*$/i);
+    var type='oth',theme=l,count=0;
+    if(m){type=mp[m[1]]||'oth';theme=m[2];count=Number(m[3]||0);}
+    else{var c=l.match(/[（(](\d+)[）)]\s*$/);if(c){count=Number(c[1]);theme=l.replace(/[（(]\d+[）)]\s*$/,'').trim();}}
+    return {theme:theme,count:count,type:type};
   });
 }
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
-  var html='<h2>💬 玩家反馈收集 · 印度市场</h2>'+
-    '<div class="sub">按周汇总官方账号后台与玩家社区的反馈；由助手整理评论主题与走向，长期追踪印度市场对游戏的态度</div>';
+  var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
+    '<div class="sub">每周由助手整理两份周报（官号后台 / 玩家社区），提炼主题、过滤无效反馈，供团队与老板快速掌握印度玩家对 GST 的态度、玩法认知与市场风评</div>';
   if(weeks.length){
     html+='<div class="att-track"><span class="att-track-label">📈 态度走向（长期）：</span>'+
       weeks.slice().reverse().map(function(w){return '<span class="att-badge '+attClass(w.attitude)+'">'+fbEsc(w.week)+' · '+(w.attitude||'—')+'</span>';}).join('')+'</div>';
@@ -3712,40 +3729,50 @@ function renderFeedback(){
   root.innerHTML=html;
   root.querySelector('.add-week-btn').onclick=openWeekModal;
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
-  root.querySelectorAll('.fb-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();var w=dd.weeks[Number(b.dataset.w)];w[b.dataset.k].splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
 }
 function wkBlock(w,wi){
-  function col(key,title,dot){
+  function dim(label,val){return '<div class="wk-dim"><span class="wk-dim-l">'+label+'</span><span class="wk-dim-v '+attClass(val)+'">'+fbEsc(val||'—')+'</span></div>';}
+  function themes(key,title,dot){
     var items=w[key]||[];
-    var cards=items.length?items.map(function(it,idx){
+    var total=items.reduce(function(s,it){return s+(Number(it.count)||0);},0);
+    var rows=items.length?items.map(function(it){
       var t=FB_TM[it.type]||FB_TM.oth;
-      return '<div class="fb-card">'+
-        '<div class="fb-meta"><span class="fb-src">'+fbEsc(it.src||'—')+'</span><span class="fb-type '+t[0]+'">'+t[1]+'</span>'+
-        (it.status?'<span class="fb-status">'+fbEsc(it.status)+'</span>':'')+
-        '<button class="fb-del" data-w="'+wi+'" data-k="'+key+'" data-i="'+idx+'">✕</button></div>'+
-        '<div class="fb-text">'+fbEsc(it.text||'')+'</div></div>';
-    }).join(''):'<div class="fb-empty">本周暂无</div>';
-    return '<div class="fb-col"><h3><span class="fb-dot" style="background:'+dot+'"></span>'+title+'</h3><div class="fb-stat">共 '+items.length+' 条</div>'+cards+'</div>';
+      return '<div class="wk-theme"><span class="fb-type '+t[0]+'">'+t[1]+'</span>'+
+        '<span class="wk-theme-t">'+fbEsc(it.theme||'')+'</span>'+
+        (it.count?'<span class="wk-theme-c">'+it.count+' 提及</span>':'')+'</div>';
+    }).join(''):'<div class="fb-empty">本周暂无'+(key==='community'?'社区':'官号')+'反馈（待补）</div>';
+    return '<div class="wk-sub"><div class="wk-sub-h"><span class="fb-dot" style="background:'+dot+'"></span>'+title+'<span class="wk-sub-n">'+items.length+' 主题'+(total?' · '+total+' 提及':'')+'</span></div>'+rows+'</div>';
   }
   return '<div class="wk-block">'+
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
-    (w.trend?'<div class="wk-trend"><b>本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
-    '<div class="fb-cols">'+
-      col('official','官方账号后台反馈','#4338ca')+
-      col('community','玩家社区 · 群组反馈','#c2410c')+
-    '</div></div>';
+    (w.summary?'<div class="wk-summary">'+fbEsc(w.summary)+'</div>':'')+
+    (w.dims?'<div class="wk-dims">'+dim('对 GST 态度',w.dims.attitude)+dim('玩不玩的懂',w.dims.comprehension)+dim('市场风评',w.dims.reputation)+dim('社区活跃度',w.dims.engagement)+'</div>':'')+
+    '<div class="wk-themes">'+
+      themes('official','官方账号后台反馈','#4338ca')+
+      themes('community','玩家社区 · 群组反馈','#c2410c')+
+    '</div>'+
+    (w.trend?'<div class="wk-trend"><b>📌 本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
+    (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
+  '</div>';
 }
 function openWeekModal(){
   var bg=document.createElement('div');bg.className='fb-modal-bg';
-  bg.innerHTML='<div class="fb-modal"><div class="fb-modal-h">新增一周反馈</div>'+
-    '<div class="hint">每行一条反馈，可选前缀 🐞Bug / 💡建议 / 😤吐槽 / 👍好评（缺省为其它）。把给助手的两个表内容直接粘贴进来即可。</div>'+
+  bg.innerHTML='<div class="fb-modal"><div class="fb-modal-h">新增一周反馈（总结式）</div>'+
+    '<div class="hint">由助手整理后录入：填一句话总结 + 四维评价 + 官号/社区主题（每行「前缀 主题 (提及数)」）。无效反馈直接不写。</div>'+
     '<label>周次（如 2026-08-04 ~ 08-10）</label><input id="wk-week" placeholder="2026-08-04 ~ 08-10">'+
     '<label>本周印度市场态度</label><select id="wk-att"><option value="正面上升">正面上升</option><option value="正面">正面</option><option value="中性">中性</option><option value="波动">波动</option><option value="负面">负面</option><option value="负面上升">负面上升</option></select>'+
-    '<label>官号后台反馈（每行一条）</label><textarea id="wk-off" rows="5" placeholder="🐞Bug：登录闪退\n💡建议：希望加 Hindi 语音包"></textarea>'+
-    '<label>玩家社区 · 群组反馈（每行一条）</label><textarea id="wk-com" rows="5" placeholder="😤吐槽：匹配机制太坑\n👍好评：新活动很赞"></textarea>'+
-    '<label>本周走向（助手整理，可选）</label><textarea id="wk-trend" rows="3" placeholder="玩家主要关注… 态度走向…"></textarea>'+
+    '<label>一句话总结（老板先看这句）</label><textarea id="wk-sum" rows="2" placeholder="印度玩家对 GST 期待极高，整体风评积极…"></textarea>'+
+    '<label>四维评价（对GST态度 / 玩不玩的懂 / 市场风评 / 社区活跃度）</label>'+
+    '<input id="wk-d1" placeholder="对GST态度，如：正面 · 高度期待">'+
+    '<input id="wk-d2" placeholder="玩不玩的懂，如：玩法认知良好">'+
+    '<input id="wk-d3" placeholder="市场风评，如：风评积极">'+
+    '<input id="wk-d4" placeholder="社区活跃度，如：互动活跃">'+
+    '<label>官号后台主题（每行：👍主题 (14)）</label><textarea id="wk-off" rows="5" placeholder="👍对上线日极度兴奋 (14)\n💡呼吁更频繁公布上线日期 (9)"></textarea>'+
+    '<label>玩家社区主题（每行一条）</label><textarea id="wk-com" rows="4" placeholder="👍玩家社区自发组织攻略 (8)"></textarea>'+
+    '<label>本周走向</label><textarea id="wk-trend" rows="2" placeholder="玩家主要关注… 态度走向…"></textarea>'+
+    '<label>已过滤的无效反馈（可选）</label><input id="wk-inv" placeholder="已过滤：2 条垃圾评论…">'+
     '<div class="fb-modal-actions"><button class="btn-cancel">取消</button><button class="btn-save">保存本周</button></div></div>';
   document.body.appendChild(bg);
   bg.querySelector('.btn-cancel').onclick=function(){bg.remove();};
@@ -3753,7 +3780,15 @@ function openWeekModal(){
     var week=bg.querySelector('#wk-week').value.trim();
     if(!week){bg.querySelector('#wk-week').focus();return;}
     var dd=getFeedback();
-    dd.weeks.unshift({week:week,attitude:bg.querySelector('#wk-att').value,official:fbParseLines(bg.querySelector('#wk-off').value),community:fbParseLines(bg.querySelector('#wk-com').value),trend:bg.querySelector('#wk-trend').value.trim()});
+    dd.weeks.unshift({
+      week:week,attitude:bg.querySelector('#wk-att').value,
+      summary:bg.querySelector('#wk-sum').value.trim(),
+      dims:{attitude:bg.querySelector('#wk-d1').value.trim(),comprehension:bg.querySelector('#wk-d2').value.trim(),reputation:bg.querySelector('#wk-d3').value.trim(),engagement:bg.querySelector('#wk-d4').value.trim()},
+      official:fbParseTheme(bg.querySelector('#wk-off').value),
+      community:fbParseTheme(bg.querySelector('#wk-com').value),
+      trend:bg.querySelector('#wk-trend').value.trim(),
+      invalid:bg.querySelector('#wk-inv').value.trim()
+    });
     setFeedback(dd);bg.remove();renderFeedback();
   };
 }
