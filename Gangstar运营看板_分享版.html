@@ -324,6 +324,7 @@ body{
 .t-koc{border-left:3px solid #12a594}.t-koc .tag{background:#d2f0eb;color:#0b7a6e}
 .t-poster{border-left:3px solid #58a83c}.t-poster .tag{background:#e0f0d8;color:#3a7a24}
 .t-gameplay{border-left:3px solid #8b5a2b}.t-gameplay .tag{background:#f3e9dc;color:#5c3a1e}
+.t-drama{border-left:3px solid #eab308}.t-drama .tag{background:#fef9c3;color:#a16207}
 /* 统计条 */
 .regional-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .rstat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 17px;min-width:122px;box-shadow:var(--shadow-sm);transition:.2s}
@@ -401,6 +402,8 @@ body{
 .chip[data-f="poster"].on{background:#58a83c}
 .chip[data-f="gameplay"]{border-color:#f3e9dc}
 .chip[data-f="gameplay"].on{background:#8b5a2b;color:#fff}
+.chip[data-f="drama"]{border-color:#fef9c3}
+.chip[data-f="drama"].on{background:#eab308;color:#fff}
 /* 分区标题带 */
 .sa-section{margin-bottom:30px}
 .sa-banner{display:flex;align-items:center;gap:10px;padding:12px 19px;border-radius:13px 13px 0 0;font-size:15px;font-weight:800;color:#fff;box-shadow:var(--shadow-sm)}
@@ -2409,6 +2412,8 @@ const FALLBACK_DATA = {
 
 
 
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -2521,7 +2526,8 @@ const SA_FILTERS=[
   {key:'poster',label:'海报'},
   {key:'copost',label:'copost'},
   {key:'hq',label:'HQ公线素材'},
-  {key:'gameplay',label:'区域玩法素材'}
+  {key:'gameplay',label:'区域玩法素材'},
+  {key:'drama',label:'短剧推广'}
 ];
 // 区域素材类型 → 标签映射（与筛选开关一一对应，直接映射）
 const REGION_TAGS={
@@ -2531,7 +2537,8 @@ const REGION_TAGS={
   koc:['koc'],
   meme:['meme'],
   poster:['poster'],
-  gameplay:['gameplay']
+  gameplay:['gameplay'],
+  drama:['drama']
 };
 let saActive=new Set(SA_FILTERS.map(f=>f.key)); // 默认全开
 let saUndoStack=null; // 已弃用，全局撤销见 doUndo()
@@ -3161,7 +3168,8 @@ const CONTENT_TYPES=[
   {key:'koc',name:'KOC',color:'#12a594',icon:'💬'},
   {key:'meme',name:'Meme',color:'#f2994a',icon:'😂'},
   {key:'poster',name:'海报',color:'#58a83c',icon:'🎨'},
-  {key:'gameplay',name:'区域玩法素材',color:'#8b5a2b',icon:'🎮'}
+  {key:'gameplay',name:'区域玩法素材',color:'#8b5a2b',icon:'🎮'},
+  {key:'drama',name:'短剧推广',color:'#eab308',icon:'🎬'}
 ];
 
 // 预设 Hashtag（编辑弹窗可选，点击切换）
