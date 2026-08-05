@@ -113,6 +113,43 @@ body{
 
 /* 平台卡片网格 */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+
+/* 玩家反馈收集看板 */
+.feedback{padding:28px 24px 44px;max-width:1180px;margin:0 auto}
+.feedback h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
+.feedback .sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+.fb-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.fb-cols{grid-template-columns:1fr}}
+.fb-col{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm)}
+.fb-col h3{font-size:15px;font-weight:800;margin:0 0 3px;display:flex;align-items:center;gap:8px}
+.fb-col h3 .add-btn{margin-left:auto;font-size:12px;font-weight:700;color:var(--brand);background:#f3edff;border:1px solid #e3d5ff;border-radius:8px;padding:5px 11px;cursor:pointer;transition:.15s}
+.fb-col h3 .add-btn:hover{background:#e9ddff}
+.fb-col .col-sub{font-size:12px;color:var(--muted);margin-bottom:10px}
+.fb-stat{font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600}
+.fb-card{background:#fbfaff;border:1px solid #ece6fb;border-radius:11px;padding:12px 13px;margin-bottom:11px;position:relative}
+.fb-card .fb-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.fb-card .fb-src{font-size:11px;font-weight:700;background:#eef2ff;color:#4338ca;border-radius:6px;padding:2px 8px}
+.fb-card .fb-type{font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px}
+.fb-type.bug{background:#fee2e2;color:#b91c1c}
+.fb-type.sug{background:#dcfce7;color:#15803d}
+.fb-type.bad{background:#ffedd5;color:#c2410c}
+.fb-type.good{background:#dbeafe;color:#1d4ed8}
+.fb-card .fb-status{font-size:11px;color:var(--muted);background:#f1f5f9;border-radius:6px;padding:2px 8px}
+.fb-card .fb-text{font-size:13px;line-height:1.55;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+.fb-card .fb-foot{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:var(--muted)}
+.fb-card .fb-del{margin-left:auto;cursor:pointer;color:#cbd5e1;font-size:13px;border:none;background:none;padding:2px 4px}
+.fb-card .fb-del:hover{color:#e53e3e}
+.fb-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;border:1px dashed #e2e8f0;border-radius:11px}
+.fb-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.fb-modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:1200}
+.fb-modal{background:#fff;border-radius:16px;padding:22px;width:min(460px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.fb-modal-h{font-size:17px;font-weight:800;margin-bottom:14px}
+.fb-modal label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 5px}
+.fb-modal input,.fb-modal select,.fb-modal textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;font-family:inherit;box-sizing:border-box}
+.fb-modal textarea{resize:vertical}
+.fb-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.fb-modal .btn-cancel,.fb-modal .btn-save{padding:9px 18px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--line)}
+.fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
 .pc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:.2s;box-shadow:var(--shadow-sm)}
 .pc:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .pc .bar{position:absolute;top:0;left:0;width:5px;height:100%;border-radius:16px 0 0 16px}
@@ -473,6 +510,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   <div class="tabs">
     <div class="tab active" data-view="sa">📅 南亚社群排期</div>
     <div class="tab" data-view="fan">📊 粉丝监控</div>
+    <div class="tab" data-view="feedback">💬 玩家反馈</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
     <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
   </div>
@@ -507,6 +545,9 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <div class="cards" id="cards"></div>
     </div>
+  </div>
+  <div class="view scroll" id="view-feedback">
+    <div class="feedback" id="feedbackView"></div>
   </div>
 </div>
 
@@ -1720,7 +1761,7 @@ window.HQ_DATA = {
 <script>
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
-const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),regional:document.getElementById('view-regional')};
+const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional')};
 tabs.forEach(t=>t.onclick=()=>{
   tabs.forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
@@ -1728,6 +1769,7 @@ tabs.forEach(t=>t.onclick=()=>{
   Object.values(views).forEach(x=>x.classList.remove('active'));
   views[v].classList.add('active');
   if(v==='fan') loadFans();
+  if(v==='feedback') renderFeedback();
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
 });
@@ -1990,7 +2032,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3372,
+      "value": 3490,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-05）；82帖子；8/1–8/4 增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
@@ -2049,14 +2091,14 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-05",
-          "value": 3372
+          "value": 3490
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 138,
+      "value": 145,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-05）",
@@ -2119,7 +2161,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-05",
-          "value": 138
+          "value": 145
         }
       ],
       "name": "Facebook"
@@ -2128,7 +2170,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1280,
+      "value": 1290,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-05）；33个视频",
@@ -2263,7 +2305,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-05",
-          "value": 1280
+          "value": 1290
         }
       ]
     },
@@ -2299,11 +2341,16 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-04",
           "value": 25
+        },
+        {
+          "date": "2026-08-05",
+          "value": 25
         }
       ]
     }
   }
 };
+
 
 
 
@@ -3569,6 +3616,61 @@ function renderRegional(){
 if(views.regional.classList.contains('active')) renderRegional();
 // 南亚社群排期（默认激活）初始渲染
 if(views.sa.classList.contains('active')) renderSouthAsia();
+
+// ===== 玩家反馈收集看板 =====
+var FEEDBACK_DATA={official:[],community:[]};
+function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function getFeedback(){
+  try{var s=localStorage.getItem('gangstar_feedback');if(s){var d=JSON.parse(s);if(d&&Array.isArray(d.official)&&Array.isArray(d.community))return d;}}catch(e){}
+  return {official:FEEDBACK_DATA.official.slice(),community:FEEDBACK_DATA.community.slice()};
+}
+function setFeedback(d){try{localStorage.setItem('gangstar_feedback',JSON.stringify(d));}catch(e){}}
+function renderFeedback(){
+  var d=getFeedback();
+  var tm={bug:['bug','🐞 Bug'],sug:['sug','💡 建议'],bad:['bad','😤 吐槽'],good:['good','👍 好评']};
+  function col(key,title,sub,dot){
+    var items=d[key];
+    var cards=items.length?items.map(function(it,idx){
+      var t=tm[it.type]||tm.bug;
+      return '<div class="fb-card">'+
+        '<div class="fb-meta"><span class="fb-src">'+fbEsc(it.src||'—')+'</span><span class="fb-type '+t[0]+'">'+t[1]+'</span>'+
+        (it.status?'<span class="fb-status">'+fbEsc(it.status)+'</span>':'')+'</div>'+
+        '<div class="fb-text">'+fbEsc(it.text||'')+'</div>'+
+        '<div class="fb-foot"><span>'+(it.date||'')+'</span><button class="fb-del" data-k="'+key+'" data-i="'+idx+'">✕</button></div>'+
+      '</div>';
+    }).join(''):'<div class="fb-empty">暂无反馈，点击右上角「＋ 添加反馈」录入</div>';
+    return '<div class="fb-col"><h3><span class="fb-dot" style="background:'+dot+'"></span>'+title+'<button class="add-btn" data-k="'+key+'">＋ 添加反馈</button></h3>'+
+      '<div class="col-sub">'+sub+'</div><div class="fb-stat">共 '+items.length+' 条</div>'+cards+'</div>';
+  }
+  document.getElementById('feedbackView').innerHTML=
+    '<h2>💬 玩家反馈收集</h2>'+
+    '<div class="sub">汇总官方账号后台与玩家社区 / 群组的真实反馈 · 点击「＋ 添加反馈」录入，数据存本地浏览器</div>'+
+    '<div class="fb-cols">'+
+      col('official','官方账号后台反馈','Instagram / YouTube / Facebook / X 等官方主页与私信后台收到的玩家反馈','#4338ca')+
+      col('community','玩家社区 · 群组反馈','WhatsApp / Discord / Facebook 群组 / 线下社群等玩家自发渠道','#c2410c')+
+    '</div>';
+  var root=document.getElementById('feedbackView');
+  root.querySelectorAll('.add-btn').forEach(function(b){b.onclick=function(){openFbModal(b.dataset.k);};});
+  root.querySelectorAll('.fb-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd[b.dataset.k].splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
+}
+function openFbModal(key){
+  var bg=document.createElement('div');bg.className='fb-modal-bg';
+  bg.innerHTML='<div class="fb-modal"><div class="fb-modal-h">添加反馈</div>'+
+    '<label>来源 / 渠道</label><input id="fb-src" placeholder="如 IG 后台私信 / Discord #吐槽频道">'+
+    '<label>反馈类型</label><select id="fb-type"><option value="bug">🐞 Bug</option><option value="sug">💡 建议</option><option value="bad">😤 吐槽</option><option value="good">👍 好评</option></select>'+
+    '<label>处理状态</label><select id="fb-status"><option value="待处理">待处理</option><option value="处理中">处理中</option><option value="已回复">已回复</option><option value="已解决">已解决</option></select>'+
+    '<label>反馈内容</label><textarea id="fb-text" rows="4" placeholder="粘贴 / 描述玩家反馈..."></textarea>'+
+    '<div class="fb-modal-actions"><button class="btn-cancel">取消</button><button class="btn-save">保存</button></div></div>';
+  document.body.appendChild(bg);
+  bg.querySelector('.btn-cancel').onclick=function(){bg.remove();};
+  bg.querySelector('.btn-save').onclick=function(){
+    var text=bg.querySelector('#fb-text').value.trim();
+    if(!text){bg.querySelector('#fb-text').focus();return;}
+    var dd=getFeedback();
+    dd[key].unshift({src:bg.querySelector('#fb-src').value.trim(),type:bg.querySelector('#fb-type').value,status:bg.querySelector('#fb-status').value,text:text,date:new Date().toISOString().slice(0,10)});
+    setFeedback(dd);bg.remove();renderFeedback();
+  };
+}
 </script>
 <script>
 (function(){
