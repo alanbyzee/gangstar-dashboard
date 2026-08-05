@@ -341,3 +341,10 @@
 - 在 `sa-cap` 产能条底部新增一行：`📦 每月产能 ≈ 🖼️ 120 张图片 + 🎬 60 支视频`（现产能图片 4/天 + 视频 2/天 ×30 天）。
 - 新增样式 `.cap-month`（橙系虚线高亮，与主看板/分享版双文件一致）。
 - 已部署公网 + Pages 重建(201) + 线上验证通过 + git commit。
+
+### fix：国内网络打不开看板（2026-08-05）
+- 现象：部分同事打不开分享链接（有的能开有的不能，同时段）。
+- 根因：① 分享版<head>里两行 `<script src="gstatic.com/firebasejs...">` 是**同步渲染阻塞**标签，国内网络拉取 gstatic 超时 → 整页白屏/一直转，表现为"打不开"；② 链接托管在 github.io，中国大陆网络对其不稳定（能开的多半走代理/海外网）；③ Firebase 实时库 `*.firebasedatabase.app` 在国内本就不可达（但之前是同步阻塞，会拖垮整页）。
+- 修复：① 移除两行同步 gstatic 标签，改为 `loadFirebaseScripts()` **运行时异步加载 + 6 秒超时降级**——页面先秒出内容，后台再连 Firebase；拉不到就降级"仅本地"模式，绝不白屏。主文件/分享版双文件一致。② 部署到 github.io 并重建 CDN；额外提供 jsDelivr 镜像链接（国内通常有 CDN 节点、更通畅）：https://cdn.jsdelivr.net/gh/alanbyzee/gangstar-dashboard@main/index.html 。
+- 验证：Playwright 无头模拟"国内屏蔽 gstatic/Firebase"→ 页面正常渲染(团队产能/粉丝监控均在)、徽标"○ 仅本地·未同步"、零致命 JS 错误。jsDelivr 主页面+同域 fan_data.json 均 HTTP 200。
+- 说明：github.io / jsDelivr 在国内仍可能偶发不稳定。要 100% 国内无障碍，最稳妥是放到国内原生托管（腾讯云 EdgeOne Pages / COS+CDN，或自有服务器），或直接把 HTML 文件发微信/邮件（零网络、离线可开，手机电脑都能开）。如需部署到 EdgeOne Pages，连接该连接器后我可直接帮你部署。
