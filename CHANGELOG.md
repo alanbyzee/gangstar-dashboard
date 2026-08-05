@@ -329,3 +329,9 @@
 - 修复（两文件）：① `.sa-wband` 加 `min-width:max-content`；② `.sa-week` 加 `min-width:min-content`；③ `.sa-grid` 不加 min-width（避免容器自撑而不滚动）。
 - 无头验证：800px 下 week/wband/cells 三者宽度均为 980px（完全对齐）；grid scrollW=980>clientW=748（可横滑232px）；滚到最右 scrollLeft=232。
 - 已部署+Pages重建(201)并轮询确认线上含 min-width:max-content；git commit。
+
+### fix：粉丝数更新看板看不到的根因与永久修复（2026-08-05）
+- 用户多次反馈"叫更新粉丝数据却看不到变化"。
+- 根因：`loadFans()` 先 fetch fan_data.json，失败回退内联 FALLBACK_DATA。用户直接双击本地 HTML（file://）打开时 fetch 被禁→永远走 FALLBACK；而 FALLBACK 需手动同步 3 处（fan_data.json+主文件+分享版），经常漏改→看板永远旧数字。
+- 永久修复：新增 `sync_fallback.py` 从 fan_data.json 自动重写两 HTML 内联 FALLBACK_DATA（括号配对精确替换，保 JS 合法）；并接入 `sync_to_gh.py`（上传前自动注入分享版 FALLBACK）。此后更新粉丝数只需改 fan_data.json + 部署，内联兜底自动一致。
+- 无头实测（Playwright 拦截 Firebase）：http 加载(fetch成功) 与 file:// 加载(fetch失败→FALLBACK) 两种场景均显示 IG3372/YTB1280/FB138/X25，0 报错。已部署公网+Pages重建(201)并轮询确认线上 fan_data.json IG=3372/2026-08-05；git commit。
