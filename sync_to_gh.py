@@ -41,6 +41,39 @@ def put(path, local, sha):
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.status, json.loads(r.read().decode())
 
+# ===== 部署前：自动把 fan_data.json 注入分享版的 FALLBACK_DATA 内联兜底 =====
+# 这样 file:// 直接打开或 fetch 失败时，也不会显示陈旧粉丝数。
+def sync_fallback_into_share():
+    import re as _re
+    share = FILES["index.html"]
+    if not os.path.exists(share) or not os.path.exists(FILES["fan_data.json"]):
+        return
+    with open(FILES["fan_data.json"], encoding="utf-8") as f:
+        fan = json.load(f)
+    with open(share, encoding="utf-8") as f:
+        html = f.read()
+    mark = "const FALLBACK_DATA = "
+    i = html.find(mark)
+    if i < 0:
+        print("WARN 分享版未找到 FALLBACK_DATA 块，跳过自动注入"); return
+    j = html.index("{", i)
+    depth = 0; k = j
+    while k < len(html):
+        if html[k] == "{": depth += 1
+        elif html[k] == "}":
+            depth -= 1
+            if depth == 0: break
+        k += 1
+    end = k + 1
+    while end < len(html) and html[end] == ";": end += 1
+    block = mark + json.dumps(fan, ensure_ascii=False, indent=2) + ";\n"
+    html = html[:i] + block + html[end:]
+    with open(share, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ 部署前已自动注入 FALLBACK (updated_at={fan.get('updated_at')})")
+
+sync_fallback_into_share()
+
 for path, local in FILES.items():
     if not os.path.exists(local):
         print("SKIP (missing)", local); continue
