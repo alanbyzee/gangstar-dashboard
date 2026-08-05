@@ -2380,6 +2380,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -3642,7 +3643,37 @@ if(views.regional.classList.contains('active')) renderRegional();
 if(views.sa.classList.contains('active')) renderSouthAsia();
 
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
-var FEEDBACK_DATA={weeks:[]};
+var FEEDBACK_DATA={weeks:[
+  {week:"7.27 - 8.2",attitude:"正面",
+   official:[
+    {src:"官号后台",type:"good",status:"",text:"玩家对上线日兴奋、急切等待发布（约 8 处提及）"},
+    {src:"官号后台",type:"good",status:"",text:"祝贺团队达成 2500万+ 预约里程碑（2 处）"},
+    {src:"官号后台",type:"good",status:"",text:"社区喜欢管理员的幽默、机智、互动式回复（5 处）"},
+    {src:"官号后台",type:"good",status:"",text:"评论区被正面表情包 🔥❤️😍😂🙌 主导（13 处）"},
+    {src:"官号后台",type:"good",status:"",text:"Meme 帖子带来高互动与笑声（6 处）"},
+    {src:"官号后台",type:"good",status:"",text:"玩家确认已预约、倒计时等上线（4 处）"},
+    {src:"官号后台",type:"good",status:"",text:"对官方 Discord 社区公告与服务器上线积极回应（3 处）"},
+    {src:"官号后台",type:"good",status:"",text:"创作者合作与玩法相关内容获强烈好评（5 处）"},
+    {src:"官号后台",type:"good",status:"",text:"武器/公司曝光与玩法预告引发兴奋（2 处）"},
+    {src:"官号后台",type:"good",status:"",text:"玩家讨论与朋友同玩、分享首日体验期待（2 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"更频繁公布官方上线日期（7 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"上线前提供抢先体验/测试机会（2 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"分享更多玩法视频、开发者更新、直播内容（2 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"增加更多 NPC 让游戏世界更鲜活（1 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"为活跃社区互动/评论提供奖励或激励（1 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"继续扩展推广 Discord 社区，提供专属更新与活动（2 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"明确 Play/App Store 可用性与国际区域（2 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"允许/鼓励创作者在上线前开始上传内容（1 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"询问最低设备要求、确认手机能否流畅运行（1 处）"},
+    {src:"官号后台",type:"sug",status:"",text:"尽快上线，很多玩家等不及了（3 处）"},
+    {src:"官号后台",type:"bad",status:"",text:"反复询问上线日期，说明玩家仍觉上线信息有限（7 处）"},
+    {src:"官号后台",type:"bad",status:"",text:"部分玩家在 App Store 难找到游戏/质疑区域可用性（如加拿大）（2 处）"},
+    {src:"官号后台",type:"bad",status:"",text:"推广虚假原版游戏链接的垃圾评论降低评论区质量（2 处）"},
+    {src:"官号后台",type:"bad",status:"",text:"一名用户报告某内容帖可能缺失音乐/音频故障（1 处）"}
+   ],
+   community:[],
+   trend:"社区情绪高度正面：多数玩家对上线兴奋、积极互动，已确认预约并庆祝 2500万+ 预约里程碑；管理员幽默互动、Meme、创作者合作与 Discord 上线共同推高参与度。建议集中在更频繁公布上线日期、抢先体验与更多玩法曝光；负面极少且多因信息缺口（上线时间/区域可用性/垃圾评论）。建议加强上线沟通、治理垃圾评论、澄清区域可用性。"}
+]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function getFeedback(){
   try{var s=localStorage.getItem('gangstar_feedback');if(s){var d=JSON.parse(s);if(d&&Array.isArray(d.weeks))return d;}}catch(e){}
