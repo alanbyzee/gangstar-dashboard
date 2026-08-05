@@ -1982,17 +1982,17 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-08-04",
+  "updated_at": "2026-08-05",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3259,
+      "value": 3372,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-04 晚）；82帖子；8/1–8/4 增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
+      "note": "数据来源：用户截图校准（2026-08-05）；82帖子；8/1–8/4 增长主要来自 boost page like（付费涨粉/赞），非自然内容增长",
       "history": [
         {
           "date": "2026-07-02",
@@ -2045,17 +2045,20 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-04",
           "value": 3259
+        },
+        {
+          "date": "2026-08-05",
+          "value": 3372
         }
       ]
     },
     "facebook": {
-      "name": "Facebook",
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 124,
+      "value": 138,
       "label": "关注者",
       "color": "#1877F2",
-      "note": "数据来源：用户截图校准（2026-08-04 下午）",
+      "note": "数据来源：用户截图校准（2026-08-05）",
       "history": [
         {
           "date": "2026-07-02",
@@ -2112,17 +2115,22 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-04",
           "value": 124
+        },
+        {
+          "date": "2026-08-05",
+          "value": 138
         }
-      ]
+      ],
+      "name": "Facebook"
     },
     "youtube": {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1270,
+      "value": 1280,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-04 下午）；32个视频",
+      "note": "数据来源：用户截图校准（2026-08-05）；33个视频",
       "history": [
         {
           "date": "2026-07-02",
@@ -2251,6 +2259,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-04",
           "value": 1270
+        },
+        {
+          "date": "2026-08-05",
+          "value": 1280
         }
       ]
     },
@@ -2290,7 +2302,9 @@ const FALLBACK_DATA = {
       ]
     }
   }
-};;;;;;
+};
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
