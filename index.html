@@ -433,12 +433,12 @@ body{
 .sa-cap.supplier-cap{background:#f4f8fc;border-color:#d6e6f5;flex-direction:column;align-items:stretch;gap:10px}
 .sa-cap.supplier-cap .ca-t{color:#1d4e89;line-height:normal}
 .sup-org{display:flex;flex-direction:column;align-items:center}
-.sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:8px 24px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25)}
-.sup-cols{display:flex;gap:14px;margin-top:24px;position:relative;width:100%;flex-wrap:wrap;justify-content:center}
-.sup-cols::before{content:'';position:absolute;top:-24px;left:8%;right:8%;height:2px;background:#c3d0e0}
-.sup-cols::after{content:'';position:absolute;top:-24px;left:50%;width:2px;height:24px;background:#c3d0e0;transform:translateX(-50%)}
-.sup-col{position:relative;flex:1 1 160px;max-width:230px;min-width:150px;padding-top:24px}
-.sup-col::before{content:'';position:absolute;top:0;left:50%;width:2px;height:24px;background:#c3d0e0;transform:translateX(-50%)}
+.sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:8px 24px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25);position:relative;z-index:2}
+.sup-root::after{content:'';position:absolute;left:50%;bottom:-20px;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
+.sup-cols{display:flex;gap:14px;margin-top:20px;position:relative;width:100%;flex-wrap:wrap;justify-content:center}
+.sup-cols::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#c3d0e0}
+.sup-col{position:relative;flex:1 1 160px;max-width:230px;min-width:150px;padding-top:20px}
+.sup-col::before{content:'';position:absolute;top:0;left:50%;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
 .sup-head{border-radius:10px 10px 0 0;padding:8px 10px;text-align:center;font-weight:800;color:#fff;font-size:13px;background:var(--c)}
 .sup-list{list-style:none;margin:0;padding:0;border:1px solid #e0e6ef;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;background:#fff}
 .sup-list li{display:flex;justify-content:space-between;gap:8px;padding:7px 11px;font-size:12.5px;color:#3a3a44;border-bottom:1px solid #f0f1f4}
@@ -2473,6 +2473,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -2954,13 +2955,13 @@ function renderSouthAsia(){
           <div class="sup-head">📨 运营交付</div>
           <ul class="sup-list">
             <li>AM·Anne 全天 push <span>×1</span></li>
-            <li>文案 &amp; Follow up <span>×1</span></li>
+            <li>Aditya（文案 & Follow up） <span>×1</span></li>
           </ul>
         </div>
         <div class="sup-col" style="--c:#d97706">
-          <div class="sup-head">💬 社群</div>
+          <div class="sup-head">💬 社群反馈</div>
           <ul class="sup-list">
-            <li>社群反馈 额外人力 <span>＋</span></li>
+            <li>专用人力 <span>＋</span></li>
           </ul>
         </div>
       </div>
