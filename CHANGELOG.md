@@ -4,6 +4,13 @@
 > 每次增删改都追加一条记录，并对应一次 git 版本提交 —— 任何被删的内容都能精确找回，更新其他数据时不会丢。
 >
 
+### 2026-08-06 ｜ 粉丝数刷新（截图 OCR 校准）
+- **来源**：用户发 3 张社媒截图（8/06 00:16 时间戳），本机无多模态，用 Node `tesseract.js` 对截图 OCR，结合 `fan_data.json` 当前值交叉比对映射平台。
+- **映射**：图0（`gangstarmiragecityindia` 无@+游戏简介+3678）→ Instagram；图1（`Gangstar Mirage City India`+Official Page+160）→ Facebook；图2（`@GangstarMirageCityindia`+1300+35）→ YouTube。X 未发截图，保持 25。
+- **变更**：IG 3639→3678、FB 158→160、YT 1300（补 8/06 核验点）、X 25 不变；`updated_at`→2026-08-06。已同步两 HTML 内联 FALLBACK + 部署。
+- **验证**：github.io 线上渲染正确（3,678 / 1,300 / 160 / 25，总 5,163）。
+- **注意**：jsDelivr @latest 仍返回 `Content-Type: text/plain`（GitHub raw 默认 MIME）→ 浏览器显示源码而非渲染，该镜像链接不可用；统一用 github.io。
+
 ### 2026-08-05 ｜ 反馈四维 pills 升级：每个维度展示标签 + 具体结论
 - **问题**：四维 pill 只显示短标签（如"正面·高度期待"），老板不知道为什么这么判断，无实质信息传递
 - **改动**：`dims` 数据结构从纯字符串改为 `{label, detail}` 对象；渲染函数 `dim()` 输出 label 彩色 pill + detail 结论文字
