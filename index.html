@@ -404,6 +404,8 @@ body{
 .chip[data-f="gameplay"].on{background:#8b5a2b;color:#fff}
 .chip[data-f="drama"]{border-color:#fef9c3}
 .chip[data-f="drama"].on{background:#eab308;color:#fff}
+.chip[data-f="delay"]{border-color:#fbd5d5}
+.chip[data-f="delay"].on{background:#e53e3e;color:#fff}
 /* 分区标题带 */
 .sa-section{margin-bottom:30px}
 .sa-banner{display:flex;align-items:center;gap:10px;padding:12px 19px;border-radius:13px 13px 0 0;font-size:15px;font-weight:800;color:#fff;box-shadow:var(--shadow-sm)}
@@ -2443,6 +2445,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -2556,8 +2559,11 @@ const SA_FILTERS=[
   {key:'copost',label:'copost'},
   {key:'hq',label:'HQ公线素材'},
   {key:'gameplay',label:'区域玩法素材'},
-  {key:'drama',label:'短剧推广'}
+  {key:'drama',label:'短剧推广'},
+  {key:'delay',label:'延期'}
 ];
+// 真正的素材类别（不含「延期」这个元筛选），用于默认全开与「全部」开关计数
+const SA_REAL=SA_FILTERS.filter(f=>f.key!=='delay');
 // 区域素材类型 → 标签映射（与筛选开关一一对应，直接映射）
 const REGION_TAGS={
   hq:['hq'],
@@ -2569,7 +2575,7 @@ const REGION_TAGS={
   gameplay:['gameplay'],
   drama:['drama']
 };
-let saActive=new Set(SA_FILTERS.map(f=>f.key)); // 默认全开
+let saActive=new Set(SA_REAL.map(f=>f.key)); // 默认全开（延期为元筛选，默认关闭）
 let saUndoStack=null; // 已弃用，全局撤销见 doUndo()
 let saDetailMap={}; // HQ 详情映射
 let saEditMap={}; // 编辑覆盖映射（pid -> 当前可编辑值）
@@ -2757,6 +2763,7 @@ function renderSouthAsia(){
   }catch(e){}
   const reqs=getReqSubmitted();
   const dels=getDelayed();
+  const delayOnly=saActive.has('delay'); // 仅看延期：点过「延」的卡片都归为此类
   // 加载编辑覆盖
   const edits={};
   try{Object.assign(edits,JSON.parse(localStorage.getItem('gangstar_edits')||'{}'));}catch(e){}
@@ -2767,7 +2774,7 @@ function renderSouthAsia(){
   // 筛选开关
   const chipsHtml=`<div class="sa-filters">
     <span class="f-label">筛选：</span>
-    <span class="chip all ${saActive.size===SA_FILTERS.length?'on':''}" data-f="all">全部</span>
+    <span class="chip all ${saActive.size===SA_REAL.length?'on':''}" data-f="all">全部</span>
     ${SA_FILTERS.map(f=>`<span class="chip ${saActive.has(f.key)?'on':''}" data-f="${f.key}">${f.label}</span>`).join('')}
   </div>`;
 
@@ -2775,6 +2782,7 @@ function renderSouthAsia(){
   const legendHtml=`<div class="sa-legend">
     <span class="lg"><span class="lgd" style="background:${HQ_BADGE.color}"></span>HQ公线</span>
     ${(CONTENT_TYPES||[]).map(t=>`<span class="lg"><span class="lgd" style="background:${t.color}"></span>${t.name}</span>`).join('')}
+    <span class="lg"><span class="lgd" style="background:#e53e3e"></span>延期（点「延」标记）</span>
   </div>`;
 
   const today=todayStr();
@@ -2810,10 +2818,11 @@ function renderSouthAsia(){
       const isToday=(c.date===today);
       let posts=[];
       // HQ 公线素材
-      if(saActive.has('hq')){
+      if(saActive.has('hq')||delayOnly){
         (hqByDate[c.date]||[]).forEach(hp=>{
           const p=hp.p, pid=hp.pid;
           if(hidden.has(pid)) return;
+          if(delayOnly && !dels[pid]) return;
           let brief=p.brief, plat=p.plat||'';
           const ov=edits[pid];
           if(ov){ if(ov.title) brief=ov.title; if(ov.partner!==undefined) plat=ov.partner; }
@@ -2832,7 +2841,8 @@ function renderSouthAsia(){
         let title=it.title, type=it.type, partner=it.partner||'', desc=it.desc||'', hashtags=[];
         if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; if(ov.hashtags) hashtags=ov.hashtags; }
         const tag=(REGION_TAGS[type]||[])[0];
-        if(saActive.has(tag)){
+        if(saActive.has(tag)||delayOnly){
+          if(delayOnly && !dels[opId]) return;
           const ti=TYPE_INFO[type]||{name:type,color:'#888'};
           saEditMap[opId]={isHQ:false,title,type,partner,desc,hashtags};
           posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,hashtags,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId),isRegion:true});
@@ -2905,8 +2915,8 @@ function renderSouthAsia(){
     ch.onclick=()=>{
       const f=ch.dataset.f;
       if(f==='all'){
-        if(saActive.size===SA_FILTERS.length) saActive.clear();
-        else saActive=new Set(SA_FILTERS.map(x=>x.key));
+        if(saActive.size===SA_REAL.length) saActive.clear();
+        else saActive=new Set(SA_REAL.map(x=>x.key));
       }else{
         if(saActive.has(f)) saActive.delete(f); else saActive.add(f);
       }
