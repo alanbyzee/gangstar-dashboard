@@ -2446,6 +2446,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -2564,6 +2565,8 @@ const SA_FILTERS=[
 ];
 // 真正的素材类别（不含「延期」这个元筛选），用于默认全开与「全部」开关计数
 const SA_REAL=SA_FILTERS.filter(f=>f.key!=='delay');
+// 全部可筛选键（含延期），用于「全部」开关的全选/全不选判定，使延期键与其他键行为一致
+const SA_ALL=SA_FILTERS.map(f=>f.key);
 // 区域素材类型 → 标签映射（与筛选开关一一对应，直接映射）
 const REGION_TAGS={
   hq:['hq'],
@@ -2575,7 +2578,7 @@ const REGION_TAGS={
   gameplay:['gameplay'],
   drama:['drama']
 };
-let saActive=new Set(SA_REAL.map(f=>f.key)); // 默认全开（延期为元筛选，默认关闭）
+let saActive=new Set(SA_ALL); // 默认全开（含延期键，与其他类别键一致：累加式多选，默认全部点亮）
 let saUndoStack=null; // 已弃用，全局撤销见 doUndo()
 let saDetailMap={}; // HQ 详情映射
 let saEditMap={}; // 编辑覆盖映射（pid -> 当前可编辑值）
@@ -2763,7 +2766,6 @@ function renderSouthAsia(){
   }catch(e){}
   const reqs=getReqSubmitted();
   const dels=getDelayed();
-  const delayOnly=saActive.has('delay'); // 仅看延期：点过「延」的卡片都归为此类
   // 加载编辑覆盖
   const edits={};
   try{Object.assign(edits,JSON.parse(localStorage.getItem('gangstar_edits')||'{}'));}catch(e){}
@@ -2774,7 +2776,7 @@ function renderSouthAsia(){
   // 筛选开关
   const chipsHtml=`<div class="sa-filters">
     <span class="f-label">筛选：</span>
-    <span class="chip all ${saActive.size===SA_REAL.length?'on':''}" data-f="all">全部</span>
+    <span class="chip all ${saActive.size===SA_ALL.length?'on':''}" data-f="all">全部</span>
     ${SA_FILTERS.map(f=>`<span class="chip ${saActive.has(f.key)?'on':''}" data-f="${f.key}">${f.label}</span>`).join('')}
   </div>`;
 
@@ -2818,11 +2820,10 @@ function renderSouthAsia(){
       const isToday=(c.date===today);
       let posts=[];
       // HQ 公线素材
-      if(saActive.has('hq')||delayOnly){
+      if(saActive.has('hq')||(saActive.has('delay')&&!!dels[pid])){
         (hqByDate[c.date]||[]).forEach(hp=>{
           const p=hp.p, pid=hp.pid;
           if(hidden.has(pid)) return;
-          if(delayOnly && !dels[pid]) return;
           let brief=p.brief, plat=p.plat||'';
           const ov=edits[pid];
           if(ov){ if(ov.title) brief=ov.title; if(ov.partner!==undefined) plat=ov.partner; }
@@ -2841,8 +2842,7 @@ function renderSouthAsia(){
         let title=it.title, type=it.type, partner=it.partner||'', desc=it.desc||'', hashtags=[];
         if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; if(ov.hashtags) hashtags=ov.hashtags; }
         const tag=(REGION_TAGS[type]||[])[0];
-        if(saActive.has(tag)||delayOnly){
-          if(delayOnly && !dels[opId]) return;
+        if(saActive.has(tag)||(saActive.has('delay')&&!!dels[opId])){
           const ti=TYPE_INFO[type]||{name:type,color:'#888'};
           saEditMap[opId]={isHQ:false,title,type,partner,desc,hashtags};
           posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,hashtags,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId),isRegion:true});
@@ -2915,8 +2915,8 @@ function renderSouthAsia(){
     ch.onclick=()=>{
       const f=ch.dataset.f;
       if(f==='all'){
-        if(saActive.size===SA_REAL.length) saActive.clear();
-        else saActive=new Set(SA_REAL.map(x=>x.key));
+        if(saActive.size===SA_ALL.length) saActive.clear();
+        else saActive=new Set(SA_ALL);
       }else{
         if(saActive.has(f)) saActive.delete(f); else saActive.add(f);
       }
