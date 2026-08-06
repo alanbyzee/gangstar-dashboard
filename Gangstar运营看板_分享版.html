@@ -2447,6 +2447,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -2820,10 +2821,11 @@ function renderSouthAsia(){
       const isToday=(c.date===today);
       let posts=[];
       // HQ 公线素材
-      if(saActive.has('hq')||(saActive.has('delay')&&!!dels[pid])){
-        (hqByDate[c.date]||[]).forEach(hp=>{
-          const p=hp.p, pid=hp.pid;
-          if(hidden.has(pid)) return;
+      (hqByDate[c.date]||[]).forEach(hp=>{
+        const p=hp.p, pid=hp.pid;
+        if(hidden.has(pid)) return;
+        if(!!dels[pid] && !saActive.has('delay')) return; // 延期键未选中则隐藏延期卡（与其他类别键一致）
+        if(saActive.has('hq')||(saActive.has('delay')&&!!dels[pid])){
           let brief=p.brief, plat=p.plat||'';
           const ov=edits[pid];
           if(ov){ if(ov.title) brief=ov.title; if(ov.partner!==undefined) plat=ov.partner; }
@@ -2831,8 +2833,8 @@ function renderSouthAsia(){
           saEditMap[pid]={isHQ:true,title:brief,partner:plat};
           posts.push({pid,badge:HQ_BADGE,time:p.time,brief,plat,sub:'',cancelled:cancelledSet.has(pid),hasDetail:true});
           hqCnt++;
-        });
-      }
+        }
+      });
       // 区域自产素材（按日期匹配，含自定义）
       (regByDate[c.date]||[]).forEach(it=>{
         const pid=it._pid||(it._id?('cus|'+it._id):('reg|'+c.date+'|'+it.type+'|'+it.title));
@@ -2843,6 +2845,7 @@ function renderSouthAsia(){
         if(ov){ if(ov.title) title=ov.title; if(ov.type) type=ov.type; if(ov.partner!==undefined) partner=ov.partner; if(ov.desc!==undefined) desc=ov.desc; if(ov.hashtags) hashtags=ov.hashtags; }
         const tag=(REGION_TAGS[type]||[])[0];
         if(saActive.has(tag)||(saActive.has('delay')&&!!dels[opId])){
+          if(!!dels[opId] && !saActive.has('delay')) return; // 延期键未选中则隐藏延期卡（与其他类别键一致）
           const ti=TYPE_INFO[type]||{name:type,color:'#888'};
           saEditMap[opId]={isHQ:false,title,type,partner,desc,hashtags};
           posts.push({pid:opId,ruid:it._ruid||'',badge:ti,time:'',brief:title,plat:partner,sub:desc,hashtags,custom:!!it.custom,cid:it._id||'',cdate:c.date,cancelled:cancelledSet.has(opId),isRegion:true});
