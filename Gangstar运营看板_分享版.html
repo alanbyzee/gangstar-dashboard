@@ -429,6 +429,9 @@ body{
 .sa-cap .cap.old{opacity:.7}
 .sa-cap .cap i{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:var(--c);border-radius:5px;padding:1px 5px;margin-left:3px}
 .sa-cap .cap-budget{margin-left:auto;font-size:11.5px;color:#b06a00;font-weight:800;background:#fff3e0;border:1px solid #ffd9a0;border-radius:8px;padding:4px 11px;white-space:nowrap}
+/* 供应商人力安排块 — 区别于团队产能，用冷色底 */
+.sa-cap.supplier-cap{background:#f4f8fc;border-color:#d6e6f5}
+.sa-cap.supplier-cap .ca-t{color:#1d4e89}
 /* HQ 周历网格 */
 .sa-grid-wrap{position:relative}
 .sa-grid{border:1px solid var(--line);border-radius:0 0 14px 14px;overflow-x:auto;overflow-y:hidden;background:#fff;box-shadow:var(--shadow-sm);scrollbar-width:thin;scrollbar-color:#cbd5e1 transparent}
@@ -2083,7 +2086,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3712,
+      "value": 3752,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-06）；84帖4关注；IG涨粉靠boost page like（付费）非自然",
@@ -2150,14 +2153,14 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 3712
+          "value": 3752
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 163,
+      "value": 165,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-06）",
@@ -2228,7 +2231,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 163
+          "value": 165
         }
       ],
       "name": "Facebook"
@@ -2420,11 +2423,18 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-05",
           "value": 25
+        },
+        {
+          "date": "2026-08-06",
+          "value": 25
         }
       ]
     }
   }
 };
+
+
+
 
 
 
@@ -2906,7 +2916,24 @@ function renderSouthAsia(){
     </div>
   </div>`;
 
+  const supplierHtml=`<div class="sa-cap supplier-cap">
+    <span class="ca-t">🏭 供应商人力安排</span>
+    <div class="cap-col">
+      <div class="cap-row">
+        <span class="cap" style="--c:#58a83c">🖼️ 固定图片 Editor <b>×1</b></span>
+        <span class="cap" style="--c:#7c8794">🔄 灵活调动 <b>×2</b><i>可调图片/视频</i></span>
+        <span class="cap" style="--c:#2f80ed">🎬 固定视频 Editor <b>×1</b></span>
+        <span class="cap" style="--c:#2f80ed">🎬 新增视频 Editor <b>×1</b><i>新增</i></span>
+        <span class="cap" style="--c:#0f766e">📨 AM·Anne 全天 push <b>×1</b></span>
+        <span class="cap" style="--c:#e05299">✍️ 文案 &amp; Follow up <b>×1</b></span>
+        <span class="cap" style="--c:#d97706">💬 社群反馈 额外人力</span>
+      </div>
+      <div class="cap-month">📊 供应商侧：图片 1固定+2灵活 ｜ 视频 2（含新增1）｜ AM·Anne 全天push ｜ 文案1 ｜ 社群反馈额外</div>
+    </div>
+  </div>`;
+
   el.innerHTML=`${capHtml}
+    ${supplierHtml}
     <h2>📋 南亚社群排期</h2>
     <div class="sub">HQ 公线素材 + 区域自产素材 · 同表展示 · 筛选开关可单独查看某类</div>
     ${chipsHtml}
