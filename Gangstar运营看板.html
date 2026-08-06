@@ -656,8 +656,23 @@ function todayStr(){
   return `${y}-${m}-${d}`;
 }
 
+// ===== 历史按天归一化：同天多条取最高值，按日期升序 =====
+function dedupeHistory(hist){
+  if(!hist||!hist.length) return [];
+  const map={};
+  hist.forEach(h=>{
+    const v=Number(h.value)||0;
+    if(map[h.date]===undefined || v>map[h.date]) map[h.date]=v;
+  });
+  return Object.keys(map).sort().map(date=>({date,value:map[date]}));
+}
+// 图表最多显示天数（按天数据）
+const FAN_DISPLAY_DAYS=30;
+
 // ===== 折线图绘制（内联 SVG） =====
 function drawChart(hist,color,events){
+  // 按天归一化 + 仅显示最近 FAN_DISPLAY_DAYS 天（完整历史仍存于 fan_data.json，不丢失）
+  hist=dedupeHistory(hist).slice(-FAN_DISPLAY_DAYS);
   if(!hist||hist.length<2){
     return `<div class="chart-area" style="text-align:center;padding:20px;color:var(--muted);font-size:12px">
       数据点不足（需至少 2 次记录），继续更新后将自动画出增长曲线
@@ -713,7 +728,7 @@ function drawChart(hist,color,events){
 
 // ===== 周增长计算（基于历史，找 ~7 天前锚点）=====
 function weeklyGrowth(pl){
-  const hist=pl.history||[];
+  const hist=dedupeHistory(pl.history||[]);
   if(hist.length<2) return null;
   const last=hist[hist.length-1];
   const lastDate=new Date(last.date+'T00:00:00');
@@ -782,7 +797,7 @@ function renderFans(data){
   const order=['instagram','facebook','youtube','x'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   document.getElementById('cards').innerHTML=order.map(k=>{
     const pl=p[k]; if(!pl) return '';
-    const hist=pl.history||[];
+    const hist=dedupeHistory(pl.history||[]);
     const prev=hist.length>1?hist[hist.length-2].value:pl.value;
     const diff=pl.value-prev;
     const dcls=diff>0?'up':(diff<0?'down':'flat');
@@ -959,14 +974,6 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 3678
-        },
-        {
-          "date": "2026-08-06",
-          "value": 3886
-        },
-        {
-          "date": "2026-08-06",
           "value": 3916
         }
       ]
@@ -1038,10 +1045,6 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-05",
           "value": 158
-        },
-        {
-          "date": "2026-08-06",
-          "value": 160
         },
         {
           "date": "2026-08-06",
@@ -1193,14 +1196,6 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 1300
-        },
-        {
-          "date": "2026-08-06",
-          "value": 1330
-        },
-        {
-          "date": "2026-08-06",
           "value": 1340
         }
       ]
@@ -1250,6 +1245,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
