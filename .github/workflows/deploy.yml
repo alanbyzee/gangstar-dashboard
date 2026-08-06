@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Use 分享版 as index.html
+        run: cp "Gangstar运营看板_分享版.html" index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
