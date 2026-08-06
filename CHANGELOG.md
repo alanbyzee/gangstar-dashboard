@@ -400,3 +400,25 @@
 - 7.27-8.2 官号反馈由 24 条压缩为 8 个主题(含提及数)：4 好评+3 建议+1 吐槽(个案)；无效反馈(2 条虚假链接垃圾评论)直接不写、并在 invalid 字段标注已过滤。
 - 手动「＋新增一周」弹窗同步改为总结式(总结+四维+主题行)。
 - 双文件一致；无头测试 PASS：四维=4、官号主题=8、社区待补、无效标注、手动新增周正常、零真实 JS 错误。已部署+Pages 重建(201)+jsDelivr purge(200)+raw 源验证命中。
+
+### fix：延期(delay)筛选键改为与其它类别键完全一致的累加式多选行为（2026-08-06）
+- 用户反馈：延期键应"和其他键一样的功能"——原实现是独占式 `delayOnly`（选中即强制只看延期、覆盖其他键），与网红/KOC 等的累加式多选不一致。
+- 修复（双文件同步）：① 新增 `SA_ALL=SA_FILTERS.map(f=>f.key)`（含延期）② `saActive` 默认 `new Set(SA_ALL)`（含延期默认点亮，与其他键一致）③ 删除独占式 `delayOnly`，HQ/区域渲染改为 `saActive.has('hq'|tag)||(saActive.has('delay')&&!!dels[pid/opId])` 累加式 ④ "全部"键 on 判定与全选改用 SA_ALL.length / SA_ALL。
+- 验证：无头交互测试 PASS——delay 键默认亮、点击不影响其他键（非独占）、选中 delay 时标记卡显示/取消即隐藏；线上 github.io 已含 SA_ALL 标记（Pages 201 重建生效）。已部署+git。
+
+### fix：延期(delay)键真正可隐藏延期内容（修复作用域崩溃 + 补反向过滤）（2026-08-06）
+- 用户复测：点击延期键仍无法隐藏下面的延期内容。
+- 根因①（致命）：renderSouthAsia 的 HQ 进入条件写在外层 `if(saActive.has('hq')||(saActive.has('delay')&&!!dels[pid]))`，但 `pid` 是在其内部 `forEach` 回调里才声明的 → `ReferenceError: pid is not defined`，整个 HQ 渲染崩溃；取消/只选延期键时因未走正常分支，卡片全空（之前看不到更新的根因）。区域循环用 `opId`（在作用域内）故无此问题。
+- 根因②（功能缺失）：仅做了"累加式显示"，缺反向过滤——取消延期键时因 HQ 等类别键仍默认点亮，`saActive.has('hq')` 为真，延期卡照常显示，无法隐藏。
+- 修复（双文件）：① 把 HQ 进入条件整体移入 `forEach` 回调内（在 `const pid=hp.pid` 之后），作用域正确；② 保留 `if(!!dels[pid] && !saActive.has('delay')) return;` 做反向过滤（延期键未选中则排除延期卡）。
+- 验证：无头测试全 PASS——① 取消延期键（HQ 仍亮）延期卡隐藏 ② 仅选延期键延期卡显示 ③ 默认全亮/非独占 ④ 全关后空。语法 0 错误；已部署+Pages 重建(201)+git。
+
+### feat：团队产能区新增「供应商人力安排」块（2026-08-06）
+- 在「🔧 团队产能 / 天」块下方新增冷色底「🏭 供应商人力安排」块（区别于团队产能）。
+- 内容：固定图片 Editor×1 ｜ 灵活调动×2（可调图片/视频）｜ 固定视频 Editor×1 ｜ 新增视频 Editor×1 ｜ AM·Anne 全天 push×1 ｜ 文案&Follow up×1 ｜ 社群反馈 额外人力。
+- 双文件同步；语法 0 错误；已部署。
+
+### fix：仓库加 .nojekyll 根治 Pages build failed（2026-08-06）
+- 现象：供应商块部署后 github.io 一直返回旧版，Pages build 状态 = errored（"Page build failed"）。
+- 根因：仓库无 .nojekyll，GitHub Pages 默认用 Jekyll 处理 197KB 单文件，处理超时/瞬时故障导致 build failed。
+- 修复：仓库根加空 `.nojekyll` 关闭 Jekyll；重建 201 成功，github.io 已含 supplier-cap。此后纯静态站点不再受 Jekyll 构建失败影响。
