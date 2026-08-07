@@ -24,7 +24,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Use 分享版 as index.html
-        run: cp "Gangstar运营看板_分享版.html" index.html
+        run: |
+          set -e
+          export LC_ALL=C.UTF-8
+          LANG=C.UTF-8
+          # Find the share-version file (Chinese filename safe via glob)
+          SRC=$(ls *分享版.html 2>/dev/null | head -1)
+          if [ -z "$SRC" ]; then
+            echo "ERROR: 分享版 file not found"
+            ls -la *.html
+            exit 1
+          fi
+          echo "Found: $SRC"
+          cp "$SRC" index.html
+          echo "Copied $SRC -> index.html"
+          ls -la index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
