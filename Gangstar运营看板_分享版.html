@@ -416,7 +416,11 @@ body{
 .sa-restore{margin-left:8px;font-size:12px;font-weight:700;background:rgba(255,255,255,.28);padding:2px 10px;border-radius:9px;cursor:pointer;white-space:nowrap}
 .sa-restore:hover{background:rgba(255,255,255,.45)}
 /* 团队产能条 — 原产能 vs 现产能 */
-.sa-cap{display:flex;align-items:flex-start;gap:14px;padding:13px 17px;margin-bottom:16px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
+.cap-sup-row{display:flex;gap:16px;margin-bottom:16px;align-items:stretch}
+.cap-sup-row>.sa-cap{margin-bottom:0;flex:1 1 0}
+.cap-sup-row>.supplier-cap{flex:0 1 auto;min-width:580px}
+@media(max-width:1100px){.cap-sup-row{flex-direction:column}.cap-sup-row>.supplier-cap{min-width:auto;width:100%}}
+.sa-cap{display:flex;align-items:flex-start;gap:14px;padding:13px 17px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
 .sa-cap .ca-t{font-weight:800;color:var(--ink);white-space:nowrap;line-height:34px}
 .sa-cap .cap-col{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
 .sa-cap .cap-month{margin-top:2px;font-size:13px;font-weight:600;color:var(--ink);background:linear-gradient(90deg,#fff7ed,#fffefb);border:1px dashed #f59e0b;border-radius:10px;padding:7px 12px}
@@ -2983,8 +2987,8 @@ function renderSouthAsia(){
     </div>
   </div>`;
 
-  el.innerHTML=`${capHtml}
-    ${supplierHtml}
+  el.innerHTML=`<div class="cap-sup-row">${capHtml}
+    ${supplierHtml}</div>
     <h2>📋 南亚社群排期</h2>
     <div class="sub">HQ 公线素材 + 区域自产素材 · 同表展示 · 筛选开关可单独查看某类</div>
     ${chipsHtml}
