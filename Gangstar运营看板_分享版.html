@@ -415,25 +415,25 @@ body{
 .sa-banner .cnt{margin-left:auto;font-size:12px;font-weight:700;background:rgba(255,255,255,.22);padding:2px 10px;border-radius:9px}
 .sa-restore{margin-left:8px;font-size:12px;font-weight:700;background:rgba(255,255,255,.28);padding:2px 10px;border-radius:9px;cursor:pointer;white-space:nowrap}
 .sa-restore:hover{background:rgba(255,255,255,.45)}
-/* 团队产能条 — 原产能 vs 现产能 */
+/* 团队产能条 — 紧凑网格布局 */
 .cap-sup-row{display:flex;gap:16px;margin-bottom:16px;align-items:stretch}
 .cap-sup-row>.sa-cap{margin-bottom:0;flex:1 1 0}
 .cap-sup-row>.supplier-cap{flex:0 1 auto;min-width:580px}
 @media(max-width:1100px){.cap-sup-row{flex-direction:column}.cap-sup-row>.supplier-cap{min-width:auto;width:100%}}
-.sa-cap{display:flex;align-items:flex-start;gap:14px;padding:13px 17px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
-.sa-cap .ca-t{font-weight:800;color:var(--ink);white-space:nowrap;line-height:34px}
-.sa-cap .cap-col{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
-.sa-cap .cap-month{margin-top:2px;font-size:13px;font-weight:600;color:var(--ink);background:linear-gradient(90deg,#fff7ed,#fffefb);border:1px dashed #f59e0b;border-radius:10px;padding:7px 12px}
+.sa-cap{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
+.sa-cap .ca-t{font-weight:800;color:var(--ink);white-space:nowrap;line-height:34px;font-size:15px}
+.sa-cap .cap-col{display:flex;flex-direction:column;gap:10px;min-width:0;flex:1}
+.sa-cap .cap-month{margin-top:2px;font-size:12.5px;font-weight:700;color:#92400e;background:linear-gradient(90deg,#fff7ed,#fffbf5);border:1px dashed #fbbf24;border-radius:8px;padding:6px 12px;text-align:center}
 .sa-cap .cap-month b{color:#d97706}
-.sa-cap .cap-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.sa-cap .ca-lbl{font-size:12px;font-weight:800;padding:4px 11px;border-radius:8px;white-space:nowrap;margin-right:2px}
-.sa-cap .ca-lbl.cur{color:#4338ca;background:#ebe9fe}
-.sa-cap .ca-lbl.old{color:#9aa1ab;background:#f1f2f4}
-.sa-cap .cap{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ecedf2;border-left:3px solid var(--c);border-radius:10px;padding:5px 12px;font-weight:600;color:#3a3a44;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.sa-cap .cap b{font-size:14px;font-weight:800;color:var(--c)}
-.sa-cap .cap.old{opacity:.7}
-.sa-cap .cap i{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:var(--c);border-radius:5px;padding:1px 5px;margin-left:3px}
-.sa-cap .cap-budget{margin-left:auto;font-size:11.5px;color:#b06a00;font-weight:800;background:#fff3e0;border:1px solid #ffd9a0;border-radius:8px;padding:4px 11px;white-space:nowrap}
+.sa-cap .cap-row{display:flex;align-items:center;gap:8px}
+.sa-cap .ca-lbl{font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:6px;white-space:nowrap;flex-shrink:0;line-height:22px}
+.sa-cap .ca-lbl.cur{color:#4338ca;background:#ede9fe}
+.sa-cap .ca-lbl.old{color:#6b7280;background:#f3f4f6}
+.sa-cap .cap{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--c);border-radius:8px;padding:4px 10px;font-weight:600;color:#374151;font-size:12.5px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.02)}
+.sa-cap .cap b{font-size:13px;font-weight:800;color:var(--c)}
+.sa-cap .cap.old{opacity:.55}
+.sa-cap .cap i{font-style:normal;font-size:9px;font-weight:800;color:#fff;background:var(--c);border-radius:4px;padding:1px 5px;margin-left:2px;line-height:16px}
+.sa-cap .cap-budget{margin-left:auto;font-size:11px;color:#92400e;font-weight:800;background:#fef3c7;border:1px solid #fcd34d;border-radius:7px;padding:4px 10px;white-space:nowrap;flex-shrink:0}
 /* 供应商人力安排块 — 组织结构图 */
 .sa-cap.supplier-cap{background:#f4f8fc;border-color:#d6e6f5;flex-direction:column;align-items:stretch;gap:10px}
 .sa-cap.supplier-cap .ca-t{color:#1d4e89;line-height:normal}
