@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gangstar 运营看板</title>
+<meta name="build" content="2026-08-07T0017">
 <style>
 :root{
   --bg:#eef1f7;
@@ -435,7 +436,7 @@ body{
 .sup-org{display:flex;flex-direction:column;align-items:center}
 .sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:8px 24px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25);position:relative;z-index:2}
 .sup-root::after{content:'';position:absolute;left:50%;bottom:-20px;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
-.sup-cols{display:flex;gap:14px;margin-top:20px;position:relative;width:100%;flex-wrap:wrap;justify-content:center}
+.sup-cols{display:flex;gap:14px;margin-top:20px;position:relative;width:fit-content;flex-wrap:nowrap;justify-content:center}
 .sup-cols::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#c3d0e0}
 .sup-col{position:relative;flex:1 1 160px;max-width:230px;min-width:150px;padding-top:20px}
 .sup-col::before{content:'';position:absolute;top:0;left:50%;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
@@ -2114,7 +2115,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3916,
+      "value": 3964,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-06 晚）；89帖4关注；IG涨粉靠boost page like（付费）非自然",
@@ -2177,14 +2178,14 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 3916
+          "value": 3964
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 165,
+      "value": 166,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-06）",
@@ -2251,7 +2252,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 165
+          "value": 166
         }
       ],
       "name": "Facebook"
@@ -2448,6 +2449,13 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
+
+
+
+
+
 
 
 
