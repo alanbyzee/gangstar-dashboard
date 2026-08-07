@@ -441,22 +441,22 @@ body{
 /* 月产能在底部 */
 .cap-month{font-size:12.5px;font-weight:700;color:#92400e;background:linear-gradient(90deg,#fff7ed,#fffbf5);border:1px dashed #fbbf24;border-radius:8px;padding:7px 14px;text-align:center;margin-top:2px}
 .cap-month b{color:#d97706}
-/* 供应商人力安排块 — 组织结构图 */
+/* 供应商人力安排块 — 2x2 网格 */
 .sa-cap.supplier-cap{background:#f4f8fc;border-color:#d6e6f5;flex-direction:column;align-items:stretch;gap:12px}
 .sa-cap.supplier-cap .ca-t{color:#1d4e89;line-height:normal}
 .sup-org{display:flex;flex-direction:column;align-items:center}
-.sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:9px 28px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25);position:relative;z-index:2}
-.sup-root::after{content:'';position:absolute;left:50%;bottom:-22px;width:2px;height:22px;background:#c3d0e0;transform:translateX(-50%)}
-.sup-cols{display:flex;gap:12px;margin-top:22px;position:relative;width:100%;flex-wrap:nowrap;justify-content:stretch}
-.sup-cols::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#c3d0e0}
-.sup-col{position:relative;flex:1 1 0;min-width:0;padding-top:20px}
-.sup-col::before{content:'';position:absolute;top:0;left:50%;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
+.sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:9px 28px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25)}
+.sup-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:6px}
+.sup-col{position:relative}
 .sup-head{border-radius:10px 10px 0 0;padding:9px 10px;text-align:center;font-weight:800;color:#fff;font-size:13px;background:var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sup-list{list-style:none;margin:0;padding:0;border:1px solid #e0e6ef;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;background:#fff}
 .sup-list li{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;font-size:12.5px;color:#3a3a44;border-bottom:1px solid #f0f1f4}
 .sup-list li:last-child{border-bottom:none}
 .sup-list li span{font-weight:800;color:var(--c);white-space:nowrap}
 .sup-list li span.isnew{background:var(--c);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px}
+.sup-extra{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:2px}
+.sup-extra-t{font-size:12.5px;font-weight:800;color:#1d4e89}
+.sup-chip{font-size:12px;font-weight:700;color:#1d4e89;background:#fff;border:1px solid #cfe0f5;border-radius:20px;padding:4px 13px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
 .sup-foot{margin-top:2px;font-size:12.5px;font-weight:700;color:#1d4e89;background:#e8f0fb;border:1px solid #cfe0f5;border-radius:10px;padding:8px 14px;text-align:center}
 .sup-foot b{color:#2563eb}
 /* HQ 周历网格 */
@@ -2991,6 +2991,12 @@ function renderSouthAsia(){
             <li>专用人力 <span>＋</span></li>
           </ul>
         </div>
+      </div>
+      <div class="sup-extra">
+        <span class="sup-extra-t">🎁 可承接能力</span>
+        <span class="sup-chip">🎨 制作周边</span>
+        <span class="sup-chip">💰 发放奖金</span>
+        <span class="sup-chip">📦 邮寄配送</span>
       </div>
       <div class="sup-foot">📊 供应商团队合计 <b>≈ 8 人</b> · 覆盖 图片 / 视频 / 运营交付 / 社群 4 条业务线</div>
     </div>
