@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gangstar 运营看板</title>
+<meta name="build" content="2026-08-07T0017">
 <style>
 :root{
   --bg:#eef1f7;
@@ -414,37 +415,50 @@ body{
 .sa-banner .cnt{margin-left:auto;font-size:12px;font-weight:700;background:rgba(255,255,255,.22);padding:2px 10px;border-radius:9px}
 .sa-restore{margin-left:8px;font-size:12px;font-weight:700;background:rgba(255,255,255,.28);padding:2px 10px;border-radius:9px;cursor:pointer;white-space:nowrap}
 .sa-restore:hover{background:rgba(255,255,255,.45)}
-/* 团队产能条 — 原产能 vs 现产能 */
-.sa-cap{display:flex;align-items:flex-start;gap:14px;padding:13px 17px;margin-bottom:16px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
-.sa-cap .ca-t{font-weight:800;color:var(--ink);white-space:nowrap;line-height:34px}
-.sa-cap .cap-col{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
-.sa-cap .cap-month{margin-top:2px;font-size:13px;font-weight:600;color:var(--ink);background:linear-gradient(90deg,#fff7ed,#fffefb);border:1px dashed #f59e0b;border-radius:10px;padding:7px 12px}
-.sa-cap .cap-month b{color:#d97706}
-.sa-cap .cap-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.sa-cap .ca-lbl{font-size:12px;font-weight:800;padding:4px 11px;border-radius:8px;white-space:nowrap;margin-right:2px}
-.sa-cap .ca-lbl.cur{color:#4338ca;background:#ebe9fe}
-.sa-cap .ca-lbl.old{color:#9aa1ab;background:#f1f2f4}
-.sa-cap .cap{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ecedf2;border-left:3px solid var(--c);border-radius:10px;padding:5px 12px;font-weight:600;color:#3a3a44;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.sa-cap .cap b{font-size:14px;font-weight:800;color:var(--c)}
-.sa-cap .cap.old{opacity:.7}
-.sa-cap .cap i{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:var(--c);border-radius:5px;padding:1px 5px;margin-left:3px}
-.sa-cap .cap-budget{margin-left:auto;font-size:11.5px;color:#b06a00;font-weight:800;background:#fff3e0;border:1px solid #ffd9a0;border-radius:8px;padding:4px 11px;white-space:nowrap}
-/* 供应商人力安排块 — 组织结构图 */
-.sa-cap.supplier-cap{background:#f4f8fc;border-color:#d6e6f5;flex-direction:column;align-items:stretch;gap:10px}
+/* 团队产能 — 2列网格卡片 */
+.cap-sup-row{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.cap-sup-row>.sa-cap{margin-bottom:0;flex:1 1 0;min-width:0}
+.cap-sup-row>.supplier-cap{flex:0 1 auto;min-width:520px}
+@media(max-width:1100px){.cap-sup-row{flex-direction:column}.cap-sup-row>.supplier-cap{min-width:auto;width:100%}}
+.sa-cap{display:flex;flex-direction:column;gap:8px;padding:14px 18px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
+.sa-cap .ca-t{font-weight:800;color:var(--ink);font-size:15px;line-height:1;margin-bottom:2px}
+/* 分组标签 */
+.cap-grp{font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;display:inline-block;width:fit-content;margin-top:4px}
+.cap-grp.old{color:#6b7280;background:#f3f4f6}
+.cap-grp.cur{color:#4338ca;background:#ede9fe}
+.cap-grp.month{color:#92400e;background:#fef3c7;width:100%;text-align:center;margin-top:6px}
+/* 2列网格 */
+.cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cap-card{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--c);border-radius:10px;padding:8px 12px;transition:box-shadow .15s}
+.cap-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.cap-card .cc-icon{font-size:20px;flex-shrink:0}
+.cap-card .cc-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.cap-card .cc-name{font-size:12.5px;font-weight:700;color:#374151}
+.cap-card .cc-val{font-size:17px;font-weight:900;color:var(--c);line-height:1.2}
+.cap-card .cc-badge{font-size:9px;font-weight:800;color:#fff;background:var(--c);border-radius:5px;padding:2px 7px;flex-shrink:0;line-height:1.4}
+.cap-card.old{opacity:.5;background:#fafafa}
+.cap-card.old .cc-name,.cap-card.old .cc-val{color:#9ca3af!important;border-color:#d1d5db}
+/* 月产能在底部 */
+.cap-month{font-size:12.5px;font-weight:700;color:#92400e;background:linear-gradient(90deg,#fff7ed,#fffbf5);border:1px dashed #fbbf24;border-radius:8px;padding:7px 14px;text-align:center;margin-top:2px}
+.cap-month b{color:#d97706}
+/* 供应商人力安排块 — 2x2 网格 */
+.sa-cap.supplier-cap{background:#f4f8fc;border-color:#d6e6f5;flex-direction:column;align-items:stretch;gap:12px}
 .sa-cap.supplier-cap .ca-t{color:#1d4e89;line-height:normal}
 .sup-org{display:flex;flex-direction:column;align-items:center}
-.sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:8px 24px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25);position:relative;z-index:2}
-.sup-root::after{content:'';position:absolute;left:50%;bottom:-20px;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
-.sup-cols{display:flex;gap:14px;margin-top:20px;position:relative;width:100%;flex-wrap:wrap;justify-content:center}
-.sup-cols::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#c3d0e0}
-.sup-col{position:relative;flex:1 1 160px;max-width:230px;min-width:150px;padding-top:20px}
-.sup-col::before{content:'';position:absolute;top:0;left:50%;width:2px;height:20px;background:#c3d0e0;transform:translateX(-50%)}
-.sup-head{border-radius:10px 10px 0 0;padding:8px 10px;text-align:center;font-weight:800;color:#fff;font-size:13px;background:var(--c)}
+.sup-root{background:linear-gradient(135deg,#1d4e89,#2563eb);color:#fff;padding:9px 28px;border-radius:12px;font-weight:800;font-size:15px;box-shadow:0 2px 7px rgba(37,99,235,.25)}
+.sup-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:6px}
+.sup-col{position:relative}
+.sup-head{border-radius:10px 10px 0 0;padding:9px 10px;text-align:center;font-weight:800;color:#fff;font-size:13px;background:var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sup-list{list-style:none;margin:0;padding:0;border:1px solid #e0e6ef;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;background:#fff}
-.sup-list li{display:flex;justify-content:space-between;gap:8px;padding:7px 11px;font-size:12.5px;color:#3a3a44;border-bottom:1px solid #f0f1f4}
+.sup-list li{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;font-size:12.5px;color:#3a3a44;border-bottom:1px solid #f0f1f4}
 .sup-list li:last-child{border-bottom:none}
 .sup-list li span{font-weight:800;color:var(--c);white-space:nowrap}
 .sup-list li span.isnew{background:var(--c);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px}
+.sup-extra{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:2px}
+.sup-extra-t{font-size:12.5px;font-weight:800;color:#1d4e89}
+.sup-chip{font-size:12px;font-weight:700;color:#1d4e89;background:#fff;border:1px solid #cfe0f5;border-radius:20px;padding:4px 13px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.sup-foot{margin-top:2px;font-size:12.5px;font-weight:700;color:#1d4e89;background:#e8f0fb;border:1px solid #cfe0f5;border-radius:10px;padding:8px 14px;text-align:center}
+.sup-foot b{color:#2563eb}
 /* HQ 周历网格 */
 .sa-grid-wrap{position:relative}
 .sa-grid{border:1px solid var(--line);border-radius:0 0 14px 14px;overflow-x:auto;overflow-y:hidden;background:#fff;box-shadow:var(--shadow-sm);scrollbar-width:thin;scrollbar-color:#cbd5e1 transparent}
@@ -2107,17 +2121,17 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-08-06",
+  "updated_at": "2026-08-07",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3916,
+      "value": 4077,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-06 晚）；89帖4关注；IG涨粉靠boost page like（付费）非自然",
+      "note": "数据来源：用户截图校准（2026-08-07 晚）；96帖4关注；IG涨粉靠boost page like（付费）非自然",
       "history": [
         {
           "date": "2026-07-02",
@@ -2177,17 +2191,21 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 3916
+          "value": 3964
+        },
+        {
+          "date": "2026-08-07",
+          "value": 4077
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 165,
+      "value": 170,
       "label": "关注者",
       "color": "#1877F2",
-      "note": "数据来源：用户截图校准（2026-08-06）",
+      "note": "数据来源：用户截图校准（2026-08-07）",
       "history": [
         {
           "date": "2026-07-02",
@@ -2251,7 +2269,11 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-06",
-          "value": 165
+          "value": 166
+        },
+        {
+          "date": "2026-08-07",
+          "value": 170
         }
       ],
       "name": "Facebook"
@@ -2260,10 +2282,10 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1340,
+      "value": 1370,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-06 晚）；37个视频",
+      "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
       "history": [
         {
           "date": "2026-07-02",
@@ -2400,6 +2422,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-06",
           "value": 1340
+        },
+        {
+          "date": "2026-08-07",
+          "value": 1370
         }
       ]
     },
@@ -2443,6 +2469,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-06",
           "value": 25
+        },
+        {
+          "date": "2026-08-07",
+          "value": 25
         }
       ]
     }
@@ -2481,15 +2511,24 @@ const FALLBACK_DATA = {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
-  try{
-    const r=await fetch('fan_data.json',{cache:'no-store'});
-    if(r.ok){lastData=await r.json();renderFans(lastData);return true;}
-  }catch(e){}
-  // 抓取失败（多为 file:// 或未连服务）→ 用内联兜底渲染，保证不空白
-  if(lastData===null && typeof FALLBACK_DATA!=='undefined'){
+  // 内联 FALLBACK 即部署最新值（看板铁律：双文件同步 + FALLBACK 内联）。
+  // 直接用它渲染，避免线上 fan_data.json 漏推导致旧值覆盖新值。
+  if(typeof FALLBACK_DATA!=='undefined'){
     lastData=FALLBACK_DATA; renderFans(lastData); return true;
   }
   return false;
@@ -2919,24 +2958,22 @@ function renderSouthAsia(){
   </div>`;
 
   const capHtml=`<div class="sa-cap">
-    <span class="ca-t">🔧 团队产能 / 天</span>
-    <div class="cap-col">
-      <div class="cap-row">
-        <span class="ca-lbl old">原产能</span>
-        <span class="cap old" style="--c:#9aa1ab">🖼️ 复用海报 <b>3</b></span>
-        <span class="cap old" style="--c:#9aa1ab">🎬 复用视频 <b>1</b></span>
-      </div>
-      <div class="cap-row">
-        <span class="ca-lbl cur">现产能</span>
-        <span class="cap" style="--c:#58a83c">🖼️ 复用海报 <b>3</b></span>
-        <span class="cap" style="--c:#2f80ed">🎬 复用视频 <b>1</b></span>
-        <span class="cap" style="--c:#7c5cd6">🎨 原创KV <b>1</b><i>新增</i></span>
-        <span class="cap" style="--c:#e05299">🎥 原创视频 <b>1</b><i>新增</i></span>
-        <span class="cap" style="--c:#0f766e">👤 AM跟进 <b>1</b><i>新增</i></span>
-        <span class="cap-budget">追加 $750/月</span>
-      </div>
-      <div class="cap-month">📦 每月产能 ≈ 🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
+    <span class="ca-t">🔧 团队产能</span>
+    <span class="cap-grp old">原产能</span>
+    <div class="cap-grid">
+      <div class="cap-card old" style="--c:#9aa1ab"><span class="cc-icon">🖼️</span><div class="cc-info"><span class="cc-name">复用海报</span><span class="cc-val">×3</span></div></div>
+      <div class="cap-card old" style="--c:#9aa1ab"><span class="cc-icon">🎬</span><div class="cc-info"><span class="cc-name">复用视频</span><span class="cc-val">×1</span></div></div>
     </div>
+    <span class="cap-grp cur">现产能</span>
+    <div class="cap-grid">
+      <div class="cap-card" style="--c:#58a83c"><span class="cc-icon">🖼️</span><div class="cc-info"><span class="cc-name">复用海报</span><span class="cc-val">×3</span></div></div>
+      <div class="cap-card" style="--c:#2f80ed"><span class="cc-icon">🎬</span><div class="cc-info"><span class="cc-name">复用视频</span><span class="cc-val">×1</span></div></div>
+      <div class="cap-card" style="--c:#7c5cd6"><span class="cc-icon">🎨</span><div class="cc-info"><span class="cc-name">原创KV</span><span class="cc-val">×1</span></div><span class="cc-badge">新增</span></div>
+      <div class="cap-card" style="--c:#e05299"><span class="cc-icon">🎥</span><div class="cc-info"><span class="cc-name">原创视频</span><span class="cc-val">×1</span></div><span class="cc-badge">新增</span></div>
+      <div class="cap-card" style="--c:#0f766e"><span class="cc-icon">👤</span><div class="cc-info"><span class="cc-name">AM跟进</span><span class="cc-val">×1</span></div><span class="cc-badge">新增</span></div>
+      <div class="cap-card" style="--c:#d97706"><span class="cc-icon">💰</span><div class="cc-info"><span class="cc-name">追加预算</span><span class="cc-val">$750/月</span></div></div>
+    </div>
+    <div class="cap-month">📦 每月产能 ≈ 🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
   </div>`;
 
   const supplierHtml=`<div class="sa-cap supplier-cap">
@@ -2968,15 +3005,22 @@ function renderSouthAsia(){
         <div class="sup-col" style="--c:#d97706">
           <div class="sup-head">💬 社群反馈</div>
           <ul class="sup-list">
-            <li>专用人力 <span>＋</span></li>
+            <li>专用人力 <span>×1</span></li>
           </ul>
         </div>
       </div>
+      <div class="sup-extra">
+        <span class="sup-extra-t">🎁 可承接能力</span>
+        <span class="sup-chip">🎨 制作周边</span>
+        <span class="sup-chip">💰 发放奖金</span>
+        <span class="sup-chip">📦 邮寄配送</span>
+      </div>
+      <div class="sup-foot">📊 供应商团队合计 <b>≈ 8 人</b> · 覆盖 图片 / 视频 / 运营交付 / 社群反馈 4 条业务线</div>
     </div>
   </div>`;
 
-  el.innerHTML=`${capHtml}
-    ${supplierHtml}
+  el.innerHTML=`<div class="cap-sup-row">${capHtml}
+    ${supplierHtml}</div>
     <h2>📋 南亚社群排期</h2>
     <div class="sub">HQ 公线素材 + 区域自产素材 · 同表展示 · 筛选开关可单独查看某类</div>
     ${chipsHtml}

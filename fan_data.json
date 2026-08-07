@@ -1,15 +1,15 @@
 {
-  "updated_at": "2026-08-06",
+  "updated_at": "2026-08-07",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3916,
+      "value": 4077,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-06 晚）；89帖4关注；IG涨粉靠boost page like（付费）非自然",
+      "note": "数据来源：用户截图校准（2026-08-07 晚）；96帖4关注；IG涨粉靠boost page like（付费）非自然",
       "history": [
         {
           "date": "2026-07-02",
@@ -69,17 +69,21 @@
         },
         {
           "date": "2026-08-06",
-          "value": 3916
+          "value": 3964
+        },
+        {
+          "date": "2026-08-07",
+          "value": 4077
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 165,
+      "value": 170,
       "label": "关注者",
       "color": "#1877F2",
-      "note": "数据来源：用户截图校准（2026-08-06）",
+      "note": "数据来源：用户截图校准（2026-08-07）",
       "history": [
         {
           "date": "2026-07-02",
@@ -143,7 +147,11 @@
         },
         {
           "date": "2026-08-06",
-          "value": 165
+          "value": 166
+        },
+        {
+          "date": "2026-08-07",
+          "value": 170
         }
       ],
       "name": "Facebook"
@@ -152,10 +160,10 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1340,
+      "value": 1370,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-06 晚）；37个视频",
+      "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
       "history": [
         {
           "date": "2026-07-02",
@@ -292,6 +300,10 @@
         {
           "date": "2026-08-06",
           "value": 1340
+        },
+        {
+          "date": "2026-08-07",
+          "value": 1370
         }
       ]
     },
@@ -334,6 +346,10 @@
         },
         {
           "date": "2026-08-06",
+          "value": 25
+        },
+        {
+          "date": "2026-08-07",
           "value": 25
         }
       ]
