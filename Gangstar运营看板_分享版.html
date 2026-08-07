@@ -2523,12 +2523,9 @@ const FALLBACK_DATA = {
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
-  try{
-    const r=await fetch('fan_data.json',{cache:'no-store'});
-    if(r.ok){lastData=await r.json();renderFans(lastData);return true;}
-  }catch(e){}
-  // 抓取失败（多为 file:// 或未连服务）→ 用内联兜底渲染，保证不空白
-  if(lastData===null && typeof FALLBACK_DATA!=='undefined'){
+  // 内联 FALLBACK 即部署最新值（看板铁律：双文件同步 + FALLBACK 内联）。
+  // 直接用它渲染，避免线上 fan_data.json 漏推导致旧值覆盖新值。
+  if(typeof FALLBACK_DATA!=='undefined'){
     lastData=FALLBACK_DATA; renderFans(lastData); return true;
   }
   return false;
