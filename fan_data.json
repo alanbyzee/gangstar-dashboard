@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-06",
+  "updated_at": "2026-08-07",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
@@ -76,7 +76,7 @@
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 166,
+      "value": 165,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-06）",
@@ -144,6 +144,10 @@
         {
           "date": "2026-08-06",
           "value": 166
+        },
+        {
+          "date": "2026-08-07",
+          "value": 165
         }
       ],
       "name": "Facebook"
@@ -292,6 +296,10 @@
         {
           "date": "2026-08-06",
           "value": 1340
+        },
+        {
+          "date": "2026-08-07",
+          "value": 1340
         }
       ]
     },
@@ -334,6 +342,10 @@
         },
         {
           "date": "2026-08-06",
+          "value": 25
+        },
+        {
+          "date": "2026-08-07",
           "value": 25
         }
       ]
