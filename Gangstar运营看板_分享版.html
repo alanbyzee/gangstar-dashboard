@@ -420,8 +420,13 @@ body{
 .cap-sup-row>.sa-cap{margin-bottom:0;flex:1 1 0;min-width:0}
 .cap-sup-row>.supplier-cap{flex:0 1 auto;min-width:520px}
 @media(max-width:1100px){.cap-sup-row{flex-direction:column}.cap-sup-row>.supplier-cap{min-width:auto;width:100%}}
-.sa-cap{display:flex;flex-direction:column;gap:10px;padding:14px 18px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
-.sa-cap .ca-t{font-weight:800;color:var(--ink);font-size:15px;line-height:1}
+.sa-cap{display:flex;flex-direction:column;gap:8px;padding:14px 18px;background:#faf9fc;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
+.sa-cap .ca-t{font-weight:800;color:var(--ink);font-size:15px;line-height:1;margin-bottom:2px}
+/* 分组标签 */
+.cap-grp{font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;display:inline-block;width:fit-content;margin-top:4px}
+.cap-grp.old{color:#6b7280;background:#f3f4f6}
+.cap-grp.cur{color:#4338ca;background:#ede9fe}
+.cap-grp.month{color:#92400e;background:#fef3c7;width:100%;text-align:center;margin-top:6px}
 /* 2列网格 */
 .cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cap-card{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--c);border-radius:10px;padding:8px 12px;transition:box-shadow .15s}
@@ -431,7 +436,7 @@ body{
 .cap-card .cc-name{font-size:12.5px;font-weight:700;color:#374151}
 .cap-card .cc-val{font-size:17px;font-weight:900;color:var(--c);line-height:1.2}
 .cap-card .cc-badge{font-size:9px;font-weight:800;color:#fff;background:var(--c);border-radius:5px;padding:2px 7px;flex-shrink:0;line-height:1.4}
-.cap-card.old{opacity:.5}
+.cap-card.old{opacity:.5;background:#fafafa}
 .cap-card.old .cc-name,.cap-card.old .cc-val{color:#9ca3af!important;border-color:#d1d5db}
 /* 月产能在底部 */
 .cap-month{font-size:12.5px;font-weight:700;color:#92400e;background:linear-gradient(90deg,#fff7ed,#fffbf5);border:1px dashed #fbbf24;border-radius:8px;padding:7px 14px;text-align:center;margin-top:2px}
@@ -2934,9 +2939,13 @@ function renderSouthAsia(){
 
   const capHtml=`<div class="sa-cap">
     <span class="ca-t">🔧 团队产能</span>
+    <span class="cap-grp old">原产能</span>
     <div class="cap-grid">
-      <div class="cap-card old" style="--c:#9aa1ab"><span class="cc-icon">🖼️</span><div class="cc-info"><span class="cc-name">复用海报（原）</span><span class="cc-val">×3</span></div></div>
-      <div class="cap-card old" style="--c:#9aa1ab"><span class="cc-icon">🎬</span><div class="cc-info"><span class="cc-name">复用视频（原）</span><span class="cc-val">×1</span></div></div>
+      <div class="cap-card old" style="--c:#9aa1ab"><span class="cc-icon">🖼️</span><div class="cc-info"><span class="cc-name">复用海报</span><span class="cc-val">×3</span></div></div>
+      <div class="cap-card old" style="--c:#9aa1ab"><span class="cc-icon">🎬</span><div class="cc-info"><span class="cc-name">复用视频</span><span class="cc-val">×1</span></div></div>
+    </div>
+    <span class="cap-grp cur">现产能</span>
+    <div class="cap-grid">
       <div class="cap-card" style="--c:#58a83c"><span class="cc-icon">🖼️</span><div class="cc-info"><span class="cc-name">复用海报</span><span class="cc-val">×3</span></div></div>
       <div class="cap-card" style="--c:#2f80ed"><span class="cc-icon">🎬</span><div class="cc-info"><span class="cc-name">复用视频</span><span class="cc-val">×1</span></div></div>
       <div class="cap-card" style="--c:#7c5cd6"><span class="cc-icon">🎨</span><div class="cc-info"><span class="cc-name">原创KV</span><span class="cc-val">×1</span></div><span class="cc-badge">新增</span></div>
@@ -2944,7 +2953,8 @@ function renderSouthAsia(){
       <div class="cap-card" style="--c:#0f766e"><span class="cc-icon">👤</span><div class="cc-info"><span class="cc-name">AM跟进</span><span class="cc-val">×1</span></div><span class="cc-badge">新增</span></div>
       <div class="cap-card" style="--c:#d97706"><span class="cc-icon">💰</span><div class="cc-info"><span class="cc-name">追加预算</span><span class="cc-val">$750/月</span></div></div>
     </div>
-    <div class="cap-month">📦 每月产能 ≈ 🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
+    <span class="cap-grp month">📦 每月产能总结</span>
+    <div class="cap-month">🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
   </div>`;
 
   const supplierHtml=`<div class="sa-cap supplier-cap">
