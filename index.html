@@ -2128,7 +2128,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 3964,
+      "value": 4019,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-06 晚）；89帖4关注；IG涨粉靠boost page like（付费）非自然",
@@ -2192,6 +2192,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-06",
           "value": 3964
+        },
+        {
+          "date": "2026-08-07",
+          "value": 4019
         }
       ]
     },
@@ -2278,7 +2282,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1340,
+      "value": 1350,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-06 晚）；37个视频",
@@ -2421,7 +2425,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-07",
-          "value": 1340
+          "value": 1350
         }
       ]
     },
@@ -2515,15 +2519,15 @@ const FALLBACK_DATA = {
 
 
 
+
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
-  try{
-    const r=await fetch('fan_data.json',{cache:'no-store'});
-    if(r.ok){lastData=await r.json();renderFans(lastData);return true;}
-  }catch(e){}
-  // 抓取失败（多为 file:// 或未连服务）→ 用内联兜底渲染，保证不空白
-  if(lastData===null && typeof FALLBACK_DATA!=='undefined'){
+  // 内联 FALLBACK 即部署最新值（看板铁律：双文件同步 + FALLBACK 内联）。
+  // 直接用它渲染，避免线上 fan_data.json 漏推导致旧值覆盖新值。
+  if(typeof FALLBACK_DATA!=='undefined'){
     lastData=FALLBACK_DATA; renderFans(lastData); return true;
   }
   return false;
@@ -2968,8 +2972,7 @@ function renderSouthAsia(){
       <div class="cap-card" style="--c:#0f766e"><span class="cc-icon">👤</span><div class="cc-info"><span class="cc-name">AM跟进</span><span class="cc-val">×1</span></div><span class="cc-badge">新增</span></div>
       <div class="cap-card" style="--c:#d97706"><span class="cc-icon">💰</span><div class="cc-info"><span class="cc-name">追加预算</span><span class="cc-val">$750/月</span></div></div>
     </div>
-    <span class="cap-grp month">📦 每月产能总结</span>
-    <div class="cap-month">🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
+    <div class="cap-month">📦 每月产能 ≈ 🖼️ <b>120 张图片</b> + 🎬 <b>60 支视频</b></div>
   </div>`;
 
   const supplierHtml=`<div class="sa-cap supplier-cap">
@@ -3001,7 +3004,7 @@ function renderSouthAsia(){
         <div class="sup-col" style="--c:#d97706">
           <div class="sup-head">💬 社群反馈</div>
           <ul class="sup-list">
-            <li>专用人力 <span>＋</span></li>
+            <li>专用人力 <span>×1</span></li>
           </ul>
         </div>
       </div>
@@ -3011,7 +3014,7 @@ function renderSouthAsia(){
         <span class="sup-chip">💰 发放奖金</span>
         <span class="sup-chip">📦 邮寄配送</span>
       </div>
-      <div class="sup-foot">📊 供应商团队合计 <b>≈ 8 人</b> · 覆盖 图片 / 视频 / 运营交付 / 社群 4 条业务线</div>
+      <div class="sup-foot">📊 供应商团队合计 <b>≈ 8 人</b> · 覆盖 图片 / 视频 / 运营交付 / 社群反馈 4 条业务线</div>
     </div>
   </div>`;
 
