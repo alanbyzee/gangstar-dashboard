@@ -120,7 +120,8 @@ body{
 .summary-top{display:flex;gap:16px;flex-wrap:wrap}
 .summary-top .stat{flex:0 0 auto}
 .summary-plats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-/* 下行平台卡与上行同高：徽章同行不换行 */
+/* 下行平台卡与上行同高：紧凑padding + 徽章同行不换行 */
+.summary-plats .stat{padding:12px 16px}
 .summary-plats .stat .v{flex-wrap:nowrap;white-space:nowrap;font-size:20px}
 .summary-plats .stat .wk-up,.summary-plats .stat .wk-down,.summary-plats .stat .wk-flat{font-size:11px;padding:1px 6px}
 
