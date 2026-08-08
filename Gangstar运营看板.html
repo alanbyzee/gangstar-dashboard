@@ -69,12 +69,12 @@ body{
 
 /* ===== 粉丝监控 ===== */
 .fan{padding:12px 24px 20px;max-width:1180px;margin:0 auto}
-.fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .fan h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .fan .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
 
 /* 汇总卡片 */
-.summary{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.summary{display:flex;gap:14px;flex-wrap:wrap}
 .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 19px;min-width:152px;box-shadow:var(--shadow-sm);transition:.2s}
 .stat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .stat .k{font-size:12px;color:var(--muted)}
@@ -87,7 +87,7 @@ body{
 .wk-total{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:2px 9px;border-radius:8px;margin-left:4px}
 
 /* 工具栏 + 刷新状态 */
-.toolbar{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .refresh{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;padding:11px 21px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(109,40,217,.28);display:flex;align-items:center;gap:8px;position:relative;overflow:hidden;transition:.18s}
 .refresh:hover{box-shadow:0 6px 18px rgba(109,40,217,.36)}
 .refresh:active{transform:translateY(1px)}
@@ -114,10 +114,10 @@ body{
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 
 /* 平台卡片网格 */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 
 /* 粉丝汇总两行布局：上行=距上线+总粉丝，下行=各平台（按粉丝排序） */
-#summary{display:flex;flex-direction:column;gap:8px}
+#summary{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
 .summary-top{display:flex;gap:16px;flex-wrap:wrap}
 .summary-top .stat{flex:0 0 auto}
 .summary-plats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;align-items:start}
@@ -228,7 +228,7 @@ body{
 .pc .lk:hover{text-decoration:underline}
 
 /* ===== 洞察区：作战进度 + 占比 ===== */
-.insights{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:0}
+.insights{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:18px}
 @media(max-width:760px){.insights{grid-template-columns:1fr}}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 19px;box-shadow:var(--shadow-sm);transition:.2s}
 .panel:hover{box-shadow:var(--shadow-md)}
