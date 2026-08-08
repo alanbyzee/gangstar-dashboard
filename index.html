@@ -2065,7 +2065,7 @@ function renderFans(data){
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
 function renderInsights(data){
   const p=data.platforms;
-  const order=['instagram','facebook','youtube','x','discord'];
+  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   const vals=order.map(k=>p[k]?.value||0);
   const names=order.map(k=>p[k]?.name||k);
   const colors=order.map(k=>p[k]?.color||'#999');
@@ -2554,6 +2554,8 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
 
 
 
