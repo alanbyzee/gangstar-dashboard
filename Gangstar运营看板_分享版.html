@@ -68,10 +68,10 @@ body{
 .view.scroll{overflow:auto;padding-right:2px}
 
 /* ===== 粉丝监控 ===== */
-.fan{padding:16px 24px 24px;max-width:1180px;margin:0 auto}
+.fan{padding:12px 24px 20px;max-width:1180px;margin:0 auto}
 .fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .fan h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
-.fan .sub{font-size:13px;color:var(--muted)}
+.fan .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
 
 /* 汇总卡片 */
 .summary{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
@@ -114,10 +114,10 @@ body{
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 
 /* 平台卡片网格 */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px}
 
 /* 粉丝汇总两行布局：上行=距上线+总粉丝，下行=各平台（按粉丝排序） */
-#summary{display:flex;flex-direction:column;gap:10px}
+#summary{display:flex;flex-direction:column;gap:8px}
 .summary-top{display:flex;gap:16px;flex-wrap:wrap}
 .summary-top .stat{flex:0 0 auto}
 .summary-plats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;align-items:start}
@@ -638,7 +638,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <div class="insights" id="insights"></div>
 
-      <div class="cards" id="cards" style="display:none"></div>
+      <div class="cards" id="cards"></div>
     </div>
   </div>
   <div class="view scroll" id="view-feedback">
