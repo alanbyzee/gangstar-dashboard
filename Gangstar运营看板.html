@@ -68,9 +68,10 @@ body{
 .view.scroll{overflow:auto;padding-right:2px}
 
 /* ===== 粉丝监控 ===== */
-.fan{padding:16px 24px 44px;max-width:1180px;margin:0 auto}
+.fan{padding:16px 24px 24px;max-width:1180px;margin:0 auto}
+.fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .fan h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
-.fan .sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.fan .sub{font-size:13px;color:var(--muted)}
 
 /* 汇总卡片 */
 .summary{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
@@ -227,7 +228,7 @@ body{
 .pc .lk:hover{text-decoration:underline}
 
 /* ===== 洞察区：作战进度 + 占比 ===== */
-.insights{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:22px}
+.insights{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:0}
 @media(max-width:760px){.insights{grid-template-columns:1fr}}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 19px;box-shadow:var(--shadow-sm);transition:.2s}
 .panel:hover{box-shadow:var(--shadow-md)}
@@ -617,20 +618,23 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   </div>
   <div class="view scroll" id="view-fan">
     <div class="fan">
-      <h2>📊 区域社媒粉丝监控</h2>
-      <div class="sub">IG / FB / YTB / X 实时追踪 · 点击「刷新」后台自动读取最新数据，无需手动输入</div>
+      <div class="fan-head">
+        <div>
+          <h2>📊 区域社媒粉丝监控</h2>
+          <div class="sub">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
+        </div>
+        <div class="toolbar">
+          <button class="refresh" id="refreshBtn">
+            <span class="spin"></span>
+            <span class="btn-text">🔄 刷新粉丝数</span>
+          </button>
+          <span class="status" id="status"></span>
+        </div>
+      </div>
 
       <div class="summary" id="summary"></div>
 
       <div class="insights" id="insights"></div>
-
-      <div class="toolbar">
-        <button class="refresh" id="refreshBtn">
-          <span class="spin"></span>
-          <span class="btn-text">🔄 刷新粉丝数</span>
-        </button>
-        <span class="status" id="status"></span>
-      </div>
 
       <div class="cards" id="cards" style="display:none"></div>
     </div>
