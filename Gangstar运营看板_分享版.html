@@ -96,14 +96,24 @@ body{
 .toast.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 
-/* 概览条：距上线 + 社区总粉丝 + 数据更新时间 */
-.overview{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
-@media(max-width:680px){.overview{grid-template-columns:1fr}}
+/* 概览区：上行=距上线+总粉丝(2卡)，下行=5平台摘要(等宽) */
+.overview{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+.ov-row-top{display:grid;grid-template-columns:200px 1fr;gap:14px}
+@media(max-width:680px){.ov-row-top{grid-template-columns:1fr}}
 .ov{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow-sm);transition:.2s}
 .ov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .ov .k{font-size:12px;color:var(--muted)}
 .ov .v{font-size:26px;font-weight:800;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ov .v small{font-size:13px;color:var(--muted);font-weight:600}
+
+/* 下行：5平台等宽摘要卡 */
+.ov-row-plats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media(max-width:900px){.ov-row-plats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.ov-row-plats{grid-template-columns:repeat(2,1fr)}}
+.ov-plat{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 15px;box-shadow:var(--shadow-sm);transition:.2s}
+.ov-plat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.ov-plat .op-name{font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:600}
+.ov-plat .op-val{font-size:24px;font-weight:800;display:flex;align-items:center;gap:7px;flex-wrap:wrap;line-height:1.2}
 
 /* 本周涨粉标签（共用） */
 .wk-up{font-size:11px;font-weight:700;color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
@@ -2014,11 +2024,15 @@ function renderFans(data){
     return `<span class="wk-flat">本周 ±0</span>`;
   }
 
-  // 概览条：距上线 + 社区总粉丝 + 数据更新时间
+  // 概览区：上行=距上线+总粉丝(2卡)，下行=5平台摘要(等宽)
   document.getElementById('summary').innerHTML=`
-    <div class="ov"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-    <div class="ov"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
-    <div class="ov"><div class="k">数据更新于</div><div class="v" style="font-size:20px">${esc(data.updated_at)}</div></div>`;
+    <div class="ov-row-top">
+      <div class="ov"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
+      <div class="ov"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+    </div>
+    <div class="ov-row-plats">
+      ${order.map(k=>`<div class="ov-plat"><div class="op-name">${esc(p[k]?.name||k)}</div><div class="op-val">${fmt(p[k]?.value||0)}${wkTag(weeklyGrowth(p[k]))}</div></div>`).join('')}
+    </div>`;
 
   // 平台卡片（每张含：图标/名称/handle/数值/周增长/折线图/note/链接）
   const el=document.getElementById('platforms');
@@ -2540,6 +2554,8 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
 
 
 
