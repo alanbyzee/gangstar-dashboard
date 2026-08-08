@@ -1843,17 +1843,22 @@ window.HQ_DATA = {
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
 const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional')};
-tabs.forEach(t=>t.onclick=()=>{
+function activateTab(v){
+  const t=[...tabs].find(x=>x.dataset.view===v);
+  if(!t||t.style.display==='none') return; // 跳过被隐藏的 tab（如区域素材）
   tabs.forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
-  const v=t.dataset.view;
   Object.values(views).forEach(x=>x.classList.remove('active'));
   views[v].classList.add('active');
+  lsSet('gst_active_tab', v);
   if(v==='fan') loadFans();
   if(v==='feedback') renderFeedback();
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
-});
+}
+tabs.forEach(t=>t.onclick=()=>activateTab(t.dataset.view));
+// 刷新后停留在上次所在的看板（而非重置到第一个）
+setTimeout(()=>{ const sv=lsGet('gst_active_tab'); if(sv) activateTab(sv); },0);
 document.getElementById('undoBtn').onclick=doUndo;
 
 // ===== 工具函数 =====
