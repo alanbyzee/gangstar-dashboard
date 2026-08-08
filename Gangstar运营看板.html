@@ -115,6 +115,12 @@ body{
 /* 平台卡片网格 */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 
+/* 粉丝汇总两行布局：上行=距上线+总粉丝，下行=各平台（按粉丝排序） */
+#summary{display:flex;flex-direction:column;gap:14px}
+.summary-top{display:flex;gap:16px;flex-wrap:wrap}
+.summary-top .stat{flex:0 0 auto}
+.summary-plats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+
 /* 玩家反馈收集看板（按周 · 印度市场态度追踪） */
 .feedback{padding:28px 24px 44px;max-width:1180px;margin:0 auto}
 .feedback h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
@@ -804,14 +810,16 @@ function renderFans(data){
     return `<span class="wk-flat">本周 ±0</span>`;
   }
 
+  // 平台按粉丝数降序排列
+  const platOrder=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   document.getElementById('summary').innerHTML=`
-    <div class="stat"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-    <div class="stat"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
-    <div class="stat"><div class="k">Instagram</div><div class="v">${fmt(p.instagram?.value||0)}${wkTag(igWg)}</div></div>
-    <div class="stat"><div class="k">YouTube 订阅</div><div class="v">${fmt(p.youtube?.value||0)}${wkTag(ytWg)}</div></div>
-    <div class="stat"><div class="k">Facebook</div><div class="v">${fmt(p.facebook?.value||0)}${wkTag(fbWg)}</div></div>
-    <div class="stat"><div class="k">X (Twitter)</div><div class="v">${fmt(p.x?.value||0)}${wkTag(xWg)}</div></div>
-    <div class="stat"><div class="k">Discord 社区</div><div class="v">${fmt(p.discord?.value||0)}${wkTag(dcWg)}</div></div>`;
+    <div class="summary-top">
+      <div class="stat"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
+      <div class="stat"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+    </div>
+    <div class="summary-plats">
+      ${platOrder.map(k=>`<div class="stat"><div class="k">${esc(p[k]?.name||k)}</div><div class="v">${fmt(p[k]?.value||0)}${wkTag(weeklyGrowth(p[k]))}</div></div>`).join('')}
+    </div>`;
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
