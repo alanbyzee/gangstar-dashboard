@@ -168,7 +168,11 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
+<<<<<<< HEAD
       "value": 1420,
+=======
+      "value": 1410,
+>>>>>>> 4fa7b9b67c6cc355c207f25ac26a4f916925f924
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
@@ -315,7 +319,11 @@
         },
         {
           "date": "2026-08-08",
+<<<<<<< HEAD
           "value": 1420
+=======
+          "value": 1410
+>>>>>>> 4fa7b9b67c6cc355c207f25ac26a4f916925f924
         }
       ]
     },
@@ -402,10 +410,13 @@
         {
           "date": "2026-08-07",
           "value": 249
+<<<<<<< HEAD
         },
         {
           "date": "2026-08-08",
           "value": 726
+=======
+>>>>>>> 4fa7b9b67c6cc355c207f25ac26a4f916925f924
         }
       ]
     }
