@@ -68,23 +68,10 @@ body{
 .view.scroll{overflow:auto;padding-right:2px}
 
 /* ===== 粉丝监控 ===== */
-.fan{padding:12px 24px 20px;max-width:1180px;margin:0 auto}
-.fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.fan{padding:14px 24px 28px;max-width:1180px;margin:0 auto}
+.fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .fan h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .fan .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
-
-/* 汇总卡片 */
-.summary{display:flex;gap:14px;flex-wrap:wrap}
-.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 19px;min-width:152px;box-shadow:var(--shadow-sm);transition:.2s}
-.stat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.stat .k{font-size:12px;color:var(--muted)}
-.stat .v{font-size:23px;font-weight:800;margin-top:3px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-
-/* 本周涨粉标签 */
-.wk-up{font-size:11px;font-weight:700;color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
-.wk-down{font-size:11px;font-weight:700;color:var(--err);background:#fef2f2;border:1px solid #fecaca;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
-.wk-flat{font-size:11px;font-weight:600;color:var(--muted);background:#f9fafb;border:1px solid var(--line);padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
-.wk-total{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:2px 9px;border-radius:8px;margin-left:4px}
 
 /* 工具栏 + 刷新状态 */
 .toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -92,14 +79,10 @@ body{
 .refresh:hover{box-shadow:0 6px 18px rgba(109,40,217,.36)}
 .refresh:active{transform:translateY(1px)}
 .refresh[disabled]{opacity:.65;cursor:default}
-
-/* 刷新按钮内 spinner */
 @keyframes spin{to{transform:rotate(360deg)}}
 .refresh .spin{display:none;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 .refresh.loading .spin{display:inline-block}
 .refresh.loading .btn-text{opacity:.5}
-
-/* 状态文字 */
 .status{font-size:13px;font-weight:600;padding:6px 13px;border-radius:9px;display:none}
 .status.show{display:inline-block}
 .status.ok{color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0}
@@ -113,33 +96,37 @@ body{
 .toast.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 
-/* 平台卡片网格 */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:18px}
+/* 概览条：距上线 + 社区总粉丝 + 数据更新时间 */
+.overview{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+@media(max-width:680px){.overview{grid-template-columns:1fr}}
+.ov{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow-sm);transition:.2s}
+.ov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.ov .k{font-size:12px;color:var(--muted)}
+.ov .v{font-size:26px;font-weight:800;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ov .v small{font-size:13px;color:var(--muted);font-weight:600}
 
-/* 平台增长趋势（紧凑折线图网格） */
-.trends{margin-bottom:18px}
-.trends-title{font-size:13px;font-weight:800;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.tchart{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow-sm);transition:.2s}
-.tchart:hover{box-shadow:var(--shadow-md)}
-.tchart .th{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
-.tchart .tname{font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;min-width:0}
-.tchart .tname .ic{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:9px;flex:none}
-.tchart .tname .tx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tchart .tval{font-size:15px;font-weight:800;white-space:nowrap}
-.tchart .tchart-area{margin-top:2px}
-.tchart .tchart-area .chart-area{padding:6px;margin-top:0}
-.tchart .tgrow{font-size:10.5px;font-weight:700;margin-top:3px}
+/* 本周涨粉标签（共用） */
+.wk-up{font-size:11px;font-weight:700;color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
+.wk-down{font-size:11px;font-weight:700;color:var(--err);background:#fef2f2;border:1px solid #fecaca;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
+.wk-flat{font-size:11px;font-weight:600;color:var(--muted);background:#f9fafb;border:1px solid var(--line);padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
+.wk-total{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:2px 9px;border-radius:8px;margin-left:4px}
 
-/* 粉丝汇总两行布局：上行=距上线+总粉丝，下行=各平台（按粉丝排序） */
-#summary{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
-.summary-top{display:flex;gap:16px;flex-wrap:wrap}
-.summary-top .stat{flex:0 0 auto}
-.summary-plats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;align-items:start}
-/* 下行平台卡与上行同高：紧凑padding + 徽章同行不换行 */
-.summary-plats .stat{padding:12px 16px}
-.summary-plats .stat .v{flex-wrap:nowrap;white-space:nowrap;font-size:20px}
-.summary-plats .stat .wk-up,.summary-plats .stat .wk-down,.summary-plats .stat .wk-flat{font-size:11px;padding:1px 6px}
+/* 平台卡片网格（每张含：图标/名称/handle/数值/周增长/折线图/note/链接） */
+.plat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;margin-bottom:16px}
+.pc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px 17px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:.2s}
+.pc:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.pc-bar{position:absolute;top:0;left:0;width:5px;height:100%;border-radius:16px 0 0 16px}
+.pc-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.pc-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.pc-titles{min-width:0;flex:1}
+.pc-name{font-size:14.5px;font-weight:800}
+.pc-handle{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-link{font-size:16px;color:var(--muted);text-decoration:none;flex:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:.15s}
+.pc-link:hover{background:var(--brand-soft);color:var(--brand)}
+.pc-valrow{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.pc-val{font-size:30px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.pc-val small{font-size:13px;color:var(--muted);font-weight:600;margin-left:4px}
+.pc-note{font-size:11px;color:var(--warn);background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:5px 9px;line-height:1.45;margin-top:8px}
 
 /* 玩家反馈收集看板（按周 · 印度市场态度追踪） */
 .feedback{padding:28px 24px 44px;max-width:1180px;margin:0 auto}
@@ -649,11 +636,11 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
         </div>
       </div>
 
-      <div class="summary" id="summary"></div>
+      <div class="overview" id="summary"></div>
+
+      <div class="plat-grid" id="platforms"></div>
 
       <div class="insights" id="insights"></div>
-
-      <div class="trends" id="trends"></div>
     </div>
   </div>
   <div class="view scroll" id="view-feedback">
@@ -2013,43 +2000,52 @@ const PLATFORM_ICONS={
 function renderFans(data){
   document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
   const p=data.platforms;
-  const totalAll=(p.instagram?.value||0)+(p.facebook?.value||0)+(p.youtube?.value||0)+(p.x?.value||0)+(p.discord?.value||0);
+  // 平台按粉丝数降序排列（统一顺序，概览/卡片/占比共用）
+  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  const totalAll=order.reduce((s,k)=>s+(p[k]?.value||0),0);
   const d=daysToLaunch();
-
-  const igHist=p.instagram?.history||[];
-  const igBase=igHist.length?igHist[0].value:0;
-  const igGain=(p.instagram?.value||0)-igBase;
-
-  // 本周涨粉（周一为节点，用 weeklyGrowth 算）
-  const igWg=weeklyGrowth(p.instagram);
-  const ytWg=weeklyGrowth(p.youtube);
-  const fbWg=weeklyGrowth(p.facebook);
-  const xWg=weeklyGrowth(p.x);
-  const dcWg=weeklyGrowth(p.discord);
-  const totalWg=(igWg?.diff||0)+(ytWg?.diff||0)+(fbWg?.diff||0)+(xWg?.diff||0)+(dcWg?.diff||0);
+  const totalWg=order.reduce((s,k)=>s+(weeklyGrowth(p[k])?.diff||0),0);
 
   function wkTag(wg){
     if(!wg) return '';
     const v=wg.diff;
     if(v>0) return `<span class="wk-up">本周 ▲+${fmt(v)}</span>`;
     if(v<0) return `<span class="wk-down">本周 ▼${fmt(v)}</span>`;
-    return '<span class="wk-flat">本周 ±0</span>';
+    return `<span class="wk-flat">本周 ±0</span>`;
   }
 
-  // 平台按粉丝数降序排列
-  const platOrder=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  // 概览条：距上线 + 社区总粉丝 + 数据更新时间
   document.getElementById('summary').innerHTML=`
-    <div class="summary-top">
-      <div class="stat"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-      <div class="stat"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
-    </div>
-    <div class="summary-plats">
-      ${platOrder.map(k=>`<div class="stat"><div class="k">${esc(p[k]?.name||k)}</div><div class="v">${fmt(p[k]?.value||0)}${wkTag(weeklyGrowth(p[k]))}</div></div>`).join('')}
-    </div>`;
+    <div class="ov"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
+    <div class="ov"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+    <div class="ov"><div class="k">数据更新于</div><div class="v" style="font-size:20px">${esc(data.updated_at)}</div></div>`;
+
+  // 平台卡片（每张含：图标/名称/handle/数值/周增长/折线图/note/链接）
+  const el=document.getElementById('platforms');
+  if(el){
+    el.innerHTML=order.map(k=>{
+      const pl=p[k]; if(!pl) return '';
+      const hist=dedupeHistory(pl.history||[]);
+      const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+      return `<div class="pc">
+        <div class="pc-bar" style="background:${pl.color}"></div>
+        <div class="pc-head">
+          <div class="pc-ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</div>
+          <div class="pc-titles"><div class="pc-name">${esc(pl.name)}</div><div class="pc-handle">${esc(pl.handle||'')}</div></div>
+          <a class="pc-link" href="${esc(pl.url)}" target="_blank" rel="noopener" title="打开 ${esc(pl.name)}">↗</a>
+        </div>
+        <div class="pc-valrow">
+          <div class="pc-val">${fmt(pl.value)}<small>${esc(pl.label)}</small></div>
+          ${wkTag(weeklyGrowth(pl))}
+        </div>
+        ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
+        ${pl.note?`<div class="pc-note">📌 ${esc(pl.note)}</div>`:''}
+      </div>`;
+    }).join('');
+  }
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
-  renderTrends(data);
 }
 
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
@@ -2115,33 +2111,6 @@ function renderInsights(data){
     const v=Number(document.getElementById('targetInput').value);
     if(v>0){pushUndo();lsSet('gangstar_fan_target',v);renderInsights(lastData);}
   };
-}
-
-// ===== 平台增长趋势：紧凑折线图网格 =====
-function renderTrends(data){
-  const p=data.platforms;
-  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
-  const el=document.getElementById('trends');
-  if(!el) return;
-  el.innerHTML=`
-    <div class="trends-title">📈 平台增长趋势（按天记录 · 近30天）</div>
-    <div class="t-grid">
-      ${order.map(k=>{
-        const pl=p[k]; if(!pl) return '';
-        const hist=dedupeHistory(pl.history||[]);
-        const wg=weeklyGrowth(pl);
-        const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-        const growTxt=wg?`<span class="${wg.diff>0?'wk-up':wg.diff<0?'wk-down':'wk-flat'}">${wg.diff>0?'+':''}${fmt(wg.diff)} 本周</span>`:'';
-        return `<div class="tchart">
-          <div class="th">
-            <div class="tname"><span class="ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</span><span class="tx">${esc(pl.name)}</span></div>
-            <div class="tval">${fmt(pl.value)}</div>
-          </div>
-          <div class="tchart-area">${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}</div>
-          ${growTxt?`<div class="tgrow">${growTxt}</div>`:''}
-        </div>`;
-      }).join('')}
-    </div>`;
 }
 
 // ===== Toast 通知 =====
@@ -2571,6 +2540,8 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
 
 
 
