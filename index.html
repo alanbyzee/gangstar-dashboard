@@ -637,8 +637,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
       <div class="summary" id="summary"></div>
 
       <div class="insights" id="insights"></div>
-
-      <div class="cards" id="cards"></div>
     </div>
   </div>
   <div class="view scroll" id="view-feedback">
@@ -2034,35 +2032,6 @@ function renderFans(data){
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
-
-  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
-  document.getElementById('cards').innerHTML=order.map(k=>{
-    const pl=p[k]; if(!pl) return '';
-    const hist=dedupeHistory(pl.history||[]);
-    const prev=hist.length>1?hist[hist.length-2].value:pl.value;
-    const diff=pl.value-prev;
-    const dcls=diff>0?'up':(diff<0?'down':'flat');
-    const dtxt=diff>0?`▲ +${fmt(diff)}`:(diff<0?`▼ ${fmt(diff)}`:'—');
-    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-    const wg=weeklyGrowth(pl);
-    const momentum=wg?`<div class="momentum">
-      <div class="m"><span class="k">近 7 天</span><span class="v ${wg.diff>0?'m-up':wg.diff<0?'m-down':'m-flat'}">${wg.diff>0?'+':''}${fmt(wg.diff)}</span></div>
-      <div class="m"><span class="k">周环比</span><span class="v ${wg.pct>=0?'m-up':'m-down'}">${wg.pct>=0?'+':''}${wg.pct.toFixed(1)}%</span></div>
-      <div class="m"><span class="k">日均增</span><span class="v ${wg.daily>=0?'m-up':'m-down'}">${wg.daily>=0?'+':''}${wg.daily.toFixed(1)}</span></div>
-    </div>`:'';
-    return `<div class="pc">
-      <div class="bar" style="background:${pl.color}"></div>
-      <div class="ph">
-        <div class="ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</div>
-        <div><div class="nm">${esc(pl.name)}</div><div class="hd">${esc(pl.handle)}</div></div>
-      </div>
-      <div class="big">${fmt(pl.value)}<small>${esc(pl.label)}</small></div>
-      <div class="delta ${dcls}">${dtxt}</div>
-      ${momentum}
-      ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
-      <a class="lk" href="${esc(pl.url)}" target="_blank" rel="noopener">${esc(pl.url)}</a>
-    </div>`;
-  }).join('');
 }
 
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
@@ -2557,6 +2526,8 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
 
 
 
