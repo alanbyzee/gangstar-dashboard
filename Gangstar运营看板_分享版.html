@@ -114,7 +114,7 @@ body{
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 
 /* 平台卡片网格 */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:18px}
 
 /* 粉丝汇总两行布局：上行=距上线+总粉丝，下行=各平台（按粉丝排序） */
 #summary{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
@@ -208,20 +208,20 @@ body{
 .btn-cancel{background:#fff;color:var(--muted)}
 .btn-save{background:var(--brand);color:#fff;border-color:var(--brand)}
 .fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
-.pc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:.2s;box-shadow:var(--shadow-sm)}
-.pc:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.pc .bar{position:absolute;top:0;left:0;width:5px;height:100%;border-radius:16px 0 0 16px}
-.pc .ph{display:flex;align-items:center;gap:9px}
-.pc .ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;box-shadow:0 3px 8px rgba(0,0,0,.12)}
-.pc .nm{font-size:14px;font-weight:800}
-.pc .hd{font-size:11px;color:var(--muted)}
-.pc .big{font-size:30px;font-weight:800;letter-spacing:-.5px}
-.pc .big small{font-size:13px;color:var(--muted);font-weight:600;margin-left:4px}
-.pc .delta{font-size:12px;font-weight:700}
+.pc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;transition:.2s;box-shadow:var(--shadow-sm)}
+.pc:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.pc .bar{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:14px 0 0 14px}
+.pc .ph{display:flex;align-items:center;gap:8px}
+.pc .ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.pc .nm{font-size:13px;font-weight:800}
+.pc .hd{font-size:10.5px;color:var(--muted)}
+.pc .big{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.pc .big small{font-size:11.5px;color:var(--muted);font-weight:600;margin-left:4px}
+.pc .delta{font-size:11.5px;font-weight:700}
 .pc .delta.up{color:var(--ok)}.pc .delta.down{color:var(--err)}.pc .delta.flat{color:#9ca3af}
 .pc .note{font-size:11px;color:var(--warn);background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:4px 8px}
 /* 折线图区域 */
-.chart-area{margin-top:4px;background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:10px}
+.chart-area{margin-top:2px;background:#fafbfc;border:1px solid var(--line);border-radius:8px;padding:6px}
 .chart-area svg{width:100%;height:auto}
 .pc .lk{font-size:11px;color:var(--brand);text-decoration:none;word-break:break-all}
 .pc .lk:hover{text-decoration:underline}
@@ -263,10 +263,10 @@ body{
 .badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
 
 /* 卡片动能行 */
-.momentum{display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}
-.momentum .m{display:flex;flex-direction:column;gap:2px}
-.momentum .m .k{font-size:10px;color:var(--muted)}
-.momentum .m .v{font-size:13px;font-weight:800}
+.momentum{display:flex;gap:10px;flex-wrap:wrap;margin-top:1px}
+.momentum .m{display:flex;flex-direction:column;gap:1px}
+.momentum .m .k{font-size:9.5px;color:var(--muted)}
+.momentum .m .v{font-size:12px;font-weight:800}
 .m-up{color:var(--ok)}.m-down{color:var(--err)}.m-flat{color:#9ca3af}
 
 /* ===== 区域素材周历 ===== */
@@ -637,8 +637,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
       <div class="summary" id="summary"></div>
 
       <div class="insights" id="insights"></div>
-
-      <div class="cards" id="cards"></div>
     </div>
   </div>
   <div class="view scroll" id="view-feedback">
@@ -1914,7 +1912,7 @@ function drawChart(hist,color,events){
       数据点不足（需至少 2 次记录），继续更新后将自动画出增长曲线
     </div>`;
   }
-  const W=250,H=90,padL=36,padR=14,padT=8,padB=20;
+  const W=250,H=62,padL=36,padR=14,padT=6,padB=16;
   const vals=hist.map(p=>p.value);
   const minV=Math.min(...vals)*0.95,maxV=Math.max(...vals)*1.03;
   const span=(maxV-minV)||1;
@@ -2034,35 +2032,6 @@ function renderFans(data){
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
-
-  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
-  document.getElementById('cards').innerHTML=order.map(k=>{
-    const pl=p[k]; if(!pl) return '';
-    const hist=dedupeHistory(pl.history||[]);
-    const prev=hist.length>1?hist[hist.length-2].value:pl.value;
-    const diff=pl.value-prev;
-    const dcls=diff>0?'up':(diff<0?'down':'flat');
-    const dtxt=diff>0?`▲ +${fmt(diff)}`:(diff<0?`▼ ${fmt(diff)}`:'—');
-    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-    const wg=weeklyGrowth(pl);
-    const momentum=wg?`<div class="momentum">
-      <div class="m"><span class="k">近 7 天</span><span class="v ${wg.diff>0?'m-up':wg.diff<0?'m-down':'m-flat'}">${wg.diff>0?'+':''}${fmt(wg.diff)}</span></div>
-      <div class="m"><span class="k">周环比</span><span class="v ${wg.pct>=0?'m-up':'m-down'}">${wg.pct>=0?'+':''}${wg.pct.toFixed(1)}%</span></div>
-      <div class="m"><span class="k">日均增</span><span class="v ${wg.daily>=0?'m-up':'m-down'}">${wg.daily>=0?'+':''}${wg.daily.toFixed(1)}</span></div>
-    </div>`:'';
-    return `<div class="pc">
-      <div class="bar" style="background:${pl.color}"></div>
-      <div class="ph">
-        <div class="ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</div>
-        <div><div class="nm">${esc(pl.name)}</div><div class="hd">${esc(pl.handle)}</div></div>
-      </div>
-      <div class="big">${fmt(pl.value)}<small>${esc(pl.label)}</small></div>
-      <div class="delta ${dcls}">${dtxt}</div>
-      ${momentum}
-      ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
-      <a class="lk" href="${esc(pl.url)}" target="_blank" rel="noopener">${esc(pl.url)}</a>
-    </div>`;
-  }).join('');
 }
 
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
@@ -2152,7 +2121,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4182,
+      "value": 4184,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-08 晚）；102帖6关注；IG涨粉靠boost page like（付费）非自然",
@@ -2223,14 +2192,14 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-08",
-          "value": 4182
+          "value": 4184
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 176,
+      "value": 177,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-07）",
@@ -2305,7 +2274,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-08",
-          "value": 176
+          "value": 177
         }
       ],
       "name": "Facebook"
@@ -2557,6 +2526,14 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
+
+
+
+
+
+
 
 
 
