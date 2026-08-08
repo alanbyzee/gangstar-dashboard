@@ -116,6 +116,21 @@ body{
 /* 平台卡片网格 */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:18px}
 
+/* 平台增长趋势（紧凑折线图网格） */
+.trends{margin-bottom:18px}
+.trends-title{font-size:13px;font-weight:800;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.tchart{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow-sm);transition:.2s}
+.tchart:hover{box-shadow:var(--shadow-md)}
+.tchart .th{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
+.tchart .tname{font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;min-width:0}
+.tchart .tname .ic{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:9px;flex:none}
+.tchart .tname .tx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tchart .tval{font-size:15px;font-weight:800;white-space:nowrap}
+.tchart .tchart-area{margin-top:2px}
+.tchart .tchart-area .chart-area{padding:6px;margin-top:0}
+.tchart .tgrow{font-size:10.5px;font-weight:700;margin-top:3px}
+
 /* 粉丝汇总两行布局：上行=距上线+总粉丝，下行=各平台（按粉丝排序） */
 #summary{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
 .summary-top{display:flex;gap:16px;flex-wrap:wrap}
@@ -637,6 +652,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
       <div class="summary" id="summary"></div>
 
       <div class="insights" id="insights"></div>
+
+      <div class="trends" id="trends"></div>
     </div>
   </div>
   <div class="view scroll" id="view-feedback">
@@ -2032,6 +2049,7 @@ function renderFans(data){
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
+  renderTrends(data);
 }
 
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
@@ -2097,6 +2115,33 @@ function renderInsights(data){
     const v=Number(document.getElementById('targetInput').value);
     if(v>0){pushUndo();lsSet('gangstar_fan_target',v);renderInsights(lastData);}
   };
+}
+
+// ===== 平台增长趋势：紧凑折线图网格 =====
+function renderTrends(data){
+  const p=data.platforms;
+  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  const el=document.getElementById('trends');
+  if(!el) return;
+  el.innerHTML=`
+    <div class="trends-title">📈 平台增长趋势（按天记录 · 近30天）</div>
+    <div class="t-grid">
+      ${order.map(k=>{
+        const pl=p[k]; if(!pl) return '';
+        const hist=dedupeHistory(pl.history||[]);
+        const wg=weeklyGrowth(pl);
+        const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+        const growTxt=wg?`<span class="${wg.diff>0?'wk-up':wg.diff<0?'wk-down':'wk-flat'}">${wg.diff>0?'+':''}${fmt(wg.diff)} 本周</span>`:'';
+        return `<div class="tchart">
+          <div class="th">
+            <div class="tname"><span class="ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</span><span class="tx">${esc(pl.name)}</span></div>
+            <div class="tval">${fmt(pl.value)}</div>
+          </div>
+          <div class="tchart-area">${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}</div>
+          ${growTxt?`<div class="tgrow">${growTxt}</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
 }
 
 // ===== Toast 通知 =====
@@ -2526,6 +2571,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
