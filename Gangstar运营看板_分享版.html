@@ -1972,13 +1972,14 @@ const PLATFORM_ICONS={
   facebook:'<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
   youtube:'<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
   x:'<svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'
+  discord:'<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.036A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.056c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.027zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>'
 };
 
 // ===== 渲染粉丝卡片 =====
 function renderFans(data){
   document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
   const p=data.platforms;
-  const totalAll=(p.instagram?.value||0)+(p.facebook?.value||0)+(p.youtube?.value||0)+(p.x?.value||0);
+  const totalAll=(p.instagram?.value||0)+(p.facebook?.value||0)+(p.youtube?.value||0)+(p.x?.value||0)+(p.discord?.value||0);
   const d=daysToLaunch();
 
   const igHist=p.instagram?.history||[];
@@ -1990,7 +1991,8 @@ function renderFans(data){
   const ytWg=weeklyGrowth(p.youtube);
   const fbWg=weeklyGrowth(p.facebook);
   const xWg=weeklyGrowth(p.x);
-  const totalWg=(igWg?.diff||0)+(ytWg?.diff||0)+(fbWg?.diff||0)+(xWg?.diff||0);
+  const dcWg=weeklyGrowth(p.discord);
+  const totalWg=(igWg?.diff||0)+(ytWg?.diff||0)+(fbWg?.diff||0)+(xWg?.diff||0)+(dcWg?.diff||0);
 
   function wkTag(wg){
     if(!wg) return '';
@@ -2002,16 +2004,17 @@ function renderFans(data){
 
   document.getElementById('summary').innerHTML=`
     <div class="stat"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-    <div class="stat"><div class="k">社区总粉丝（4 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+    <div class="stat"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
     <div class="stat"><div class="k">Instagram</div><div class="v">${fmt(p.instagram?.value||0)}${wkTag(igWg)}</div></div>
     <div class="stat"><div class="k">YouTube 订阅</div><div class="v">${fmt(p.youtube?.value||0)}${wkTag(ytWg)}</div></div>
     <div class="stat"><div class="k">Facebook</div><div class="v">${fmt(p.facebook?.value||0)}${wkTag(fbWg)}</div></div>
-    <div class="stat"><div class="k">X (Twitter)</div><div class="v">${fmt(p.x?.value||0)}${wkTag(xWg)}</div></div>`;
+    <div class="stat"><div class="k">X (Twitter)</div><div class="v">${fmt(p.x?.value||0)}${wkTag(xWg)}</div></div>
+    <div class="stat"><div class="k">Discord 社区</div><div class="v">${fmt(p.discord?.value||0)}${wkTag(dcWg)}</div></div>`;
 
   // 洞察区（作战进度 + 占比 + 本周最佳）
   renderInsights(data);
 
-  const order=['instagram','facebook','youtube','x'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   document.getElementById('cards').innerHTML=order.map(k=>{
     const pl=p[k]; if(!pl) return '';
     const hist=dedupeHistory(pl.history||[]);
@@ -2044,7 +2047,7 @@ function renderFans(data){
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
 function renderInsights(data){
   const p=data.platforms;
-  const order=['instagram','facebook','youtube','x'];
+  const order=['instagram','facebook','youtube','x','discord'];
   const vals=order.map(k=>p[k]?.value||0);
   const names=order.map(k=>p[k]?.name||k);
   const colors=order.map(k=>p[k]?.color||'#999');
@@ -2121,14 +2124,14 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-08-07",
+  "updated_at": "2026-08-08",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4077,
+      "value": 4106,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；96帖4关注；IG涨粉靠boost page like（付费）非自然",
@@ -2196,13 +2199,17 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-07",
           "value": 4077
+        },
+        {
+          "date": "2026-08-08",
+          "value": 4106
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 170,
+      "value": 173,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-07）",
@@ -2274,6 +2281,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-07",
           "value": 170
+        },
+        {
+          "date": "2026-08-08",
+          "value": 173
         }
       ],
       "name": "Facebook"
@@ -2282,7 +2293,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1370,
+      "value": 1400,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
@@ -2426,6 +2437,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-07",
           "value": 1370
+        },
+        {
+          "date": "2026-08-08",
+          "value": 1400
         }
       ]
     },
@@ -2433,7 +2448,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 25,
+      "value": 26,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -2473,11 +2488,54 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-07",
           "value": 25
+        },
+        {
+          "date": "2026-08-08",
+          "value": 26
+        }
+      ]
+    },
+    "discord": {
+      "name": "Discord",
+      "handle": "Gangstar Mirage City 社区",
+      "url": "https://discord.gg/",
+      "value": 249,
+      "label": "成员",
+      "color": "#5865F2",
+      "note": "数据来源：用户截图校准（2026-08-07）；7/15 搭建完成",
+      "history": [
+        {
+          "date": "2026-07-15",
+          "value": 0
+        },
+        {
+          "date": "2026-07-20",
+          "value": 56
+        },
+        {
+          "date": "2026-07-25",
+          "value": 102
+        },
+        {
+          "date": "2026-07-30",
+          "value": 135
+        },
+        {
+          "date": "2026-08-03",
+          "value": 169
+        },
+        {
+          "date": "2026-08-07",
+          "value": 249
         }
       ]
     }
   }
 };
+
+
+
+
 
 
 

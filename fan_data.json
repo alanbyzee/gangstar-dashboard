@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-08-07",
+  "updated_at": "2026-08-08",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4077,
+      "value": 4106,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；96帖4关注；IG涨粉靠boost page like（付费）非自然",
@@ -74,13 +74,17 @@
         {
           "date": "2026-08-07",
           "value": 4077
+        },
+        {
+          "date": "2026-08-08",
+          "value": 4106
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 170,
+      "value": 173,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-07）",
@@ -152,6 +156,10 @@
         {
           "date": "2026-08-07",
           "value": 170
+        },
+        {
+          "date": "2026-08-08",
+          "value": 173
         }
       ],
       "name": "Facebook"
@@ -160,7 +168,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1370,
+      "value": 1400,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
@@ -304,6 +312,10 @@
         {
           "date": "2026-08-07",
           "value": 1370
+        },
+        {
+          "date": "2026-08-08",
+          "value": 1400
         }
       ]
     },
@@ -311,7 +323,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 25,
+      "value": 26,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -351,7 +363,28 @@
         {
           "date": "2026-08-07",
           "value": 25
+        },
+        {
+          "date": "2026-08-08",
+          "value": 26
         }
+      ]
+    },
+    "discord": {
+      "name": "Discord",
+      "handle": "Gangstar Mirage City 社区",
+      "url": "https://discord.gg/",
+      "value": 249,
+      "label": "成员",
+      "color": "#5865F2",
+      "note": "数据来源：用户截图校准（2026-08-07）；7/15 搭建完成",
+      "history": [
+        {"date": "2026-07-15", "value": 0},
+        {"date": "2026-07-20", "value": 56},
+        {"date": "2026-07-25", "value": 102},
+        {"date": "2026-07-30", "value": 135},
+        {"date": "2026-08-03", "value": 169},
+        {"date": "2026-08-07", "value": 249}
       ]
     }
   }
