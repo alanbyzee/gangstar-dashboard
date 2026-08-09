@@ -6,10 +6,10 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4384,
+      "value": 4392,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-08 晚）；102帖6关注",
+      "note": "数据来源：用户截图校准（2026-08-09 晚）；107帖7关注",
       "history": [
         {
           "date": "2026-07-02",
@@ -390,10 +390,10 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 726,
+      "value": 1173,
       "label": "成员",
       "color": "#5865F2",
-      "note": "数据来源：用户截图校准（2026-08-08）；7/15 搭建完成",
+      "note": "数据来源：用户截图校准（2026-08-09 晚）",
       "history": [
         {
           "date": "2026-07-15",
@@ -422,6 +422,10 @@
         {
           "date": "2026-08-08",
           "value": 726
+        },
+        {
+          "date": "2026-08-09",
+          "value": 1173
         }
       ]
     }
