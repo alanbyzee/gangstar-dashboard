@@ -2690,6 +2690,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4004,51 +4005,81 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA={weeks:[
   {week:"8.2 - 8.9",attitude:"正面上升",
-   summary:"Beta 实机曝光显著抬升好评，负面仍低位；建议类反馈从「催上线」升级到「RPG 深度与打磨细节」，社区进入高期待 + 共创建议阶段。",
-   dims:{attitude:{label:"积极向上 · Beta 拉升",detail:"抽样30条中正面19（63.3%）/建议8（26.7%）/负面3（10.0%），实机内容发布后口碑改善"},
-    comprehension:{label:"玩法认知良好",detail:"玩家能清楚表达对玩法价值点的改进建议，深度需求开始浮现"},
+   summary:"Beta 实机曝光后口碑显著拉升：玩家对移动端 GTA 般体验、低端机流畅运行（约 5GB）、载具损坏/碎玻璃/保险/多人等机制高度好评；建议从「催上线」升级到「RPG 深度与沉浸感（组织/职业系统）」；负面仍低位，集中在画面/音效/操作打磨。",
+   dims:{attitude:{label:"积极向上 · Beta 拉升",detail:"正面 19 / 建议 8 / 负面 3（共 30 条），实机内容发布后口碑明显改善"},
+    comprehension:{label:"玩法认知良好",detail:"玩家能具体指出机制亮点并给出改进建议，深度需求浮现"},
     reputation:{label:"风评良好",detail:"实机内容发布后口碑进一步改善，预注册 25M+ 传播延续"},
-    engagement:{label:"社区高活跃",detail:"讨论从「等上线」扩展到「玩法深度共创」，互动质量抬升"}},
-   official:[],
-   community:[
-    {theme:"Beta 实机内容带动好评（高频）",count:0,type:"good"},
-    {theme:"预注册 25M+ 里程碑传播延续（高频）",count:0,type:"good"},
-    {theme:"希望持续开发者更新 / 直播",count:0,type:"sug"},
-    {theme:"开放世界体验 / 画面期待（高频）",count:0,type:"good"},
-    {theme:"RPG 深度建议：组织系统 / 关系系统 / 地图扩展（高频）",count:0,type:"sug"},
-    {theme:"打磨建议：UI / 音效 / 操作（3，负面集中）",count:3,type:"bad"},
-    {theme:"上线时间与可用区追问（持续出现）",count:0,type:"sug"}
+    engagement:{label:"社区高活跃",detail:"讨论从「等上线」扩展到「玩法深度共创」"}},
+   official:[
+    {theme:"移动端带来强劲的 GTA 般体验令人惊喜，没想到手机上能有这种开放世界玩法",count:1,type:"good"},
+    {theme:"Beta 实机看起来极令人兴奋且充满潜力，早期画面大幅提升期待",count:1,type:"good"},
+    {theme:"Beta 版本观看体验极佳，玩法引人入胜、娱乐性强，整体印象非常正面",count:1,type:"good"},
+    {theme:"游戏真实感强，尤其 NPC 会对威胁作出逃跑等反应",count:1,type:"good"},
+    {theme:"爆胎、碎玻璃等载具损坏机制进一步增强沉浸感",count:1,type:"good"},
+    {theme:"最惊艳之一：游戏能在低端机上运行，优化程度超出预期",count:1,type:"good"},
+    {theme:"游戏压缩到约 5GB 令人惊讶，这种体量的优化非常出色",count:1,type:"good"},
+    {theme:"多人联机是强势且意外的特性，大幅提升游戏价值与兴奋感",count:1,type:"good"},
+    {theme:"任务设计精良、引人入胜且多样，可长时间游玩不腻",count:1,type:"good"},
+    {theme:"角色动画已很先进，可自定义面部特征增强真实感与个性化",count:1,type:"good"},
+    {theme:"载具自定义系统令人印象深刻，为玩法增添一层深度",count:1,type:"good"},
+    {theme:"街头竞速、与好友 PvP 等令人兴奋，超出预期",count:1,type:"good"},
+    {theme:"合作任务（抢劫珠宝店等）非常吸引人，增添显著游戏价值",count:1,type:"good"},
+    {theme:"地图大而美观，玩家可自由漫游探索城市",count:1,type:"good"},
+    {theme:"保险系统是一大亮点，可通过保险修复受损车辆，细节真实",count:1,type:"good"},
+    {theme:"即便无真实工作经验，游戏内「工作式系统」也让人觉得创新且投入",count:1,type:"good"},
+    {theme:"现实中难进公司，但做成游戏系统是有创意的点子，增加深度与兴趣",count:1,type:"good"},
+    {theme:"低画质下画面仍令人印象深刻，高配表现值得期待",count:1,type:"good"},
+    {theme:"（其他正面反馈若干）",count:1,type:"good"},
+    {theme:"增加更多生活/社交元素，如关系系统，让体验更沉浸",count:1,type:"sug"},
+    {theme:"地图设计好，但期待更多地点种类与扩展以增强探索",count:1,type:"sug"},
+    {theme:"音效与背景音乐可进一步改进，更沉浸精致",count:1,type:"sug"},
+    {theme:"操作与 UI 不错，但可进一步优化以更流畅跟手",count:1,type:"sug"},
+    {theme:"加入组织/服务器系统：玩家可创建并加入政府/警察/军队/FIB/医疗/商业等组织，强化 RP",count:1,type:"sug"},
+    {theme:"每个用户都可通过面试、申请、培训加入组织，获得不同职业路径",count:1,type:"sug"},
+    {theme:"组织内设置不同职级与职责（警员/高级警员/探员/指挥官/医生等）",count:1,type:"sug"},
+    {theme:"组织系统让玩家更真实互动：出任务、应对事件、办案、逮捕、保护官员等 RP 活动",count:1,type:"sug"},
+    {theme:"画面已不错，但仍有提升空间（游戏仍在开发）",count:1,type:"bad"},
+    {theme:"音效与背景音乐可进一步打磨，更沉浸",count:1,type:"bad"},
+    {theme:"操作与 UI 不错，但可进一步优化以更跟手",count:1,type:"bad"}
    ],
-   trend:"舆情进入「高期待 + 共创建议」阶段，运营窗口明确：信息透明 + 持续放料可继续放大正反馈。",
+   community:[],
+   trend:"舆情进入「高期待 + 共创建议」阶段；信息透明 + 持续放料可继续放大正反馈。",
    invalid:"已过滤重复催更、无内容复读、引战式短贴与无效噪音评论。"},
   {week:"7.27 - 8.2",attitude:"正面",
-   summary:"社区整体高热正向，核心阻力不是内容本身，而是「上线时间 / 可用地区信息不透明」带来的焦虑；玩家对移动端 GTA-like 定位反响强。",
-   dims:{attitude:{label:"积极 · 高度期待",detail:"84个提及点中正面50、建议22、负面12，整体明显偏正向，无对核心玩法的否定"},
-    comprehension:{label:"玩法认知良好",detail:"玩家能准确描述开放世界 / 载具损坏 / 保险系统等核心玩法，无「看不懂」类反馈"},
-    reputation:{label:"风评中上",detail:"对「移动端 GTA-like」定位反响强，但催上线声音大，区域可用性争议存在"},
-    engagement:{label:"社区活跃",detail:"meme、管理员幽默互动、创作者联动带动讨论持续活跃"}},
+   summary:"社区整体高热正向，核心阻力不是内容本身，而是「上线时间 / 可用地区信息不透明」带来的焦虑；玩家对移动端 GTA-like 定位反响强，管理员幽默互动与 Meme 带动高活跃。",
+   dims:{attitude:{label:"积极 · 高度期待",detail:"正面 50 / 建议 22 / 负面 12（共 84 个提及点），整体明显偏正向"},
+    comprehension:{label:"玩法认知良好",detail:"玩家能准确描述开放世界/载具损坏/保险系统等核心玩法"},
+    reputation:{label:"风评中上",detail:"对「移动端 GTA-like」定位反响强，但催上线声音大"},
+    engagement:{label:"社区活跃",detail:"Meme、管理员幽默互动、创作者联动带动讨论持续活跃"}},
    official:[
-    {theme:"对上线日极度兴奋、自发倒计时并相约朋友同玩",count:14,type:"good"},
-    {theme:"庆祝 2500万+ 预约里程碑、对品牌/武器曝光兴奋",count:4,type:"good"},
-    {theme:"喜爱管理员幽默互动 + Meme 高互动，评论区正面表情包主导",count:24,type:"good"},
-    {theme:"创作者合作与玩法内容获强烈好评",count:5,type:"good"},
-    {theme:"呼吁更频繁公布上线日期 / 抢先体验",count:9,type:"sug"},
-    {theme:"希望更多玩法视频 / 开发者更新 / 直播",count:5,type:"sug"},
-    {theme:"明确 Play/App Store 与区域可用性（玩家反馈 App Store 难找 / 如加拿大）",count:4,type:"sug"}
+    {theme:"玩家对上线日充满兴奋，热切等待发布",count:8,type:"good"},
+    {theme:"玩家庆祝团队达成 2500万+ 预注册里程碑",count:2,type:"good"},
+    {theme:"社区喜爱管理员幽默、机智、互动的回复",count:5,type:"good"},
+    {theme:"多个帖子评论区被 🔥❤️😍😂🙌 等正面表情包主导",count:13,type:"good"},
+    {theme:"Meme 帖子引发高互动与欢笑",count:6,type:"good"},
+    {theme:"玩家确认已预注册并倒计时等待上线",count:4,type:"good"},
+    {theme:"对官方 Discord 社区公告与服务器上线反响正面",count:3,type:"good"},
+    {theme:"创作者合作与玩法相关内容获强烈好评",count:5,type:"good"},
+    {theme:"武器/公司曝光与玩法预告引发玩家兴奋",count:2,type:"good"},
+    {theme:"玩家讨论约朋友一起玩，分享首日活动体验的兴奋",count:2,type:"good"},
+    {theme:"更频繁地公布官方上线日期",count:7,type:"sug"},
+    {theme:"上线前提供抢先体验 / Beta 测试机会",count:2,type:"sug"},
+    {theme:"分享更多玩法视频、开发者更新与直播",count:2,type:"sug"},
+    {theme:"增加更多 NPC 让游戏世界更有生机",count:1,type:"sug"},
+    {theme:"为活跃社区互动与评论引入奖励或激励",count:1,type:"sug"},
+    {theme:"持续扩展并推广 Discord 社区，提供独家更新与活动",count:2,type:"sug"},
+    {theme:"澄清 Play/App Store 与国际用户的区域可用性",count:2,type:"sug"},
+    {theme:"允许/鼓励创作者在上线前就开始上传 GST 内容",count:1,type:"sug"},
+    {theme:"玩家询问最低设备要求，希望确认手机能否流畅运行",count:1,type:"sug"},
+    {theme:"尽快上线，许多玩家等不及了",count:3,type:"sug"},
+    {theme:"反复追问上线日期，说明玩家仍觉得上线信息有限",count:7,type:"bad"},
+    {theme:"部分玩家在 App Store 找不到游戏，或质疑区域可用性（如加拿大）",count:2,type:"bad"},
+    {theme:"推广虚假「原版链接」的垃圾评论降低评论区质量",count:2,type:"bad"},
+    {theme:"一名用户反映某内容帖可能缺少音乐/音频",count:1,type:"bad"}
    ],
-   community:[
-    {theme:"「什么时候上线」相关追问",count:7,type:"good"},
-    {theme:"「尽快上线」直接诉求",count:3,type:"sug"},
-    {theme:"区域可用性 / 商店可见性问题（如加拿大找不到）",count:2,type:"sug"},
-    {theme:"假链接 / spam 诈骗干扰",count:2,type:"bad"},
-    {theme:"个别音频 glitch 反馈",count:1,type:"bad"},
-    {theme:"发布时间 / 日期沟通诉求（反复问「什么时候上线」）",count:7,type:"sug"},
-    {theme:"希望更频繁公布官方更新 / 日期",count:7,type:"sug"},
-    {theme:"预注册 25M+ 里程碑集体庆祝（多条）",count:0,type:"good"},
-    {theme:"官方 / 创作者内容联动好评",count:5,type:"good"}
-   ],
+   community:[],
    trend:"从「期待讨论」转向「催上线 + 要确定信息」，情绪仍正向，但信息缺口开始放大负面噪音。",
-   invalid:"已剔除灌水、重复刷屏、无上下文表情贴与无效短句；重复催更并入「公布上线日期」诉求统计。"}
+   invalid:"已剔除灌水、重复刷屏、无上下文表情贴与无效短句。"}
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fbSeedSig(){var s=JSON.stringify(FEEDBACK_DATA.weeks||[]);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
