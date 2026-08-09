@@ -192,6 +192,36 @@ body{
 .fb-card .fb-del{margin-left:auto;cursor:pointer;color:#cbd5e1;font-size:12px;border:none;background:none;padding:1px 3px}
 .fb-card .fb-del:hover{color:#e53e3e}
 /* 顶部结合总结 + 综合占比 */
+
+/* 数据看板风：KPI 指标卡 + 占比环 + 高频主题 Top */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:4px 0 16px}
+@media(max-width:860px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+.kpi-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 13px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow-sm);border-top:3px solid #cbd5e1}
+.kpi-card.kp{border-top-color:#22c55e}
+.kpi-card.ks{border-top-color:#3b82f6}
+.kpi-card.kb{border-top-color:#f97316}
+.kpi-card.kn{border-top-color:#8b5cf6}
+.kpi-label{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.2px}
+.kpi-val{font-size:24px;font-weight:800;color:#1e293b;line-height:1.1}
+.kpi-sub{font-size:10.5px;color:#94a3b8}
+.donut-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 16px}
+@media(max-width:860px){.donut-row{grid-template-columns:1fr}}
+.donut-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center;box-shadow:var(--shadow-sm)}
+.donut-cap{font-size:12.5px;font-weight:800;color:#334155;margin-bottom:6px}
+.donut-leg{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:11px;color:#64748b;margin-top:6px}
+.lg{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.lg.g{background:#22c55e}.lg.s{background:#3b82f6}.lg.b{background:#f97316}
+.top-block{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px;box-shadow:var(--shadow-sm)}
+.top-h{font-size:13px;font-weight:800;color:#334155;margin-bottom:10px}
+.top-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.top-cols{grid-template-columns:1fr}}
+.top-col-h{font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:8px}
+.top-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.top-name{flex:1;min-width:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-bar{flex:none;width:30%;height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden}
+.top-bar i{display:block;height:100%;background:linear-gradient(90deg,#4338ca,#6366f1);border-radius:4px}
+.top-val{flex:none;font-weight:800;color:#4338ca;min-width:22px;text-align:right}
+
 .wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
 .sent-wrap{margin:4px 0 6px}
 .sent-wrap.comb{margin:2px 0 16px}
@@ -2694,6 +2724,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4120,6 +4151,12 @@ function renderFeedback(){
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
 }
 function wkBlock(w,wi){
+  function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
+  function segOf(arr){var g=0,s=0,b=0;arr.forEach(function(it){var c=Number(it.count)||0;var k=bucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0};}
+  var offSeg=segOf(w.official||[]);
+  var comSeg=segOf(w.community||[]);
+  var allC=(w.official||[]).concat(w.community||[]);
+  var cgO=segOf(allC);
   function srcCol(key,sumKey,platKey,label,cls,dot){
     var cmts=w[key]||[];
     var summary=w[sumKey]||'';
@@ -4155,24 +4192,47 @@ function wkBlock(w,wi){
       summaryHtml+platHtml+(tot>0?'<div class="sent-wrap">'+bar+'</div>':'')+commentsHtml+
     '</div>';
   }
-  // 综合占比（官号 + 社群 合并）
-  var allC=(w.official||[]).concat(w.community||[]);
-  function cb(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
-  var cg={good:[],sug:[],bad:[]};allC.forEach(function(it){cg[cb(it.type||'oth')].push(it);});
-  var ct=allC.reduce(function(s,it){return s+(Number(it.count)||0);},0);
-  function cseg(t){var a=cg[t];var sc=a.reduce(function(s,it){return s+(Number(it.count)||0);},0);var p=ct>0?Math.round(sc/ct*100):0;return {pct:p,count:sc};}
-  var cgO=cseg('good'),csO=cseg('sug'),cbO=cseg('bad');
+  function donut(seg,size){
+    var r=size/2-9, cx=size/2, cy=size/2, C=2*Math.PI*r;
+    var segs=[['good',seg.g,'#22c55e'],['sug',seg.s,'#3b82f6'],['bad',seg.b,'#f97316']];
+    var acc=0, parts=[];
+    segs.forEach(function(sg){var len=seg.t?sg[1]/seg.t*C:0; if(len>0){parts.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+sg[2]+'" stroke-width="13" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-acc).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"></circle>'); acc+=len;}});
+    var bg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#eef2f7" stroke-width="13"></circle>';
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+bg+parts.join('')+'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="21" font-weight="800" fill="#1e293b">'+seg.gp+'%</text><text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="10" fill="#64748b">正面率</text></svg>';
+  }
+  function topRows(arr,n){
+    var sorted=(arr||[]).slice().sort(function(a,b){return (Number(b.count)||0)-(Number(a.count)||0);}).slice(0,n);
+    if(!sorted.length)return '<div class="fb-empty">暂无数据</div>';
+    var max=Math.max(1,sorted[0].count);
+    return sorted.map(function(it){var c=Number(it.count)||0;var wd=Math.max(8,Math.round(c/max*100));return '<div class="top-row"><span class="top-name" title="'+fbEsc(it.theme||'')+'">'+fbEsc(it.theme||'')+'</span><span class="top-bar"><i style="width:'+wd+'%"></i></span><span class="top-val">'+c+'</span></div>';}).join('');
+  }
+  var kpi='<div class="kpi-row">'+
+    '<div class="kpi-card"><div class="kpi-label">总反馈量 · Total VoC</div><div class="kpi-val">'+cgO.t+'</div><div class="kpi-sub">官号 '+offSeg.t+' · 社群 '+comSeg.t+'</div></div>'+
+    '<div class="kpi-card kp"><div class="kpi-label">正面率 · Positive</div><div class="kpi-val">'+cgO.gp+'%</div><div class="kpi-sub">'+cgO.g+' 提及</div></div>'+
+    '<div class="kpi-card ks"><div class="kpi-label">建议占比 · Suggestion</div><div class="kpi-val">'+cgO.sp+'%</div><div class="kpi-sub">'+cgO.s+' 提及</div></div>'+
+    '<div class="kpi-card kb"><div class="kpi-label">负面情绪率 · Negative</div><div class="kpi-val">'+cgO.bp+'%</div><div class="kpi-sub">'+cgO.b+' 提及</div></div>'+
+    '<div class="kpi-card kn"><div class="kpi-label">净情绪指数</div><div class="kpi-val">'+(cgO.gp-cgO.bp>=0?'+':'')+(cgO.gp-cgO.bp)+'%</div><div class="kpi-sub">正面率 − 负面率</div></div>'+
+    '</div>';
+  var donuts='<div class="donut-row">'+
+    '<div class="donut-box"><div class="donut-cap">官号后台 · 情感构成</div>'+donut(offSeg,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+offSeg.g+'<span class="lg s"></span>建议 '+offSeg.s+'<span class="lg b"></span>负面 '+offSeg.b+'</div></div>'+
+    '<div class="donut-box"><div class="donut-cap">玩家社群 · 情感构成</div>'+donut(comSeg,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+comSeg.g+'<span class="lg s"></span>建议 '+comSeg.s+'<span class="lg b"></span>负面 '+comSeg.b+'</div></div>'+
+    '</div>';
+  var tops='<div class="top-block"><div class="top-h">🔥 高频主题 Top（按提及量）</div><div class="top-cols">'+
+    '<div class="top-col"><div class="top-col-h">官方账号</div>'+topRows(w.official,5)+'</div>'+
+    '<div class="top-col"><div class="top-col-h">玩家社群</div>'+topRows(w.community,5)+'</div>'+
+    '</div></div>';
+  var ct=cgO.t;
   var cbar=ct>0?'<div class="sent-wrap comb"><div class="sent-bar">'+
-    (cgO.pct>0?'<div class="sent-seg good" style="width:'+cgO.pct+'%">正面 '+cgO.count+' · '+cgO.pct+'%</div>':'')+
-    (csO.pct>0?'<div class="sent-seg sug" style="width:'+csO.pct+'%">建议 '+csO.count+' · '+csO.pct+'%</div>':'')+
-    (cbO.pct>0?'<div class="sent-seg bad" style="width:'+cbO.pct+'%">负面 '+cbO.count+' · '+cbO.pct+'%</div>':'')+
+    (cgO.gp>0?'<div class="sent-seg good" style="width:'+cgO.gp+'%">正面 '+cgO.g+' · '+cgO.gp+'%</div>':'')+
+    (cgO.sp>0?'<div class="sent-seg sug" style="width:'+cgO.sp+'%">建议 '+cgO.s+' · '+cgO.sp+'%</div>':'')+
+    (cgO.bp>0?'<div class="sent-seg bad" style="width:'+cgO.bp+'%">负面 '+cgO.b+' · '+cgO.bp+'%</div>':'')+
     '</div><div class="sent-total">官号 + 社群合计 '+ct+' 提及 · 整体态度：'+(w.attitude||'—')+'</div></div>':'';
   return '<div class="wk-block">'+
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
     (w.summary?'<div class="wk-summary">'+fbEsc(w.summary)+'</div>':'')+
-    cbar+
+    kpi+donuts+tops+cbar+
     '<div class="two-col">'+
       srcCol('official','officialSummary','officialPlatforms','官方账号 · 后台','col-official','#4338ca')+
       srcCol('community','communitySummary','communityPlatforms','玩家社群','col-community','#c2410c')+
@@ -4181,6 +4241,7 @@ function wkBlock(w,wi){
     (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
   '</div>';
 }
+
 function openWeekModal(){
   function parsePlat(txt){
     return (txt||'').split('\n').map(function(l){return l.trim();}).filter(function(l){return l;}).map(function(l){
