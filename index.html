@@ -183,7 +183,7 @@ body{
 .fb-card .fb-src{font-size:10.5px;font-weight:700;background:#eef2ff;color:#4338ca;border-radius:6px;padding:2px 7px}
 .fb-card .fb-type{font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 7px}
 .fb-type.bug{background:#fee2e2;color:#b91c1c}
-.fb-type.sug{background:#f1f5f9;color:#475569}
+.fb-type.sug{background:#fef9c3;color:#854d0e}
 .fb-type.bad{background:#ffedd5;color:#c2410c}
 .fb-type.good{background:#dbeafe;color:#1d4ed8}
 .fb-type.oth{background:#f1f5f9;color:#475569}
@@ -198,8 +198,8 @@ body{
 @media(max-width:860px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
 .kpi-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 13px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow-sm);border-top:3px solid #cbd5e1}
 .kpi-card.kp{border-top-color:#22c55e}
-.kpi-card.ks{border-top-color:#94a3b8}
-.kpi-card.kb{border-top-color:#f97316}
+.kpi-card.ks{border-top-color:#eab308}
+.kpi-card.kb{border-top-color:#ef4444}
 .kpi-card.kn{border-top-color:#8b5cf6}
 .kpi-label{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.2px}
 .kpi-val{font-size:24px;font-weight:800;color:#1e293b;line-height:1.1}
@@ -210,7 +210,7 @@ body{
 .donut-cap{font-size:12.5px;font-weight:800;color:#334155;margin-bottom:6px}
 .donut-leg{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:11px;color:#64748b;margin-top:6px}
 .lg{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:middle}
-.lg.g{background:#22c55e}.lg.s{background:#94a3b8}.lg.b{background:#f97316}
+.lg.g{background:#22c55e}.lg.s{background:#eab308}.lg.b{background:#ef4444}
 .top-block{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px;box-shadow:var(--shadow-sm)}
 .top-h{font-size:13px;font-weight:800;color:#334155;margin-bottom:10px}
 .top-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -230,8 +230,8 @@ body{
 .sent-bar{display:flex;height:32px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:#f1f5f9}
 .sent-seg{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#fff;min-width:0;white-space:nowrap;overflow:hidden}
 .sent-seg.good{background:linear-gradient(135deg,#22c55e,#16a34a)}
-.sent-seg.sug{background:linear-gradient(135deg,#94a3b8,#64748b)}
-.sent-seg.bad{background:linear-gradient(135deg,#f97316,#ea580c)}
+.sent-seg.sug{background:linear-gradient(135deg,#fde047,#eab308);color:#1e293b}
+.sent-seg.bad{background:linear-gradient(135deg,#ef4444,#dc2626)}
 .sent-total{font-size:11.5px;color:var(--muted);margin:7px 0 4px;font-weight:600}
 /* 左官号 / 右社群 两栏 */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:4px 0 6px}
@@ -250,8 +250,8 @@ body{
 .sent-group{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:13px}
 .sg-head{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;font-weight:800;color:#fff}
 .sent-group.good .sg-head{background:linear-gradient(135deg,#22c55e,#16a34a)}
-.sent-group.sug .sg-head{background:linear-gradient(135deg,#94a3b8,#64748b)}
-.sent-group.bad .sg-head{background:linear-gradient(135deg,#f97316,#ea580c)}
+.sent-group.sug .sg-head{background:linear-gradient(135deg,#fde047,#eab308);color:#1e293b}
+.sent-group.bad .sg-head{background:linear-gradient(135deg,#ef4444,#dc2626)}
 .sg-body{padding:4px 14px 8px;background:#fff}
 .cmt{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px dashed #eef2f7}
 .cmt:last-child{border-bottom:none}
@@ -2729,6 +2729,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4198,7 +4199,7 @@ function wkBlock(w,wi){
   }
   function donut(seg,size){
     var r=size/2-9, cx=size/2, cy=size/2, C=2*Math.PI*r;
-    var segs=[['good',seg.g,'#22c55e'],['sug',seg.s,'#94a3b8'],['bad',seg.b,'#f97316']];
+    var segs=[['good',seg.g,'#22c55e'],['sug',seg.s,'#eab308'],['bad',seg.b,'#ef4444']];
     var acc=0, parts=[];
     segs.forEach(function(sg){var len=seg.t?sg[1]/seg.t*C:0; if(len>0){parts.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+sg[2]+'" stroke-width="13" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-acc).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"></circle>'); acc+=len;}});
     var bg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#eef2f7" stroke-width="13"></circle>';
