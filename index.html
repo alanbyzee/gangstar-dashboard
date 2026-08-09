@@ -225,6 +225,13 @@ body{
 .top-bar i{display:block;height:100%;background:linear-gradient(90deg,#4338ca,#6366f1);border-radius:4px}
 .top-val{flex:none;font-weight:800;color:#4338ca;min-width:22px;text-align:right}
 
+.ch-tip{position:fixed;z-index:9999;display:none;pointer-events:none;background:#0f172a;color:#fff;border-radius:9px;padding:8px 11px;font-size:12px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.22);min-width:92px}
+.ch-tip .ch-d{font-size:11px;color:#94a3b8;font-weight:700;margin-bottom:2px}
+.ch-tip .ch-v{font-size:17px;font-weight:900;letter-spacing:.3px}
+.ch-tip .ch-dl{font-size:11px;color:#cbd5e1;margin-top:3px}
+.ch-tip .ch-delta{font-weight:800}
+.ch-tip .ch-delta.up{color:#4ade80}.ch-tip .ch-delta.down{color:#f87171}.ch-tip .ch-delta.flat{color:#94a3b8}
+.ch-hit{cursor:crosshair}
 .wk-summary.insight{border-left:4px solid #8b5cf6;background:linear-gradient(90deg,#f5f3ff,#faf8ff)}
 .wk-summary .ins-h{font-size:20px;font-weight:900;color:#7c3aed;letter-spacing:.5px;margin-bottom:8px}
 .wk-summary b.hl{font-weight:800;color:#0f172a;background:linear-gradient(180deg,transparent 62%,#fde68a 62%);padding:0 1px;border-radius:2px}
@@ -2026,6 +2033,14 @@ function drawChart(hist,color,events){
   const lastLabel=`<text x="${last.x.toFixed(1)}" y="${Math.max(padT+10,last.y-8)}" text-anchor="middle" font-size="10" fill="${color}" font-weight="700">${fmt(vals[vals.length-1])}</text>`;
   // 网格线
   const gridLines=[0,.5,1].map(f=>`<line x1="${padL}" y1="${padT+(H-padT-padB)*(1-f)}" x2="${W-padR}" y2="${padT+(H-padT-padB)*(1-f)}" stroke="#e5e7eb" stroke-dasharray="3,3"/>`).join('');
+  // 悬停：十字指示 + 透明命中区（命中区必须最后绘制，保证在最上层）
+  const slotW=(W-padL-padR)/Math.max(1,n-1);
+  const hoverG=`<g class="ch-hover" style="display:none"><line class="ch-vline" x1="0" y1="${padT}" x2="0" y2="${H-padB}" stroke="${color}" stroke-width="1" stroke-dasharray="3,3" opacity=".55"/><circle class="ch-hdot" cx="-99" cy="-99" r="4.2" fill="#fff" stroke="${color}" stroke-width="2.4"/></g>`;
+  const hits=pts.map((p,i)=>{
+    const x0=Math.max(0,p.x-slotW/2), w0=Math.min(W-x0,slotW||W);
+    const dd=(i>0)?(vals[i]-vals[i-1]):'';
+    return `<rect class="ch-hit" x="${x0.toFixed(1)}" y="0" width="${Math.max(6,w0).toFixed(1)}" height="${H}" fill="transparent" data-d="${hist[i].date}" data-v="${vals[i]}" data-dd="${dd}" data-cx="${p.x.toFixed(1)}" data-cy="${p.y.toFixed(1)}" data-color="${color}"/>`;
+  }).join('');
 
   return `<div class="chart-area">
     <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -2035,6 +2050,7 @@ function drawChart(hist,color,events){
       <!-- 点 -->${dotsCircs}${lastLabel}
       <!-- X轴 -->${xLabels.join('')}
       <!-- Y轴 -->${yLabels}
+      <!-- 悬停 -->${hoverG}${hits}
     </svg>
   </div>`;
 }
@@ -2649,6 +2665,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -4431,6 +4448,24 @@ function moveCmtTip(e){var x=e.clientX+14,y=e.clientY+14,w=cmtTip.offsetWidth,h=
 document.addEventListener('mouseover',function(e){var c=e.target&&e.target.closest?e.target.closest('.cmt'):null;if(c)showCmtTip(c,e);});
 document.addEventListener('mousemove',function(e){if(cmtTip.style.display==='block'){var c=e.target&&e.target.closest?e.target.closest('.cmt'):null;if(c)moveCmtTip(e);}});
 document.addEventListener('mouseout',function(e){var c=e.target&&e.target.closest?e.target.closest('.cmt'):null;if(c)cmtTip.style.display='none';});
+/* ===== 粉丝折线图 悬停查看当日粉丝数 ===== */
+var chTip=(function(){var t=document.getElementById('chTip');if(!t){t=document.createElement('div');t.id='chTip';t.className='ch-tip';document.body.appendChild(t);}return t;})();
+function chNum(n){n=Number(n)||0;return n.toLocaleString('en-US');}
+function isChHit(t){return !!(t&&t.getAttribute&&t.getAttribute('class')&&String(t.getAttribute('class')).indexOf('ch-hit')>-1);}
+function moveChTip(e){var x=e.clientX+14,y=e.clientY+14,w=chTip.offsetWidth,h=chTip.offsetHeight;if(x+w>window.innerWidth-8)x=e.clientX-w-14;if(y+h>window.innerHeight-8)y=e.clientY-h-14;chTip.style.left=x+'px';chTip.style.top=y+'px';}
+function showChTip(el,e){
+  var d=el.getAttribute('data-d')||'',v=el.getAttribute('data-v'),dd=el.getAttribute('data-dd'),c=el.getAttribute('data-color')||'#4338ca';
+  var dl='';
+  if(dd!==''&&dd!==null&&dd!==undefined){var n=Number(dd);dl='<div class="ch-dl">较上一数据点 <span class="ch-delta '+(n>0?'up':(n<0?'down':'flat'))+'">'+(n>0?'+':'')+chNum(n)+'</span></div>';}
+  chTip.innerHTML='<div class="ch-d">'+d+'</div><div class="ch-v" style="color:'+c+'">'+chNum(v)+'</div>'+dl;
+  chTip.style.display='block';moveChTip(e);
+  var svg=el.ownerSVGElement;
+  if(svg){var g=svg.querySelector('.ch-hover');if(g){var cx=el.getAttribute('data-cx'),cy=el.getAttribute('data-cy');var ln=g.querySelector('.ch-vline'),dot=g.querySelector('.ch-hdot');if(ln){ln.setAttribute('x1',cx);ln.setAttribute('x2',cx);}if(dot){dot.setAttribute('cx',cx);dot.setAttribute('cy',cy);}g.style.display='';}}
+}
+function hideChTip(){chTip.style.display='none';var gs=document.querySelectorAll('.ch-hover');for(var i=0;i<gs.length;i++)gs[i].style.display='none';}
+document.addEventListener('mouseover',function(e){if(isChHit(e.target))showChTip(e.target,e);});
+document.addEventListener('mousemove',function(e){if(chTip.style.display==='block'&&isChHit(e.target))moveChTip(e);});
+document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});
 
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
