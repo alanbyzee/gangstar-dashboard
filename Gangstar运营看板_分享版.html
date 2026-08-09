@@ -224,6 +224,7 @@ body{
 
 .wk-summary.insight{border-left:4px solid #8b5cf6;background:linear-gradient(90deg,#f5f3ff,#faf8ff)}
 .wk-summary .ins-h{font-size:20px;font-weight:900;color:#7c3aed;letter-spacing:.5px;margin-bottom:8px}
+.wk-summary b.hl{font-weight:800;color:#0f172a;background:linear-gradient(180deg,transparent 62%,#fde68a 62%);padding:0 1px;border-radius:2px}
 .wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
 .sent-wrap{margin:4px 0 6px}
 .sent-wrap.comb{margin:2px 0 16px}
@@ -2220,7 +2221,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4314,
+      "value": 4384,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-08 晚）；102帖6关注",
@@ -2295,14 +2296,14 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-09",
-          "value": 4314
+          "value": 4384
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 183,
+      "value": 185,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-07）",
@@ -2381,7 +2382,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-09",
-          "value": 183
+          "value": 185
         }
       ],
       "name": "Facebook"
@@ -2390,7 +2391,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1440,
+      "value": 1450,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
@@ -2541,7 +2542,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-09",
-          "value": 1440
+          "value": 1450
         }
       ]
     },
@@ -2641,6 +2642,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -4064,7 +4066,7 @@ var FEEDBACK_DATA={weeks:[
  {
   "week": "8.3 - 8.9",
   "attitude": "正面上升",
-  "summary": "玩家这周一边倒地嗨：Beta 实机把'能不能玩'彻底坐实，满屏都是'手机上能跑 GTA 了''低端机 5GB 居然能玩''等不及 8.20'——认可早就不是问题。真正的雷只有一个：上线日一直没钉死，24 条催更背后是同一句'到底哪天'，期待正被悬而未决一点点熬成焦虑。守住 8.20、把日期焊死高频复读，这股势能就是上线即爆的燃料；一旦再飘，正向会反被自己的信息真空吞掉。",
+  "summary": "本阶段《Gangstar: Mirage City》社区生态整体进入**高期待、高互动、低负面反馈**的发展阶段。随着**2500万预注册里程碑达成**以及**8月20日上线节点临近**，玩家讨论重心已从“是否值得体验”转向**“期待正式进入游戏”**，社区情绪核心由产品认可转变为**上线等待**。当前玩家认可主要集中在三大方向：首先，**移动端开放世界体验突破预期**，**5GB包体控制、低端设备适配以及流畅表现**成为核心口碑资产，有效降低了印度市场用户对大型开放世界游戏的进入门槛；其次，**角色/车辆自定义、车辆损毁、保险理赔**等高拟真细节，以及**PvP、街头竞速、组队玩法**等多人体验，强化了玩家对**“创造个人故事”**的期待；此外，官方社区通过**Meme内容、创作者联动和高互动运营方式**，进一步建立了亲近、年轻化的品牌形象。\n\n从用户需求来看，社区已经开始从**“体验游戏”向“参与生态”转变**。大量玩家主动表达对**RP体系、职业组织、社区身份成长以及Creator Hub参与机制**的兴趣，体现出开放世界游戏长期运营潜力。同时，部分关于操控、动画、音效等细节优化的反馈，更多反映了玩家已将产品按照**高品质开放世界标准**期待，**而非核心体验不满**。后续社区运营将重点围绕**稳定上线前期待、降低用户等待焦虑、强化Creator Hub参与入口、维护评论区健康生态**展开，通过持续的信息释放和玩家共创机制，将当前高热度预期进一步转化为**上线首日下载、社区活跃及长期UGC生态**。",
   "dims": {
    "attitude": {
     "label": "积极 · 双端走高",
@@ -4384,6 +4386,7 @@ var FEEDBACK_DATA={weeks:[
  }
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fbRich(s){return fbEsc(s||'').replace(/\*\*([\s\S]+?)\*\*/g,'<b class="hl">$1</b>');}
 function fbSeedSig(){var s=JSON.stringify(FEEDBACK_DATA.weeks||[]);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
 function getFeedback(){
   var sig=fbSeedSig();
@@ -4519,7 +4522,7 @@ function wkBlock(w,wi){
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
-    (w.summary?'<div class="wk-summary insight"><div class="ins-h">🔑 核心洞察</div>'+fbEsc(w.summary)+'</div>':'')+
+    (w.summary?'<div class="wk-summary insight"><div class="ins-h">🔑 核心洞察</div>'+fbRich(w.summary)+'</div>':'')+
     kpi+donuts+tops+cbar+
     '<div class="two-col">'+
       srcCol('official','officialSummary','officialPlatforms','官方账号 · 后台','col-official','#4338ca')+
