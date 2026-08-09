@@ -258,6 +258,16 @@ body{
 .cmt-text{font-size:13px;line-height:1.55;color:var(--ink);flex:1}
 .cmt-c{flex:none;font-size:11px;font-weight:700;color:#64748b;background:#f1f5f9;border-radius:7px;padding:2px 8px;white-space:nowrap}
 .cmt-c.hot{color:#c2410c;background:#fff1e6}
+.cmt{position:relative;cursor:default}
+.cmt-card{display:none;position:absolute;left:0;top:100%;z-index:50;min-width:240px;max-width:380px;background:#fff;border:1px solid #e2e8f0;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.13);padding:12px 14px;font-size:13px;line-height:1.6;color:var(--ink)}
+.cmt:hover .cmt-card{display:block}
+.cmt-card .cc-tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;margin-bottom:7px}
+.cmt-card .cc-tag.good{background:#dcfce7;color:#15803d}
+.cmt-card .cc-tag.sug{background:#fef9c3;color:#854d0e}
+.cmt-card .cc-tag.bad{background:#fee2e2;color:#b91c1c}
+.cmt-card .cc-text{margin-bottom:8px}
+.cmt-card .cc-meta{font-size:11px;color:#94a3b8}
+
 .wk-invalid{margin-top:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;font-size:12px;color:#92400e;line-height:1.55}
 .fb-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;border:1px dashed #e2e8f0;border-radius:11px}
 .fb-empty.big{padding:40px 0;font-size:13.5px}
@@ -2735,6 +2745,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4180,7 +4191,11 @@ function wkBlock(w,wi){
     function cmtRow(it){
       var cnt=Number(it.count)||0;
       var cntHtml=cnt>0?'<span class="cmt-c">'+cnt+' 提及</span>':'<span class="cmt-c hot">高频</span>';
-      return '<div class="cmt" title="'+fbEsc(it.theme||'')+'"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
+      var tt=it.type||'oth';var tagMap={good:'👍 正面',sug:'🟦 中性',bad:'😤 负面',oth:'其他'};
+      return '<div class="cmt"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+
+        '<div class="cmt-card"><span class="cc-tag '+tt+'">'+(tagMap[tt]||'其他')+'</span>'+
+        '<div class="cc-text">'+fbEsc(it.theme||'')+'</div>'+
+        '<div class="cc-meta">'+(cnt>0?cnt+' 次提及 · ':'')+'8.3-8.9</div></div></div>';
     }
     function groupHtml(t,emoji,title,segObj){
       if(!segObj.items.length)return '';
