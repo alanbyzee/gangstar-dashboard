@@ -192,27 +192,41 @@ body{
 .fb-card .fb-del{margin-left:auto;cursor:pointer;color:#cbd5e1;font-size:12px;border:none;background:none;padding:1px 3px}
 .fb-card .fb-del:hover{color:#e53e3e}
 /* 紧凑总结版（老板视角） */
-.wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
-.wk-dims{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
+.wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 16px;white-space:pre-wrap;word-break:break-word}
+/* 情绪占比条 */
+.sent-wrap{margin:4px 0 2px}
+.sent-bar{display:flex;height:32px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:#f1f5f9}
+.sent-seg{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#fff;min-width:0;white-space:nowrap;overflow:hidden}
+.sent-seg.good{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.sent-seg.sug{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.sent-seg.bad{background:linear-gradient(135deg,#f97316,#ea580c)}
+.sent-total{font-size:11.5px;color:var(--muted);margin:7px 0 14px;font-weight:600}
+/* 情感分组评论 */
+.sent-group{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:13px}
+.sg-head{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;font-weight:800;color:#fff}
+.sent-group.good .sg-head{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.sent-group.sug .sg-head{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.sent-group.bad .sg-head{background:linear-gradient(135deg,#f97316,#ea580c)}
+.sg-body{padding:4px 14px 8px;background:#fff}
+.cmt{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px dashed #eef2f7}
+.cmt:last-child{border-bottom:none}
+.cmt-src{font-size:10px;font-weight:800;border-radius:6px;padding:2px 7px;flex:none;white-space:nowrap;line-height:1.4}
+.cmt-src.official{background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe}
+.cmt-src.community{background:#fff1e6;color:#c2410c;border:1px solid #fed7aa}
+.cmt-text{font-size:13px;line-height:1.55;color:var(--ink);flex:1}
+.cmt-c{flex:none;font-size:11px;font-weight:700;color:#64748b;background:#f1f5f9;border-radius:7px;padding:2px 8px;white-space:nowrap}
+.cmt-c.hot{color:#c2410c;background:#fff1e6}
+/* 四维速览（紧凑） */
+.wk-dims{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:2px 0 16px}
 @media(max-width:760px){.wk-dims{grid-template-columns:repeat(2,1fr)}}
 .wk-dim{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px}
 .wk-dim-l{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px}
 .wk-dim-v{display:inline-block;font-size:13.5px;font-weight:800;border-radius:8px;padding:3px 10px}
-.wk-dim-d{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--text);font-weight:400}
+.wk-dim-d{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--ink);font-weight:400}
 .wk-dim-v.pos{background:#dcfce7;color:#15803d}
 .wk-dim-v.neg{background:#fee2e2;color:#b91c1c}
 .wk-dim-v.wave{background:#ffedd5;color:#c2410c}
 .wk-dim-v.neu{background:#f1f5f9;color:#475569}
-.wk-themes{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:860px){.wk-themes{grid-template-columns:1fr}}
-.wk-sub{background:#fbfcfe;border:1px solid #eef2f7;border-radius:13px;padding:15px}
-.wk-sub-h{font-size:14px;font-weight:800;margin:0 0 11px;display:flex;align-items:center;gap:8px}
-.wk-sub-n{margin-left:auto;font-size:11px;color:var(--muted);font-weight:600}
-.wk-theme{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px dashed #eef2f7}
-.wk-theme:last-child{border-bottom:none}
-.wk-theme .fb-type{flex:none;margin-top:1px}
-.wk-theme-t{font-size:13px;line-height:1.55;color:var(--ink);flex:1}
-.wk-theme-c{flex:none;font-size:11px;font-weight:700;color:#64748b;background:#f1f5f9;border-radius:7px;padding:2px 8px;white-space:nowrap}
 .wk-invalid{margin-top:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;font-size:12px;color:#92400e;line-height:1.55}
 .fb-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;border:1px dashed #e2e8f0;border-radius:11px}
 .fb-empty.big{padding:40px 0;font-size:13.5px}
@@ -2675,6 +2689,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4082,33 +4097,57 @@ function renderFeedback(){
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
 }
 function wkBlock(w,wi){
-  function dim(label,val){
-    var v=val&&(typeof val==='object')?val:{label:val||'—',detail:''};
-    var cls=attClass(v.label);
-    return '<div class="wk-dim"><span class="wk-dim-l">'+label+'</span><span class="wk-dim-v '+cls+'">'+fbEsc(v.label)+'</span>'+
-      (v.detail?'<span class="wk-dim-d">'+fbEsc(v.detail)+'</span>':'')+'</div>';
+  function dimSection(){
+    if(!w.dims)return '';
+    function dim(label,val){
+      var v=val&&(typeof val==='object')?val:{label:val||'—',detail:''};
+      var cls=attClass(v.label);
+      return '<div class="wk-dim"><span class="wk-dim-l">'+label+'</span><span class="wk-dim-v '+cls+'">'+fbEsc(v.label)+'</span>'+
+        (v.detail?'<span class="wk-dim-d">'+fbEsc(v.detail)+'</span>':'')+'</div>';
+    }
+    return '<div class="wk-dims">'+dim('对 GST 态度',w.dims.attitude)+dim('玩不玩的懂',w.dims.comprehension)+dim('市场风评',w.dims.reputation)+dim('社区活跃度',w.dims.engagement)+'</div>';
   }
-  function themes(key,title,dot){
-    var items=w[key]||[];
-    var total=items.reduce(function(s,it){return s+(Number(it.count)||0);},0);
-    var rows=items.length?items.map(function(it){
-      var t=FB_TM[it.type]||FB_TM.oth;
-      return '<div class="wk-theme"><span class="fb-type '+t[0]+'">'+t[1]+'</span>'+
-        '<span class="wk-theme-t">'+fbEsc(it.theme||'')+'</span>'+
-        (it.count?'<span class="wk-theme-c">'+it.count+' 提及</span>':'')+'</div>';
-    }).join(''):'<div class="fb-empty">本周暂无'+(key==='community'?'社区':'官号')+'反馈（待补）</div>';
-    return '<div class="wk-sub"><div class="wk-sub-h"><span class="fb-dot" style="background:'+dot+'"></span>'+title+'<span class="wk-sub-n">'+items.length+' 主题'+(total?' · '+total+' 提及':'')+'</span></div>'+rows+'</div>';
+  function items(key,src){return (w[key]||[]).map(function(it){return {theme:it.theme,count:Number(it.count)||0,type:it.type||'oth',src:src};});}
+  var all=items('official','official').concat(items('community','community'));
+  function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
+  var groups={good:[],sug:[],bad:[]};
+  all.forEach(function(it){groups[bucket(it.type)].push(it);});
+  var totN=all.length;
+  function seg(type){
+    var arr=groups[type];
+    var pct=totN>0?Math.round(arr.length/totN*100):0;
+    return {pct:pct,items:arr,count:arr.length};
+  }
+  var g=seg('good'),s=seg('sug'),b=seg('bad');
+  function cmtRow(it){
+    var srcLbl=it.src==='official'?'官号':'社区';
+    var cntHtml=it.count>0?'<span class="cmt-c">'+it.count+' 提及</span>':'<span class="cmt-c hot">高频</span>';
+    return '<div class="cmt"><span class="cmt-src '+it.src+'">'+srcLbl+'</span>'+
+      '<span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
+  }
+  function groupHtml(type,emoji,title,segObj){
+    if(!segObj.items.length)return '';
+    return '<div class="sent-group '+type+'"><div class="sg-head">'+emoji+' '+title+' · '+segObj.count+' 条 ('+segObj.pct+'%)</div>'+
+      '<div class="sg-body">'+segObj.items.map(cmtRow).join('')+'</div></div>';
+  }
+  var bar='';
+  if(totN>0){
+    bar='<div class="sent-wrap"><div class="sent-bar">'+
+      (g.pct>0?'<div class="sent-seg good" style="width:'+g.pct+'%">正面 '+g.count+' · '+g.pct+'%</div>':'')+
+      (s.pct>0?'<div class="sent-seg sug" style="width:'+s.pct+'%">建议 '+s.count+' · '+s.pct+'%</div>':'')+
+      (b.pct>0?'<div class="sent-seg bad" style="width:'+b.pct+'%">负面 '+b.count+' · '+b.pct+'%</div>':'')+
+      '</div><div class="sent-total">本周共 '+totN+' 条反馈 · 占比按评论条数计，每条括号为提及数</div></div>';
   }
   return '<div class="wk-block">'+
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
     (w.summary?'<div class="wk-summary">'+fbEsc(w.summary)+'</div>':'')+
-    (w.dims?'<div class="wk-dims">'+dim('对 GST 态度',w.dims.attitude)+dim('玩不玩的懂',w.dims.comprehension)+dim('市场风评',w.dims.reputation)+dim('社区活跃度',w.dims.engagement)+'</div>':'')+
-    '<div class="wk-themes">'+
-      themes('official','官方账号后台反馈','#4338ca')+
-      themes('community','玩家社区 · 群组反馈','#c2410c')+
-    '</div>'+
+    bar+
+    groupHtml('good','👍','正面',g)+
+    groupHtml('sug','💡','建议',s)+
+    groupHtml('bad','😤','负面',b)+
+    dimSection()+
     (w.trend?'<div class="wk-trend"><b>📌 本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
     (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
   '</div>';
