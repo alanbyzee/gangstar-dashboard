@@ -264,7 +264,7 @@ body{
 .cmt-tip .cc-tag.good{background:#dcfce7;color:#15803d}
 .cmt-tip .cc-tag.sug{background:#fef9c3;color:#854d0e}
 .cmt-tip .cc-tag.bad{background:#fee2e2;color:#b91c1c}
-.cmt-tip .cc-text{margin-bottom:8px}
+.cmt-tip .cc-h{font-size:11px;font-weight:700;color:#6366f1;margin-bottom:4px}.cmt-tip .cc-text{margin-bottom:8px;word-break:break-word}
 .cmt-tip .cc-meta{font-size:11px;color:#94a3b8}
 
 .wk-invalid{margin-top:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;font-size:12px;color:#92400e;line-height:1.55}
@@ -2746,6 +2746,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4059,71 +4060,327 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA={weeks:[
-  {week:"8.3 - 8.9",attitude:"正面上升",
-   summary:"本周玩家态度明确向好——非负占比 86%、净情绪 +38%，Beta 实机已把产品力坐实，社群里没人质疑'能不能玩'，都在催'什么时候上'。好的方面占绝对主导：低端机 5GB 能跑、载具损坏/保险/多人联机被逐一点名表扬，'移动端 GTA'心智已立住，玩法深度诉求（组织/职业 RP、生活社交）涌现更说明玩家已把游戏当'长期可玩'在看。唯一需留意的是上线日不确定催生集体焦虑（官号 24 条催 8.20）——守住 8.20、预告深度系统，焦虑自然转期待。",
-   dims:{attitude:{label:"积极 · 双端走高",detail:"官号 22 正/18 中/8 负，社群 19 正/8 中/3 负；Beta 实机拉升双端正向，非负占比 86%"},
-    comprehension:{label:"玩法认知良好",detail:"玩家能具体指出载具损坏/保险/工作式系统/组织系统等机制亮点并提改进"},
-    reputation:{label:"风评良好",detail:"实机内容发布后口碑明显改善，移动端 GTA-like 定位获强认可"},
-    engagement:{label:"社区高活跃",detail:"官号 Meme/创作者互动 + 社群深度机制讨论，互动从「等上线」扩展到「玩法共创」"}},
-   official:[
-    {theme:"对 8.20 上线极度期待：等不及、等20号、想看 Mirage City",count:24,type:"good"},
-    {theme:"对玩法、PvP、武器与 Mirage City 内容积极响应",count:12,type:"good"},
-    {theme:"对 Meme 与营销内容正面反响",count:15,type:"good"},
-    {theme:"对 Creator Hub 与成为创作者兴趣浓厚",count:9,type:"good"},
-    {theme:"对社区 / Discord 与上线前更新互动积极",count:6,type:"good"},
-    {theme:"更清晰、一致地公布官方上线日期",count:9,type:"sug"},
-    {theme:"尽快上线，玩家反复表达等不及",count:9,type:"sug"},
-    {theme:"上线前提供抢先体验机会",count:6,type:"sug"},
-    {theme:"分享更多玩法、武器与后续游戏内容信息",count:6,type:"sug"},
-    {theme:"提供更清晰的 Creator Hub 加入 / 注册指引",count:12,type:"sug"},
-    {theme:"澄清 Creator Hub 资格与要求（含创作者 / YouTube 门槛）",count:3,type:"sug"},
-    {theme:"允许 / 鼓励创作者在上线前就开始上传 GST 内容",count:3,type:"sug"},
-    {theme:"增加 / 改进奔跑与行走动画，让玩法更真实",count:3,type:"sug"},
-    {theme:"提供更多经创作者 / 达人贴预告的玩法内容信息",count:3,type:"sug"},
-    {theme:"等待 8.20 上线的焦躁 / 不耐",count:9,type:"bad"},
-    {theme:"反复不确定游戏究竟何时上线",count:6,type:"bad"},
-    {theme:"对如何进入 / 加入 Creator Hub 的疑问与困惑",count:6,type:"bad"},
-    {theme:"要求上线前抢先 / 免费体验",count:3,type:"bad"}
-   ],
-   community:[
-    {theme:"移动端带来强劲的 GTA 般体验令人惊喜，没想到手机上能有这种开放世界玩法",count:3,type:"good"},
-    {theme:"Beta 实机画面极令人兴奋且充满潜力，大幅提升期待",count:3,type:"good"},
-    {theme:"Beta 版本观看体验极佳，玩法引人入胜、娱乐性强",count:3,type:"good"},
-    {theme:"即便无真实工作经验，游戏内工作式系统也让人觉得创新且投入",count:3,type:"good"},
-    {theme:"现实中难进公司，但做成游戏系统是有创意的点子，增加深度与兴趣",count:3,type:"good"},
-    {theme:"低画质下画面仍令人印象深刻，高配表现值得期待",count:3,type:"good"},
-    {theme:"游戏真实感强，尤其 NPC 会对威胁作出逃跑等反应",count:3,type:"good"},
-    {theme:"爆胎、碎玻璃等载具损坏机制进一步增强沉浸感",count:3,type:"good"},
-    {theme:"最惊艳之一：游戏能在低端机上运行，优化超出预期",count:3,type:"good"},
-    {theme:"游戏压缩到约 5GB 令人惊讶，这种体量的优化非常出色",count:3,type:"good"},
-    {theme:"多人联机是强势且意外的特性，大幅提升游戏价值与兴奋感",count:3,type:"good"},
-    {theme:"任务设计精良、引人入胜且多样，可长时间游玩不腻",count:3,type:"good"},
-    {theme:"角色动画已很先进，可自定义面部特征增强真实感与个性化",count:3,type:"good"},
-    {theme:"载具自定义系统令人印象深刻，为玩法增添一层深度",count:3,type:"good"},
-    {theme:"街头竞速、与好友 PvP 等令人兴奋，超出预期",count:3,type:"good"},
-    {theme:"合作任务（抢劫珠宝店等）非常吸引人，增添显著游戏价值",count:3,type:"good"},
-    {theme:"地图大而美观，玩家可自由漫游探索城市",count:3,type:"good"},
-    {theme:"保险系统是一大亮点，可通过保险修复受损车辆，细节真实",count:3,type:"good"},
-    {theme:"其他正面反馈若干",count:3,type:"good"},
-    {theme:"增加更多生活 / 社交元素，如关系系统，让体验更沉浸",count:3,type:"sug"},
-    {theme:"地图设计好，但期待更多地点种类与扩展以增强探索",count:3,type:"sug"},
-    {theme:"音效与背景音乐可进一步改进，更沉浸精致",count:3,type:"sug"},
-    {theme:"操作与 UI 不错，但可进一步优化以更流畅跟手",count:3,type:"sug"},
-    {theme:"加入组织 / 服务器系统：玩家可创建并加入政府 / 警察 / 军队 / FIB / 医疗 / 商业等组织，强化 RP",count:3,type:"sug"},
-    {theme:"每个用户都可通过面试、申请、培训加入组织，获得不同职业路径",count:3,type:"sug"},
-    {theme:"组织内设置不同职级与职责（警员 / 探员 / 指挥官 / 医生等）",count:3,type:"sug"},
-    {theme:"组织系统让玩家更真实互动：出任务、办案、逮捕、保护官员等 RP 活动",count:3,type:"sug"},
-    {theme:"画面已不错，但仍有提升空间（游戏仍在开发）",count:3,type:"bad"},
-    {theme:"音效与背景音乐可进一步打磨，更沉浸",count:3,type:"bad"},
-    {theme:"操作与 UI 不错，但可进一步优化以更跟手",count:3,type:"bad"}
-   ],
-      officialSummary:"官号侧态度=高度认可+极度期待。144 条提及里正向占绝对主导，玩家对 Beta 实机的画面、玩法、潜力给出高评价，24 条集中催 8.20 上线——这是产品力被认可的最好证据。核心动作只有一件：反复锁定并高频复读上线日，把这份期待变成倒计时，别让'到底哪天'的焦虑消耗掉正向势能。",
-   officialPlatforms:[],
-   communitySummary:"社群侧态度=认可并要更多。玩家已用脚投票肯定产品力：低端机 5GB 能跑、载具损坏/保险/多人联机被逐一点名表扬，任务设计精良、地图大而美观、角色动画先进，'移动端 GTA'心智已立住。诉求从'能不能玩'升级到'够不够深'（组织/职业 RP、生活社交、地图扩展），这是产品进入'被要求更好'阶段的强信号——重点是把高活跃讨论导流进 Creator Hub，把玩家共创变成留存引擎。",
-   communityPlatforms:[],
-
-   trend:"态度走向：继续向好，正向势能充足。8.20 前做好三件事即可把期待拉满——① 高频锁定上线日，把期待变成倒计时；② 预告组织/职业 RP 系统承接深度诉求，锚定'上线即有大世界'；③ 把高活跃讨论导流 Creator Hub，把等待期变成内容生产期。当前势能是最好的一段时间，别浪费在信息真空里。",
-   invalid:"已过滤重复催更、无内容复读、引战短贴、虚假链接与无效噪音。"}
+ {
+  "week": "8.3 - 8.9",
+  "attitude": "正面上升",
+  "summary": "本周玩家态度明确向好——非负占比 86%、净情绪 +38%，Beta 实机已把产品力坐实，社群里没人质疑'能不能玩'，都在催'什么时候上'。好的方面占绝对主导：低端机 5GB 能跑、载具损坏/保险/多人联机被逐一点名表扬，'移动端 GTA'心智已立住，玩法深度诉求（组织/职业 RP、生活社交）涌现更说明玩家已把游戏当'长期可玩'在看。唯一需留意的是上线日不确定催生集体焦虑（官号 24 条催 8.20）——守住 8.20、预告深度系统，焦虑自然转期待。",
+  "dims": {
+   "attitude": {
+    "label": "积极 · 双端走高",
+    "detail": "官号 22 正/18 中/8 负，社群 19 正/8 中/3 负；Beta 实机拉升双端正向，非负占比 86%"
+   },
+   "comprehension": {
+    "label": "玩法认知良好",
+    "detail": "玩家能具体指出载具损坏/保险/工作式系统/组织系统等机制亮点并提改进"
+   },
+   "reputation": {
+    "label": "风评良好",
+    "detail": "实机内容发布后口碑明显改善，移动端 GTA-like 定位获强认可"
+   },
+   "engagement": {
+    "label": "社区高活跃",
+    "detail": "官号 Meme/创作者互动 + 社群深度机制讨论，互动从「等上线」扩展到「玩法共创」"
+   }
+  },
+  "official": [
+   {
+    "theme": "等不及了！8.20 必须给我上，Mirage City 我已经盯很久了",
+    "count": 24,
+    "type": "good",
+    "orig": "Strong excitement & anticipation for the 20 August launch. Comments: 'can't wait,' 'waiting for the 20th,' 'excited to see Mirage City.' (8+)"
+   },
+   {
+    "theme": "这玩法 / PvP / 枪械太对味了，Gangstar 那个味儿正",
+    "count": 12,
+    "type": "good",
+    "orig": "Positive reactions to gameplay, PvP, weapons and Mirage City content. (4)"
+   },
+   {
+    "theme": "你们这波 meme 和预告片太顶了，整挺带感",
+    "count": 15,
+    "type": "good",
+    "orig": "Positive reactions to memes and campaign content. (5+)"
+   },
+   {
+    "theme": "Creator Hub 我想进！当创作者这事儿我认真了",
+    "count": 9,
+    "type": "good",
+    "orig": "Strong interest in the Creator Hub and becoming a creator. (3)"
+   },
+   {
+    "theme": "Discord 和上线前更新我都在跟，有活儿喊我",
+    "count": 6,
+    "type": "good",
+    "orig": "Positive engagement with the community/Discord and pre-launch updates. (2)"
+   },
+   {
+    "theme": "上线日能不能别藏着掖着？说清楚、固定住",
+    "count": 9,
+    "type": "sug",
+    "orig": "Announce and communicate the official release date more clearly and consistently. (3)"
+   },
+   {
+    "theme": "赶紧发吧求你了，天天问到底哪天能玩",
+    "count": 9,
+    "type": "sug",
+    "orig": "Launch the game ASAP; players repeatedly expressed impatience and asked when it would release. (3)"
+   },
+   {
+    "theme": "上线前让我先摸一把行不行？给个抢先体验",
+    "count": 6,
+    "type": "sug",
+    "orig": "Provide early access opportunities before launch. (2)"
+   },
+   {
+    "theme": "多放点玩法、枪械和后续内容的料啊",
+    "count": 6,
+    "type": "sug",
+    "orig": "Share more information about gameplay, weapons and upcoming game features. (2)"
+   },
+   {
+    "theme": "Creator Hub 到底怎么进？给个清楚的注册指引",
+    "count": 12,
+    "type": "sug",
+    "orig": "Provide clearer guidance on how to join/register for the Creator Hub. (4)"
+   },
+   {
+    "theme": "Creator Hub 的门槛是啥？YouTuber 要多少粉？说门儿清",
+    "count": 3,
+    "type": "sug",
+    "orig": "Clarify Creator Hub eligibility & requirements, including creator/YouTube thresholds. (1)"
+   },
+   {
+    "theme": "别等上线，现在就让创作者开传 GST 内容",
+    "count": 3,
+    "type": "sug",
+    "orig": "Allow or encourage creators to start uploading GST content before launch. (1)"
+   },
+   {
+    "theme": "跑动 / 走路动画再润润，真实感还能更顶",
+    "count": 3,
+    "type": "sug",
+    "orig": "Add/improve running and walking animations to make gameplay feel more realistic. (1)"
+   },
+   {
+    "theme": "达人 / 网红那边的玩法料再多透点",
+    "count": 3,
+    "type": "sug",
+    "orig": "Provide more info around gameplay/content teased through creator & influencer posts. (1)"
+   },
+   {
+    "theme": "天天刷就等 8.20，再不上线我要急眼了",
+    "count": 9,
+    "type": "bad",
+    "orig": "Frustration/impatience around waiting for the 20 August launch. (3)"
+   },
+   {
+    "theme": "到底哪天上线？吊了一周还没准信儿",
+    "count": 6,
+    "type": "bad",
+    "orig": "Repeated uncertainty around when the game will actually release. (2)"
+   },
+   {
+    "theme": "Creator Hub 到底咋进？我是懵的",
+    "count": 6,
+    "type": "bad",
+    "orig": "Questions or confusion around how to access/join the Creator Hub. (2)"
+   },
+   {
+    "theme": "上线前给个免费 / 抢先体验呗",
+    "count": 3,
+    "type": "bad",
+    "orig": "Requests for early/free access before launch. (1)"
+   }
+  ],
+  "community": [
+   {
+    "theme": "上班族没干过真活儿，但游戏里这套职业系统真上头又新鲜",
+    "count": 3,
+    "type": "good",
+    "orig": "Even without real-life job experience, the job-like systems feel highly engaging and innovative (adds realism & interaction)."
+   },
+   {
+    "theme": "乍看像普通开放世界，但得亲自上手才敢下结论——懂的都懂",
+    "count": 3,
+    "type": "good",
+    "orig": "At first glance a standard open-world experience; a more accurate evaluation only after personally playing. (2)"
+   },
+   {
+    "theme": "没想到手机上能玩到这种 GTA 级开放世界，直接惊到我了",
+    "count": 3,
+    "type": "good",
+    "orig": "Delivers a strong GTA-like experience on mobile, which is quite surprising. (3)"
+   },
+   {
+    "theme": "这 Beta 实机也太能打了，已经开始好奇正式版长啥样",
+    "count": 3,
+    "type": "good",
+    "orig": "The beta gameplay appears extremely exciting and promising; early footage significantly increased anticipation. (4)"
+   },
+   {
+    "theme": "Beta 看着就爽，玩法又带劲又好玩，整体印象拉满",
+    "count": 3,
+    "type": "good",
+    "orig": "The beta version was highly enjoyable to watch; gameplay felt engaging and entertaining. (5)"
+   },
+   {
+    "theme": "现实里进不了大厂，做成游戏系统这脑洞可以，深度直接拉满",
+    "count": 3,
+    "type": "good",
+    "orig": "Implementing company-like systems in-game is a creative, impactful idea that adds depth. (6)"
+   },
+   {
+    "theme": "低画质都这么顶，高配还不得起飞？",
+    "count": 3,
+    "type": "good",
+    "orig": "Graphics look impressive even on low settings; strong visual potential for higher configs. (7)"
+   },
+   {
+    "theme": "NPC 看到威胁会跑、车胎会爆玻璃会碎——这沉浸感绝了",
+    "count": 3,
+    "type": "good",
+    "orig": "Feels highly realistic: NPC flee from threats, vehicle damage (tire bursts, breaking glass) enhance immersion. (8)"
+   },
+   {
+    "theme": "最离谱的是低端机都能跑，这优化我服",
+    "count": 3,
+    "type": "good",
+    "orig": "One of the most impressive aspects: runs on low-end devices; optimization exceeded expectations. (9)"
+   },
+   {
+    "theme": "压缩到 5GB 不到，这体量这优化真的离谱",
+    "count": 3,
+    "type": "good",
+    "orig": "Compressed to around 5GB given its scale; level of optimization is highly impressive. (10)"
+   },
+   {
+    "theme": "居然还有多人联机？这波直接加分加到爆",
+    "count": 3,
+    "type": "good",
+    "orig": "Multiplayer is a strong and unexpected feature that significantly increases value & excitement. (11)"
+   },
+   {
+    "theme": "任务设计得又好又多，能肝一整天不腻",
+    "count": 3,
+    "type": "good",
+    "orig": "Missions appear well-designed, engaging, and diverse; long hours without boredom. (12)"
+   },
+   {
+    "theme": "角色动画已经很顶了，脸还能自由捏，真实感拉满",
+    "count": 3,
+    "type": "good",
+    "orig": "Character animations already at a very advanced level; full facial customization adds realism. (13)"
+   },
+   {
+    "theme": "载具自定义系统太香了，又多一层深度",
+    "count": 3,
+    "type": "good",
+    "orig": "Car customization system is highly impressive; adds another layer of depth. (14)"
+   },
+   {
+    "theme": "街头竞速 + 跟朋友 PvP，爽到超出预期",
+    "count": 3,
+    "type": "good",
+    "orig": "Street racing and PvP with friends are exciting and exceeded expectations. (15)"
+   },
+   {
+    "theme": "抢劫珠宝店这种合作任务太上头，游戏价值直接翻倍",
+    "count": 3,
+    "type": "good",
+    "orig": "Cooperative activities (heists, jewellery store robberies) are very engaging and add significant value. (16)"
+   },
+   {
+    "theme": "地图又大又好看，城市随便逛真自由",
+    "count": 3,
+    "type": "good",
+    "orig": "Features a large, visually appealing map; players freely roam and explore the city. (17)"
+   },
+   {
+    "theme": "保险系统是一绝，车撞坏了能走保险修，细节是真的细",
+    "count": 3,
+    "type": "good",
+    "orig": "Insurance system is a standout feature; repair damaged vehicles via insurance adds realism. (18)"
+   },
+   {
+    "theme": "总之就是 positive，夸的太多列不完",
+    "count": 3,
+    "type": "good",
+    "orig": "Other positive feedback (general praise)."
+   },
+   {
+    "theme": "多整点生活 / 社交玩法，像关系系统那种，沉浸感还能再炸",
+    "count": 3,
+    "type": "sug",
+    "orig": "Add more lifestyle/social elements (e.g., relationship systems) for more immersion. (1)"
+   },
+   {
+    "theme": "地图是不错，但地方种类再多、再扩点就更好逛了",
+    "count": 3,
+    "type": "sug",
+    "orig": "Map design is good, but expect more variety and expansion across locations. (2)"
+   },
+   {
+    "theme": "音效和 BGM 还能再打磨，更沉浸更精致",
+    "count": 3,
+    "type": "sug",
+    "orig": "Sound effects and background music can be further improved for a more polished experience. (3)"
+   },
+   {
+    "theme": "操作 UI 还行，但还能再跟手更顺",
+    "count": 3,
+    "type": "sug",
+    "orig": "Controls and UI are good but can be further optimized for smoother mobile gameplay. (4)"
+   },
+   {
+    "theme": "加个组织 / 服务器系统吧！政府/警察/军队/FIB/医生都能建，纯 RP 神作",
+    "count": 3,
+    "type": "sug",
+    "orig": "Add an organization/server system (gov, police, military, FIB, medical, business) to make it more RP. (5)"
+   },
+   {
+    "theme": "让每个玩家都能面试、申请、培训进组织，给不同职业路线",
+    "count": 3,
+    "type": "sug",
+    "orig": "Every user can join orgs via interviews, applications, training -> different career paths. (6)"
+   },
+   {
+    "theme": "组织里整点职级：警员/探员/指挥官/医生…有升迁才上头",
+    "count": 3,
+    "type": "sug",
+    "orig": "Different ranks/responsibilities within orgs (Police Officer, Inspector, Commander, Doctor...). (7)"
+   },
+   {
+    "theme": "组织系统让玩家真互动：出任务、办案、抓人、护官，RP 才带感",
+    "count": 3,
+    "type": "sug",
+    "orig": "Org-based system enables realistic interaction: missions, incidents, investigations, arrests, protecting officials. (8)"
+   },
+   {
+    "theme": "画面已经不错了，但还能再冲（毕竟还在开发中）",
+    "count": 3,
+    "type": "bad",
+    "orig": "Graphics are already good but still room to improve (game still in development)."
+   },
+   {
+    "theme": "音效 / BGM 还能再磨磨，更沉浸",
+    "count": 3,
+    "type": "bad",
+    "orig": "Sound effects and BGM could be further polished for immersion."
+   },
+   {
+    "theme": "操作 UI 还行，但能再跟手点",
+    "count": 3,
+    "type": "bad",
+    "orig": "Controls/UI are okay but can be further optimized to feel more responsive."
+   }
+  ],
+  "officialSummary": "官号侧态度=高度认可+极度期待。144 条提及里正向占绝对主导，玩家对 Beta 实机的画面、玩法、潜力给出高评价，24 条集中催 8.20 上线——这是产品力被认可的最好证据。核心动作只有一件：反复锁定并高频复读上线日，把这份期待变成倒计时，别让'到底哪天'的焦虑消耗掉正向势能。",
+  "officialPlatforms": [],
+  "communitySummary": "社群侧态度=认可并要更多。玩家已用脚投票肯定产品力：低端机 5GB 能跑、载具损坏/保险/多人联机被逐一点名表扬，任务设计精良、地图大而美观、角色动画先进，'移动端 GTA'心智已立住。诉求从'能不能玩'升级到'够不够深'（组织/职业 RP、生活社交、地图扩展），这是产品进入'被要求更好'阶段的强信号——重点是把高活跃讨论导流进 Creator Hub，把玩家共创变成留存引擎。",
+  "communityPlatforms": [],
+  "trend": "态度走向：继续向好，正向势能充足。8.20 前做好三件事即可把期待拉满——① 高频锁定上线日，把期待变成倒计时；② 预告组织/职业 RP 系统承接深度诉求，锚定'上线即有大世界'；③ 把高活跃讨论导流 Creator Hub，把等待期变成内容生产期。当前势能是最好的一段时间，别浪费在信息真空里。",
+  "invalid": "已过滤重复催更、无内容复读、引战短贴、虚假链接与无效噪音。"
+ }
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fbSeedSig(){var s=JSON.stringify(FEEDBACK_DATA.weeks||[]);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
@@ -4155,7 +4412,7 @@ function fbParseTheme(txt){
 
 var cmtTip=(function(){var t=document.getElementById('cmtTip');if(!t){t=document.createElement('div');t.id='cmtTip';t.className='cmt-tip';document.body.appendChild(t);}return t;})();
 var cmtTagMap={good:'👍 正面',sug:'🟦 中性',bad:'😤 负面',oth:'其他'};
-function showCmtTip(el,e){var tag=el.getAttribute('data-tag')||'oth';var cnt=el.getAttribute('data-cnt');cmtTip.innerHTML='<span class="cc-tag '+tag+'">'+(cmtTagMap[tag]||'其他')+'</span><div class="cc-text">'+el.getAttribute('data-tip')+'</div><div class="cc-meta">'+(cnt>0?cnt+' 次提及 · ':'')+'8.3-8.9</div>';cmtTip.style.display='block';moveCmtTip(e);}
+function showCmtTip(el,e){var tag=el.getAttribute('data-tag')||'oth';var cnt=el.getAttribute('data-cnt');cmtTip.innerHTML='<span class="cc-tag '+tag+'">'+(cmtTagMap[tag]||'其他')+'</span><div class="cc-h">🗣 玩家原评（EN）</div><div class="cc-text">'+el.getAttribute('data-tip')+'</div><div class="cc-meta">'+(cnt>0?cnt+' 次提及 · ':'')+'8.3-8.9</div>';cmtTip.style.display='block';moveCmtTip(e);}
 function moveCmtTip(e){var x=e.clientX+14,y=e.clientY+14,w=cmtTip.offsetWidth,h=cmtTip.offsetHeight;if(x+w>window.innerWidth-8)x=e.clientX-w-14;if(y+h>window.innerHeight-8)y=e.clientY-h-14;cmtTip.style.left=x+'px';cmtTip.style.top=y+'px';}
 document.addEventListener('mouseover',function(e){var c=e.target&&e.target.closest?e.target.closest('.cmt'):null;if(c)showCmtTip(c,e);});
 document.addEventListener('mousemove',function(e){if(cmtTip.style.display==='block'){var c=e.target&&e.target.closest?e.target.closest('.cmt'):null;if(c)moveCmtTip(e);}});
@@ -4200,7 +4457,7 @@ function wkBlock(w,wi){
     function cmtRow(it){
       var cnt=Number(it.count)||0;
       var cntHtml=cnt>0?'<span class="cmt-c">'+cnt+' 提及</span>':'<span class="cmt-c hot">高频</span>';
-      return '<div class="cmt" data-tip="'+fbEsc(it.theme||'')+'" data-tag="'+(it.type||'oth')+'" data-cnt="'+cnt+'"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
+      return '<div class="cmt" data-tip="'+fbEsc(it.orig||it.theme||'')+'" data-tag="'+(it.type||'oth')+'" data-cnt="'+cnt+'"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
     }
     function groupHtml(t,emoji,title,segObj){
       if(!segObj.items.length)return '';
