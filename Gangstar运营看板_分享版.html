@@ -191,16 +191,29 @@ body{
 .fb-card .fb-text{font-size:12.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap;word-break:break-word}
 .fb-card .fb-del{margin-left:auto;cursor:pointer;color:#cbd5e1;font-size:12px;border:none;background:none;padding:1px 3px}
 .fb-card .fb-del:hover{color:#e53e3e}
-/* 紧凑总结版（老板视角） */
-.wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 16px;white-space:pre-wrap;word-break:break-word}
-/* 情绪占比条 */
-.sent-wrap{margin:4px 0 2px}
+/* 顶部结合总结 + 综合占比 */
+.wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
+.sent-wrap{margin:4px 0 6px}
+.sent-wrap.comb{margin:2px 0 16px}
 .sent-bar{display:flex;height:32px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:#f1f5f9}
 .sent-seg{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#fff;min-width:0;white-space:nowrap;overflow:hidden}
 .sent-seg.good{background:linear-gradient(135deg,#22c55e,#16a34a)}
 .sent-seg.sug{background:linear-gradient(135deg,#3b82f6,#2563eb)}
 .sent-seg.bad{background:linear-gradient(135deg,#f97316,#ea580c)}
-.sent-total{font-size:11.5px;color:var(--muted);margin:7px 0 14px;font-weight:600}
+.sent-total{font-size:11.5px;color:var(--muted);margin:7px 0 4px;font-weight:600}
+/* 左官号 / 右社群 两栏 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:4px 0 6px}
+@media(max-width:860px){.two-col{grid-template-columns:1fr}}
+.src-col{background:#fbfcfe;border:1px solid #eef2f7;border-radius:14px;padding:15px 16px}
+.src-head{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:800;margin:0 0 11px;color:#1e293b}
+.src-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.src-sum{background:#fff;border:1px solid #eceff3;border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.plat-sum{margin-bottom:12px}
+.plat-sum-h{font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:7px;letter-spacing:.3px}
+.plat-row{display:flex;gap:9px;padding:6px 0;border-bottom:1px dashed #eef2f7;font-size:12.5px;line-height:1.5}
+.plat-row:last-child{border-bottom:none}
+.plat-name{flex:none;font-weight:800;color:#334155;min-width:74px}
+.plat-note{color:var(--ink);flex:1}
 /* 情感分组评论 */
 .sent-group{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:13px}
 .sg-head{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;font-weight:800;color:#fff}
@@ -210,23 +223,9 @@ body{
 .sg-body{padding:4px 14px 8px;background:#fff}
 .cmt{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px dashed #eef2f7}
 .cmt:last-child{border-bottom:none}
-.cmt-src{font-size:10px;font-weight:800;border-radius:6px;padding:2px 7px;flex:none;white-space:nowrap;line-height:1.4}
-.cmt-src.official{background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe}
-.cmt-src.community{background:#fff1e6;color:#c2410c;border:1px solid #fed7aa}
 .cmt-text{font-size:13px;line-height:1.55;color:var(--ink);flex:1}
 .cmt-c{flex:none;font-size:11px;font-weight:700;color:#64748b;background:#f1f5f9;border-radius:7px;padding:2px 8px;white-space:nowrap}
 .cmt-c.hot{color:#c2410c;background:#fff1e6}
-/* 四维速览（紧凑） */
-.wk-dims{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:2px 0 16px}
-@media(max-width:760px){.wk-dims{grid-template-columns:repeat(2,1fr)}}
-.wk-dim{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px}
-.wk-dim-l{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px}
-.wk-dim-v{display:inline-block;font-size:13.5px;font-weight:800;border-radius:8px;padding:3px 10px}
-.wk-dim-d{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--ink);font-weight:400}
-.wk-dim-v.pos{background:#dcfce7;color:#15803d}
-.wk-dim-v.neg{background:#fee2e2;color:#b91c1c}
-.wk-dim-v.wave{background:#ffedd5;color:#c2410c}
-.wk-dim-v.neu{background:#f1f5f9;color:#475569}
 .wk-invalid{margin-top:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;font-size:12px;color:#92400e;line-height:1.55}
 .fb-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;border:1px dashed #e2e8f0;border-radius:11px}
 .fb-empty.big{padding:40px 0;font-size:13.5px}
@@ -2691,6 +2690,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4043,6 +4043,11 @@ var FEEDBACK_DATA={weeks:[
     {theme:"操作与 UI 不错，但可进一步优化以更跟手",count:1,type:"bad"}
    ],
    community:[],
+      officialSummary:"官号后台（Instagram / YouTube / Facebook / X / Discord）整体正向：Beta 实机内容引爆好评，玩家自发庆祝 25M+ 预注册，多人/任务/地图探索与载具机制获集中称赞；建议聚焦 RPG 深度（组织/职业系统）与音画 UI 打磨。",
+   officialPlatforms:[{name:"Instagram",note:"实机画面与载具损坏短视频引爆，点赞与「没想到手机能这样」好评主导"},{name:"YouTube",note:"Beta 长视频驱动深度讨论，多人/任务/地图探索好评集中"},{name:"Facebook",note:"预注册里程碑 + 约朋友同玩讨论，偏正向情绪"},{name:"X",note:"实时热议 Beta 亮点与 RPG 深度建议（组织/职业系统）集中"},{name:"Discord",note:"玩法机制深挖（保险/工作式系统）+ 打磨建议（音效/UI）活跃"}],
+   communitySummary:"",
+   communityPlatforms:[],
+
    trend:"舆情进入「高期待 + 共创建议」阶段；信息透明 + 持续放料可继续放大正反馈。",
    invalid:"已过滤重复催更、无内容复读、引战式短贴与无效噪音评论。"},
   {week:"7.27 - 8.2",attitude:"正面",
@@ -4078,6 +4083,11 @@ var FEEDBACK_DATA={weeks:[
     {theme:"一名用户反映某内容帖可能缺少音乐/音频",count:1,type:"bad"}
    ],
    community:[],
+      officialSummary:"官号后台整体高热正向：上线兴奋与 2500万+ 里程碑庆祝刷屏，管理员幽默 + Meme + 创作者联动带动高互动；负面多为信息缺口（催上线、区域可用性、假链接）。",
+   officialPlatforms:[{name:"Instagram",note:"上线倒计时 + 里程碑表情包刷屏，Meme 高互动"},{name:"YouTube",note:"玩法预告/创作者内容强好评，催更上线"},{name:"Facebook",note:"约朋友同玩讨论 + 管理员幽默互动正面"},{name:"X",note:"反复追问上线日期 + 区域可用性（如加拿大）负面集中"},{name:"Discord",note:"社区公告上线反响正，垃圾假链接需治理"}],
+   communitySummary:"",
+   communityPlatforms:[],
+
    trend:"从「期待讨论」转向「催上线 + 要确定信息」，情绪仍正向，但信息缺口开始放大负面噪音。",
    invalid:"已剔除灌水、重复刷屏、无上下文表情贴与无效短句。"}
 ]};
@@ -4128,62 +4138,75 @@ function renderFeedback(){
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
 }
 function wkBlock(w,wi){
-  function dimSection(){
-    if(!w.dims)return '';
-    function dim(label,val){
-      var v=val&&(typeof val==='object')?val:{label:val||'—',detail:''};
-      var cls=attClass(v.label);
-      return '<div class="wk-dim"><span class="wk-dim-l">'+label+'</span><span class="wk-dim-v '+cls+'">'+fbEsc(v.label)+'</span>'+
-        (v.detail?'<span class="wk-dim-d">'+fbEsc(v.detail)+'</span>':'')+'</div>';
+  function srcCol(key,sumKey,platKey,label,cls,dot){
+    var cmts=w[key]||[];
+    var summary=w[sumKey]||'';
+    var plats=w[platKey]||[];
+    function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
+    var groups={good:[],sug:[],bad:[]};
+    cmts.forEach(function(it){groups[bucket(it.type||'oth')].push(it);});
+    var tot=cmts.length;
+    function seg(t){var a=groups[t];var p=tot>0?Math.round(a.length/tot*100):0;return {pct:p,items:a,count:a.length};}
+    var g=seg('good'),sg=seg('sug'),bd=seg('bad');
+    function cmtRow(it){
+      var cnt=Number(it.count)||0;
+      var cntHtml=cnt>0?'<span class="cmt-c">'+cnt+' 提及</span>':'<span class="cmt-c hot">高频</span>';
+      return '<div class="cmt"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
     }
-    return '<div class="wk-dims">'+dim('对 GST 态度',w.dims.attitude)+dim('玩不玩的懂',w.dims.comprehension)+dim('市场风评',w.dims.reputation)+dim('社区活跃度',w.dims.engagement)+'</div>';
+    function groupHtml(t,emoji,title,segObj){
+      if(!segObj.items.length)return '';
+      return '<div class="sent-group '+t+'"><div class="sg-head">'+emoji+' '+title+' · '+segObj.count+' 条 ('+segObj.pct+'%)</div><div class="sg-body">'+segObj.items.map(cmtRow).join('')+'</div></div>';
+    }
+    var bar='';
+    if(tot>0){
+      bar='<div class="sent-bar">'+
+        (g.pct>0?'<div class="sent-seg good" style="width:'+g.pct+'%">正面 '+g.count+' · '+g.pct+'%</div>':'')+
+        (sg.pct>0?'<div class="sent-seg sug" style="width:'+sg.pct+'%">建议 '+sg.count+' · '+sg.pct+'%</div>':'')+
+        (bd.pct>0?'<div class="sent-seg bad" style="width:'+bd.pct+'%">负面 '+bd.count+' · '+bd.pct+'%</div>':'')+
+        '</div><div class="sent-total">共 '+tot+' 条 · 占比按评论条数</div>';
+    }
+    var platHtml=plats.length?'<div class="plat-sum"><div class="plat-sum-h">各平台总结</div>'+plats.map(function(p){return '<div class="plat-row"><span class="plat-name">'+fbEsc(p.name)+'</span><span class="plat-note">'+fbEsc(p.note||'')+'</span></div>';}).join('')+'</div>':'';
+    var summaryHtml=summary?'<div class="src-sum">'+fbEsc(summary)+'</div>':'';
+    var commentsHtml=tot>0?(groupHtml('good','👍','正面',g)+groupHtml('sug','💡','建议',sg)+groupHtml('bad','😤','负面',bd)):'<div class="fb-empty">本周暂无'+label+'反馈（待补）</div>';
+    return '<div class="src-col '+cls+'">'+
+      '<div class="src-head"><span class="src-dot" style="background:'+dot+'"></span>'+label+'</div>'+
+      summaryHtml+platHtml+(tot>0?'<div class="sent-wrap">'+bar+'</div>':'')+commentsHtml+
+    '</div>';
   }
-  function items(key,src){return (w[key]||[]).map(function(it){return {theme:it.theme,count:Number(it.count)||0,type:it.type||'oth',src:src};});}
-  var all=items('official','official').concat(items('community','community'));
-  function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
-  var groups={good:[],sug:[],bad:[]};
-  all.forEach(function(it){groups[bucket(it.type)].push(it);});
-  var totN=all.length;
-  function seg(type){
-    var arr=groups[type];
-    var pct=totN>0?Math.round(arr.length/totN*100):0;
-    return {pct:pct,items:arr,count:arr.length};
-  }
-  var g=seg('good'),s=seg('sug'),b=seg('bad');
-  function cmtRow(it){
-    var srcLbl=it.src==='official'?'官号':'社区';
-    var cntHtml=it.count>0?'<span class="cmt-c">'+it.count+' 提及</span>':'<span class="cmt-c hot">高频</span>';
-    return '<div class="cmt"><span class="cmt-src '+it.src+'">'+srcLbl+'</span>'+
-      '<span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
-  }
-  function groupHtml(type,emoji,title,segObj){
-    if(!segObj.items.length)return '';
-    return '<div class="sent-group '+type+'"><div class="sg-head">'+emoji+' '+title+' · '+segObj.count+' 条 ('+segObj.pct+'%)</div>'+
-      '<div class="sg-body">'+segObj.items.map(cmtRow).join('')+'</div></div>';
-  }
-  var bar='';
-  if(totN>0){
-    bar='<div class="sent-wrap"><div class="sent-bar">'+
-      (g.pct>0?'<div class="sent-seg good" style="width:'+g.pct+'%">正面 '+g.count+' · '+g.pct+'%</div>':'')+
-      (s.pct>0?'<div class="sent-seg sug" style="width:'+s.pct+'%">建议 '+s.count+' · '+s.pct+'%</div>':'')+
-      (b.pct>0?'<div class="sent-seg bad" style="width:'+b.pct+'%">负面 '+b.count+' · '+b.pct+'%</div>':'')+
-      '</div><div class="sent-total">本周共 '+totN+' 条反馈 · 占比按评论条数计，每条括号为提及数</div></div>';
-  }
+  // 综合占比（官号 + 社群 合并）
+  var allC=(w.official||[]).concat(w.community||[]);
+  function cb(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
+  var cg={good:[],sug:[],bad:[]};allC.forEach(function(it){cg[cb(it.type||'oth')].push(it);});
+  var ct=allC.length;
+  function cseg(t){var a=cg[t];var p=ct>0?Math.round(a.length/ct*100):0;return {pct:p,count:a.length};}
+  var cgO=cseg('good'),csO=cseg('sug'),cbO=cseg('bad');
+  var cbar=ct>0?'<div class="sent-wrap comb"><div class="sent-bar">'+
+    (cgO.pct>0?'<div class="sent-seg good" style="width:'+cgO.pct+'%">正面 '+cgO.count+' · '+cgO.pct+'%</div>':'')+
+    (csO.pct>0?'<div class="sent-seg sug" style="width:'+csO.pct+'%">建议 '+csO.count+' · '+csO.pct+'%</div>':'')+
+    (cbO.pct>0?'<div class="sent-seg bad" style="width:'+cbO.pct+'%">负面 '+cbO.count+' · '+cbO.pct+'%</div>':'')+
+    '</div><div class="sent-total">官号 + 社群合计 '+ct+' 条 · 整体态度：'+(w.attitude||'—')+'</div></div>':'';
   return '<div class="wk-block">'+
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
     (w.summary?'<div class="wk-summary">'+fbEsc(w.summary)+'</div>':'')+
-    bar+
-    groupHtml('good','👍','正面',g)+
-    groupHtml('sug','💡','建议',s)+
-    groupHtml('bad','😤','负面',b)+
-    dimSection()+
+    cbar+
+    '<div class="two-col">'+
+      srcCol('official','officialSummary','officialPlatforms','官方账号 · 后台','col-official','#4338ca')+
+      srcCol('community','communitySummary','communityPlatforms','玩家社群','col-community','#c2410c')+
+    '</div>'+
     (w.trend?'<div class="wk-trend"><b>📌 本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
     (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
   '</div>';
 }
 function openWeekModal(){
+  function parsePlat(txt){
+    return (txt||'').split('\n').map(function(l){return l.trim();}).filter(function(l){return l;}).map(function(l){
+      var i=l.indexOf('：');if(i<0)i=l.indexOf(':');
+      if(i<0)return {name:l,note:''};
+      return {name:l.slice(0,i).trim(),note:l.slice(i+1).trim()};
+    });
+  }
   var bg=document.createElement('div');bg.className='fb-modal-bg';
   bg.innerHTML='<div class="fb-modal"><div class="fb-modal-h">新增一周反馈（总结式）</div>'+
     '<div class="hint">由助手整理后录入：填一句话总结 + 四维评价 + 官号/社区主题（每行「前缀 主题 (提及数)」）。无效反馈直接不写。</div>'+
@@ -4195,7 +4218,11 @@ function openWeekModal(){
     '<input id="wk-d2" placeholder="玩不玩的懂，如：玩法认知良好">'+
     '<input id="wk-d3" placeholder="市场风评，如：风评积极">'+
     '<input id="wk-d4" placeholder="社区活跃度，如：互动活跃">'+
+    '<label>官号整体总结（行话术）</label><textarea id="wk-offsum" rows="2" placeholder="官号后台整体舆情…"></textarea>'+
+    '<label>官号各平台总结（每行：平台名：一句总结）</label><textarea id="wk-offplat" rows="3" placeholder="Instagram：上线倒计时表情包刷屏\nYouTube：玩法预告强好评"></textarea>'+
     '<label>官号后台主题（每行：👍主题 (14)）</label><textarea id="wk-off" rows="5" placeholder="👍对上线日极度兴奋 (14)\n💡呼吁更频繁公布上线日期 (9)"></textarea>'+
+    '<label>玩家社群整体总结（行话术）</label><textarea id="wk-comsum" rows="2" placeholder="玩家社群整体舆情…"></textarea>'+
+    '<label>社群各平台总结（每行：平台名：一句总结）</label><textarea id="wk-complat" rows="3" placeholder="Discord：…\nReddit：…"></textarea>'+
     '<label>玩家社区主题（每行一条）</label><textarea id="wk-com" rows="4" placeholder="👍玩家社区自发组织攻略 (8)"></textarea>'+
     '<label>本周走向</label><textarea id="wk-trend" rows="2" placeholder="玩家主要关注… 态度走向…"></textarea>'+
     '<label>已过滤的无效反馈（可选）</label><input id="wk-inv" placeholder="已过滤：2 条垃圾评论…">'+
@@ -4211,7 +4238,11 @@ function openWeekModal(){
       summary:bg.querySelector('#wk-sum').value.trim(),
       dims:{attitude:wrapDim(bg.querySelector('#wk-d1').value.trim()),comprehension:wrapDim(bg.querySelector('#wk-d2').value.trim()),reputation:wrapDim(bg.querySelector('#wk-d3').value.trim()),engagement:wrapDim(bg.querySelector('#wk-d4').value.trim())},
       official:fbParseTheme(bg.querySelector('#wk-off').value),
+      officialSummary:bg.querySelector('#wk-offsum').value.trim(),
+      officialPlatforms:parsePlat(bg.querySelector('#wk-offplat').value),
       community:fbParseTheme(bg.querySelector('#wk-com').value),
+      communitySummary:bg.querySelector('#wk-comsum').value.trim(),
+      communityPlatforms:parsePlat(bg.querySelector('#wk-complat').value),
       trend:bg.querySelector('#wk-trend').value.trim(),
       invalid:bg.querySelector('#wk-inv').value.trim()
     });
