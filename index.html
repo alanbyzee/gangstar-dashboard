@@ -59,6 +59,14 @@ body{
 .undo-btn{margin-left:10px;padding:8px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:6px}
 .undo-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft);box-shadow:0 3px 10px rgba(109,40,217,.12)}
 .undo-btn:active{transform:translateY(1px)}
+@media(max-width:680px){
+  .hdr{flex-wrap:wrap;gap:8px 10px;padding:10px 14px}
+  .brand{flex:1 1 auto;min-width:0;font-size:15px}
+  .spacer{display:none}
+  .tabs{order:5;flex:1 1 100%;margin-left:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .upd{flex-shrink:0}
+  .undo-btn{flex-shrink:0;margin-left:auto}
+}
 
 /* ===== 内容区 ===== */
 .stage{flex:1;position:relative;overflow:hidden}
@@ -2564,6 +2572,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
