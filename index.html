@@ -223,7 +223,7 @@ body{
 .top-val{flex:none;font-weight:800;color:#4338ca;min-width:22px;text-align:right}
 
 .wk-summary.insight{border-left:4px solid #8b5cf6;background:linear-gradient(90deg,#f5f3ff,#faf8ff)}
-.wk-summary .ins-h{font-size:11px;font-weight:800;color:#7c3aed;letter-spacing:.4px;margin-bottom:5px}
+.wk-summary .ins-h{font-size:20px;font-weight:900;color:#7c3aed;letter-spacing:.5px;margin-bottom:8px}
 .wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
 .sent-wrap{margin:4px 0 6px}
 .sent-wrap.comb{margin:2px 0 16px}
@@ -2747,6 +2747,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4063,7 +4064,7 @@ var FEEDBACK_DATA={weeks:[
  {
   "week": "8.3 - 8.9",
   "attitude": "正面上升",
-  "summary": "本周玩家态度明确向好——非负占比 86%、净情绪 +38%，Beta 实机已把产品力坐实，社群里没人质疑'能不能玩'，都在催'什么时候上'。好的方面占绝对主导：低端机 5GB 能跑、载具损坏/保险/多人联机被逐一点名表扬，'移动端 GTA'心智已立住，玩法深度诉求（组织/职业 RP、生活社交）涌现更说明玩家已把游戏当'长期可玩'在看。唯一需留意的是上线日不确定催生集体焦虑（官号 24 条催 8.20）——守住 8.20、预告深度系统，焦虑自然转期待。",
+  "summary": "玩家这周一边倒地嗨：Beta 实机把'能不能玩'彻底坐实，满屏都是'手机上能跑 GTA 了''低端机 5GB 居然能玩''等不及 8.20'——认可早就不是问题。真正的雷只有一个：上线日一直没钉死，24 条催更背后是同一句'到底哪天'，期待正被悬而未决一点点熬成焦虑。守住 8.20、把日期焊死高频复读，这股势能就是上线即爆的燃料；一旦再飘，正向会反被自己的信息真空吞掉。",
   "dims": {
    "attitude": {
     "label": "积极 · 双端走高",
@@ -4374,11 +4375,11 @@ var FEEDBACK_DATA={weeks:[
     "orig": "Controls/UI are okay but can be further optimized to feel more responsive."
    }
   ],
-  "officialSummary": "官号侧态度=高度认可+极度期待。144 条提及里正向占绝对主导，玩家对 Beta 实机的画面、玩法、潜力给出高评价，24 条集中催 8.20 上线——这是产品力被认可的最好证据。核心动作只有一件：反复锁定并高频复读上线日，把这份期待变成倒计时，别让'到底哪天'的焦虑消耗掉正向势能。",
+  "officialSummary": "官号侧玩家就一个状态：上头 + 急。144 条里正向碾压，Beta 画面/玩法被猛夸，但最响的声音永远是'8.20 啥时候''等不及了'——这是被产品力说服后最自然的催更。运营唯一动作：把上线日焊死、反复复读，别让'到底哪天'把这份热情磨成怨气。",
   "officialPlatforms": [],
-  "communitySummary": "社群侧态度=认可并要更多。玩家已用脚投票肯定产品力：低端机 5GB 能跑、载具损坏/保险/多人联机被逐一点名表扬，任务设计精良、地图大而美观、角色动画先进，'移动端 GTA'心智已立住。诉求从'能不能玩'升级到'够不够深'（组织/职业 RP、生活社交、地图扩展），这是产品进入'被要求更好'阶段的强信号——重点是把高活跃讨论导流进 Creator Hub，把玩家共创变成留存引擎。",
+  "communitySummary": "社群侧玩家已经'玩进去了'：低端机 5GB 能跑、载具损坏/保险/多人联机被点名夸，'移动端 GTA'心智立住了。最值得警惕的信号是——诉求从'能不能玩'跳到了'够不够深'（组织/职业 RP、生活社交、地图扩展），说明他们已经当'长期可玩'在看。别浪费这股高活跃，赶紧把讨论导流进 Creator Hub，让等待期变成内容生产期。",
   "communityPlatforms": [],
-  "trend": "态度走向：继续向好，正向势能充足。8.20 前做好三件事即可把期待拉满——① 高频锁定上线日，把期待变成倒计时；② 预告组织/职业 RP 系统承接深度诉求，锚定'上线即有大世界'；③ 把高活跃讨论导流 Creator Hub，把等待期变成内容生产期。当前势能是最好的一段时间，别浪费在信息真空里。",
+  "trend": "态度走向：继续冲高，但势能的命门在'确定性'。8.20 前只做三件事就能把期待拉满——① 把上线日焊死、做成倒计时天天复读；② 预告组织/职业 RP 系统接住深度诉求，锚定'上线即有大世界'；③ 把高活跃讨论导进 Creator Hub，让等待变成共创。这是全周期最好的一段势能，别耗在信息真空里。",
   "invalid": "已过滤重复催更、无内容复读、引战短贴、虚假链接与无效噪音。"
  }
 ]};
