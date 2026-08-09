@@ -2159,14 +2159,14 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-08-08",
+  "updated_at": "2026-08-09",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4184,
+      "value": 4314,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-08 晚）；102帖6关注；IG涨粉靠boost page like（付费）非自然",
@@ -2238,13 +2238,17 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-08",
           "value": 4184
+        },
+        {
+          "date": "2026-08-09",
+          "value": 4314
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 177,
+      "value": 183,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-07）",
@@ -2320,6 +2324,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-08",
           "value": 177
+        },
+        {
+          "date": "2026-08-09",
+          "value": 183
         }
       ],
       "name": "Facebook"
@@ -2328,7 +2336,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1420,
+      "value": 1440,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-07 晚）；40个视频",
@@ -2476,6 +2484,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-08",
           "value": 1420
+        },
+        {
+          "date": "2026-08-09",
+          "value": 1440
         }
       ]
     },
@@ -2527,6 +2539,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-08",
           "value": 26
+        },
+        {
+          "date": "2026-08-09",
+          "value": 26
         }
       ]
     },
@@ -2571,6 +2587,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -3970,24 +3987,46 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA={weeks:[
-  {week:"7.27 - 8.2",attitude:"正面",
-   summary:"印度玩家对 GST 期待极高，评论区情绪高度正面，自发庆祝 2500万+ 预约里程碑；核心诉求集中在「尽快明确上线日期」与「更多玩法曝光」。无重大负面，整体风评积极、玩法认知良好。",
-   dims:{attitude:{label:"正面 · 高度期待",detail:"66条官号反馈中62条为正面情绪，玩家自发倒计时+相约朋友同玩，零负面态度表达"},
-    comprehension:{label:"玩法认知良好",detail:"玩家能准确描述开放世界/载具/任务玩法，创作者合作内容获5条好评，无「看不懂」类反馈"},
-    reputation:{label:"风评积极",detail:"自发庆祝2500万+预约里程碑，主动分享给朋友/社群，无口碑崩塌或竞品对比负面信号"},
-    engagement:{label:"互动活跃",detail:"管理员帖均100+评论，Meme与表情包主导评论区，24条高互动 meme 好评"}},
+  {week:"8.2 - 8.9",attitude:"正面上升",
+   summary:"Beta 实机曝光显著抬升好评，负面仍低位；建议类反馈从「催上线」升级到「RPG 深度与打磨细节」，社区进入高期待 + 共创建议阶段。",
+   dims:{attitude:{label:"积极向上 · Beta 拉升",detail:"抽样30条中正面19（63.3%）/建议8（26.7%）/负面3（10.0%），实机内容发布后口碑改善"},
+    comprehension:{label:"玩法认知良好",detail:"玩家能清楚表达对玩法价值点的改进建议，深度需求开始浮现"},
+    reputation:{label:"风评良好",detail:"实机内容发布后口碑进一步改善，预注册 25M+ 传播延续"},
+    engagement:{label:"社区高活跃",detail:"讨论从「等上线」扩展到「玩法深度共创」，互动质量抬升"}},
    official:[
-    {theme:"对上线日极度兴奋、自发倒计时并相约朋友同玩",count:14,type:"good"},
-    {theme:"庆祝 2500万+ 预约里程碑、对品牌/武器曝光兴奋",count:4,type:"good"},
-    {theme:"喜爱管理员幽默互动 + Meme 高互动，评论区正面表情包主导",count:24,type:"good"},
-    {theme:"创作者合作与玩法内容获强烈好评",count:5,type:"good"},
-    {theme:"呼吁更频繁公布上线日期 / 抢先体验",count:9,type:"sug"},
-    {theme:"希望更多玩法视频 / 开发者更新 / 直播",count:5,type:"sug"},
-    {theme:"明确 Play/App Store 与区域可用性（玩家反馈 App Store 难找 / 如加拿大）",count:4,type:"sug"}
+    {theme:"Beta 实机内容带动好评（高频）",count:0,type:"good"},
+    {theme:"预注册 25M+ 里程碑传播延续（高频）",count:0,type:"good"},
+    {theme:"希望持续开发者更新 / 直播",count:0,type:"sug"}
    ],
-   community:[],
-   trend:"社区情绪高度正面：管理员幽默、Meme、创作者合作与 Discord 上线共同推高参与度；建议集中在上线沟通与玩法曝光；负面极少且多为信息缺口（区域可用性）。建议加强上线沟通、治理垃圾评论、澄清区域可用性。",
-   invalid:"已过滤无效反馈：2 条推广虚假「原版链接」的垃圾评论；另将重复刷「上线日期」的噪音并入「公布上线日期」诉求统计，未单列。"}
+   community:[
+    {theme:"开放世界体验 / 画面期待（高频）",count:0,type:"good"},
+    {theme:"RPG 深度建议：组织系统 / 关系系统 / 地图扩展（高频）",count:0,type:"sug"},
+    {theme:"打磨建议：UI / 音效 / 操作（3，负面集中）",count:3,type:"bad"},
+    {theme:"上线时间与可用区追问（持续出现）",count:0,type:"sug"}
+   ],
+   trend:"舆情进入「高期待 + 共创建议」阶段，运营窗口明确：信息透明 + 持续放料可继续放大正反馈。",
+   invalid:"已过滤重复催更、无内容复读、引战式短贴与无效噪音评论。"},
+  {week:"7.27 - 8.2",attitude:"正面",
+   summary:"社区整体高热正向，核心阻力不是内容本身，而是「上线时间 / 可用地区信息不透明」带来的焦虑；玩家对移动端 GTA-like 定位反响强。",
+   dims:{attitude:{label:"积极 · 高度期待",detail:"84个提及点中正面50、建议22、负面12，整体明显偏正向，无对核心玩法的否定"},
+    comprehension:{label:"玩法认知良好",detail:"玩家能准确描述开放世界 / 载具损坏 / 保险系统等核心玩法，无「看不懂」类反馈"},
+    reputation:{label:"风评中上",detail:"对「移动端 GTA-like」定位反响强，但催上线声音大，区域可用性争议存在"},
+    engagement:{label:"社区活跃",detail:"meme、管理员幽默互动、创作者联动带动讨论持续活跃"}},
+   official:[
+    {theme:"发布时间 / 日期沟通诉求（反复问「什么时候上线」）",count:7,type:"sug"},
+    {theme:"希望更频繁公布官方更新 / 日期",count:7,type:"sug"},
+    {theme:"预注册 25M+ 里程碑集体庆祝（多条）",count:0,type:"good"},
+    {theme:"官方 / 创作者内容联动好评",count:5,type:"good"}
+   ],
+   community:[
+    {theme:"「什么时候上线」相关追问",count:7,type:"good"},
+    {theme:"「尽快上线」直接诉求",count:3,type:"sug"},
+    {theme:"区域可用性 / 商店可见性问题（如加拿大找不到）",count:2,type:"sug"},
+    {theme:"假链接 / spam 诈骗干扰",count:2,type:"bad"},
+    {theme:"个别音频 glitch 反馈",count:1,type:"bad"}
+   ],
+   trend:"从「期待讨论」转向「催上线 + 要确定信息」，情绪仍正向，但信息缺口开始放大负面噪音。",
+   invalid:"已剔除灌水、重复刷屏、无上下文表情贴与无效短句；重复催更并入「公布上线日期」诉求统计。"}
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fbSeedSig(){var s=JSON.stringify(FEEDBACK_DATA.weeks||[]);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
