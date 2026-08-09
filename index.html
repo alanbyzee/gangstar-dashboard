@@ -2730,6 +2730,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4157,7 +4158,7 @@ function renderFeedback(){
 }
 function wkBlock(w,wi){
   function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
-  function segOf(arr){var g=0,s=0,b=0;arr.forEach(function(it){var c=Number(it.count)||0;var k=bucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0};}
+  function segOf(arr){var g=0,s=0,b=0;arr.forEach(function(it){var c=Number(it.count)||0;var k=bucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0,np:t?Math.round((g+s)/t*100):0};}
   var offSeg=segOf(w.official||[]);
   var comSeg=segOf(w.community||[]);
   var allC=(w.official||[]).concat(w.community||[]);
@@ -4203,7 +4204,7 @@ function wkBlock(w,wi){
     var acc=0, parts=[];
     segs.forEach(function(sg){var len=seg.t?sg[1]/seg.t*C:0; if(len>0){parts.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+sg[2]+'" stroke-width="13" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-acc).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"></circle>'); acc+=len;}});
     var bg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#eef2f7" stroke-width="13"></circle>';
-    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+bg+parts.join('')+'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="21" font-weight="800" fill="#1e293b">'+seg.gp+'%</text><text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="10" fill="#64748b">正面率</text></svg>';
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+bg+parts.join('')+'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="21" font-weight="800" fill="#1e293b">'+seg.np+'%</text><text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="10" fill="#64748b">非负占比</text></svg>';
   }
   function topRows(arr,n){
     var sorted=(arr||[]).slice().sort(function(a,b){return (Number(b.count)||0)-(Number(a.count)||0);}).slice(0,n);
@@ -4213,10 +4214,10 @@ function wkBlock(w,wi){
   }
   var kpi='<div class="kpi-row">'+
     '<div class="kpi-card"><div class="kpi-label">总反馈量 · Total VoC</div><div class="kpi-val">'+cgO.t+'</div><div class="kpi-sub">官号 '+offSeg.t+' · 社群 '+comSeg.t+'</div></div>'+
-    '<div class="kpi-card kp"><div class="kpi-label">正面率 · Positive</div><div class="kpi-val">'+cgO.gp+'%</div><div class="kpi-sub">'+cgO.g+' 提及</div></div>'+
+    '<div class="kpi-card kp"><div class="kpi-label">非负占比 · Non-negative</div><div class="kpi-val">'+cgO.np+'%</div><div class="kpi-sub">'+(cgO.g+cgO.s)+' 非负提及</div></div>'+
     '<div class="kpi-card ks"><div class="kpi-label">中性占比 · Neutral</div><div class="kpi-val">'+cgO.sp+'%</div><div class="kpi-sub">'+cgO.s+' 提及</div></div>'+
     '<div class="kpi-card kb"><div class="kpi-label">负面情绪率 · Negative</div><div class="kpi-val">'+cgO.bp+'%</div><div class="kpi-sub">'+cgO.b+' 提及</div></div>'+
-    '<div class="kpi-card kn"><div class="kpi-label">净情绪指数</div><div class="kpi-val">'+(cgO.gp-cgO.bp>=0?'+':'')+(cgO.gp-cgO.bp)+'%</div><div class="kpi-sub">正面率 − 负面率</div></div>'+
+    '<div class="kpi-card kn"><div class="kpi-label">净情绪指数</div><div class="kpi-val">'+(cgO.gp-cgO.bp>=0?'+':'')+(cgO.gp-cgO.bp)+'%</div><div class="kpi-sub">正面 − 负面</div></div>'+
     '</div>';
   var donuts='<div class="donut-row">'+
     '<div class="donut-box"><div class="donut-cap">官号后台 · 情感构成</div>'+donut(offSeg,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+offSeg.g+'<span class="lg s"></span>中性 '+offSeg.s+'<span class="lg b"></span>负面 '+offSeg.b+'</div></div>'+
