@@ -2734,6 +2734,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4179,7 +4180,7 @@ function wkBlock(w,wi){
     function cmtRow(it){
       var cnt=Number(it.count)||0;
       var cntHtml=cnt>0?'<span class="cmt-c">'+cnt+' 提及</span>':'<span class="cmt-c hot">高频</span>';
-      return '<div class="cmt"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
+      return '<div class="cmt" title="'+fbEsc(it.theme||'')+'"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
     }
     function groupHtml(t,emoji,title,segObj){
       if(!segObj.items.length)return '';
