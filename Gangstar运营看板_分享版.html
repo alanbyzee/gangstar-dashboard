@@ -2674,6 +2674,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -3993,12 +3994,11 @@ var FEEDBACK_DATA={weeks:[
     comprehension:{label:"玩法认知良好",detail:"玩家能清楚表达对玩法价值点的改进建议，深度需求开始浮现"},
     reputation:{label:"风评良好",detail:"实机内容发布后口碑进一步改善，预注册 25M+ 传播延续"},
     engagement:{label:"社区高活跃",detail:"讨论从「等上线」扩展到「玩法深度共创」，互动质量抬升"}},
-   official:[
+   official:[],
+   community:[
     {theme:"Beta 实机内容带动好评（高频）",count:0,type:"good"},
     {theme:"预注册 25M+ 里程碑传播延续（高频）",count:0,type:"good"},
-    {theme:"希望持续开发者更新 / 直播",count:0,type:"sug"}
-   ],
-   community:[
+    {theme:"希望持续开发者更新 / 直播",count:0,type:"sug"},
     {theme:"开放世界体验 / 画面期待（高频）",count:0,type:"good"},
     {theme:"RPG 深度建议：组织系统 / 关系系统 / 地图扩展（高频）",count:0,type:"sug"},
     {theme:"打磨建议：UI / 音效 / 操作（3，负面集中）",count:3,type:"bad"},
@@ -4013,17 +4013,24 @@ var FEEDBACK_DATA={weeks:[
     reputation:{label:"风评中上",detail:"对「移动端 GTA-like」定位反响强，但催上线声音大，区域可用性争议存在"},
     engagement:{label:"社区活跃",detail:"meme、管理员幽默互动、创作者联动带动讨论持续活跃"}},
    official:[
-    {theme:"发布时间 / 日期沟通诉求（反复问「什么时候上线」）",count:7,type:"sug"},
-    {theme:"希望更频繁公布官方更新 / 日期",count:7,type:"sug"},
-    {theme:"预注册 25M+ 里程碑集体庆祝（多条）",count:0,type:"good"},
-    {theme:"官方 / 创作者内容联动好评",count:5,type:"good"}
+    {theme:"对上线日极度兴奋、自发倒计时并相约朋友同玩",count:14,type:"good"},
+    {theme:"庆祝 2500万+ 预约里程碑、对品牌/武器曝光兴奋",count:4,type:"good"},
+    {theme:"喜爱管理员幽默互动 + Meme 高互动，评论区正面表情包主导",count:24,type:"good"},
+    {theme:"创作者合作与玩法内容获强烈好评",count:5,type:"good"},
+    {theme:"呼吁更频繁公布上线日期 / 抢先体验",count:9,type:"sug"},
+    {theme:"希望更多玩法视频 / 开发者更新 / 直播",count:5,type:"sug"},
+    {theme:"明确 Play/App Store 与区域可用性（玩家反馈 App Store 难找 / 如加拿大）",count:4,type:"sug"}
    ],
    community:[
     {theme:"「什么时候上线」相关追问",count:7,type:"good"},
     {theme:"「尽快上线」直接诉求",count:3,type:"sug"},
     {theme:"区域可用性 / 商店可见性问题（如加拿大找不到）",count:2,type:"sug"},
     {theme:"假链接 / spam 诈骗干扰",count:2,type:"bad"},
-    {theme:"个别音频 glitch 反馈",count:1,type:"bad"}
+    {theme:"个别音频 glitch 反馈",count:1,type:"bad"},
+    {theme:"发布时间 / 日期沟通诉求（反复问「什么时候上线」）",count:7,type:"sug"},
+    {theme:"希望更频繁公布官方更新 / 日期",count:7,type:"sug"},
+    {theme:"预注册 25M+ 里程碑集体庆祝（多条）",count:0,type:"good"},
+    {theme:"官方 / 创作者内容联动好评",count:5,type:"good"}
    ],
    trend:"从「期待讨论」转向「催上线 + 要确定信息」，情绪仍正向，但信息缺口开始放大负面噪音。",
    invalid:"已剔除灌水、重复刷屏、无上下文表情贴与无效短句；重复催更并入「公布上线日期」诉求统计。"}
