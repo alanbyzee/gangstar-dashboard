@@ -222,6 +222,8 @@ body{
 .top-bar i{display:block;height:100%;background:linear-gradient(90deg,#4338ca,#6366f1);border-radius:4px}
 .top-val{flex:none;font-weight:800;color:#4338ca;min-width:22px;text-align:right}
 
+.wk-summary.insight{border-left:4px solid #8b5cf6;background:linear-gradient(90deg,#f5f3ff,#faf8ff)}
+.wk-summary .ins-h{font-size:11px;font-weight:800;color:#7c3aed;letter-spacing:.4px;margin-bottom:5px}
 .wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
 .sent-wrap{margin:4px 0 6px}
 .sent-wrap.comb{margin:2px 0 16px}
@@ -2725,6 +2727,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4039,7 +4042,7 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA={weeks:[
   {week:"8.3 - 8.9",attitude:"正面上升",
-   summary:"Beta 实机内容曝光后，官号与社群舆情同步走高：社群对移动端 GTA 般体验、低端机优化（约5GB）与多人/任务/地图机制好评如潮；官号侧对 8.20 上线极度期待、Creator Hub 热情高涨。建议焦点从「催上线」转向「RPG 深度 + 创作者生态 + 信息透明」，负面仍低位、以等待焦虑与信息缺口为主。",
+   summary:"产品力已被 Beta 实机自证——这是本周最大的确定性；真正的不确定在「等待」。需求侧极度饥渴（官号 24 条集中催 8.20）与供给侧信息真空（上线日 / 玩法细节反复不确定）的张力正在累积焦虑：当前正向是 Beta 撑住的，一旦 8.20 有变，等待型负面会迅速反噬。破局点不在产品，而在信息节奏——用固定上线日 + 持续内容喂料，把「等不及」转化为「持续期待」。",
    dims:{attitude:{label:"积极 · 双端走高",detail:"官号 22 正面 / 18 建议 / 8 负面；社群 19 正面 / 8 建议 / 3 负面，Beta 实机拉升双端正向"},
     comprehension:{label:"玩法认知良好",detail:"玩家能具体指出载具损坏/保险/工作式系统/组织系统等机制亮点并提改进"},
     reputation:{label:"风评良好",detail:"实机内容发布后口碑明显改善，移动端 GTA-like 定位获强认可"},
@@ -4096,12 +4099,12 @@ var FEEDBACK_DATA={weeks:[
     {theme:"音效与背景音乐可进一步打磨，更沉浸",count:3,type:"bad"},
     {theme:"操作与 UI 不错，但可进一步优化以更跟手",count:3,type:"bad"}
    ],
-      officialSummary:"官号后台整体高度正向：玩家对 8.20 上线极度期待（等不及、等20号），对玩法 / PvP / 武器 / 城市题材与 Meme 内容积极响应；Creator Hub 与成为创作者兴趣浓；负面极少，主要是上线等待焦虑与 Creator Hub 入会疑问。",
+      officialSummary:"官号是饥饿营销的天然沃土，却也是最脆弱的爆破点：66 条反馈里 24 条集中在「等不及 8.20」，说明期待被压成了高张力。情绪指向上行、Creator Hub 自带传播势能，是利好；但「高压期待」一旦遇上跳票或信息反复，会从「催更」瞬间翻转为「被放鸽子」的舆情反噬。官号运营的核心 KPI 不是涨粉，而是守住上线日的确定性。",
    officialPlatforms:[],
-   communitySummary:"玩家社群对 Beta 实机曝光反响极佳：移动端 GTA 般开放世界、低端机流畅运行（约5GB）、载具损坏 / 保险 / 多人 / 任务 / 地图探索等机制获集中好评；建议从催上线升级到 RPG 深度与沉浸感（组织 / 职业系统）；负面仅低位，集中在画面 / 音效 / 操作打磨。",
+   communitySummary:"社群已用脚投票认可产品力：低端机 5GB 能跑、载具损坏 / 保险 / 多人等机制被逐一点名表扬，「移动端 GTA」的心智已立住。诉求也从「能不能玩」升级到「够不够深」（组织 / 职业 RP 系统）——这是好信号，意味着产品进入「被要求更好」阶段。风险不在产品缺陷，而在「要得更多」若得不到回应会转为流失；重点是把高活跃讨论导流进 Creator Hub，把玩家共创变成留存引擎。",
    communityPlatforms:[],
 
-   trend:"舆情进入高期待 + 共创建议阶段；Beta 持续放料 + 上线日期确定性沟通可继续放大正反馈，并提前为 Creator Hub 入驻铺路。",
+   trend:"未来两周是口碑的窗口期也是危险期：8.20 前每条内容都应服务一个目的——强化「上线日确定」与「玩法深度可期」。立即动作：① 锁定并高频复读上线日，堵住「到底哪天」的焦虑源头；② 用 Creator Hub 入驻预告承接创作热情，把等待期变成内容生产期；③ 提前剧透组织 / 职业系统，把期待锚定在「上线即有大世界」。",
    invalid:"已过滤重复催更、无内容复读、引战式短贴、虚假链接与无效噪音评论。"}
 ]};
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -4231,7 +4234,7 @@ function wkBlock(w,wi){
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
-    (w.summary?'<div class="wk-summary">'+fbEsc(w.summary)+'</div>':'')+
+    (w.summary?'<div class="wk-summary insight"><div class="ins-h">🔑 核心洞察</div>'+fbEsc(w.summary)+'</div>':'')+
     kpi+donuts+tops+cbar+
     '<div class="two-col">'+
       srcCol('official','officialSummary','officialPlatforms','官方账号 · 后台','col-official','#4338ca')+
