@@ -219,8 +219,9 @@ body{
 .top-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
 .top-name{flex:1;min-width:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top-bar{flex:none;width:28%;min-width:40px;max-width:140px;height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden}
-@media(max-width:900px){.top-bar{width:22%;max-width:100px}}
-@media(max-width:680px){.top-bar{width:18%;max-width:70px}}
+@media(max-width:900px){.top-bar{width:20%;max-width:90px}}
+@media(max-width:720px){.top-row{align-items:flex-start;gap:6px;font-size:11.5px}.top-name{white-space:normal;line-height:1.35}.top-bar{width:16%;max-width:64px;height:6px}}
+@media(max-width:540px){.top-row{gap:4px}.top-bar{width:14%;max-width:50px;height:5px}}
 .top-bar i{display:block;height:100%;background:linear-gradient(90deg,#4338ca,#6366f1);border-radius:4px}
 .top-val{flex:none;font-weight:800;color:#4338ca;min-width:22px;text-align:right}
 
@@ -2644,6 +2645,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
