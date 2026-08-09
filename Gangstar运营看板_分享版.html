@@ -1992,6 +1992,16 @@ function weeklyGrowth(pl){
   return {diff, pct, daily:diff/7};
 }
 
+// ===== 较昨日增长（最后一条 vs 倒数第二条）=====
+function dailyGrowth(pl){
+  const hist=dedupeHistory(pl.history||[]);
+  if(hist.length<2) return null;
+  const last=hist[hist.length-1].value;
+  const prev=hist[hist.length-2].value;
+  const diff=last-prev;
+  return {diff, pct:prev? (diff/prev*100):0};
+}
+
 // 关键事件标注（在折线图对应日期点高亮）
 const PLATFORM_EVENTS={
   youtube:[{date:'2026-07-11',label:'TechnoGamerz'}]
@@ -2019,9 +2029,9 @@ function renderFans(data){
   function wkTag(wg){
     if(!wg) return '';
     const v=wg.diff;
-    if(v>0) return `<span class="wk-up">本周 ▲+${fmt(v)}</span>`;
-    if(v<0) return `<span class="wk-down">本周 ▼${fmt(v)}</span>`;
-    return `<span class="wk-flat">本周 ±0</span>`;
+    if(v>0) return `<span class="wk-up">较昨日 ▲+${fmt(v)}</span>`;
+    if(v<0) return `<span class="wk-down">较昨日 ▼${fmt(v)}</span>`;
+    return `<span class="wk-flat">较昨日 ±0</span>`;
   }
 
   // 概览区：上行=距上线+总粉丝(2卡)，下行=5平台摘要(等宽)
@@ -2050,7 +2060,7 @@ function renderFans(data){
         </div>
         <div class="pc-valrow">
           <div class="pc-val">${fmt(pl.value)}<small>${esc(pl.label)}</small></div>
-          ${wkTag(weeklyGrowth(pl))}
+          ${wkTag(dailyGrowth(pl))}
         </div>
         ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
         ${pl.note?`<div class="pc-note">📌 ${esc(pl.note)}</div>`:''}
@@ -2554,6 +2564,9 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
+
 
 
 
