@@ -573,7 +573,7 @@ body{
 .sa-wbody.collapsed{display:none}
 .sa-cells{display:grid;grid-template-columns:repeat(7,minmax(140px,1fr))}
 /* 南亚社群排期 · 横滑箭头（小窗口左右滑动周历） */
-.sa-arrows{position:absolute;right:14px;bottom:14px;display:flex;gap:8px;z-index:5}
+.sa-arrows{display:flex;gap:8px;z-index:5;justify-content:center;padding:10px 0 4px}
 .sa-arrow{width:34px;height:34px;border-radius:50%;border:none;background:rgba(99,102,241,.92);color:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;transition:.15s}
 .sa-arrow:hover{background:#6366f1;transform:translateY(-1px)}
 .sa-cell{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:9px 9px;min-height:68px;background:#fcfcfd;font-size:12px;transition:background .12s}
@@ -2666,6 +2666,10 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
+
+
 
 
 
