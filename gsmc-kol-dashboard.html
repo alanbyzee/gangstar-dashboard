@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>某开放世界动作手游（GTA-like） · 市场A KOL 项目接手速览</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --ink2:#4b5563; --ink3:#8b93a1;
+  --line:#e5e7eb; --accent:#c8102e; --accent2:#0f62fe; --warn:#d97706; --ok:#0f9d58;
+  --red:#d62839; --green:#0f9d58;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,"PingFang SC","Helvetica Neue",Arial,sans-serif;padding:28px 20px 60px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:26px;font-weight:700;letter-spacing:-.4px}
+.sub{color:var(--ink3);font-size:13px;margin-top:6px}
+h2{font-size:17px;font-weight:700;margin:34px 0 14px;padding-left:11px;border-left:4px solid var(--accent)}
+h3{font-size:14px;font-weight:700;margin:18px 0 8px;color:var(--ink2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.kpi .lb{font-size:11.5px;color:var(--ink3);letter-spacing:.3px;text-transform:uppercase}
+.kpi .vl{font-size:25px;font-weight:750;margin-top:5px;letter-spacing:-.6px}
+.kpi .nt{font-size:11.5px;color:var(--ink2);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:600;color:var(--ink3);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid #f1f2f4;vertical-align:top}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.tot td{font-weight:700;background:#fafbfc}
+.tag{display:inline-block;padding:1.5px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.t-red{background:#fdecee;color:#b3122b}
+.t-amber{background:#fef4e6;color:#9a5b02}
+.t-green{background:#e8f5ec;color:#0b7a45}
+.t-blue{background:#e8f0fe;color:#0b47b8}
+.t-gray{background:#f0f1f3;color:#5b6472}
+ul{padding-left:18px}
+li{margin:5px 0}
+.bar{height:7px;border-radius:4px;background:#eef0f3;overflow:hidden;margin-top:5px}
+.bar>i{display:block;height:100%;border-radius:4px}
+.risk{border-left:3px solid var(--red);padding:12px 14px;background:#fff;border-radius:0 10px 10px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:10px}
+.risk.mid{border-left-color:var(--warn)}
+.risk.low{border-left-color:#9aa3b0}
+.risk .rh{font-weight:700;font-size:13.5px;display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.risk .rb{font-size:12.5px;color:var(--ink2)}
+.risk .rf{font-size:12.5px;margin-top:6px;color:var(--ink)}
+.risk .rf b{color:var(--accent)}
+.tl{position:relative;padding-left:0}
+.tlrow{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid #f1f2f4}
+.tlrow:last-child{border-bottom:none}
+.tld{font-weight:700;font-size:12.5px;color:var(--ink)}
+.tlc{font-size:12.5px;color:var(--ink2)}
+.pill{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:4px;background:#f0f1f3;color:#5b6472;margin-right:5px;font-weight:600}
+.chart{display:flex;align-items:flex-end;gap:2px;height:130px;padding:0 2px}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px}
+.chart .col>i{display:block;width:100%;background:linear-gradient(180deg,#c8102e,#e8546b);border-radius:2px 2px 0 0;min-height:2px}
+.chart .col span{font-size:8.5px;color:var(--ink3);writing-mode:vertical-rl;height:34px;white-space:nowrap}
+.note{font-size:12px;color:var(--ink3);margin-top:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.mono{font-variant-numeric:tabular-nums}
+.hl{background:#fff8e1;padding:0 3px;border-radius:2px}
+.chk{list-style:none;padding:0}
+.chk li{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f1f2f4;font-size:13px}
+.chk li:last-child{border-bottom:none}
+.chk .d{flex:0 0 60px;font-weight:700;font-size:12px;color:var(--accent)}
+@media(max-width:900px){.g4,.g3,.g2,.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>某开放世界动作手游（GTA-like） · 市场A KOL 营销项目 · 接手速览</h1>
+<div class="sub">数据源：某开放世界动作手游_MasterSheet.xlsx（11 个 Sheet）　·　代理商：供应商A　·　交接时点：T-20（交接）　·　距上线 <b>20 天</b>　·　距预约关闭 <b>18 天</b>　·　<b>脱敏版</b></div>
+
+<!-- ========== 一、30 秒结论 ========== -->
+<h2>一、30 秒抓住全局</h2>
+<div class="card">
+  <div class="grid g4" style="margin-bottom:14px">
+    <div class="kpi"><div class="lb">总预算（含税含代理费）</div><div class="vl">预算（量级不披露）</div><div class="nt">Cap 预算（量级不披露）· <span class="t-red tag">超 约 $4K</span></div></div>
+    <div class="kpi"><div class="lb">签约达人</div><div class="vl">150 位</div><div class="nt">Brief 要求 80+ · 全部已确认 Agree</div></div>
+    <div class="kpi"><div class="lb">交付物总量</div><div class="vl">515 条</div><div class="nt">直播 394 · 短视频 78 · VOD 15 · 图文 26</div></div>
+    <div class="kpi"><div class="lb">承诺曝光</div><div class="vl">34.0M</div><div class="nt">Brief 25M · 已完成约 1.15M（3.4%）</div></div>
+  </div>
+  <table>
+    <tr><td style="width:110px;color:var(--ink3)">项目结构</td><td>三阶段预热（T-41–T-1）→ <b>上线日(T0) 上线全网 Takeover</b> → T+1–T+21 上线后饱和期。核心创意主线：创意线A 通缉令 → GTA6 对标短视频 → "意外泄露"直播 → 供应商B GTA RP 社区接管。</td></tr>
+    <tr><td style="color:var(--ink3)">最大特征</td><td><span class="hl">76% 的交付物（392 条直播）集中在上线后 21 天内</span>，且靠 122 位 供应商B RP 主播的"单日集群开播"（单日 50–60 场）撑量。<b>项目重心不在预热，而在上线后的执行密度。</b></td></tr>
+    <tr><td style="color:var(--ink3)">你接手的位置</td><td>预热期已跑完 3 波（T-40、T-32、T-27~T-26），实测曝光 <b>约 115 万</b>。<span class="t-red tag">最关键的 上线日(T0) 上线前 20 天，是你全程负责的窗口。</span></td></tr>
+    <tr><td style="color:var(--ink3)">对接人</td><td>供应商A 项目负责人（唯一对接口）→ 升级路径：执行层 → 达人对接层 → 危机升级层</td></tr>
+  </table>
+</div>
+
+<!-- ========== 二、资源盘点 ========== -->
+<h2>二、资源盘点：钱花在哪、量在谁身上</h2>
+
+<div class="two">
+  <div class="cbox">
+    <h3 style="margin-top:0">按层级拆分（源自 KOL List 逐条核算）</h3>
+    <table>
+      <thead><tr><th>层级</th><th class="num">达人</th><th class="num">交付量</th><th class="num">预算(USD)</th><th class="num">占比</th></tr></thead>
+      <tbody>
+        <tr><td><b>Macro</b> 头部</td><td class="num">14</td><td class="num">44</td><td class="num">约 6万</td><td class="num">65.9%</td></tr>
+        <tr><td>Macro (供应商B)</td><td class="num">3</td><td class="num">15</td><td class="num">约 $3K</td><td class="num">3.2%</td></tr>
+        <tr><td><b>Micro</b> 腰部</td><td class="num">14</td><td class="num">32</td><td class="num">约 $7K</td><td class="num">8.0%</td></tr>
+        <tr><td>Micro (供应商B)</td><td class="num">12</td><td class="num">57</td><td class="num">约 $6K</td><td class="num">6.5%</td></tr>
+        <tr><td><b>Nano (供应商B)</b></td><td class="num">107</td><td class="num">365</td><td class="num">约 $8K</td><td class="num">8.8%</td></tr>
+        <tr><td>Amplification 放大层</td><td class="num">2 网络</td><td class="num">2</td><td class="num">约 $7K</td><td class="num">7.7%</td></tr>
+        <tr class="tot"><td>合计</td><td class="num">150</td><td class="num">515</td><td class="num">预算（量级不披露）</td><td class="num">100%</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Amplification = 13 个 YT 剪辑号 + 245 个 IG 游戏页 + Twitter 多号外联，承诺 12M 曝光但仅占 7.7% 预算 —— 单位成本极低（CPV $0.0005），是本项目性价比最高的一层。</div>
+  </div>
+
+  <div class="cbox">
+    <h3 style="margin-top:0">预算集中度：前 5 位吃掉 44%</h3>
+    <table>
+      <thead><tr><th>达人</th><th>层级</th><th class="num">费用</th><th class="num">占总预算</th></tr></thead>
+      <tbody>
+        <tr><td>M-01</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">11.9%</td></tr>
+        <tr><td>M-02</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">10.5%</td></tr>
+        <tr><td>M-03</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">9.8%</td></tr>
+        <tr><td>供应商C</td><td><span class="tag t-blue">放大层</span></td><td class="num">—</td><td class="num">6.4%</td></tr>
+        <tr><td>M-04</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">5.6%</td></tr>
+        <tr><td>M-05</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">5.5%</td></tr>
+        <tr><td>M-06（16M 粉，最大号）</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">5.2%</td></tr>
+        <tr><td>M-07 / M-08（各）</td><td><span class="tag t-red">Macro</span></td><td class="num">—</td><td class="num">3.8%</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>结论：Macro 层 17 人拿走 69% 预算、贡献 82% 承诺曝光。这 17 人的档期与内容质量 = 项目成败。</b>其中 M-01 一人身兼「意外泄露直播」+ 上线日 Reel，是单点风险最高的资源。</div>
+  </div>
+</div>
+
+<div class="cbox" style="margin-top:14px">
+  <h3 style="margin-top:0">按内容形式拆分</h3>
+  <table>
+    <thead><tr><th>形式</th><th class="num">数量</th><th class="num">费用</th><th>说明与产能判断</th></tr></thead>
+    <tbody>
+      <tr><td><b>Live Streaming 直播</b></td><td class="num">394</td><td class="num">约 2.5万</td><td>其中 <b>366 场来自 供应商B RP 社区</b>，单价仅 约数十美元/场。产能瓶颈不在钱，在<b>单日 50–60 场的调度与开播率</b>。</td></tr>
+      <tr><td><b>Short Video / Reel</b></td><td class="num">78</td><td class="num">约 3万</td><td>单项最贵的形式（占 34% 预算）。含 Macro「Reel Star vs 该手游」系列 + 30 条预热 Reel。</td></tr>
+      <tr><td><b>Dedicated Video / VOD</b></td><td class="num">15</td><td class="num">约 1万</td><td>「该手游 Origins」长视频，全部排在 T+1–T+15 上线后。制作周期最长，<b>脚本必须现在启动</b>。</td></tr>
+      <tr><td>IG Static Post 图文</td><td class="num">8</td><td class="num">约 1.5万</td><td>创意线A 通缉令海报，单价极高（M-06 单条单价极高）。</td></tr>
+      <tr><td>IG Story</td><td class="num">18</td><td class="num">约 $4K</td><td>含 <b>17 条 FOC（免费赠送）</b>，是谈判争取到的额外量。</td></tr>
+      <tr><td>放大层 / Campaign</td><td class="num">2</td><td class="num">约 $7K</td><td>供应商C + Twitter 社区外联，打包计价。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 三、排期 ========== -->
+<h2>三、上线排期：交付量的真实分布</h2>
+
+<div class="card">
+  <h3 style="margin-top:0">每日交付量分布（T-41 – T+21，共 549 个交付单位）</h3>
+  <div class="chart" id="chart"></div>
+  <div class="note">
+    <span class="pill">预热期 T-41–T-1</span>仅 56 单位（10%）　
+    <span class="pill">上线周 上线日(T0)–T+11</span>234 单位（43%）　
+    <span class="pill">T+12–T+21</span>259 单位（47%）
+    <br><b>典型的"后置型"排期</b>：上线日(T0) 单日 63 单位、T+6 / T+8 / T+12 / T+14 / T+18 / T+20 各 52–60 单位（供应商B 集群开播日）。
+  </div>
+</div>
+
+<div class="two" style="margin-top:14px">
+  <div class="cbox">
+    <h3 style="margin-top:0">关键节点日历（客户侧里程碑）</h3>
+    <div class="tl">
+      <div class="tlrow"><div class="tld">T-41 ✅</div><div class="tlc"><span class="pill">已完成</span>"活动A" 市场A启动 · 创意线A 首发</div></div>
+      <div class="tlrow"><div class="tld">T-40 ✅</div><div class="tlc"><span class="pill">已完成</span>UA Peak 2 · 3 位 Macro 视频 Story（33.6 万曝光）</div></div>
+      <div class="tlrow"><div class="tld">T-32 ✅</div><div class="tlc"><span class="pill">已完成</span>Co-Heist 揭示 · Micro 4 条（12.9 万曝光）</div></div>
+      <div class="tlrow"><div class="tld">T-30 ✅</div><div class="tlc"><span class="pill">已完成</span>PVP 揭示</div></div>
+      <div class="tlrow"><div class="tld">T-27–25 ✅</div><div class="tlc"><span class="pill">已完成</span>Micro Reel + 图文（24.2 万曝光）</div></div>
+      <div class="tlrow" style="background:#fff8e1"><div class="tld" style="color:var(--warn)">T-20–T-19 ⚠</div><div class="tlc"><b>TG-01 拍摄 · 供应商C 内容</b> —— 概念与页面清单待甲方审批，<b>今天到期</b></div></div>
+      <div class="tlrow"><div class="tld">T-17</div><div class="tlc">Zero-to-Millionaire 逆袭故事线（5 条 Reel）</div></div>
+      <div class="tlrow"><div class="tld">T-16–T-6</div><div class="tlc"><b>W4 转化峰值</b>：Great Gameplay Leak，3 场直播 + 100+ 剪辑</div></div>
+      <div class="tlrow"><div class="tld">T-9</div><div class="tlc">Don Phil 掉落 · M-01 反应直播 + 5 条 Reel</div></div>
+      <div class="tlrow"><div class="tld">T-6</div><div class="tlc">10 条 Reel（游戏实况反应 + 预约紧迫感）+ 供应商C 上线预热</div></div>
+      <div class="tlrow" style="background:#fdecee"><div class="tld" style="color:var(--red)">T-3–T-2 🔴</div><div class="tlc"><b>预约关闭前最后冲刺</b>：5 位 Macro 同步"最后一天"Story</div></div>
+      <div class="tlrow" style="background:#fdecee"><div class="tld" style="color:var(--red)">上线日(T0) 🔴</div><div class="tlc"><b>上线日 · PEAK</b>：360° 全网 Takeover + 53 场 供应商B 直播 + 全阵容协同（单日 63 单位）</div></div>
+      <div class="tlrow"><div class="tld">T+1–T+11</div><div class="tlc">饱和期：10 条 VOD（T+1）· 52 场直播/集群日 · Reel Star 系列</div></div>
+      <div class="tlrow"><div class="tld">T+7</div><div class="tlc">Taxi/Jeepney 活动 · 首个版本节点</div></div>
+      <div class="tlrow"><div class="tld">T+12–T+21</div><div class="tlc">Micro Origins VOD 收尾 + 5 个 供应商B 集群日</div></div>
+      <div class="tlrow"><div class="tld">T+21</div><div class="tlc">Faction War 首个大型活动 · 结案审计（T+18–T+21）</div></div>
+    </div>
+  </div>
+
+  <div class="cbox">
+    <h3 style="margin-top:0">Macro 达人档期表（14 人已排，逐日）</h3>
+    <table style="font-size:12.5px">
+      <thead><tr><th>达人</th><th>粉丝</th><th>档期</th></tr></thead>
+      <tbody>
+        <tr><td>M-06</td><td>16M</td><td>T-27 图文 · T-3 Story · <b>T+1 直播</b></td></tr>
+        <tr><td>M-09</td><td>5.9M</td><td>T-34 图文 · T-27 Story · T+7 VOD</td></tr>
+        <tr><td>M-10</td><td>3.2M</td><td>T-34 图文 · T-3 Story · T+12 VOD</td></tr>
+        <tr><td>M-03</td><td>2.5M</td><td>T-35 图文 · T-3 Story · <b>T+4 直播</b> · T+5 Reel</td></tr>
+        <tr><td>M-04</td><td>2.4M</td><td>T-34 Story · T-28 图文 · <b>上线日(T0) 上线日直播</b></td></tr>
+        <tr><td>M-01</td><td>2M</td><td>T-35 Story · T-27 图文 · <b>T-9 泄露直播</b> · <b>上线日(T0) 上线 Reel</b></td></tr>
+        <tr><td>M-02</td><td>1.3M</td><td>T-41 Story ✅ · T-27 Story · <b>上线日(T0) 上线 Reel</b>（共 8 项）</td></tr>
+        <tr><td>M-11</td><td>1.5M</td><td>T+2 VOD <span class="tag t-amber">规格 TBC</span></td></tr>
+        <tr><td>M-12</td><td>900K</td><td>T-34 图文 · T+15 VOD</td></tr>
+        <tr><td>M-13</td><td>525K</td><td>T-27 图文 · T-3 Story · <b>上线日(T0) 上线日直播</b></td></tr>
+        <tr><td>M-14</td><td>250K</td><td>T-28 图文 · 上线日(T0) Story · T+14 VOD</td></tr>
+        <tr><td>M-15</td><td>200K</td><td>T-29 Reel · T-3 Story · T+8 直播 · T+9+T+14 Reel</td></tr>
+        <tr><td>M-16</td><td>168K</td><td>T-31 Reel · 上线日(T0) Story · T+6 直播 · T+9+T+14 Reel</td></tr>
+        <tr><td>M-17</td><td>100K</td><td>T+13 VOD</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><span class="tag t-red">缺口</span>成本表里另有 <b>8 位 Macro 未出现在日历中</b>：M-05(4M)、M-07(2.5M)、M-08、M-18、m-05、M-19、M-20、M-21 —— 合计约 <b>约 2万</b> 预算无对应排期。</div>
+  </div>
+</div>
+
+<!-- ========== 四、执行现状 ========== -->
+<h2>四、执行现状：已跑出来的实际数据</h2>
+<div class="grid g4">
+  <div class="kpi"><div class="lb">已完成曝光</div><div class="vl">1.15M</div><div class="nt">占 34M 承诺的 <b>3.4%</b><div class="bar"><i style="width:3.4%;background:var(--red)"></i></div></div></div>
+  <div class="kpi"><div class="lb">已交付条数</div><div class="vl">28 条</div><div class="nt">11 条 KOL + 17 条 供应商C / 共 515 条（5.4%）<div class="bar"><i style="width:5.4%;background:var(--warn)"></i></div></div></div>
+  <div class="kpi"><div class="lb">Macro 审批完成</div><div class="vl">3 / 44</div><div class="nt">41 条 Pending Submission<div class="bar"><i style="width:7%;background:var(--red)"></i></div></div></div>
+  <div class="kpi"><div class="lb">实测互动率</div><div class="vl">3.3%</div><div class="nt">承诺 5%+ · <span class="tag t-amber">低于承诺</span></div></div>
+</div>
+
+<div class="two" style="margin-top:14px">
+  <div class="cbox">
+    <h3 style="margin-top:0">三波预热实测表现</h3>
+    <table>
+      <thead><tr><th>日期 / 波次</th><th>达人</th><th class="num">曝光</th><th class="num">互动</th><th class="num">互动率</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="1">T-40 Macro 视频 Story</td><td>M-03·M-10·M-02</td><td class="num">335,817</td><td class="num">11,002</td><td class="num">3.3%</td></tr>
+        <tr><td>T-32 Micro Story+Reel</td><td>m-01·m-02·m-03·m-04</td><td class="num">129,234</td><td class="num">9,126</td><td class="num">7.1%</td></tr>
+        <tr><td>T-27–25 Micro Reel+图文</td><td>m-01·m-02·m-05·m-06</td><td class="num">242,282</td><td class="num">8,393</td><td class="num">3.5%</td></tr>
+        <tr><td>T-40 供应商C（17 页）</td><td>供应商C 页面 等</td><td class="num">438,100</td><td class="num">12,095</td><td class="num">2.8%</td></tr>
+        <tr class="tot"><td>合计</td><td></td><td class="num">1,145,433</td><td class="num">40,616</td><td class="num">3.5%</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>值得注意的反直觉发现：</b>Micro 层的互动率（7.1% / 3.5%）明显高于 Macro（3.3%）；单条效率最高的是 m-04（Micro，10.6 万曝光 / 8,186 互动 = 7.7%）和 m-05（11.6 万曝光）。<b>而 Macro 层 M-10 单条 Story 仅 2.6 万曝光（其 IG 只有 19.7 万粉，YT 才是主阵地）。</b></div>
+  </div>
+
+  <div class="cbox">
+    <h3 style="margin-top:0">审批流现状（Approvals Sheet · 44 条 Macro 交付物）</h3>
+    <table>
+      <thead><tr><th>状态</th><th class="num">条数</th><th>明细</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag t-green">Approved</span></td><td class="num">3</td><td>M-10 / M-02 / M-03 的 T-41 视频 Story</td></tr>
+        <tr><td><span class="tag t-red">Pending Submission</span></td><td class="num">41</td><td>其余全部未提交 —— 含全部 15 场直播、15 条 VOD、8 条海报</td></tr>
+      </tbody>
+    </table>
+    <h3>已发生的返工记录（预示质量风险）</h3>
+    <ul style="font-size:12.5px;color:var(--ink2)">
+      <li>M-10 T-41 Story：<b>要求重拍（Reshoot required）</b></li>
+      <li>M-02 T-41 Story：字幕缺失 + <b>手机端显示错误 Logo</b> + 要求补游戏画面和预约录屏</li>
+      <li>T-32 脚本轮：甲方要求 CTA 明确化 + m-03 Reel 前 6–12 秒必须出现游戏画面 + 正确 Logo/尾板；<b>供应商A 就"开头即露出游戏会掉完播率"提出反对，双方未完全收敛</b></li>
+      <li>Reel CTA 无法做点击链接，供应商A 提议改为 "Search '某开放世界动作手游（GTA-like）' on App Store/Play Store" —— <b>意味着 KOL Reel 无法归因追踪</b></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 五、风险 ========== -->
+<h2>五、风险清单（按严重度排序）</h2>
+
+<div class="risk">
+  <div class="rh"><span class="tag t-red">P0 · 预算</span>预算已超上限 约 $4K，且有 约 2万 无排期</div>
+  <div class="rb">Reporting 页写 "预算上限（量级不披露） / 预算计划（量级不披露）"，但逐条核算 KOL List 的 Grand Total 实为 <b>预算（量级不披露）</b>（含 10% 代理费）。同时 8 位 Macro（M-05 —、M-07 —、M-08 —、M-18 —、8bit×2、Maya、m-05）有预算但日历上无档期。另 Requirements #10 提到"M-08 被 M-02 替换 + 供应商A 需返还 约定金额"，该冲抵尚未反映在成本表。</div>
+  <div class="rf"><b>动作：</b>要 供应商A 出一份「成本表 vs 排期表 vs Cap」三方对账单，明确 约 $4K差额是谁承担、约定金额 冲抵何时到账、8 位无档期 Macro 是删除还是补排。<b>这件事在下一笔付款前必须锁死。</b></div>
+</div>
+
+<div class="risk">
+  <div class="rh"><span class="tag t-red">P0 · 产能</span>76% 交付物挤在上线后 21 天，且靠 122 个 Nano 主播集群开播</div>
+  <div class="rb">上线日(T0) 起共 493 个交付单位，其中 366 场 供应商B RP 直播分布在 10 个"集群日"（单日 52–60 场）。这些主播单价仅 约数十美元/场、平均粉丝 1,600 左右，<b>开播率、时长达标率、内容合规几乎无法逐个核验</b>。Approvals 页明确写：Micro/Nano 的 339 条走内部批量 QC，客户不逐条看。</div>
+  <div class="rf"><b>动作：</b>① 现在就要 供应商B 122 人的<b>确认开播名单 + 备用池</b>（要求 ≥20% buffer）；② 定义抽检机制（如每集群日随机抽 10% 录屏存档）；③ 约定<b>未开播的扣费/补播规则</b>写进 SOW。</div>
+</div>
+
+<div class="risk">
+  <div class="rh"><span class="tag t-red">P0 · 交付</span>41/44 条 Macro 交付物仍是 Pending Submission，含全部 15 场直播和 15 条 VOD</div>
+  <div class="rb">距上线 20 天，Macro 层只有 3 条 Story 通过审批。<b>VOD 是周期最长的形式（脚本→拍摄→剪辑→两轮审批，通常 2–3 周）</b>，而 15 条 VOD 全部排在 T+1–T+15。按现在的提交进度，8 月下旬会出现审批堵塞 + 集体延期。</div>
+  <div class="rf"><b>动作：</b>要求 供应商A 本周内提交<b>全部 15 条 VOD 的选题+脚本大纲</b>和 15 场直播的 rundown，倒排一个"脚本截止日 = 上线日 -14 天"的硬规则。</div>
+</div>
+
+<div class="risk mid">
+  <div class="rh"><span class="tag t-amber">P1 · 归因</span>Reel 无法带链接，CTA 退化为"去商店搜索" —— 效果无法归因</div>
+  <div class="rb">150 位达人都已生成 AppsFlyer OneLink（gst.onelink.me），但 供应商A 明确表示 IG Reel 无法要求点击链接，改为口播搜索引导。<b>意味着 78 条 Reel（占 34% 预算 / 约 3万）的转化数据断链</b>，只能看曝光和互动。</div>
+  <div class="rf"><b>动作：</b>① 要求 Reel 必须在 Story 联动位挂 OneLink（Story 可挂链接）；② 用专属搜索词/Promo Code 做辅助归因；③ 提前和甲方侧对齐"Reel 只考核曝光+互动，不背预约量"，避免结案时口径打架。</div>
+</div>
+
+<div class="risk mid">
+  <div class="rh"><span class="tag t-amber">P1 · KPI</span>实测互动率 3.5%，低于承诺的 5%+</div>
+  <div class="rb">四波实测加权互动率 3.5%。且已完成曝光仅 115 万 / 3.4%，剩余 96.6%（约 3,285 万）要在 41 天内跑完。Macro 层的曝光承诺高度依赖 上线日(T0) 后的直播和 VOD。</div>
+  <div class="rf"><b>动作：</b>把 Micro 层的高互动特性用起来（7.1% vs Macro 3.3%）—— 在 T-6 那批 10 条 Reel 和上线后 Reel Star 系列里，向表现好的 Micro（m-04、m-05、m-02）加量，用省下来的 Macro 溢价换互动率。</div>
+</div>
+
+<div class="risk mid">
+  <div class="rh"><span class="tag t-amber">P1 · 创意</span>甲方与 供应商A 在"开头是否露出游戏"上未达成一致</div>
+  <div class="rb">甲方要求前 6–12 秒必须出现 该手游 游戏画面（品牌识别），供应商A 坚持"开头露出即广告感、掉完播率"。已发生 2 次重拍/改稿。另 M-02 那条出现过<b>错误 Logo 上线</b>的事故。</div>
+  <div class="rf"><b>动作：</b>出一份一页的 <b>Brand Do/Don't 清单</b>（Logo 版本文件、必现时点、尾板模板、禁用画面），作为 Stage-1 内部 QC 的强制勾选项，从源头减少两轮返工。</div>
+</div>
+
+<div class="risk mid">
+  <div class="rh"><span class="tag t-amber">P1 · 排期</span>日历只覆盖到 T+21，客户侧 9 月中下旬和 10 月全球上线未纳入</div>
+  <div class="rb">表内已自行标注：Jul 2 预约开启、Jul 4 UA Peak 1、<b>Sep 14 Rooklyn 片场活动、Sep 17 奖励加倍、Sep 18 全球创作者悬赏、Sep 24 吉祥物 PVP、Sep 28 GL 终版交付、10 月全球上线（TBC）</b> 均在当前日历窗口外，无 KOL 内容对应。</div>
+  <div class="rf"><b>动作：</b>确认 T+21 之后是否续约/追加预算。如果 10 月全球上线要 KOL 支撑，现在就要谈第二期 SOW，否则 T+21 结案后阵容会散。</div>
+</div>
+
+<div class="risk low">
+  <div class="rh"><span class="tag t-gray">P2 · 数据质量</span>表格自身的一致性问题</div>
+  <div class="rb">
+    ① Executive Summary 写 148 位达人 / 513 条，Overview 写 157 位 / 511 条，实际逐条核算 <b>150 位 / 515 条</b> —— 三处口径不一致，对外汇报前必须统一。<br>
+    ② M-09、M-11、M-13、M-12、Qayzer 出现在日历和审批表，但<b>不在 KOL List 成本表里</b>（可能是 M-21 等的别名，需确认）。<br>
+    ③ Approvals 第 10 行编号缺失（M-02 那行没有序号）。<br>
+    ④ Approvals 有 2 条提交日期写成 "T+18（原表录入异常）"（年份错误）。<br>
+    ⑤ 部分名字在成本表与报告表拼写不一致（已统一为代号处理）。
+  </div>
+  <div class="rf"><b>动作：</b>要求 供应商A 以 KOL List 为唯一权威源，统一 ID 命名，并把 Executive Summary / Overview / Reporting 的汇总数字重算一遍。这份表是要给甲方看的，数字打架会直接影响信任。</div>
+</div>
+
+<!-- ========== 六、待办 ========== -->
+<h2>六、接手后 72 小时必做清单</h2>
+<div class="two">
+  <div class="cbox">
+    <h3 style="margin-top:0">已逾期 / 今日到期（Requirements 页）</h3>
+    <ul class="chk">
+      <li><div class="d">今日到期</div><div><b>#20 供应商C 概念审批</b>（T-20–T-19 TG-01 拍摄）· 状态 In Progress · <span class="tag t-red">今天必须批</span></div></li>
+      <li><div class="d">今日到期</div><div><b>#21 供应商C 页面清单</b>（Micro+Nano IG 页）· 状态 In Progress</div></li>
+      <li><div class="d">逾期 22d</div><div><b>#3 甲方侧完整时间表</b>（含 TG-01 内容排期）· 目标 T-42 · 仍 In Progress —— <span class="tag t-amber">这是排期打架的根源</span></div></li>
+      <li><div class="d">逾期 21d</div><div><b>#4 统一内容日历 / 实时追踪表</b>（供应商A）· 目标 T-41 · 仍 In Progress</div></li>
+      <li><div class="d">逾期 21d</div><div><b>#7 KlugKlug 实时看板链接</b>（供应商A）· 目标 T-41 · 状态仍是"Sharing Initial Requirement" —— <span class="tag t-red">承诺 Day 1 客户可见，至今未交付</span></div></li>
+      <li><div class="d">逾期 19d</div><div><b>#8 游戏文档 / Media Kit</b>（甲方）· 目标 T-39 · In Progress —— 影响 15 条 VOD 的内容准确性</div></li>
+      <li><div class="d">逾期 19d</div><div><b>#10 M-08 → M-02 替换 + 约定金额 冲抵</b>· 目标 T-39 · In Progress</div></li>
+    </ul>
+  </div>
+  <div class="cbox">
+    <h3 style="margin-top:0">你要主动发起的 5 件事</h3>
+    <ul class="chk">
+      <li><div class="d">D+1</div><div><b>预算三方对账</b>：预算实算（量级不披露） vs 预算上限（量级不披露） vs 排期覆盖。锁定 约 $4K超支责任 + 约定金额 冲抵 + 8 位无档期 Macro 的处置。</div></li>
+      <li><div class="d">D+2</div><div><b>VOD/直播倒排会</b>：15 条 VOD + 15 场直播的脚本截止日、拍摄日、审批窗口全部写进日历，硬规则 = 上线日 -14 天交脚本。</div></li>
+      <li><div class="d">D+2</div><div><b>供应商B 122 人开播确认 + 备用池</b>：要名单、要 ≥20% buffer、要抽检和扣费规则。这是 366 场直播能否落地的唯一保障。</div></li>
+      <li><div class="d">D+3</div><div><b>Brand Do/Don't 一页纸</b>：Logo 文件版本、必现时点、尾板、CTA 标准话术。终结"开头是否露游戏"的反复拉扯。</div></li>
+      <li><div class="d">D+3</div><div><b>KlugKlug 看板 + 归因方案</b>：拿到实时看板；同时确定 Reel 的替代归因口径（Story 挂链 / 搜索词 / Promo Code），避免结案时无法对账。</div></li>
+    </ul>
+    <div class="note" style="margin-top:12px"><b>一句话优先级：</b>钱（对账）→ 量（供应商B 开播保障）→ 内容（VOD 倒排）→ 质量（品牌清单）→ 数据（看板与归因）。</div>
+  </div>
+</div>
+
+<div class="note" style="margin-top:24px;text-align:center;color:var(--ink3)">
+  以上全部数字均由 某开放世界动作手游_MasterSheet.xlsx 的 11 个 Sheet 逐条核算得出，与表内汇总页存在差异的地方已在 P2 风险中标注。（本版为脱敏版：真实达人姓名已替换为代号、内部对接人姓名已替换为角色、单人费用已隐去、所有金额已模糊为约数/区间、供应商名(供应商A/供应商B/供应商C网络)已替换为代称(供应商A/B/C)、地区(市场A)已替换为代称(市场A)；项目名/排期/研判逻辑均保留。客户方甲方按范围保留。）
+</div>
+
+</div>
+
+<script>
+const data=[["T-41",1],["T-40",1],["T-39",0],["T-38",0],["T-37",0],["T-36",0],["T-35",3],["T-34",4],["T-33",0],["T-32",0],["T-31",7],["T-30",0],["T-29",1],["T-28",7],["T-27",5],["T-26",0],["T-25",0],["T-24",0],["T-23",0],["T-22",0],["T-21",0],["T-20",0],["T-19",0],["T-18",0],["T-17",0],["T-16",5],["T-15",0],["T-14",0],["T-13",0],["T-12",0],["T-11",0],["T-10",0],["T-9",6],["T-8",0],["T-7",0],["T-6",11],["T-5",0],["T-4",0],["T-3",5],["T-2",0],["T-1",0],["上线日(T0)",63],["T+1",11],["T+2",2],["T+3",0],["T+4",17],["T+5",3],["T+6",55],["T+7",6],["T+8",58],["T+9",4],["T+10",13],["T+11",2],["T+12",60],["T+13",3],["T+14",57],["T+15",3],["T+16",13],["T+17",2],["T+18",55],["T+19",1],["T+20",53],["T+21",12]];
+const max=Math.max(...data.map(d=>d[1]));
+const el=document.getElementById('chart');
+el.innerHTML=data.map(([d,v])=>{
+  const h=v===0?2:Math.max(3,Math.round(v/max*100));
+  const key=["上线日(T0)","T+6","T+8","T+12","T+14","T+18","T+20"].includes(d);
+  const bg=key?'linear-gradient(180deg,#c8102e,#e8546b)':(v>0?'linear-gradient(180deg,#0f62fe,#6b9bff)':'#dfe3e8');
+  const show=["T-41","T-31","T-16","T-6","上线日(T0)","T+8","T+14","T+21"].includes(d);
+  return `<div class="col" title="${d}: ${v}"><i style="height:${h}%;background:${bg}"></i><span>${show?d:''}</span></div>`;
+}).join('');
+</script>
+</body>
+</html>
