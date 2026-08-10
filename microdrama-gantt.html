@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tencent × SCN 短剧拍摄排期 · 甘特图</title>
+<style>
+  :root{
+    --bg:#eef1f5; --card:#ffffff; --ink:#1f2329; --muted:#717884; --line:#e6e9ee;
+    --grid:#eef1f5; --weekend:#f5f7fa;
+    --today:#e5484d; --gold:#e6a700; --goldbg:#fff6d8;
+    --done:#9aa3af; --donebar:#cdd3db;
+    --p1:#3f6fb0; --p2:#2f9e6b; --p3:#d1495b; --p4:#e0822f; --p5:#7a6cb0; --p6:#927c4e;
+    --gate:#f0a500;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       font-size:13px;line-height:1.45;}
+  .page{max-width:1320px;margin:0 auto;padding:20px 22px 48px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.04);}
+  /* header */
+  header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+  header.top h1{font-size:21px;margin:0 0 3px;font-weight:750;letter-spacing:.2px;}
+  header.top .sub{color:var(--muted);font-size:12.5px;}
+  header.top .sub b{color:var(--ink);}
+  .export{appearance:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;
+          font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer;}
+  .export:hover{background:#f6f8fb;}
+  /* summary cards */
+  .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+  .sum .s{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(16,24,40,.04);}
+  .sum .s .n{font-size:24px;font-weight:780;line-height:1;}
+  .sum .s .l{font-size:12px;color:var(--muted);margin-top:5px;}
+  .s.done .n{color:#2e7d52}.s.act .n{color:#c97a00}.s.up .n{color:#2f6fb0}.s.tot .n{color:#3a3f47}
+  .s .bar{height:5px;border-radius:4px;background:#eef1f5;margin-top:9px;overflow:hidden;}
+  .s .bar i{display:block;height:100%;border-radius:4px;}
+  .s.done .bar i{background:#2e7d52}.s.act .bar i{background:#e0a000}.s.up .bar i{background:#2f6fb0}.s.tot .bar i{background:#3a3f47}
+  /* confirmed anchors */
+  .anchors{display:flex;gap:10px;flex-wrap:wrap;background:linear-gradient(90deg,var(--goldbg),#fff);
+           border:1px solid #f0dca0;border-left:4px solid var(--gold);border-radius:12px;padding:11px 14px;margin-bottom:14px;}
+  .anchors .ttl{font-weight:750;color:#8a5e00;font-size:12.5px;align-self:center;margin-right:4px;}
+  .anchors .k{background:#fff;border:1px solid #ecd58a;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:650;color:#8a5e00;white-space:nowrap;}
+  /* countdown cards */
+  .cd{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+  .cd .c{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--card);position:relative;overflow:hidden;}
+  .cd .c.user{border-color:#f0d58a;background:linear-gradient(180deg,#fffaf0,#fff);}
+  .cd .c .d{font-size:12px;color:var(--muted);font-weight:600;}
+  .cd .c .nm{font-size:13px;font-weight:700;margin:3px 0 6px;line-height:1.25;}
+  .cd .c .cnt{font-size:13px;font-weight:750;}
+  .cd .c .cnt.rem{color:#2f6fb0}.cd .c .cnt.now{color:var(--today)}.cd .c .cnt.past{color:var(--muted)}
+  .cd .c .rib{position:absolute;top:0;right:0;font-size:9.5px;font-weight:700;color:#8a5e00;background:var(--goldbg);padding:2px 8px;border-bottom-left-radius:7px;}
+  /* toolbar */
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 14px;cursor:pointer;font-size:12.5px;color:var(--ink);user-select:none;font-weight:550;}
+  .pill.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .spacer{flex:1}
+  /* gantt */
+  .scroll{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff;max-height:82vh;}
+  .gantt{position:relative;}
+  .axis{position:sticky;top:0;z-index:9;display:flex;background:#fbfcfe;border-bottom:1px solid var(--line);}
+  .axis .corner{position:sticky;left:0;z-index:10;background:#fbfcfe;border-right:1px solid var(--line);width:330px;min-width:330px;
+               display:flex;align-items:center;padding:8px 12px;font-weight:700;font-size:12.5px;}
+  .axis .track{position:relative;flex:1;min-width:0;}
+  .axis .month{position:absolute;top:6px;font-weight:750;font-size:12.5px;color:var(--ink);border-left:2px solid #dfe3ea;padding-left:6px;}
+  .axis .wk{position:absolute;top:27px;font-size:9.5px;color:var(--muted);}
+  /* done zone + today overlays */
+  .donezone{position:absolute;top:0;bottom:0;left:330px;background:repeating-linear-gradient(45deg,#f4f6f9,#f4f6f9 7px,#eef1f5 7px,#eef1f5 14px);z-index:0;pointer-events:none;}
+  /* focus zone: next 14 days highlight */
+  .focuszone{position:absolute;top:0;bottom:0;z-index:0;pointer-events:none;
+    background:linear-gradient(90deg,rgba(47,111,176,.04),rgba(47,111,176,.08),rgba(47,111,176,.04));}
+  .focus-label{position:absolute;top:4px;z-index:2;pointer-events:none;
+    font-size:10px;font-weight:700;color:rgba(47,111,176,.45);white-space:nowrap;letter-spacing:1px;}
+  /* hover crosshair (day line) */
+  .crosshair{position:absolute;top:0;bottom:0;width:2px;background:rgba(31,35,41,.55);z-index:7;pointer-events:none;display:none;}
+  .crosshair .grip{position:absolute;top:0;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--ink);}
+  .crosshair-date{position:fixed;top:0;z-index:12;pointer-events:none;display:none;
+    background:#1f2329;color:#fff;border-radius:8px;padding:4px 9px;font-size:11px;font-weight:650;white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,.28);transform:translateX(-50%);}
+  .crosshair-date .d2{font-size:10px;color:#cbd2dc;font-weight:600;margin-top:1px;}
+  .todayline{position:absolute;top:0;bottom:0;width:2px;background:var(--today);z-index:8;pointer-events:none;}
+  .todayline::before{content:'';position:absolute;top:0;bottom:0;left:-40px;width:40px;
+    background:linear-gradient(90deg,transparent,rgba(229,72,77,.10));z-index:-1;}
+  .todayline .flag{position:absolute;top:1px;left:3px;background:var(--today);color:#fff;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:5px;white-space:nowrap;}
+  /* rows */
+  .row{position:relative;z-index:1;display:flex;border-bottom:1px solid var(--line);}
+  .row:hover{background:#fafbfd;}
+  .row.ph-head{background:#f4f6fa;border-bottom:1px solid var(--line);}
+  .row.ph-head .lbl{background:#f4f6fa;font-weight:750;}
+  .row.ph-head .track{display:flex;align-items:center;}
+  .ph-band{height:6px;border-radius:4px;position:absolute;top:12px;opacity:.5;}
+  .ph-prog{font-size:11px;color:var(--muted);font-weight:600;padding-right:14px;white-space:nowrap;}
+  .lbl{position:sticky;left:0;z-index:6;background:#fff;width:330px;min-width:330px;border-right:1px solid var(--line);
+       padding:7px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px;}
+  .row:hover .lbl{background:#fafbfd;}
+  .row.ph-head:hover .lbl{background:#f4f6fa;}
+  .lbl .nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lbl .ph{font-size:10.5px;color:var(--muted);}
+  .lbl .st{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;align-self:flex-start;margin-top:1px;}
+  .st.done{background:#eaf5ee;color:#2e7d52}.st.act{background:#fdf0db;color:#c97a00}.st.up{background:#eaf2fb;color:#2f6fb0}
+  .track{position:relative;flex:1;min-height:36px;}
+  .wkbg{position:absolute;top:0;bottom:0;background:var(--weekend);}
+  .bar{position:absolute;top:7px;height:22px;border-radius:6px;display:flex;align-items:center;padding:0 8px;
+       font-size:10.5px;color:#fff;white-space:nowrap;overflow:hidden;cursor:default;font-weight:600;
+       box-shadow:0 1px 3px rgba(16,24,40,.18);transition:transform .15s,box-shadow .15s;}
+  .bar:hover{transform:scale(1.04);z-index:5;}
+  .bar.done{filter:grayscale(.55);opacity:.65;height:18px;top:9px;}
+  .bar .chk{margin-right:4px;}
+  .bar.gate{background:repeating-linear-gradient(45deg,#f0a500,#f0a500 6px,#d98e00 6px,#d98e00 12px) !important;color:#553a00;}
+  .bar.active{box-shadow:0 0 0 2px #fff,0 0 0 4px #e0a000,0 1px 2px rgba(16,24,40,.16);}
+  /* upcoming bars: bolder + subtle glow */
+  .row[data-status="upcoming"] .bar{height:24px;top:6px;box-shadow:0 2px 6px rgba(16,24,40,.22),0 0 12px rgba(47,111,176,.15);}
+  .row[data-status="upcoming"] .bar.key{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--gold),0 2px 8px rgba(230,167,0,.35),0 0 16px rgba(230,167,0,.12);}
+  /* pulse animation for key upcoming milestones */
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,130,47,.35)}50%{box-shadow:0 0 0 6px rgba(224,130,47,0)}}
+  .ms.key[data-upcoming="true"] .dia{animation:pulse 2.2s ease-in-out infinite;}
+  .ms.user[data-upcoming="true"] .dia{animation:pulse 2s ease-in-out infinite;}
+  .ms{position:absolute;top:4px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:default;z-index:3;}
+  .ms .dia{width:16px;height:16px;background:var(--p4);transform:rotate(45deg);border-radius:3px;border:2px solid #fff;box-shadow:0 1px 3px rgba(16,24,40,.3);}
+  .ms.user .dia{background:var(--gold);border-color:#b8860b;box-shadow:0 0 0 3px var(--goldbg),0 1px 4px rgba(16,24,40,.35);}
+  /* upcoming milestone: larger + glow */
+  .ms[data-upcoming="true"]{top:2px;width:32px;height:32px;}
+  .ms[data-upcoming="true"] .dia{width:18px;height:18px;}
+  .ms .lab{position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#8a5e00;white-space:nowrap;background:#fff6d8;border:1px solid #f0dca0;border-radius:5px;padding:0 4px;}
+  /* key-node highlight */
+  .star{color:var(--gold);font-size:11px;margin-right:2px;}
+  .bar.key{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--gold),0 1px 3px rgba(16,24,40,.22);}
+  .ms.key .dia{border-color:var(--gold);box-shadow:0 0 0 3px var(--goldbg),0 0 0 4px var(--gold),0 1px 4px rgba(16,24,40,.35);}
+  .ms.key .lab{color:#8a5e00;background:#fff6d8;border-color:#f0dca0;}
+  /* legend + footer */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:14px 2px 6px;font-size:11.5px;color:var(--muted);}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px;}
+  .foot{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.7;}
+  .foot code{background:#eef1f5;padding:1px 5px;border-radius:4px;}
+  #tip{position:fixed;z-index:60;background:#1f2329;color:#fff;padding:9px 12px;border-radius:9px;font-size:12px;
+       max-width:320px;pointer-events:none;opacity:0;transition:opacity .08s;box-shadow:0 6px 22px rgba(0,0,0,.32);}
+  #tip .tn{font-weight:700;margin-bottom:4px;}
+  #tip .tr{color:#cbd2dc;font-size:11px;}
+  #tip .tb{display:inline-block;margin-top:6px;padding:1px 8px;border-radius:5px;font-size:10.5px;font-weight:700;}
+  @media print{
+    body{background:#fff}.page{max-width:none;padding:0}
+    .card,.sum,.anchors,.cd,.export,.toolbar,.legend{display:none!important}
+    .scroll{overflow:visible;border:none}.gantt{width:max-content}
+    .row.ph-head{display:none}
+    .crosshair,.crosshair-date{display:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>Tencent × SCN 短剧 · 拍摄排期甘特图</h1>
+      <div class="sub">基于源文件 <code>Revised Gantt (7 Jul)</code> 重建 · 数据截至 <b id="asof"></b> · 横轴 6/16 – 8/16</div>
+    </div>
+    <button class="export" onclick="exportPDF()">⬇ 导出 PDF / 打印</button>
+  </header>
+
+  <div class="sum" id="sum"></div>
+
+  <div class="anchors">
+    <span class="ttl">★ 用户确认锚点</span>
+    <span class="k">7/29　TG 定装 &amp; 剧本确认</span>
+    <span class="k">7/31　拍摄 Day1（含 TG）</span>
+    <span class="k">8/1　拍摄 Day2（含 TG）</span>
+  </div>
+
+  <div class="cd" id="cd"></div>
+
+  <div class="toolbar" id="toolbar">
+    <span class="pill active" data-f="all">全部</span>
+    <span class="pill" data-f="upcoming" id="focusUpcoming">🎯 即将做（聚焦）</span>
+    <span class="pill" data-f="done">已做完</span>
+    <span class="pill" data-f="user">仅确认节点</span>
+    <span class="spacer"></span>
+    <span class="pill" id="toggleDone">⊟ 收起已完成</span>
+    <span class="pill" id="gotoToday">⤢ 定位今日</span>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="scroll" id="scroll">
+      <div class="gantt" id="gantt"></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:linear-gradient(90deg,rgba(47,111,176,.06),rgba(47,111,176,.12))"></i>即将做聚焦区</span>
+    <span><i style="background:var(--p1)"></i>开发·剧本</span>
+    <span><i style="background:var(--p2)"></i>筹备·选角</span>
+    <span><i style="background:var(--p3)"></i>与TG定装</span>
+    <span><i style="background:var(--p4)"></i>拍摄</span>
+    <span><i style="background:var(--p5)"></i>后期</span>
+    <span><i style="background:var(--p6)"></i>上线</span>
+    <span><i style="background:var(--gate)"></i>客户审阅关卡</span>
+    <span><i style="background:var(--donebar)"></i>已完成</span>
+    <span><i style="background:var(--gold)"></i>用户确认里程碑</span>
+    <span><i style="background:var(--p4);outline:2px solid var(--gold);outline-offset:1px"></i>关键节点 ★</span>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+<div id="tip"></div>
+
+<script>
+const DATA = {"meta":{"today":"2026-08-10","start":"2026-06-16","end":"2026-08-16","done":23,"upcoming":3,"active":2,"total":28},"tasks":[{"phase":"Pre-Production\n开发/剧本","name":"概念方案修订（客户反馈后）","start":"2026-06-16","end":"2026-06-16","kind":"normal","user":false,"key":false,"note":"源:品红单点 6/16 (FF00FF)","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"客户审阅窗口","start":"2026-06-17","end":"2026-06-19","kind":"gate","user":false,"key":false,"note":"源:浅黄 6/17-6/19 (FFFF99)","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"故事线开发","start":"2026-06-20","end":"2026-06-21","kind":"normal","user":false,"key":false,"note":"源:品红 6/20-6/21 (FF00FF)","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"概念重构 v2","start":"2026-06-23","end":"2026-06-25","kind":"normal","user":false,"key":false,"note":"源:品红 6/23-6/25 (FF00FF)","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"终版概念审批（客户关卡）","start":"2026-07-03","end":"2026-07-03","kind":"gate","user":false,"key":true,"note":"源:浅黄单点 7/3 (FFFF99)·关键","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"分集梗概 Beat Sheet","start":"2026-07-10","end":"2026-07-10","kind":"normal","user":false,"key":false,"note":"源:品红单点 7/10 (FF00FF)","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"Beat Sheet 客户审批（关卡）","start":"2026-07-10","end":"2026-07-13","kind":"gate","user":false,"key":false,"note":"源:浅黄 7/10-7/11 + 品红 7/13 (FF00FF)","status":"done"},{"phase":"Pre-Production\n开发/剧本","name":"剧本初稿 V1","start":"2026-07-20","end":"2026-07-20","kind":"normal","user":false,"key":false,"note":"源:品红单点 7/20 (FF00FF)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"选角建议","start":"2026-07-15","end":"2026-07-15","kind":"normal","user":false,"key":false,"note":"源:品红单点 7/15 (FF00FF)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"选角客户反馈/审批（关卡）","start":"2026-07-15","end":"2026-07-16","kind":"gate","user":false,"key":false,"note":"源:浅黄 7/15-7/16 (FFFF99)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"选角锁定 Casting Lock ★","start":"2026-07-20","end":"2026-07-20","kind":"normal","user":false,"key":true,"note":"【修正】源:品红单点 7/20 (FF00FF)，非旧版6/27-7/1","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"客户审阅窗口","start":"2026-07-21","end":"2026-07-22","kind":"gate","user":false,"key":false,"note":"源:浅黄 7/21-7/22 (FFFF99)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"反馈整合（概念）","start":"2026-06-22","end":"2026-06-22","kind":"normal","user":false,"key":false,"note":"源:品红单点 6/22 (FF00FF)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"反馈整合","start":"2026-07-24","end":"2026-07-24","kind":"normal","user":false,"key":false,"note":"源:品红单点 7/24 (FF00FF)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"终版审批（客户关卡）","start":"2026-07-24","end":"2026-07-24","kind":"gate","user":false,"key":false,"note":"源:浅黄单点 7/24 (FFFF99)","status":"done"},{"phase":"Pre-Production\n筹备/选角","name":"PPM 拍摄前会议 ★（场地·许可·剧本·参考定稿）","start":"2026-07-21","end":"2026-07-24","kind":"normal","user":true,"key":true,"note":"合并源6项(均品红7/21-7/24)+参考锁定7/24·关键","status":"done"},{"phase":"Pre-Production\n与TG定装(确认)","name":"TG 定装 & 剧本确认 ★（含试拍/试读/走位）","start":"2026-07-29","end":"2026-07-29","kind":"milestone","user":true,"key":true,"note":"源:品红 7/29 (FF00FF)·用户确认 7/29","status":"done"},{"phase":"Pre-Production\n与TG定装(确认)","name":"拍摄前准备（微调·通告·组讯·搭景）","start":"2026-07-30","end":"2026-07-30","kind":"normal","user":false,"key":false,"note":"合并源4项(均品红7/30)","status":"done"},{"phase":"Production\n拍摄(确认)","name":"拍摄 Day1 ★（含 TG）","start":"2026-07-31","end":"2026-07-31","kind":"milestone","user":true,"key":true,"note":"源:品红 7/31 (FF00FF)·用户确认 7/31","status":"done"},{"phase":"Production\n拍摄(确认)","name":"拍摄 Day2 ★（含 TG）","start":"2026-08-01","end":"2026-08-01","kind":"milestone","user":true,"key":true,"note":"用户确认 8/1（源仅标7/31，按确认补8/1）","status":"done"},{"phase":"Production\n拍摄(确认)","name":"收工 Pack-up","start":"2026-08-02","end":"2026-08-02","kind":"normal","user":false,"key":false,"note":"源:仅浅粉模板(无品红)，按拍摄次日8/2推算","status":"done"},{"phase":"Post-Production\n后期","name":"后期制作（素材整理·内审·音效·调色）","start":"2026-08-02","end":"2026-08-09","kind":"normal","user":false,"key":false,"note":"源:4项均仅浅粉模板(FFD9EA)，按拍摄后窗口8/2-8/9","status":"done"},{"phase":"Post-Production\n后期","name":"粗剪交付客户 First Cut ★","start":"2026-08-07","end":"2026-08-07","kind":"normal","user":false,"key":true,"note":"源:品红单点 8/7 (FF00FF)·关键","status":"done"},{"phase":"Post-Production\n后期","name":"客户反馈（客户关卡）","start":"2026-08-08","end":"2026-08-10","kind":"gate","user":false,"key":false,"note":"源:浅黄 8/8-8/10 (FFFF99)","status":"active"},{"phase":"Post-Production\n后期","name":"客户反馈整合","start":"2026-08-10","end":"2026-08-12","kind":"normal","user":false,"key":false,"note":"源:品红 8/10-8/12 (FF00FF)","status":"active"},{"phase":"Post-Production\n后期","name":"客户终审 ★（客户关卡）","start":"2026-08-13","end":"2026-08-14","kind":"gate","user":false,"key":true,"note":"源:浅黄 8/13-8/14 (FFFF99)·关键","status":"upcoming"},{"phase":"Go Live\n上线","name":"上传协调 Upload","start":"2026-08-13","end":"2026-08-15","kind":"normal","user":false,"key":false,"note":"源:品红 8/13-8/15 (FF00FF)","status":"upcoming"},{"phase":"Go Live\n上线","name":"正式上线 Go Live ★","start":"2026-08-15","end":"2026-08-15","kind":"milestone","user":false,"key":true,"note":"源:品红 8/13-8/15 (FF00FF)·关键","status":"upcoming"}]};
+const PHASE_META = {
+  "Pre-Production\n开发/剧本":{zh:"开发 · 剧本",c:"var(--p1)"},
+  "Pre-Production\n筹备/选角":{zh:"筹备 · 选角",c:"var(--p2)"},
+  "Pre-Production\n与TG定装(确认)":{zh:"与 TG 定装 · 确认",c:"var(--p3)"},
+  "Production\n拍摄(确认)":{zh:"拍摄",c:"var(--p4)"},
+  "Post-Production\n后期":{zh:"后期",c:"var(--p5)"},
+  "Go Live\n上线":{zh:"上线",c:"var(--p6)"}
+};
+const PHASE_ORDER = ["Pre-Production\n开发/剧本","Pre-Production\n筹备/选角","Pre-Production\n与TG定装(确认)","Production\n拍摄(确认)","Post-Production\n后期","Go Live\n上线"];
+const DAY_W = 28;
+const d0 = new Date(DATA.meta.start), d1 = new Date(DATA.meta.end), td = new Date(DATA.meta.today);
+const dayIdx = d => Math.round((d - d0)/86400000);
+const totalDays = dayIdx(d1)+1;
+const fmt = d => (new Date(d).getMonth()+1)+"/"+new Date(d).getDate();
+const fmtFull = d => { const x=new Date(d); const w=["日","一","二","三","四","五","六"][x.getDay()]; return (x.getMonth()+1)+"月"+x.getDate()+"日 (周"+w+")"; };
+const daysBetween = (a,b)=>Math.round((new Date(b)-new Date(a))/86400000);
+
+document.getElementById('asof').textContent = fmtFull(td);
+
+// summary cards
+const sum=document.getElementById('sum');
+const sc=[["done","已完成",DATA.meta.done],["act","进行中",DATA.meta.active],["up","即将做",DATA.meta.upcoming],["tot","总节点",DATA.meta.total]];
+sc.forEach(([k,l,v])=>{const e=document.createElement('div');e.className='s '+k;
+  e.innerHTML='<div class="n">'+v+'</div><div class="l">'+l+'</div><div class="bar"><i style="width:'+(v/DATA.meta.total*100)+'%"></i></div>';sum.appendChild(e);});
+
+// countdown cards
+const ms=[...DATA.tasks.filter(t=>t.kind==='milestone')];
+const cd=document.getElementById('cd');
+ms.forEach(t=>{
+  const days=daysBetween(td,t.start);
+  let cnt,cls;
+  if(t.start===DATA.meta.today){cnt="就是今天";cls="now";}
+  else if(days>0){cnt="还有 "+days+" 天";cls="rem";}
+  else{cnt="已过期 "+(-days)+" 天";cls="past";}
+  const e=document.createElement('div');e.className='c'+(t.user?' user':'');
+  e.innerHTML=(t.user?'<div class="rib">用户确认</div>':'')+
+    '<div class="d">'+fmtFull(t.start)+'</div>'+
+    '<div class="nm">'+t.name.replace(/ \(w\/ TG Techno Gamerz\)/,'').replace(' (Script Lock)','').replace(' (Go Live)','')+'</div>'+
+    '<div class="cnt '+cls+'">'+cnt+'</div>';
+  cd.appendChild(e);
+});
+
+// gantt build
+const g=document.getElementById('gantt');
+// axis
+const axis=document.createElement('div');axis.className='axis';
+const corner=document.createElement('div');corner.className='corner';corner.textContent='任务 / 阶段';
+axis.appendChild(corner);
+const at=document.createElement('div');at.className='track';at.style.minWidth=(totalDays*DAY_W)+'px';
+let curM=-1;
+for(let i=0;i<totalDays;i++){const dt=new Date(d0.getTime()+i*86400000);
+  if(curM!==dt.getMonth()){curM=dt.getMonth();const m=document.createElement('div');m.className='month';
+    m.style.left=(i*DAY_W+4)+'px';m.textContent=(dt.getMonth()+1)+'月';at.appendChild(m);}
+}
+for(let i=0;i<totalDays;i++){const dt=new Date(d0.getTime()+i*86400000);
+  if(dt.getDay()===1){const w=document.createElement('div');w.className='wk';w.style.left=(i*DAY_W+4)+'px';w.textContent=fmt(dt);at.appendChild(w);}
+}
+axis.appendChild(at);g.appendChild(axis);
+
+// overlays (done zone + focus zone + today)
+const donezone=document.createElement('div');donezone.className='donezone';donezone.style.zIndex='0';
+donezone.style.width=(dayIdx(td)*DAY_W+'px');g.appendChild(donezone);
+// focus zone: from today to END of timeline (all upcoming)
+const fz=document.createElement('div');fz.className='focuszone';
+const fzLeft=dayIdx(td)*DAY_W;
+const fzWidth=(totalDays-dayIdx(td))*DAY_W;
+fz.style.left=(330+fzLeft)+'px';fz.style.width=fzWidth+'px';
+g.appendChild(fz);
+// focus zone label
+const fl=document.createElement('div');fl.className='focus-label';
+fl.style.left=(330+fzLeft+10)+'px';fl.textContent='🎯 即将做 · 聚焦区';
+g.appendChild(fl);
+// right padding: extend track slightly past last date
+g.style.paddingRight='40px';
+const tl=document.createElement('div');tl.className='todayline';
+tl.style.left=(330+dayIdx(td)*DAY_W+DAY_W/2)+'px';
+tl.innerHTML='<div class="flag">今日 '+fmt(td)+'</div>';g.appendChild(tl);
+
+// hover crosshair (day line) — snaps to a day, shows date + progress at cursor
+const cross=document.createElement('div');cross.className='crosshair';
+cross.appendChild(document.createElement('div')).className='grip';
+const crossDate=document.createElement('div');crossDate.className='crosshair-date';
+g.appendChild(cross);document.body.appendChild(crossDate);
+const scrollEl=document.getElementById('scroll');
+function onMove(ev){
+  const gr=g.getBoundingClientRect();
+  const contentX=ev.clientX-gr.left;
+  if(contentX<330){cross.style.display='none';crossDate.style.display='none';return;}
+  let di=Math.floor((contentX-330)/DAY_W);
+  if(di<0)di=0; if(di>totalDays-1)di=totalDays-1;
+  const cx=330+(di+0.5)*DAY_W;
+  const dt=new Date(d0.getTime()+di*86400000);
+  const dToday=di-dayIdx(td);
+  const prog=Math.round(di/(totalDays-1)*100);
+  let rel=dToday===0?'就是今日':(dToday>0?('距今日 +'+dToday+' 天'):('已过 '+(-dToday)+' 天'));
+  cross.style.display='block';cross.style.left=cx+'px';
+  // fixed chip: use viewport X (from gantt left edge + cx), clamp
+  let chipLeft=gr.left+cx; const minL=44,maxL=window.innerWidth-44;
+  if(chipLeft<minL)chipLeft=minL; if(chipLeft>maxL)chipLeft=maxL;
+  crossDate.style.display='block';crossDate.style.left=chipLeft+'px';
+  // always pinned near top of viewport (below page header area)
+  const axisRect=document.querySelector('.axis').getBoundingClientRect();
+  crossDate.style.top=(axisRect.bottom+4)+'px';
+  crossDate.innerHTML='<div>'+fmtFull(dt)+'</div><div class="d2">'+rel+' · 整体 '+prog+'%</div>';
+}
+scrollEl.addEventListener('mousemove',onMove);
+scrollEl.addEventListener('mouseleave',()=>{cross.style.display='none';crossDate.style.display='none';});
+
+// phase groups
+PHASE_ORDER.forEach(ph=>{
+  const rows=DATA.tasks.filter(t=>t.phase===ph);
+  if(!rows.length)return;
+  const dn=rows.filter(t=>t.status==='done').length;
+  const pm=PHASE_META[ph];
+  // phase header — band spans only the tasks' actual date range
+  const hr=document.createElement('div');hr.className='row ph-head';
+  const hl=document.createElement('div');hl.className='lbl';hl.innerHTML='<div class="nm" style="color:'+pm.c+'">'+pm.zh+'</div>';
+  const ht=document.createElement('div');ht.className='track';
+  // compute this phase's min start / max end
+  const pStart=new Date(Math.min(...rows.map(t=>new Date(t.start))));
+  const pEnd=new Date(Math.max(...rows.map(t=>new Date(t.end))));
+  const pLeft=dayIdx(pStart)*DAY_W, pW=(dayIdx(pEnd)-dayIdx(pStart)+1)*DAY_W;
+  ht.innerHTML='<div class="ph-band" style="background:'+pm.c+';left:'+pLeft+'px;width:'+pW+'px"></div><div class="ph-prog">'+dn+' / '+rows.length+' 已完成</div>';
+  hr.appendChild(hl);hr.appendChild(ht);g.appendChild(hr);
+  // task rows
+  rows.forEach(t=>{
+    const row=document.createElement('div');row.className='row';row.dataset.status=t.status;row.dataset.user=t.user;
+    const lbl=document.createElement('div');lbl.className='lbl';
+    const stMap={done:'已完成',act:'进行中',upcoming:'即将做'};
+    const star=t.key?'<span class="star">★</span>':'';
+    lbl.innerHTML='<div class="nm">'+star+t.name+'</div>'+
+      '<span class="st '+t.status+'">'+stMap[t.status]+'</span>';
+    const track=document.createElement('div');track.className='track';track.style.minWidth=(totalDays*DAY_W)+'px';
+    for(let i=0;i<totalDays;i++){const dt=new Date(d0.getTime()+i*86400000);if(dt.getDay()===0||dt.getDay()===6){const w=document.createElement('div');w.className='wkbg';w.style.left=(i*DAY_W)+'px';w.style.width=DAY_W+'px';track.appendChild(w);}}
+    const s=new Date(t.start),e_=new Date(t.end);
+    const left=dayIdx(s)*DAY_W,w=(dayIdx(e_)-dayIdx(s)+1)*DAY_W;
+    if(t.kind==='milestone'){
+      const isUp=t.status==='upcoming';
+      const m=document.createElement('div');m.className='ms'+(t.user?' user':'')+(t.key?' key':'');m.style.left=(left+w/2-13)+'px';
+      if(isUp)m.setAttribute('data-upcoming','true');
+      m.innerHTML='<div class="dia"></div><div class="lab">'+(t.key?'★ ':'')+fmt(s)+'</div>';
+      m.addEventListener('mousemove',ev=>showTip(ev,t));m.addEventListener('mouseleave',hideTip);track.appendChild(m);
+    }else{
+      const b=document.createElement('div');b.className='bar'+(t.status==='done'?' done':'')+(t.kind==='gate'?' gate':'')+(t.status==='active'?' active':'')+(t.key?' key':'');
+      b.style.left=left+'px';b.style.width=w+'px';b.style.background=pm.c;
+      const dur=(dayIdx(e_)-dayIdx(s)+1);
+      let inner=(t.status==='done'?'<span class="chk">✓</span>':'');
+      if(w>180) inner+=t.name+' · '+dur+'天'; else if(w>t.name.length*10) inner+=t.name; else inner+=(t.status==='done'?'✓':'');
+      b.innerHTML=inner;
+      b.addEventListener('mousemove',ev=>showTip(ev,t));b.addEventListener('mouseleave',hideTip);track.appendChild(b);
+    }
+    row.appendChild(lbl);row.appendChild(track);g.appendChild(row);
+  });
+});
+
+// tooltip
+const tip=document.getElementById('tip');
+function showTip(ev,t){
+  const st={done:'已完成',active:'进行中',upcoming:'即将做'}[t.status];
+  const col={done:'#3aa76d',active:'#e0a000',upcoming:'#3a78c2'}[t.status];
+  tip.innerHTML='<div class="tn">'+t.name+'</div>'+
+    '<div class="tr">📅 '+fmtFull(t.start)+(t.start!==t.end?' → '+fmtFull(t.end):'')+'</div>'+
+    '<div class="tr">阶段：'+(PHASE_META[t.phase]?PHASE_META[t.phase].zh:t.phase)+'</div>'+
+    '<div class="tr">来源：'+t.note+'</div>'+
+    '<div class="tb" style="background:'+col+';color:#fff">'+st+(t.user?' · 用户确认':'')+(t.key?' · 关键节点':'').replace(/  /g,' ')+'</div>';
+  tip.style.opacity='1';tip.style.left=Math.min(ev.clientX+14,window.innerWidth-330)+'px';tip.style.top=(ev.clientY+14)+'px';
+}
+function hideTip(){tip.style.opacity='0';}
+
+// filter
+let doneCollapsed=false;
+document.getElementById('toolbar').addEventListener('click',e=>{
+  const p=e.target.closest('.pill');if(!p)return;
+  if(p.id==='gotoToday'){const sc=document.getElementById('scroll');sc.scrollTo({left:Math.max(0,330+dayIdx(td)*DAY_W-400),behavior:'smooth'});return;}
+  if(p.id==='toggleDone'){
+    doneCollapsed=!doneCollapsed;p.textContent=doneCollapsed?'⊞ 展开已完成':'⊟ 收起已完成';
+    document.querySelectorAll('.row[data-status="done"]').forEach(r=>{r.style.display=doneCollapsed?'none':'flex';});
+    // also toggle phase headers for done-only phases
+    return;
+  }
+  document.querySelectorAll('.pill[data-f]').forEach(x=>x.classList.remove('active'));p.classList.add('active');
+  const f=p.dataset.f;
+  const isFocusUp=(f==='upcoming'&&p.id==='focusUpcoming');
+  document.querySelectorAll('.row:not(.ph-head)').forEach(r=>{
+    let show=true;
+    if(f==='done')show=r.dataset.status==='done';
+    else if(f==='upcoming')show=r.dataset.status!=='done';
+    else if(f==='user')show=r.dataset.user==='true';
+    r.style.display=show?'flex':'none';
+  });
+  if(isFocusUp){
+    const sc=document.getElementById('scroll');sc.scrollTo({left:Math.max(0,330+dayIdx(td)*DAY_W-200),behavior:'smooth'});
+  }
+});
+// auto-focus: scroll to today area on load
+setTimeout(()=>{
+  const sc=document.getElementById('scroll');
+  sc.scrollTo({left:Math.max(0,330+dayIdx(td)*DAY_W-250),behavior:'smooth'});
+},300);
+
+function exportPDF(){window.print();}
+
+// footer
+document.getElementById('foot').innerHTML=
+ '说明：① 源文件为「每周循环占位」式暂定甘特图，本图已合并为单一中文项目时间线。'+
+ ' ② <b>今日红线</b>左侧灰底=已做完，右侧蓝色聚焦区=即将做（全部）。③ <b>★ 金边</b>=关键节点，即将做的关键节点带脉冲动画。'+
+ ' ④ 仅 7/29、7/31、8/1 为用户确认节点（金色实心）。⑤ 其余起止若与正式标准不符，给标准即可一键替换。⑥ TG = Techno Gamerz。';
+</script>
+</body>
+</html>
