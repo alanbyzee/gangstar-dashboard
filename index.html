@@ -2169,7 +2169,7 @@ function renderInsights(data){
   const segs=order.map((k,i)=>{
     const frac=total?vals[i]/total:0;
     const dash=frac*C;
-    const seg=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${colors[i]}" stroke-width="18" stroke-dasharray="${dash.toFixed(1)} ${(C-dash).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" transform="rotate(-90 60 60)"/>`;
+    const seg=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${colors[i]}" stroke-width="18" stroke-dasharray="${dash.toFixed(1)} ${(C-dash).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 60 60)"/>`;
     off+=dash;
     return seg;
   }).join('');
@@ -2234,7 +2234,7 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-08-11",
+  "updated_at": "2026-08-12",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
@@ -2331,7 +2331,7 @@ const FALLBACK_DATA = {
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 187,
+      "value": 189,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-11）；116帖7关注",
@@ -2419,6 +2419,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-11",
           "value": 187
+        },
+        {
+          "date": "2026-08-12",
+          "value": 189
         }
       ],
       "name": "Facebook"
@@ -2427,7 +2431,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 1570,
+      "value": 1800,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-11）；56个视频",
@@ -2587,6 +2591,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-11",
           "value": 1570
+        },
+        {
+          "date": "2026-08-12",
+          "value": 1800
         }
       ]
     },
@@ -2594,7 +2602,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 26,
+      "value": 27,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -2650,6 +2658,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-11",
           "value": 26
+        },
+        {
+          "date": "2026-08-12",
+          "value": 27
         }
       ]
     },
@@ -2706,6 +2718,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
