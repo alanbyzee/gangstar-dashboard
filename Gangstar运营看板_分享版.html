@@ -2163,17 +2163,17 @@ function renderInsights(data){
   const colors=order.map(k=>p[k]?.color||'#999');
   const total=vals.reduce((a,b)=>a+b,0);
 
-  // 占比环图（SVG 描边分段）
-  const R=52,C=2*Math.PI*R;
+  // 占比环图（SVG 描边分段）—— viewBox 留出余量，避免外缘被裁成平边
+  const R=52,C=2*Math.PI*R,CX=64,CY=64;
   let off=0;
   const segs=order.map((k,i)=>{
     const frac=total?vals[i]/total:0;
     const dash=frac*C;
-    const seg=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${colors[i]}" stroke-width="18" stroke-dasharray="${dash.toFixed(1)} ${(C-dash).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 60 60)"/>`;
+    const seg=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${colors[i]}" stroke-width="18" stroke-dasharray="${dash.toFixed(1)} ${(C-dash).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 ${CX} ${CY})"/>`;
     off+=dash;
     return seg;
   }).join('');
-  const donut=`<svg width="120" height="120" viewBox="0 0 120 120">${segs}</svg>`;
+  const donut=`<svg width="120" height="120" viewBox="0 0 128 128">${segs}</svg>`;
   const legendRows=order.map((k,i)=>`
     <div class="row"><span class="dot" style="background:${colors[i]}"></span>
       <span class="nm">${esc(names[i])}</span>
@@ -2718,6 +2718,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
