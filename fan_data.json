@@ -6,10 +6,10 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 4747,
+      "value": 5124,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-11）；IG公共主页",
+      "note": "数据来源：用户截图校准（2026-08-12）；IG公共主页",
       "history": [
         {
           "date": "2026-07-02",
@@ -90,13 +90,17 @@
         {
           "date": "2026-08-11",
           "value": 4747
+        },
+        {
+          "date": "2026-08-12",
+          "value": 5124
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 191,
+      "value": 194,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-11）；116帖7关注",
@@ -187,7 +191,7 @@
         },
         {
           "date": "2026-08-12",
-          "value": 191
+          "value": 194
         }
       ],
       "name": "Facebook"
@@ -196,10 +200,10 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 2280,
+      "value": 3110,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-11）；56个视频",
+      "note": "数据来源：用户截图校准（2026-08-12）；59个视频",
       "history": [
         {
           "date": "2026-07-02",
@@ -359,7 +363,7 @@
         },
         {
           "date": "2026-08-12",
-          "value": 2280
+          "value": 3110
         }
       ]
     },
@@ -434,10 +438,10 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 1433,
+      "value": 1560,
       "label": "成员",
       "color": "#5865F2",
-      "note": "数据来源：用户截图校准（2026-08-11）",
+      "note": "数据来源：用户截图校准（2026-08-12）",
       "history": [
         {
           "date": "2026-07-15",
@@ -476,8 +480,8 @@
           "value": 1311
         },
         {
-          "date": "2026-08-11",
-          "value": 1433
+          "date": "2026-08-12",
+          "value": 1560
         }
       ]
     }
