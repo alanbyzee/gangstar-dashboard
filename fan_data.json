@@ -208,7 +208,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 6990,
+      "value": 7040,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-13）；59个视频",
@@ -375,7 +375,7 @@
         },
         {
           "date": "2026-08-13",
-          "value": 6990
+          "value": 7040
         }
       ]
     },
