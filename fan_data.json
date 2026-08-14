@@ -6,10 +6,10 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 5550,
+      "value": 5620,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-13）；IG公共主页",
+      "note": "数据来源：用户截图校准（2026-08-14 深夜）；128帖子",
       "history": [
         {
           "date": "2026-07-02",
@@ -98,13 +98,17 @@
         {
           "date": "2026-08-13",
           "value": 5550
+        },
+        {
+          "date": "2026-08-14",
+          "value": 5620
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 214,
+      "value": 216,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-13）；208位粉丝",
@@ -203,7 +207,7 @@
         },
         {
           "date": "2026-08-14",
-          "value": 214
+          "value": 216
         }
       ],
       "name": "Facebook"
@@ -212,10 +216,10 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 9960,
+      "value": 10580,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-14 晚间）；61个视频",
+      "note": "数据来源：用户截图校准（2026-08-14 深夜，YT Studio）；过去28天+8583人，75.1万观看",
       "history": [
         {
           "date": "2026-07-02",
@@ -383,7 +387,7 @@
         },
         {
           "date": "2026-08-14",
-          "value": 9960
+          "value": 10580
         }
       ]
     },
@@ -391,7 +395,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 27,
+      "value": 28,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -458,7 +462,7 @@
         },
         {
           "date": "2026-08-14",
-          "value": 27
+          "value": 28
         }
       ]
     },
