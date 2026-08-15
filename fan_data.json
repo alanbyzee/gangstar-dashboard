@@ -540,6 +540,36 @@
           "value": 2031
         }
       ]
+    },
+    "moj": {
+      "name": "Moj",
+      "handle": "@gangstarmiragecityindia",
+      "url": "https://mojapp.in/@gangstarmiragecityindia",
+      "value": 0,
+      "label": "粉丝",
+      "color": "#7C3AED",
+      "note": "待截图校准（平台位已接入，2026-08-15）",
+      "history": [
+        {
+          "date": "2026-08-15",
+          "value": 0
+        }
+      ]
+    },
+    "sharechat": {
+      "name": "ShareChat",
+      "handle": "@gangstarmiragecityindia",
+      "url": "https://sharechat.com/profile/gangstarmiragecityindia",
+      "value": 0,
+      "label": "粉丝",
+      "color": "#FF7A00",
+      "note": "待截图校准（平台位已接入，2026-08-15）",
+      "history": [
+        {
+          "date": "2026-08-15",
+          "value": 0
+        }
+      ]
     }
   }
 }
