@@ -316,9 +316,9 @@ body{
 .insights>.panel{display:flex;flex-direction:column}
 .insights>.panel:last-child{justify-content:center}
 @media(max-width:760px){.insights{grid-template-columns:1fr}}
-.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 19px;box-shadow:var(--shadow-sm);transition:.2s}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;box-shadow:var(--shadow-sm);transition:.2s}
 .panel:hover{box-shadow:var(--shadow-md)}
-.panel h3{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.panel h3{font-size:13px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
 .panel h3 .em{font-size:15px}
 
 /* 目标进度 */
@@ -336,15 +336,15 @@ body{
 .target-edit button:active{transform:translateY(1px)}
 
 /* 本周涨粉总结（文字+数据，总结性） */
-.wk-summary{font-size:11.5px;line-height:1.45;color:var(--ink)}
+.wk-summary{font-size:11.5px;line-height:1.4;color:var(--ink)}
 .wk-summary p{margin:0}
 .wk-summary b{font-weight:800}
 .wk-summary .up{color:var(--ok)}
-.wk-lead{display:flex;gap:6px;align-items:center;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1px solid #bbf7d0;border-radius:8px;padding:5px 9px;margin-bottom:6px}
-.wk-lead .wk-crown{font-size:14px;line-height:1;flex:none}
-.wk-lead div{font-size:11.5px;line-height:1.35}
-.wk-inner{margin-top:9px;border-top:1px solid var(--line);padding-top:8px}
-.wk-inner h4{font-size:12px;font-weight:800;margin-bottom:5px;color:var(--ink)}
+.wk-lead{display:inline-flex;gap:6px;align-items:center;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1px solid #bbf7d0;border-radius:7px;padding:4px 9px;margin-bottom:5px}
+.wk-lead .wk-crown{font-size:13px;line-height:1;flex:none}
+.wk-lead div{font-size:11.5px;line-height:1.3}
+.wk-inner{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}
+.wk-inner h4{font-size:11.5px;font-weight:800;margin-bottom:4px;color:var(--ink)}
 
 /* 占比条形图（横向排序，替代环图） */
 .fb-total{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
@@ -1857,7 +1857,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 5683,
+      "value": 5711,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-15）；135帖子",
@@ -1956,7 +1956,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-15",
-          "value": 5683
+          "value": 5711
         }
       ]
     },
@@ -2258,7 +2258,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 28,
+      "value": 29,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -2326,6 +2326,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-08-14",
           "value": 28
+        },
+        {
+          "date": "2026-08-15",
+          "value": 29
         }
       ]
     },
@@ -2536,6 +2540,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
