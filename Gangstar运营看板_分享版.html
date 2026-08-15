@@ -312,8 +312,9 @@ body{
 .pc .lk:hover{text-decoration:underline}
 
 /* ===== 洞察区：作战进度 + 占比 ===== */
-.insights{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:18px}
-@media(max-width:760px){.insights{grid-template-columns:1fr}}
+.insights{display:grid;grid-template-columns:1.05fr .95fr .95fr;gap:16px;margin-bottom:18px}
+@media(max-width:1000px){.insights{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.insights{grid-template-columns:1fr}}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 19px;box-shadow:var(--shadow-sm);transition:.2s}
 .panel:hover{box-shadow:var(--shadow-md)}
 .panel h3{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:7px}
@@ -333,19 +334,14 @@ body{
 .target-edit button:hover{box-shadow:0 3px 10px rgba(109,40,217,.25)}
 .target-edit button:active{transform:translateY(1px)}
 
-/* 本周涨粉排行 */
-.wk-panel{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
-.wk-panel h4{font-size:13.5px;font-weight:800;margin-bottom:10px;color:var(--ink)}
-.wk-list{display:flex;flex-direction:column;gap:6px}
-.wk-row{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fafbfc;border-radius:9px}
-.wk-rank{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:6px;flex:none}
-.wk-row:nth-child(2) .wk-rank{background:linear-gradient(135deg,#94a3b8,#64748b)}
-.wk-row:nth-child(n+3) .wk-rank{background:linear-gradient(135deg,#d1d5db,#9ca3af)}
-.wk-row .nm{font-weight:700;font-size:12.5px;min-width:72px;flex:none}
-.wk-vals{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:11.5px}
-.wk-vals .chg{font-weight:800;font-size:13px}
-.wk-vals .chg.up{color:var(--ok)}
-.wk-vals small{color:var(--muted)}
+/* 本周涨粉总结（文字+数据，总结性） */
+.wk-summary{font-size:12.5px;line-height:1.65;color:var(--ink)}
+.wk-summary p{margin:0}
+.wk-summary b{font-weight:800}
+.wk-summary .up{color:var(--ok)}
+.wk-lead{display:flex;gap:9px;align-items:flex-start;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1px solid #bbf7d0;border-radius:11px;padding:10px 12px;margin-bottom:11px}
+.wk-lead .wk-crown{font-size:17px;line-height:1.2;flex:none}
+.wk-lead div{font-size:12.5px;line-height:1.5}
 
 /* 占比条形图（横向排序，替代环图） */
 .fb-total{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
@@ -1790,16 +1786,19 @@ function renderInsights(data){
     return `<div class="fb-row"><div class="fb-label"><span class="dot" style="background:${colors[i]}"></span><span class="nm">${esc(names[i])}</span></div><div class="fb-bar-wrap"><div class="fb-bar" style="background:${colors[i]};width:${wPct}%"></div></div><div class="fb-val"><b>${fmt(vals[i])}</b><small>${pct.toFixed(1)}%</small></div></div>`;
   }).join('');
 
-  // 本周涨粉排行（按周绝对增量，Top N）
-  const grows=order.map(k=>({key:k,name:p[k]?.name||k,wg:weeklyGrowth(p[k]),color:p[k]?.color||'#999',val:p[k]?.value||0}));
+  // 本周涨粉总结（文字+数据，总结性；与右侧平台占比框平齐）
+  const grows=order.map(k=>({name:p[k]?.name||k,wg:weeklyGrowth(p[k])}));
   const valid=grows.filter(g=>g.wg).sort((a,b)=>b.wg.diff-a.wg.diff);
   const best=valid[0];
-  const topN=valid.slice(0,5); // 取 Top 5
-  const wkRows=topN.map(g=>{
-    const dailyAvg=(g.wg.diff/(g.wg.days||7)).toFixed(0);
-    const pctChg=g.wg.base?((g.wg.diff/g.wg.base)*100).toFixed(1):'—';
-    return `<div class="wk-row"><span class="wk-rank">${topN.indexOf(g)+1}</span><span class="dot" style="background:${g.color}"></span><span class="nm">${esc(g.name)}</span><div class="wk-vals"><span class="chg up">+${fmt(g.wg.diff)}</span><small>日均 +${dailyAvg}</small><small>${pctChg}%</small></div></div>`;
-  }).join('');
+  const weeklyTotal=valid.reduce((s,g)=>s+g.wg.diff,0);
+  const top2=valid.slice(0,2);
+  const top2share=weeklyTotal?Math.round(top2.reduce((s,g)=>s+g.wg.diff,0)/weeklyTotal*100):0;
+  const bestShare=weeklyTotal?Math.round(best.wg.diff/weeklyTotal*100):0;
+  const summaryHtml=weeklyTotal>0?`
+    <div class="wk-summary">
+      <div class="wk-lead"><span class="wk-crown">🏆</span><div>${esc(best.name)} 本周领跑，净增 <b class="up">+${fmt(best.wg.diff)}</b>（占全平台周增 ${bestShare}%）</div></div>
+      <p>全平台本周合计净增 <b>+${fmt(weeklyTotal)}</b>。${top2.length>1?`${esc(top2[0].name)} 与 ${esc(top2[1].name)} 构成增长主力（合计占周增 ${top2share}%）`:`${esc(best.name)} 为绝对主力`}，其余平台稳步跟进；Facebook、X 基本持平。</p>
+    </div>`:`<div class="wk-summary"><p>本周各平台粉丝变化平稳，暂无显著增长。</p></div>`;
 
   // 上线目标进度（目标值存 localStorage，可改）
   const target=Number(lsGet('gangstar_fan_target')||10000);
@@ -1818,14 +1817,16 @@ function renderInsights(data){
       <div class="meta"><span>社区总粉丝 <b>${fmt(total)}</b></span><span>目标 <b>${fmt(target)}</b></span></div>
       <div class="meta"><span>完成度 <b>${prog.toFixed(1)}%</b></span><span>日均需 +<b>${needDaily.toFixed(0)}</b> 连 ${dl} 天</span></div>
       <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
-      ${topN.length?`<div class="wk-panel"><h4>📈 本周涨粉表现</h4><div class="wk-list">${wkRows}</div></div>`:''}
     </div>
     <div class="panel">
       <h3><span class="em">🥧</span> 平台粉丝占比</h3>
       <div class="fb-total"><b>${fmt(total)}</b> 总粉丝 · ${order.length} 个平台</div>
       <div class="fb-chart">${barRows}</div>
-      ${best?`<div style="margin-top:14px;text-align:center"><span class="badge">🏆 本周最佳 · ${esc(best.name)}（周 +${fmt(best.wg.diff)}）</span></div>`:''}
-    </div>`;
+    </div>
+    ${summaryHtml?`<div class="panel">
+      <h3><span class="em">📈</span> 本周涨粉总结</h3>
+      ${summaryHtml}
+    </div>`:''}`;
 
   const saveBtn=document.getElementById('targetSave');
   if(saveBtn) saveBtn.onclick=()=>{
@@ -2535,6 +2536,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
