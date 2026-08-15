@@ -343,13 +343,6 @@ body{
 .wk-lead{display:inline-flex;gap:4px;align-items:center;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1px solid #bbf7d0;border-radius:5px;padding:1px 5px;margin-bottom:2px}
 .wk-lead .wk-crown{font-size:10px;line-height:1;flex:none}
 .wk-lead div{font-size:9.5px;line-height:1.1}
-.wk-pills{display:flex;flex-wrap:wrap;gap:3px 5px;margin-bottom:2px}
-.wk-pill{display:inline-flex;align-items:center;gap:2px;font-size:9px;line-height:1.1;padding:0 4px 0 5px;border-left:3px solid #ccc;background:#f8fafc;border-radius:3px}
-.wk-pill b{font-weight:700;color:var(--ink)}
-.wk-pill small{color:var(--muted)}
-.wk-pill.wk-up{background:#f0fdf4}.wk-pill.wk-up b{color:var(--ok)}
-.wk-pill.wk-down{background:#fef2f2}.wk-pill.wk-down b{color:var(--err)}
-.wk-pill.wk-flat{background:#f8fafc}.wk-pill.wk-flat b{color:var(--muted)}
 .wk-inner{margin-top:3px;border-top:1px solid var(--line);padding-top:2px}
 .wk-inner h4{font-size:9.5px;font-weight:800;margin-bottom:2px;color:var(--ink)}
 
@@ -1796,28 +1789,32 @@ function renderInsights(data){
     return `<div class="fb-row"><div class="fb-label"><span class="dot" style="background:${colors[i]}"></span><span class="nm">${esc(names[i])}</span></div><div class="fb-bar-wrap"><div class="fb-bar" style="background:${colors[i]};width:${wPct}%"></div></div><div class="fb-val"><b>${fmt(vals[i])}</b><small>${pct.toFixed(1)}%</small></div></div>`;
   }).join('');
 
-  // 本周涨粉总结（文字+数据，总结性；与右侧平台占比框平齐）
-  const grows=order.map(k=>({key:k,name:p[k]?.name||k,wg:weeklyGrowth(p[k]),color:p[k]?.color||'#999'}));
+  // 本周涨粉总结（总结性段落，非罗列；与右侧平台占比框平齐）
+  const grows=order.map(k=>({name:p[k]?.name||k,wg:weeklyGrowth(p[k])}));
   const valid=grows.filter(g=>g.wg).sort((a,b)=>b.wg.diff-a.wg.diff);
   const best=valid[0];
+  const second=valid[1];
   const weeklyTotal=valid.reduce((s,g)=>s+g.wg.diff,0);
-  const top2=valid.slice(0,2);
-  const top2share=weeklyTotal?Math.round(top2.reduce((s,g)=>s+g.wg.diff,0)/weeklyTotal*100):0;
   const bestShare=weeklyTotal?Math.round(best.wg.diff/weeklyTotal*100):0;
+  const secondShare=weeklyTotal&&second?Math.round(second.wg.diff/weeklyTotal*100):0;
+  const downers=valid.filter(g=>g.wg.diff<0).map(g=>g.name);
+  const steady=valid.slice(second?2:1).filter(g=>g.wg.diff>=0).map(g=>g.name);
 
-  // 各平台 mini-pill
-  const pills=grows.map(g=>{
-    if(!g.wg) return `<span class="wk-pill wk-flat">${esc(g.name)} <b>±0</b></span>`;
-    const cls=g.wg.diff>0?'wk-up':(g.wg.diff<0?'wk-down':'wk-flat');
-    const sign=g.wg.diff>0?'+':'';
-    return `<span class="wk-pill ${cls}" style="border-left-color:${g.color}">${esc(g.name)} <b>${sign}${fmt(g.wg.diff)}</b><small>${g.wg.pct.toFixed(1)}%</small></span>`;
-  }).join('');
+  const mainTxt = second
+    ? `${esc(best.name)} 净增 <b class="up">+${fmt(best.wg.diff)}</b> 领跑（占周增 ${bestShare}%），${esc(second.name)} 以 +${fmt(second.wg.diff)}（${secondShare}%）紧随`
+    : `${esc(best.name)} 净增 <b class="up">+${fmt(best.wg.diff)}</b> 为绝对增长主力（占周增 ${bestShare}%）`;
+  const tailTxt = [
+    steady.length?`${steady.join('、')} 平稳小涨`:'',
+    downers.length?`${downers.join('、')} 小幅回落`:''
+  ].filter(Boolean).join('；');
+  const trendTxt = downers.length
+    ? `增长结构略有分化，需关注回落平台`
+    : `增长结构集中、动能健康`;
 
   const summaryHtml=weeklyTotal>0?`
     <div class="wk-summary">
-      <div class="wk-lead"><span class="wk-crown">🏆</span><div>${esc(best.name)} 领跑 · 净增 <b class="up">+${fmt(best.wg.diff)}</b>（占 ${bestShare}%）</div></div>
-      <div class="wk-pills">${pills}</div>
-      <p>${top2.length>1?`${esc(top2[0].name)}+${esc(top2[1].name)} 占周增 ${top2share}%`:`${esc(best.name)} 绝对主力`}；其余稳步跟进。</p>
+      <div class="wk-lead"><span class="wk-crown">🏆</span><div>${esc(best.name)} 领跑 · <b class="up">+${fmt(best.wg.diff)}</b>（${bestShare}%）</div></div>
+      <p>${mainTxt}；${tailTxt}。全平台本周合计净增 <b>+${fmt(weeklyTotal)}</b>，${trendTxt}。</p>
     </div>`:`<div class="wk-summary"><p>本周各平台粉丝变化平稳，暂无显著增长。</p></div>`;
 
   // 上线目标进度（目标值存 localStorage，可改）
@@ -2557,6 +2554,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
