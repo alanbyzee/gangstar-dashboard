@@ -1618,20 +1618,14 @@ function drawChart(hist,color,events){
     }
     return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.8" fill="${color}" opacity=".75"/>`;
   }).join('');
-  // 每日数值标签：统一写在数据点【正上方】，绘制顺序在折线之后→绝不被线挡住
-  // 密集天数按最小间距贪心抽稀（始终保留最新一天；事件点已显示事件名故不重复标数值）
-  const MIN_GAP=22;
-  let lastLX=-999;
-  const valLabels=pts.map((p,i)=>{
-    const isEvt=!!evtMap[hist[i].date];
-    const isLast=(i===n-1);
-    if(isEvt) return '';
-    if(!isLast && (p.x-lastLX)<MIN_GAP) return '';
-    lastLX=p.x;
+  // 仅【最新一天】显示数值（写在数据点正上方，绘制顺序在折线之后→绝不被线挡住）；之前每天不标
+  const lastIdx=n-1;
+  const lastLabel=evtMap[hist[lastIdx].date]?'':(()=>{
+    const p=pts[lastIdx];
     let ty=p.y-7; if(ty<padT+1) ty=padT+1;
     const anchor=(p.x<padL+10)?'start':(p.x>W-padR-10)?'end':'middle';
-    return `<text x="${p.x.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${anchor}" font-size="8" fill="${color}" font-weight="700">${fmt(vals[i])}</text>`;
-  }).join('');
+    return `<text x="${p.x.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${anchor}" font-size="10" fill="${color}" font-weight="700">${fmt(vals[lastIdx])}</text>`;
+  })();
   // X轴标签（每隔几个显示一个）
   const xLabels=[];
   const step=Math.ceil(n/6);
@@ -1639,7 +1633,6 @@ function drawChart(hist,color,events){
   // Y轴标签
   const yTicks=[minV,minV+(maxV-minV)*0.5,maxV];
   const yLabels=yTicks.map(v=>`<text x="${padL-4}" y="${padT+(H-padT-padB)*(1-(v-minV)/span).toFixed(1)}" text-anchor="end" font-size="9" fill="#9ca3af">${Math.round(v)}</text>`).join('');
-  // 最新值已并入上方"每日数值标签"（valLabels 始终标注最后一天）
   // 网格线
   const gridLines=[0,.5,1].map(f=>`<line x1="${padL}" y1="${padT+(H-padT-padB)*(1-f)}" x2="${W-padR}" y2="${padT+(H-padT-padB)*(1-f)}" stroke="#e5e7eb" stroke-dasharray="3,3"/>`).join('');
   // 悬停：十字指示 + 透明命中区（命中区必须最后绘制，保证在最上层）
@@ -1656,7 +1649,7 @@ function drawChart(hist,color,events){
       <!-- 网格 -->${gridLines}
       <!-- 面积 --><path d="${areaD}" fill="${color}" opacity=".08"/>
       <!-- 线条 --><path d="${lineD}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
-      <!-- 点 -->${dotsCircs}${valLabels}
+      <!-- 点 -->${dotsCircs}${lastLabel}
       <!-- X轴 -->${xLabels.join('')}
       <!-- Y轴 -->${yLabels}
       <!-- 悬停 -->${hoverG}${hits}
@@ -2419,6 +2412,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
