@@ -1695,7 +1695,7 @@ function renderFans(data){
   document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
   const p=data.platforms;
   // 平台按粉丝数降序排列（统一顺序，概览/卡片/占比共用）
-  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   const totalAll=order.reduce((s,k)=>s+(p[k]?.value||0),0);
   const d=daysToLaunch();
   const totalWg=order.reduce((s,k)=>s+(weeklyGrowth(p[k])?.diff||0),0);
@@ -1713,7 +1713,7 @@ function renderFans(data){
   document.getElementById('summary').innerHTML=`
     <div class="ov-row-top">
       <div class="ov"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-      <div class="ov"><div class="k">社区总粉丝（5 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+      <div class="ov"><div class="k">社区总粉丝（${order.length} 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
     </div>
     <div class="ov-row-plats">
       ${order.map(k=>`<div class="ov-plat"><div class="op-name">${esc(p[k]?.name||k)}</div><div class="op-val">${fmt(p[k]?.value||0)}${wkTag(weeklyGrowth(p[k]),'本周')}</div></div>`).join('')}
@@ -1750,7 +1750,7 @@ function renderFans(data){
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
 function renderInsights(data){
   const p=data.platforms;
-  const order=['instagram','facebook','youtube','x','discord'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   const vals=order.map(k=>p[k]?.value||0);
   const names=order.map(k=>p[k]?.name||k);
   const colors=order.map(k=>p[k]?.color||'#999');
@@ -2368,9 +2368,40 @@ const FALLBACK_DATA = {
           "value": 2031
         }
       ]
+    },
+    "moj": {
+      "name": "Moj",
+      "handle": "@gangstarmiragecityindia",
+      "url": "https://mojapp.in/@gangstarmiragecityindia",
+      "value": 0,
+      "label": "粉丝",
+      "color": "#7C3AED",
+      "note": "待截图校准（平台位已接入，2026-08-15）",
+      "history": [
+        {
+          "date": "2026-08-15",
+          "value": 0
+        }
+      ]
+    },
+    "sharechat": {
+      "name": "ShareChat",
+      "handle": "@gangstarmiragecityindia",
+      "url": "https://sharechat.com/profile/gangstarmiragecityindia",
+      "value": 0,
+      "label": "粉丝",
+      "color": "#FF7A00",
+      "note": "待截图校准（平台位已接入，2026-08-15）",
+      "history": [
+        {
+          "date": "2026-08-15",
+          "value": 0
+        }
+      ]
     }
   }
 };
+
 
 
 
