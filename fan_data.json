@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 5683,
+      "value": 5711,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-15）；135帖子",
@@ -105,7 +105,7 @@
         },
         {
           "date": "2026-08-15",
-          "value": 5683
+          "value": 5711
         }
       ]
     },
@@ -407,7 +407,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 28,
+      "value": 29,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -475,6 +475,10 @@
         {
           "date": "2026-08-14",
           "value": 28
+        },
+        {
+          "date": "2026-08-15",
+          "value": 29
         }
       ]
     },
