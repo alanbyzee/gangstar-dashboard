@@ -335,16 +335,13 @@ body{
 .target-edit button:hover{box-shadow:0 3px 10px rgba(109,40,217,.25)}
 .target-edit button:active{transform:translateY(1px)}
 
-/* 本周涨粉总结（文字+数据，总结性） */
-.wk-summary{font-size:9.5px;line-height:1.15;color:var(--ink)}
+/* 本周涨粉总结（文字+数据，总结性段落） */
+.wk-summary{font-size:12px;line-height:1.3;color:var(--ink)}
 .wk-summary p{margin:0}
 .wk-summary b{font-weight:800}
 .wk-summary .up{color:var(--ok)}
-.wk-lead{display:inline-flex;gap:4px;align-items:center;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1px solid #bbf7d0;border-radius:5px;padding:1px 5px;margin-bottom:2px}
-.wk-lead .wk-crown{font-size:10px;line-height:1;flex:none}
-.wk-lead div{font-size:9.5px;line-height:1.1}
-.wk-inner{margin-top:3px;border-top:1px solid var(--line);padding-top:2px}
-.wk-inner h4{font-size:9.5px;font-weight:800;margin-bottom:2px;color:var(--ink)}
+.wk-inner{margin-top:4px;border-top:1px solid var(--line);padding-top:4px}
+.wk-inner h4{font-size:11.5px;font-weight:800;margin-bottom:3px;color:var(--ink)}
 
 /* 占比条形图（横向排序，替代环图） */
 .fb-total{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
@@ -1801,8 +1798,8 @@ function renderInsights(data){
   const steady=valid.slice(second?2:1).filter(g=>g.wg.diff>=0).map(g=>g.name);
 
   const mainTxt = second
-    ? `${esc(best.name)} 净增 <b class="up">+${fmt(best.wg.diff)}</b> 领跑（占周增 ${bestShare}%），${esc(second.name)} 以 +${fmt(second.wg.diff)}（${secondShare}%）紧随`
-    : `${esc(best.name)} 净增 <b class="up">+${fmt(best.wg.diff)}</b> 为绝对增长主力（占周增 ${bestShare}%）`;
+    ? `🏆 ${esc(best.name)} 净增 <b class="up">+${fmt(best.wg.diff)}</b>（占周增 ${bestShare}%）领跑，${esc(second.name)} 以 +${fmt(second.wg.diff)} 紧随`
+    : `🏆 ${esc(best.name)} 净增 <b class="up">+${fmt(best.wg.diff)}</b> 为绝对增长主力（占周增 ${bestShare}%）`;
   const tailTxt = [
     steady.length?`${steady.join('、')} 平稳小涨`:'',
     downers.length?`${downers.join('、')} 小幅回落`:''
@@ -1813,7 +1810,6 @@ function renderInsights(data){
 
   const summaryHtml=weeklyTotal>0?`
     <div class="wk-summary">
-      <div class="wk-lead"><span class="wk-crown">🏆</span><div>${esc(best.name)} 领跑 · <b class="up">+${fmt(best.wg.diff)}</b>（${bestShare}%）</div></div>
       <p>${mainTxt}；${tailTxt}。全平台本周合计净增 <b>+${fmt(weeklyTotal)}</b>，${trendTxt}。</p>
     </div>`:`<div class="wk-summary"><p>本周各平台粉丝变化平稳，暂无显著增长。</p></div>`;
 
@@ -2554,6 +2550,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
