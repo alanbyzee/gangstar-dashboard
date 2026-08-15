@@ -333,18 +333,19 @@ body{
 .target-edit button:hover{box-shadow:0 3px 10px rgba(109,40,217,.25)}
 .target-edit button:active{transform:translateY(1px)}
 
-/* 占比环图 */
-.donut-wrap{display:flex;align-items:center;gap:18px}
-.donut{position:relative;flex:none;width:120px;height:120px}
-.donut .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.donut .center .n{font-size:20px;font-weight:800}
-.donut .center .t{font-size:10px;color:var(--muted)}
-.legend{display:flex;flex-direction:column;gap:7px;font-size:12px;flex:1}
-.legend .row{display:flex;align-items:center;gap:7px}
-.legend .dot{width:10px;height:10px;border-radius:3px;flex:none}
-.legend .nm{font-weight:700;min-width:64px}
-.legend .pc2{color:var(--muted)}
-.legend .vl{margin-left:auto;font-weight:700}
+/* 占比条形图（横向排序，替代环图） */
+.fb-total{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
+.fb-total b{font-size:18px;color:var(--ink)}
+.fb-chart{display:flex;flex-direction:column;gap:8px}
+.fb-row{display:flex;align-items:center;gap:10px}
+.fb-label{display:flex;align-items:center;gap:6px;width:100px;flex:none;font-size:12.5px;font-weight:700}
+.fb-label .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.fb-label .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fb-bar-wrap{flex:1;height:22px;background:#f1f5f9;border-radius:11px;overflow:hidden;position:relative}
+.fb-bar{height:100%;border-radius:11px;transition:width .4s ease;min-width:2px}
+.fb-val{width:72px;flex:none;text-align:right;font-size:12px}
+.fb-val b{font-weight:800}
+.fb-val small{color:var(--muted);margin-left:3px}
 .badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
 
 /* 卡片动能行 */
@@ -1767,22 +1768,13 @@ function renderInsights(data){
   const colors=order.map(k=>p[k]?.color||'#999');
   const total=vals.reduce((a,b)=>a+b,0);
 
-  // 占比环图（SVG 描边分段）—— viewBox 留出余量，避免外缘被裁成平边
-  const R=52,C=2*Math.PI*R,CX=64,CY=64;
-  let off=0;
-  const segs=order.map((k,i)=>{
-    const frac=total?vals[i]/total:0;
-    const dash=frac*C;
-    const seg=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${colors[i]}" stroke-width="18" stroke-dasharray="${dash.toFixed(1)} ${(C-dash).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 ${CX} ${CY})"/>`;
-    off+=dash;
-    return seg;
+  // 占比条形图（横向排序，极端分布下远优于环图）
+  const maxV=Math.max(...vals,1);
+  const barRows=order.map((k,i)=>{
+    const pct=total?vals[i]/total*100:0;
+    const wPct=(vals[i]/maxV*100).toFixed(1);
+    return `<div class="fb-row"><div class="fb-label"><span class="dot" style="background:${colors[i]}"></span><span class="nm">${esc(names[i])}</span></div><div class="fb-bar-wrap"><div class="fb-bar" style="background:${colors[i]};width:${wPct}%"></div></div><div class="fb-val"><b>${fmt(vals[i])}</b><small>${pct.toFixed(1)}%</small></div></div>`;
   }).join('');
-  const donut=`<svg width="120" height="120" viewBox="0 0 128 128">${segs}</svg>`;
-  const legendRows=order.map((k,i)=>`
-    <div class="row"><span class="dot" style="background:${colors[i]}"></span>
-      <span class="nm">${esc(names[i])}</span>
-      <span class="pc2">${(total?vals[i]/total*100:0).toFixed(1)}%</span>
-      <span class="vl">${fmt(vals[i])}</span></div>`).join('');
 
   // 本周最佳渠道（按周绝对增量，避免小基数百分比误导）
   const grows=order.map(k=>({name:p[k]?.name||k,wg:weeklyGrowth(p[k])}));
@@ -1809,10 +1801,8 @@ function renderInsights(data){
     </div>
     <div class="panel">
       <h3><span class="em">🥧</span> 平台粉丝占比</h3>
-      <div class="donut-wrap">
-        <div class="donut">${donut}<div class="center"><div class="n">${fmt(total)}</div><div class="t">总粉丝</div></div></div>
-        <div class="legend">${legendRows}</div>
-      </div>
+      <div class="fb-total"><b>${fmt(total)}</b> 总粉丝 · ${order.length} 个平台</div>
+      <div class="fb-chart">${barRows}</div>
       ${best?`<div style="margin-top:14px;text-align:center"><span class="badge">🏆 本周最佳 · ${esc(best.name)}（周 +${fmt(best.wg.diff)}）</span></div>`:''}
     </div>`;
 
@@ -2524,6 +2514,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
