@@ -1838,7 +1838,6 @@ function renderInsights(data){
         <div class="mission-cell"><span>日均需</span><b class="v-ok">+${needDaily.toFixed(0)}</b><span> / ${dl}天</span></div>
       </div>
       <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
-      ${summaryHtml?`<div class="wk-summary">${summaryHtml}</div>`:''}
     </div>
     <div class="panel">
       <h3><span class="em">🥧</span> 平台粉丝占比</h3>
@@ -2561,6 +2560,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
