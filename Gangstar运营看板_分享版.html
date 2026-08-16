@@ -340,8 +340,7 @@ body{
 .wk-summary p{margin:0}
 .wk-summary b{font-weight:800}
 .wk-summary .up{color:var(--ok)}
-.wk-inner{margin-top:0;border-top:1px solid var(--line);padding-top:4px}
-.wk-inner h4{font-size:13.5px;font-weight:800;margin-bottom:4px;color:var(--ink)}
+.wk-inner{margin:0;padding:0;border:none;border-left:3px solid var(--brand2);border-radius:4px;background:#fafbff}
 
 /* 占比条形图（横向排序，替代环图） */
 .fb-total{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
@@ -1829,7 +1828,7 @@ function renderInsights(data){
       <div class="meta"><span>社区总粉丝 <b>${fmt(total)}</b></span><span>目标 <b>${fmt(target)}</b></span></div>
       <div class="meta"><span>完成度 <b>${prog.toFixed(1)}%</b></span><span>日均需 +<b>${needDaily.toFixed(0)}</b> 连 ${dl} 天</span></div>
       <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
-      ${summaryHtml?`<div class="wk-inner"><h4>📈 本周涨粉总结</h4>${summaryHtml}</div>`:''}
+      ${summaryHtml?`<div class="wk-inner">${summaryHtml}</div>`:''}
     </div>
     <div class="panel">
       <h3><span class="em">🥧</span> 平台粉丝占比</h3>
@@ -2549,6 +2548,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
