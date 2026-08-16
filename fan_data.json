@@ -6,10 +6,10 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 5848,
+      "value": 5905,
       "label": "粉丝",
       "color": "#E1306C",
-      "note": "数据来源：用户截图校准（2026-08-15）；135帖子",
+      "note": "数据来源：用户截图校准（2026-08-16）；144帖子",
       "history": [
         {
           "date": "2026-07-02",
@@ -109,7 +109,7 @@
         },
         {
           "date": "2026-08-16",
-          "value": 5848
+          "value": 5905
         }
       ]
     },
@@ -232,10 +232,10 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 11010,
+      "value": 12175,
       "label": "订阅者",
       "color": "#FF0000",
-      "note": "数据来源：用户截图校准（2026-08-15，YT Studio）；过去28天+10,851人，77.7万观看",
+      "note": "数据来源：用户截图校准（2026-08-16，YT Studio）；当前订阅人数 12,175",
       "history": [
         {
           "date": "2026-07-02",
@@ -408,6 +408,10 @@
         {
           "date": "2026-08-15",
           "value": 11010
+        },
+        {
+          "date": "2026-08-16",
+          "value": 12175
         }
       ]
     },
