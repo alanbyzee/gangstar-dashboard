@@ -3035,6 +3035,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4992,6 +4993,111 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 var FEEDBACK_DATA={
   "weeks": [
     {
+      "week": "8.17 - 8.23",
+      "attitude": "期待期 · 健康",
+      "summary": "本阶段社区舆情正式进入**“上线怎么玩、上线后怎么参与”的期待期**。回收约286条官号后台+玩家社区代表性评论，**整体非负反馈约85%，口碑保持健康**。玩家关注点已从“什么时候上线、游戏好不好玩”，明显上移到**上线后实际体验、设备适配、多人玩法与Creator/UGC生态参与**。\n\n核心判断：期待本身已不是风险，**真正的命门是“上线前信息真空”**——玩家最想确认的（下载渠道、最低/推荐配置、联机稳定、Creator Hub怎么进）若上线前没人接，这份高期待会迅速转成“上线即踩坑”的负面。明确动作：上线前最后阶段只打三件事——**实机内录+FAQ把设备/下载/多人问题焊死**，**Meme+创作者内容放大参与入口**，**把讨论导流进Creator Hub，让等待期变成内容生产期**。",
+      "dims": {
+        "attitude": {
+          "label": "积极 · 期待期",
+          "detail": "回收约286条官号后台+社区代表评论，整体非负约85%，口碑保持健康"
+        },
+        "comprehension": {
+          "label": "关注上移 · 从上线到体验",
+          "detail": "玩家从“什么时候上线/好不好玩”延伸到上线后实际体验、设备适配、多人玩法与UGC参与"
+        },
+        "reputation": {
+          "label": "风评健康",
+          "detail": "存在少数集中负面：上线延期不耐、Creator Hub 付款/奖励发放最受关注；整体仍属期待型抱怨，非产品否定"
+        },
+        "engagement": {
+          "label": "UGC活跃走高",
+          "detail": "Creator Hub注册/Early Access/Moderator招募受关注，玩家主动制GST内容、参与活动，UGC意愿持续提升"
+        }
+      },
+      "official": [
+        {
+          "theme": "上线前信息扫盲+核心玩法强化+UGC承接（实机内录/Meme/FAQ）",
+          "count": 130,
+          "type": "good",
+          "orig": "Pre-launch plan: info-clarification + core gameplay reinforcement + UGC handoff via gameplay captures, memes, FAQs answering device/download/multiplayer/Creator Hub questions."
+        },
+        {
+          "theme": "放大Creator/Moderator/社区活动参与入口，把期待接成首日下载与共创",
+          "count": 90,
+          "type": "good",
+          "orig": "Amplify entry points for Creator, Moderator and community events to convert anticipation into Day-1 download, content creation and participation."
+        },
+        {
+          "theme": "专人Mod+供应商实时监 Discord/社群（产品体验/下载设备/Creator/负面）",
+          "count": 66,
+          "type": "sug",
+          "orig": "Dedicated Mod + vendor coverage for real-time Discord/community monitoring; focus on product experience, download/device issues, Creator ecosystem, negative sentiment, ensure closed-loop."
+        }
+      ],
+      "community": [
+        {
+          "theme": "上线体验预期：下载渠道/Android·Play Store/支持地区/最低配置/联机稳定",
+          "count": 95,
+          "type": "sug",
+          "orig": "Pre-launch questions on official download channels, Android/Play Store, supported regions/platforms, min & recommended device specs, multiplayer stability & overall performance."
+        },
+        {
+          "theme": "核心产品体验：角色跑动动画/画质/多人联机流畅沉浸",
+          "count": 70,
+          "type": "sug",
+          "orig": "Shift from 'can it run' to 'is it smooth & immersive after launch' — character movement/run animation, graphics, co-op experience."
+        },
+        {
+          "theme": "社区与UGC参与：Creator Hub注册审核/Early Access/任务奖励/Moderator招募",
+          "count": 75,
+          "type": "good",
+          "orig": "Strong interest in Creator Hub registration & review, Early Access, creator tasks/rewards, Moderator recruitment; players proactively make GST content; UGC willingness rising."
+        },
+        {
+          "theme": "社区运营机制：Discord响应/Mod机制/Creator奖励/India-Global区分+Hindi支持",
+          "count": 46,
+          "type": "sug",
+          "orig": "Community ops concerns: Discord response efficiency, Mod role mechanics, Creator reward payout, India/Global community split & Hindi support."
+        },
+        {
+          "theme": "宣发了这么久还不上线，到底什么时候能玩",
+          "count": 26,
+          "type": "bad",
+          "orig": "Advertised for so long, when is it actually launching?"
+        },
+        {
+          "theme": "Creator Hub 奖励/付款迟迟不到账，说好的收益呢",
+          "count": 18,
+          "type": "bad",
+          "orig": "Creator Hub rewards/payments still not received, where are the promised earnings?"
+        },
+        {
+          "theme": "最低配置会不会砍画质，低端机怕变 PPT",
+          "count": 15,
+          "type": "bad",
+          "orig": "Will minimum specs cut graphics; low-end phones worried about becoming slideshow"
+        },
+        {
+          "theme": "Discord 官方回消息太慢，问题没人接",
+          "count": 13,
+          "type": "bad",
+          "orig": "Discord official replies too slow, questions unanswered"
+        },
+        {
+          "theme": "预告画质和实机有落差，别又是个饼",
+          "count": 12,
+          "type": "bad",
+          "orig": "Preview graphics don't match gameplay, hope it's not another empty promise"
+        }
+      ],
+      "officialSummary": "官号侧本周进入“上线前总动员”：信息扫盲+玩法强化+UGC承接三线并发，实机内录/Meme/FAQ集中回应设备、下载、多人、Creator Hub 四类高频疑问；同步放大 Creator/Moderator 与社区活动入口，把玩家“期待”接成上线首日下载与内容共创。",
+      "officialPlatforms": [],
+      "communitySummary": "社群侧玩家关注点明显上移：从“何时上线/好不好玩”转向“上线后怎么玩、设备能不能跑、多人稳不稳、Creator Hub 怎么进”。UGC 意愿持续走高，主动制 GST 内容、盯 Creator Hub 与 Moderator 招募；最该接住的信号是“信息真空”——高频疑问若上线前不清，期待易转负面。",
+      "communityPlatforms": [],
+      "trend": "走向：期待期势能仍在冲高，但命门在“确定性”。8.20 前只做三件能锁住势能的事——① 实机内录+FAQ 把设备/下载/多人问题焊死；② Meme+创作者内容放大参与入口；③ 讨论导流进 Creator Hub，让等待期变内容生产期。专人 Mod+供应商已就位做上线前后实时监控闭环。",
+      "invalid": "已过滤重复催更、无内容复读、引战短贴、虚假链接与无效噪音。"
+    },
+    {
       "week": "8.3 - 8.9",
       "attitude": "正面上升",
       "summary": "本阶段《Gangstar: Mirage City》社区生态整体进入**高期待、高互动、低负面反馈**的发展阶段。随着**2500万预注册里程碑达成**以及**8月20日上线节点临近**，玩家讨论重心已从“是否值得体验”转向**“期待正式进入游戏”**，社区情绪核心由产品认可转变为**上线等待**。当前玩家认可主要集中在三大方向：首先，**移动端开放世界体验突破预期**，**5GB包体控制、低端设备适配以及流畅表现**成为核心口碑资产，有效降低了印度市场用户对大型开放世界游戏的进入门槛；其次，**角色/车辆自定义、车辆损毁、保险理赔**等高拟真细节，以及**PvP、街头竞速、组队玩法**等多人体验，强化了玩家对**“创造个人故事”**的期待；此外，官方社区通过**Meme内容、创作者联动和高互动运营方式**，进一步建立了亲近、年轻化的品牌形象。\n\n从用户需求来看，社区已经开始从**“体验游戏”向“参与生态”转变**。大量玩家主动表达对**RP体系、职业组织、社区身份成长以及Creator Hub参与机制**的兴趣，体现出开放世界游戏长期运营潜力。同时，部分关于操控、动画、音效等细节优化的反馈，更多反映了玩家已将产品按照**高品质开放世界标准**期待，**而非核心体验不满**。后续社区运营将重点围绕**稳定上线前期待、降低用户等待焦虑、强化Creator Hub参与入口、维护评论区健康生态**展开，通过持续的信息释放和玩家共创机制，将当前高热度预期进一步转化为**上线首日下载、社区活跃及长期UGC生态**。",
@@ -5310,81 +5416,6 @@ var FEEDBACK_DATA={
       "communitySummary": "社群侧玩家已经'玩进去了'：低端机 5GB 能跑、载具损坏/保险/多人联机被点名夸，'移动端 GTA'心智立住了。最值得警惕的信号是——诉求从'能不能玩'跳到了'够不够深'（组织/职业 RP、生活社交、地图扩展），说明他们已经当'长期可玩'在看。别浪费这股高活跃，赶紧把讨论导流进 Creator Hub，让等待期变成内容生产期。",
       "communityPlatforms": [],
       "trend": "态度走向：继续冲高，但势能的命门在'确定性'。8.20 前只做三件事就能把期待拉满——① 把上线日焊死、做成倒计时天天复读；② 预告组织/职业 RP 系统接住深度诉求，锚定'上线即有大世界'；③ 把高活跃讨论导进 Creator Hub，让等待变成共创。这是全周期最好的一段势能，别耗在信息真空里。",
-      "invalid": "已过滤重复催更、无内容复读、引战短贴、虚假链接与无效噪音。"
-    },
-    {
-      "week": "8.17 - 8.23",
-      "attitude": "期待期 · 健康",
-      "summary": "本阶段社区舆情正式进入**“上线怎么玩、上线后怎么参与”的期待期**。回收约286条官号后台+玩家社区代表性评论，**整体非负反馈约85%，口碑保持健康**。玩家关注点已从“什么时候上线、游戏好不好玩”，明显上移到**上线后实际体验、设备适配、多人玩法与Creator/UGC生态参与**。\n\n核心判断：期待本身已不是风险，**真正的命门是“上线前信息真空”**——玩家最想确认的（下载渠道、最低/推荐配置、联机稳定、Creator Hub怎么进）若上线前没人接，这份高期待会迅速转成“上线即踩坑”的负面。明确动作：上线前最后阶段只打三件事——**实机内录+FAQ把设备/下载/多人问题焊死**，**Meme+创作者内容放大参与入口**，**把讨论导流进Creator Hub，让等待期变成内容生产期**。",
-      "dims": {
-        "attitude": {
-          "label": "积极 · 期待期",
-          "detail": "回收约286条官号后台+社区代表评论，整体非负约85%，口碑保持健康"
-        },
-        "comprehension": {
-          "label": "关注上移 · 从上线到体验",
-          "detail": "玩家从“什么时候上线/好不好玩”延伸到上线后实际体验、设备适配、多人玩法与UGC参与"
-        },
-        "reputation": {
-          "label": "风评健康",
-          "detail": "社区整体口碑健康，无集中负面；少量负面多为信息不清型疑问而非产品否定"
-        },
-        "engagement": {
-          "label": "UGC活跃走高",
-          "detail": "Creator Hub注册/Early Access/Moderator招募受关注，玩家主动制GST内容、参与活动，UGC意愿持续提升"
-        }
-      },
-      "official": [
-        {
-          "theme": "上线前信息扫盲+核心玩法强化+UGC承接（实机内录/Meme/FAQ）",
-          "count": 130,
-          "type": "good",
-          "orig": "Pre-launch plan: info-clarification + core gameplay reinforcement + UGC handoff via gameplay captures, memes, FAQs answering device/download/multiplayer/Creator Hub questions."
-        },
-        {
-          "theme": "放大Creator/Moderator/社区活动参与入口，把期待接成首日下载与共创",
-          "count": 90,
-          "type": "good",
-          "orig": "Amplify entry points for Creator, Moderator and community events to convert anticipation into Day-1 download, content creation and participation."
-        },
-        {
-          "theme": "专人Mod+供应商实时监 Discord/社群（产品体验/下载设备/Creator/负面）",
-          "count": 66,
-          "type": "sug",
-          "orig": "Dedicated Mod + vendor coverage for real-time Discord/community monitoring; focus on product experience, download/device issues, Creator ecosystem, negative sentiment, ensure closed-loop."
-        }
-      ],
-      "community": [
-        {
-          "theme": "上线体验预期：下载渠道/Android·Play Store/支持地区/最低配置/联机稳定",
-          "count": 95,
-          "type": "sug",
-          "orig": "Pre-launch questions on official download channels, Android/Play Store, supported regions/platforms, min & recommended device specs, multiplayer stability & overall performance."
-        },
-        {
-          "theme": "核心产品体验：角色跑动动画/画质/多人联机流畅沉浸",
-          "count": 70,
-          "type": "sug",
-          "orig": "Shift from 'can it run' to 'is it smooth & immersive after launch' — character movement/run animation, graphics, co-op experience."
-        },
-        {
-          "theme": "社区与UGC参与：Creator Hub注册审核/Early Access/任务奖励/Moderator招募",
-          "count": 75,
-          "type": "good",
-          "orig": "Strong interest in Creator Hub registration & review, Early Access, creator tasks/rewards, Moderator recruitment; players proactively make GST content; UGC willingness rising."
-        },
-        {
-          "theme": "社区运营机制：Discord响应/Mod机制/Creator奖励/India-Global区分+Hindi支持",
-          "count": 46,
-          "type": "sug",
-          "orig": "Community ops concerns: Discord response efficiency, Mod role mechanics, Creator reward payout, India/Global community split & Hindi support."
-        }
-      ],
-      "officialSummary": "官号侧本周进入“上线前总动员”：信息扫盲+玩法强化+UGC承接三线并发，实机内录/Meme/FAQ集中回应设备、下载、多人、Creator Hub 四类高频疑问；同步放大 Creator/Moderator 与社区活动入口，把玩家“期待”接成上线首日下载与内容共创。",
-      "officialPlatforms": [],
-      "communitySummary": "社群侧玩家关注点明显上移：从“何时上线/好不好玩”转向“上线后怎么玩、设备能不能跑、多人稳不稳、Creator Hub 怎么进”。UGC 意愿持续走高，主动制 GST 内容、盯 Creator Hub 与 Moderator 招募；最该接住的信号是“信息真空”——高频疑问若上线前不清，期待易转负面。",
-      "communityPlatforms": [],
-      "trend": "走向：期待期势能仍在冲高，但命门在“确定性”。8.20 前只做三件能锁住势能的事——① 实机内录+FAQ 把设备/下载/多人问题焊死；② Meme+创作者内容放大参与入口；③ 讨论导流进 Creator Hub，让等待期变内容生产期。专人 Mod+供应商已就位做上线前后实时监控闭环。",
       "invalid": "已过滤重复催更、无内容复读、引战短贴、虚假链接与无效噪音。"
     }
   ]
