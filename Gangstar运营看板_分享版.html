@@ -706,6 +706,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
     <div class="tab active" data-view="sa">📅 南亚社群排期</div>
     <div class="tab" data-view="fan">📊 粉丝监控</div>
     <div class="tab" data-view="feedback">💬 玩家反馈</div>
+    <div class="tab" data-view="drama">🎬 短剧排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
     <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
   </div>
@@ -746,6 +747,9 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   <div class="view scroll" id="view-feedback">
     <div class="feedback" id="feedbackView"></div>
   </div>
+  <div class="view scroll" id="view-drama">
+    <div class="drama" id="dramaView"></div>
+  </div>
 </div>
 
 <!-- Toast 通知 -->
@@ -755,6 +759,129 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
 <script>
 // HQ 公线排期数据（提取自 HQ排期日历.html，供南亚社群排期合并视图使用）
+window.SHORTDRAMA_DATA = [
+  {
+    "date": "2026-08-17",
+    "type": "trailer",
+    "cn": "预告片（15–30秒）：须包含游戏上线日期",
+    "en": "Trailer (15–30 sec): Should Include Go live date and"
+  },
+  {
+    "date": "2026-08-17",
+    "type": "visual",
+    "cn": "角色视觉海报：展示全员阵容",
+    "en": "Show Visual - showing entire cast"
+  },
+  {
+    "date": "2026-08-18",
+    "type": "bts",
+    "cn": "幕后花絮（30–40秒）：认识主创阵容，附上线倒计时尾板（剧名·还剩2天·观看平台）",
+    "en": "BTS - Meet the faces with End slate for launch. End slate with show name, 2 days to go, Watch on. platform names"
+  },
+  {
+    "date": "2026-08-19",
+    "type": "bts",
+    "cn": "幕后花絮2（30–40秒）：认识主创阵容，附上线倒计时尾板（剧名·还剩2天·观看平台）",
+    "en": "BTS2 - Meet the faces with End slate for launch. End slate with show name, 2 days to go, Watch on. platform names"
+  },
+  {
+    "date": "2026-08-20",
+    "type": "supercut",
+    "cn": "高光混剪（60–90秒）：含剧名尾板·正在热播·平台信息",
+    "en": "Supercut (60–90 sec)\nShould include end slate with show name, Live Now, and platform details"
+  },
+  {
+    "date": "2026-08-21",
+    "type": "promo",
+    "cn": "宣传片：Ujwal × 导演（30秒），含剧名尾板·正在热播·平台信息",
+    "en": "Promo- Ujwal x Director (30 sec) + Should include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-22",
+    "type": "bts",
+    "cn": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
+    "en": "BTS (30–40 sec): \n\nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-23",
+    "type": "bts",
+    "cn": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
+    "en": "BTS (30–40 sec): \n\nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-24",
+    "type": "gap",
+    "cn": "暂无排期",
+    "en": ""
+  },
+  {
+    "date": "2026-08-25",
+    "type": "bts",
+    "cn": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
+    "en": "BTS (30–40 sec): \n\nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-26",
+    "type": "gap",
+    "cn": "暂无排期",
+    "en": ""
+  },
+  {
+    "date": "2026-08-27",
+    "type": "gap",
+    "cn": "暂无排期",
+    "en": ""
+  },
+  {
+    "date": "2026-08-28",
+    "type": "edit",
+    "cn": "短视频剪辑1（15–30秒）：含剧名尾板·正在热播·平台信息",
+    "en": "Short Edit 1 (15–30 sec)\nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-29",
+    "type": "bts",
+    "cn": "幕后花絮（30–40秒）：TG最爱的名场面，含剧名尾板·正在热播·平台信息",
+    "en": "BTS (30–40 sec): TG's Fav Moments \nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-30",
+    "type": "edit",
+    "cn": "短视频剪辑2（15–30秒）：含剧名尾板·正在热播·平台信息",
+    "en": "Short Edit 2 (15–30 sec)\nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-08-31",
+    "type": "gap",
+    "cn": "暂无排期",
+    "en": ""
+  },
+  {
+    "date": "2026-09-01",
+    "type": "gap",
+    "cn": "暂无排期",
+    "en": ""
+  },
+  {
+    "date": "2026-09-02",
+    "type": "bts",
+    "cn": "幕后花絮（30–40秒）：他的一天，含剧名尾板·正在热播·平台信息",
+    "en": "BTS (30–40 sec): A day in his Life \nShould include end slate with show name, Live Now , and platform details"
+  },
+  {
+    "date": "2026-09-03",
+    "type": "gap",
+    "cn": "暂无排期",
+    "en": ""
+  },
+  {
+    "date": "2026-09-04",
+    "type": "edit",
+    "cn": "短视频剪辑3（15–30秒）：含剧名尾板·正在热播·平台信息",
+    "en": "Short Edit 3 (15–30 sec) Should include end slate with show name, Live Now , and platform details"
+  }
+];
+
 window.HQ_DATA = {
   "launch": "2026-08-20",
   "august": [
@@ -1771,7 +1898,7 @@ window.HQ_DATA = {
 <script>
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
-const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional')};
+const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional'),drama:document.getElementById('view-drama')};
 function activateTab(v){
   const t=[...tabs].find(x=>x.dataset.view===v);
   if(!t||t.style.display==='none') return; // 跳过被隐藏的 tab（如区域素材）
@@ -1784,6 +1911,7 @@ function activateTab(v){
   if(v==='feedback') renderFeedback();
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
+  if(v==='drama') renderDrama();
 }
 tabs.forEach(t=>t.onclick=()=>activateTab(t.dataset.view));
 // 刷新后停留在上次所在的看板（而非重置到第一个）
@@ -2837,6 +2965,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -5670,6 +5799,57 @@ function hideChTip(){chTip.style.display='none';var gs=document.querySelectorAll
 document.addEventListener('mouseover',function(e){if(isChHit(e.target))showChTip(e.target,e);});
 document.addEventListener('mousemove',function(e){if(chTip.style.display==='block'&&isChHit(e.target))moveChTip(e);});
 document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});
+
+function renderDrama(){
+  const root=document.getElementById('dramaView');
+  if(!root) return;
+  const data=window.SHORTDRAMA_DATA||[];
+  const map={};
+  data.forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it); });
+  const dates=Object.keys(map).sort();
+  const today=todayStr();
+  const typeStyle={
+    trailer:{c:'#6d28d9',bg:'#f2eeff',label:'预告片'},
+    visual:{c:'#2563eb',bg:'#eaf1ff',label:'角色视觉'},
+    bts:{c:'#0ea5e9',bg:'#e6f7fe',label:'幕后花絮'},
+    supercut:{c:'#db2777',bg:'#fdeaf4',label:'高光混剪'},
+    promo:{c:'#d97706',bg:'#fdf2e3',label:'宣传片'},
+    edit:{c:'#059669',bg:'#e7f7f0',label:'短视频剪辑'},
+    gap:{c:'#94a3b8',bg:'#f1f5f9',label:'空档'}
+  };
+  let h='<div style="padding:18px 4px 10px">';
+  h+='<h2 style="font-size:20px;margin:0 0 4px">🎬 短剧内容排期</h2>';
+  h+='<div style="color:var(--muted);font-size:13px;margin-bottom:16px">上线倒计时物料日历 · 共 '+data.length+' 条 · 翻译自 HQ《短剧内容排期.xlsx》</div>';
+  dates.forEach((d,idx)=>{
+    const items=map[d];
+    const passed=d<today, isToday=d===today;
+    const tag=isToday?'今天':(passed?'已发布':'待发布');
+    const dotColor=passed?'#d3d8e3':(isToday?'var(--brand)':'#c4b5fd');
+    const dotGlow=isToday?'0 0 0 4px rgba(109,40,217,.15)':'0 0 0 0 rgba(0,0,0,0)';
+    const last=idx===dates.length-1;
+    h+='<div style="display:flex;gap:14px;align-items:stretch;margin:0 0 10px">';
+    h+='<div style="flex:0 0 88px;text-align:right;padding-top:11px">';
+    h+='<div style="font-weight:800;font-size:14px;color:'+(passed?'var(--muted)':(isToday?'var(--brand)':'var(--ink)'))+'">'+d.slice(5)+'</div>';
+    h+='<div style="font-size:11px;font-weight:700;margin-top:3px;color:'+(passed?'var(--muted)':'var(--brand)')+'">'+tag+'</div>';
+    h+='</div>';
+    h+='<div style="flex:0 0 16px;display:flex;flex-direction:column;align-items:center;align-self:stretch;padding-top:13px">';
+    h+='<div style="width:11px;height:11px;border-radius:50%;background:'+dotColor+';box-shadow:'+dotGlow+'"></div>';
+    if(!last) h+='<div style="flex:1;width:2px;background:var(--line);margin-top:5px"></div>';
+    h+='</div>';
+    h+='<div style="flex:1 1 auto;display:flex;flex-direction:column;gap:8px;padding-bottom:2px">';
+    items.forEach(it=>{
+      const ts=typeStyle[it.type]||typeStyle.gap;
+      h+='<div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow-sm);'+(passed?'opacity:.7':'')+'">';
+      h+='<span style="display:inline-block;font-size:11px;font-weight:800;color:'+ts.c+';background:'+ts.bg+';padding:2px 9px;border-radius:999px;margin-bottom:6px">'+ts.label+'</span>';
+      h+='<div style="font-size:14px;line-height:1.55;color:var(--ink)">'+esc(it.cn)+'</div>';
+      if(it.en) h+='<div style="font-size:11px;color:var(--muted);margin-top:5px">EN：'+esc(it.en)+'</div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+  });
+  h+='</div>';
+  root.innerHTML=h;
+}
 
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
