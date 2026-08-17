@@ -120,7 +120,7 @@
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 227,
+      "value": 228,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -231,7 +231,7 @@
         },
         {
           "date": "2026-08-17",
-          "value": 227
+          "value": 228
         }
       ],
       "name": "Facebook"
@@ -506,6 +506,10 @@
         },
         {
           "date": "2026-08-16",
+          "value": 29
+        },
+        {
+          "date": "2026-08-17",
           "value": 29
         }
       ]
