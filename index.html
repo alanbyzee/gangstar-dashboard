@@ -706,7 +706,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
     <div class="tab active" data-view="sa">📅 南亚社群排期</div>
     <div class="tab" data-view="fan">📊 粉丝监控</div>
     <div class="tab" data-view="feedback">💬 玩家反馈</div>
-    <div class="tab" data-view="drama">🎬 短剧排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
     <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
   </div>
@@ -747,9 +746,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   <div class="view scroll" id="view-feedback">
     <div class="feedback" id="feedbackView"></div>
   </div>
-  <div class="view scroll" id="view-drama">
-    <div class="drama" id="dramaView"></div>
-  </div>
 </div>
 
 <!-- Toast 通知 -->
@@ -759,129 +755,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
 <script>
 // HQ 公线排期数据（提取自 HQ排期日历.html，供南亚社群排期合并视图使用）
-window.SHORTDRAMA_DATA = [
-  {
-    "date": "2026-08-17",
-    "type": "trailer",
-    "cn": "预告片（15–30秒）：须包含游戏上线日期",
-    "en": "Trailer (15–30 sec): Should Include Go live date and"
-  },
-  {
-    "date": "2026-08-17",
-    "type": "visual",
-    "cn": "角色视觉海报：展示全员阵容",
-    "en": "Show Visual - showing entire cast"
-  },
-  {
-    "date": "2026-08-18",
-    "type": "bts",
-    "cn": "幕后花絮（30–40秒）：认识主创阵容，附上线倒计时尾板（剧名·还剩2天·观看平台）",
-    "en": "BTS - Meet the faces with End slate for launch. End slate with show name, 2 days to go, Watch on. platform names"
-  },
-  {
-    "date": "2026-08-19",
-    "type": "bts",
-    "cn": "幕后花絮2（30–40秒）：认识主创阵容，附上线倒计时尾板（剧名·还剩2天·观看平台）",
-    "en": "BTS2 - Meet the faces with End slate for launch. End slate with show name, 2 days to go, Watch on. platform names"
-  },
-  {
-    "date": "2026-08-20",
-    "type": "supercut",
-    "cn": "高光混剪（60–90秒）：含剧名尾板·正在热播·平台信息",
-    "en": "Supercut (60–90 sec)\nShould include end slate with show name, Live Now, and platform details"
-  },
-  {
-    "date": "2026-08-21",
-    "type": "promo",
-    "cn": "宣传片：Ujwal × 导演（30秒），含剧名尾板·正在热播·平台信息",
-    "en": "Promo- Ujwal x Director (30 sec) + Should include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-22",
-    "type": "bts",
-    "cn": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
-    "en": "BTS (30–40 sec): \n\nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-23",
-    "type": "bts",
-    "cn": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
-    "en": "BTS (30–40 sec): \n\nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-24",
-    "type": "gap",
-    "cn": "暂无排期",
-    "en": ""
-  },
-  {
-    "date": "2026-08-25",
-    "type": "bts",
-    "cn": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
-    "en": "BTS (30–40 sec): \n\nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-26",
-    "type": "gap",
-    "cn": "暂无排期",
-    "en": ""
-  },
-  {
-    "date": "2026-08-27",
-    "type": "gap",
-    "cn": "暂无排期",
-    "en": ""
-  },
-  {
-    "date": "2026-08-28",
-    "type": "edit",
-    "cn": "短视频剪辑1（15–30秒）：含剧名尾板·正在热播·平台信息",
-    "en": "Short Edit 1 (15–30 sec)\nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-29",
-    "type": "bts",
-    "cn": "幕后花絮（30–40秒）：TG最爱的名场面，含剧名尾板·正在热播·平台信息",
-    "en": "BTS (30–40 sec): TG's Fav Moments \nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-30",
-    "type": "edit",
-    "cn": "短视频剪辑2（15–30秒）：含剧名尾板·正在热播·平台信息",
-    "en": "Short Edit 2 (15–30 sec)\nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-08-31",
-    "type": "gap",
-    "cn": "暂无排期",
-    "en": ""
-  },
-  {
-    "date": "2026-09-01",
-    "type": "gap",
-    "cn": "暂无排期",
-    "en": ""
-  },
-  {
-    "date": "2026-09-02",
-    "type": "bts",
-    "cn": "幕后花絮（30–40秒）：他的一天，含剧名尾板·正在热播·平台信息",
-    "en": "BTS (30–40 sec): A day in his Life \nShould include end slate with show name, Live Now , and platform details"
-  },
-  {
-    "date": "2026-09-03",
-    "type": "gap",
-    "cn": "暂无排期",
-    "en": ""
-  },
-  {
-    "date": "2026-09-04",
-    "type": "edit",
-    "cn": "短视频剪辑3（15–30秒）：含剧名尾板·正在热播·平台信息",
-    "en": "Short Edit 3 (15–30 sec) Should include end slate with show name, Live Now , and platform details"
-  }
-];
-
 window.HQ_DATA = {
   "launch": "2026-08-20",
   "august": [
@@ -1898,7 +1771,7 @@ window.HQ_DATA = {
 <script>
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
-const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional'),drama:document.getElementById('view-drama')};
+const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional')};
 function activateTab(v){
   const t=[...tabs].find(x=>x.dataset.view===v);
   if(!t||t.style.display==='none') return; // 跳过被隐藏的 tab（如区域素材）
@@ -1911,7 +1784,6 @@ function activateTab(v){
   if(v==='feedback') renderFeedback();
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
-  if(v==='drama') renderDrama();
 }
 tabs.forEach(t=>t.onclick=()=>activateTab(t.dataset.view));
 // 刷新后停留在上次所在的看板（而非重置到第一个）
@@ -2230,7 +2102,7 @@ const FALLBACK_DATA = {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 5988,
+      "value": 6135,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -2337,14 +2209,14 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-17",
-          "value": 5988
+          "value": 6135
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 228,
+      "value": 229,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -2455,7 +2327,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-17",
-          "value": 228
+          "value": 229
         }
       ],
       "name": "Facebook"
@@ -2655,7 +2527,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 29,
+      "value": 30,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -2734,7 +2606,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-17",
-          "value": 29
+          "value": 30
         }
       ]
     },
@@ -2965,6 +2837,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -4483,6 +4356,20 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "1条“我说我会开车，你们信了”梗图。",
             "desc": "meme内容：1条“我说我会开车，你们信了”梗图。"
+          },
+          {
+            "type": "drama",
+            "title": "预告片（15–30秒）：须含上线日期",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
+          },
+          {
+            "type": "drama",
+            "title": "角色视觉海报：展示全员阵容",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-18": [
@@ -4500,6 +4387,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "TG上线号召Story repost",
             "desc": "TG上线号召Story repost"
+          },
+          {
+            "type": "drama",
+            "title": "幕后花絮（30–40秒）：认识主创阵容，附上线倒计时尾板（剧名·还剩2天·观看平台）",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-19": [
@@ -4522,6 +4416,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "短剧上线前预热",
             "desc": "短剧上线前预热"
+          },
+          {
+            "type": "drama",
+            "title": "幕后花絮2（30–40秒）：认识主创阵容，附上线倒计时尾板（剧名·还剩2天·观看平台）",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-20": [
@@ -4539,6 +4440,13 @@ const REGIONAL_DATA={
             "type": "koc",
             "title": "TG开服CTA，落地miragecity 召唤印度玩家assemble狂欢",
             "desc": "TG开服CTA，落地miragecity 召唤印度玩家assemble狂欢"
+          },
+          {
+            "type": "drama",
+            "title": "高光混剪（60–90秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-21": [
@@ -4561,6 +4469,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "TG地标打卡活动社群二次放大（抽奖amazon）——发答案照片+tag我+hashtag",
             "desc": "TG地标打卡活动社群二次放大（抽奖amazon）——发答案照片+tag我+hashtag"
+          },
+          {
+            "type": "drama",
+            "title": "宣传片：Ujwal × 导演（30秒），含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-22": [
@@ -4588,6 +4503,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "短剧上线首爆",
             "desc": "短剧上线首爆"
+          },
+          {
+            "type": "drama",
+            "title": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-23": [
@@ -4615,6 +4537,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "India Tuktuk在mirage city 狂飙",
             "desc": "India Tuktuk在mirage city 狂飙"
+          },
+          {
+            "type": "drama",
+            "title": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ]
       }
@@ -4707,6 +4636,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "25-8.30",
             "desc": "25-8.30"
+          },
+          {
+            "type": "drama",
+            "title": "幕后花絮（30–40秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-26": [
@@ -4748,6 +4684,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "出租车大军反击",
             "desc": "meme内容：出租车大军反击"
+          },
+          {
+            "type": "drama",
+            "title": "短视频剪辑1（15–30秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-29": [
@@ -4765,6 +4708,13 @@ const REGIONAL_DATA={
             "type": "meme",
             "title": "寻找你城市的Gangstar TukTuk",
             "desc": "寻找你城市的Gangstar TukTuk"
+          },
+          {
+            "type": "drama",
+            "title": "幕后花絮（30–40秒）：TG最爱的名场面，含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ],
         "2026-08-30": [
@@ -4777,6 +4727,74 @@ const REGIONAL_DATA={
             "type": "koc",
             "title": "KOC内容Call back",
             "desc": "KOC内容Call back"
+          },
+          {
+            "type": "drama",
+            "title": "短视频剪辑2（15–30秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
+          }
+        ]
+      }
+    },
+    {
+      "label": "Week 10",
+      "range": "08/31 ~ 09/06",
+      "days": [
+        {
+          "date": "2026-08-31",
+          "dow": "Monday",
+          "num": "8/31"
+        },
+        {
+          "date": "2026-09-01",
+          "dow": "Tuesday",
+          "num": "9/1"
+        },
+        {
+          "date": "2026-09-02",
+          "dow": "Wednesday",
+          "num": "9/2"
+        },
+        {
+          "date": "2026-09-03",
+          "dow": "Thursday",
+          "num": "9/3"
+        },
+        {
+          "date": "2026-09-04",
+          "dow": "Friday",
+          "num": "9/4"
+        },
+        {
+          "date": "2026-09-05",
+          "dow": "Saturday",
+          "num": "9/5"
+        },
+        {
+          "date": "2026-09-06",
+          "dow": "Sunday",
+          "num": "9/6"
+        }
+      ],
+      "items": {
+        "2026-09-02": [
+          {
+            "type": "drama",
+            "title": "幕后花絮（30–40秒）：他的一天，含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
+          }
+        ],
+        "2026-09-04": [
+          {
+            "type": "drama",
+            "title": "短视频剪辑3（15–30秒）：含剧名尾板·正在热播·平台信息",
+            "partner": "",
+            "desc": "",
+            "hashtags": []
           }
         ]
       }
@@ -5798,60 +5816,7 @@ function showChTip(el,e){
 function hideChTip(){chTip.style.display='none';var gs=document.querySelectorAll('.ch-hover');for(var i=0;i<gs.length;i++)gs[i].style.display='none';}
 document.addEventListener('mouseover',function(e){if(isChHit(e.target))showChTip(e.target,e);});
 document.addEventListener('mousemove',function(e){if(chTip.style.display==='block'&&isChHit(e.target))moveChTip(e);});
-document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});
-
-function renderDrama(){
-  const root=document.getElementById('dramaView');
-  if(!root) return;
-  const data=window.SHORTDRAMA_DATA||[];
-  const map={};
-  data.forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it); });
-  const dates=Object.keys(map).sort();
-  const today=todayStr();
-  const typeStyle={
-    trailer:{c:'#6d28d9',bg:'#f2eeff',label:'预告片'},
-    visual:{c:'#2563eb',bg:'#eaf1ff',label:'角色视觉'},
-    bts:{c:'#0ea5e9',bg:'#e6f7fe',label:'幕后花絮'},
-    supercut:{c:'#db2777',bg:'#fdeaf4',label:'高光混剪'},
-    promo:{c:'#d97706',bg:'#fdf2e3',label:'宣传片'},
-    edit:{c:'#059669',bg:'#e7f7f0',label:'短视频剪辑'},
-    gap:{c:'#94a3b8',bg:'#f1f5f9',label:'空档'}
-  };
-  let h='<div style="padding:18px 4px 10px">';
-  h+='<h2 style="font-size:20px;margin:0 0 4px">🎬 短剧内容排期</h2>';
-  h+='<div style="color:var(--muted);font-size:13px;margin-bottom:16px">上线倒计时物料日历 · 共 '+data.length+' 条 · 翻译自 HQ《短剧内容排期.xlsx》</div>';
-  dates.forEach((d,idx)=>{
-    const items=map[d];
-    const passed=d<today, isToday=d===today;
-    const tag=isToday?'今天':(passed?'已发布':'待发布');
-    const dotColor=passed?'#d3d8e3':(isToday?'var(--brand)':'#c4b5fd');
-    const dotGlow=isToday?'0 0 0 4px rgba(109,40,217,.15)':'0 0 0 0 rgba(0,0,0,0)';
-    const last=idx===dates.length-1;
-    h+='<div style="display:flex;gap:14px;align-items:stretch;margin:0 0 10px">';
-    h+='<div style="flex:0 0 88px;text-align:right;padding-top:11px">';
-    h+='<div style="font-weight:800;font-size:14px;color:'+(passed?'var(--muted)':(isToday?'var(--brand)':'var(--ink)'))+'">'+d.slice(5)+'</div>';
-    h+='<div style="font-size:11px;font-weight:700;margin-top:3px;color:'+(passed?'var(--muted)':'var(--brand)')+'">'+tag+'</div>';
-    h+='</div>';
-    h+='<div style="flex:0 0 16px;display:flex;flex-direction:column;align-items:center;align-self:stretch;padding-top:13px">';
-    h+='<div style="width:11px;height:11px;border-radius:50%;background:'+dotColor+';box-shadow:'+dotGlow+'"></div>';
-    if(!last) h+='<div style="flex:1;width:2px;background:var(--line);margin-top:5px"></div>';
-    h+='</div>';
-    h+='<div style="flex:1 1 auto;display:flex;flex-direction:column;gap:8px;padding-bottom:2px">';
-    items.forEach(it=>{
-      const ts=typeStyle[it.type]||typeStyle.gap;
-      h+='<div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow-sm);'+(passed?'opacity:.7':'')+'">';
-      h+='<span style="display:inline-block;font-size:11px;font-weight:800;color:'+ts.c+';background:'+ts.bg+';padding:2px 9px;border-radius:999px;margin-bottom:6px">'+ts.label+'</span>';
-      h+='<div style="font-size:14px;line-height:1.55;color:var(--ink)">'+esc(it.cn)+'</div>';
-      if(it.en) h+='<div style="font-size:11px;color:var(--muted);margin-top:5px">EN：'+esc(it.en)+'</div>';
-      h+='</div>';
-    });
-    h+='</div></div>';
-  });
-  h+='</div>';
-  root.innerHTML=h;
-}
-
-function renderFeedback(){
+document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
   var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
     '<div class="sub">每周由助手整理两份周报（官号后台 / 玩家社区），提炼主题、过滤无效反馈，供团队与老板快速掌握印度玩家对 GST 的态度、玩法认知与市场风评</div>';
