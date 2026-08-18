@@ -534,7 +534,7 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 2573,
+      "value": 2725,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -598,6 +598,10 @@
         {
           "date": "2026-08-17",
           "value": 2573
+        },
+        {
+          "date": "2026-08-18",
+          "value": 2725
         }
       ]
     },
@@ -605,7 +609,7 @@
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 8540,
+      "value": 8821,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -677,6 +681,10 @@
         {
           "date": "2026-08-17",
           "value": 8540
+        },
+        {
+          "date": "2026-08-18",
+          "value": 8821
         }
       ]
     },
