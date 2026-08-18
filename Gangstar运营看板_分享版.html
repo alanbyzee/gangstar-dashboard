@@ -1795,10 +1795,12 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function fmt(n){return Number(n).toLocaleString('en-US');}
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-function daysToLaunch(){
+const GOAL_MONTH_DATE='2026-09-20'; // 上线后一个月（launch 2026-08-20 + 1月）
+function daysTo(targetStr){
   const today=new Date(); today.setHours(0,0,0,0);
-  return Math.max(0, Math.round((new Date('2026-08-20')-today)/86400000));
+  return Math.max(0, Math.round((new Date(targetStr)-today)/86400000));
 }
+function daysToLaunch(){ return daysTo('2026-08-20'); }
 function todayStr(){
   const t=new Date();
   const y=t.getFullYear();
@@ -2041,17 +2043,17 @@ function renderInsights(data){
   const target=Number(lsGet('gangstar_fan_target')||10000);
   const prog=Math.min(100,total/target*100);
   const remain=Math.max(0,target-total);
-  const dl=daysToLaunch();
+  const dl=daysTo(GOAL_MONTH_DATE);
   const needDaily=dl>0?remain/dl:0;
 
   const el=document.getElementById('insights');
   if(!el) return;
   el.innerHTML=`
     <div class="panel">
-      <h3><span class="em">🎯</span> 上线作战进度</h3>
+      <h3><span class="em">🎯</span> 上线后一个月目标进度</h3>
       <div class="mission-header">
         <span class="mission-d">D-${dl}</span>
-        <span class="mission-dl">距 2026-08-20 正式上线</span>
+        <span class="mission-dl">距 2026-09-20（上线后一个月）目标</span>
         <span class="mission-pct">${prog.toFixed(1)}%</span>
       </div>
       <div class="prog"><i style="width:${prog.toFixed(1)}%"></i></div>
@@ -2531,7 +2533,7 @@ const FALLBACK_DATA = {
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 30,
+      "value": 32,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -2614,7 +2616,7 @@ const FALLBACK_DATA = {
         },
         {
           "date": "2026-08-18",
-          "value": 30
+          "value": 32
         }
       ]
     },
@@ -2849,6 +2851,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
