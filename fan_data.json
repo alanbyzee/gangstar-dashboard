@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 6720,
+      "value": 7340,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -121,14 +121,14 @@
         },
         {
           "date": "2026-08-19",
-          "value": 6720
+          "value": 7340
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 232,
+      "value": 248,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -247,7 +247,7 @@
         },
         {
           "date": "2026-08-19",
-          "value": 232
+          "value": 248
         }
       ],
       "name": "Facebook"
@@ -451,7 +451,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 34,
+      "value": 37,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -538,7 +538,7 @@
         },
         {
           "date": "2026-08-19",
-          "value": 34
+          "value": 37
         }
       ]
     },
