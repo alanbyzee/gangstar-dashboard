@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 10889,
+      "value": 22075,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -122,13 +122,17 @@
         {
           "date": "2026-08-19",
           "value": 10889
+        },
+        {
+          "date": "2026-08-20",
+          "value": 22075
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 395,
+      "value": 399,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -251,7 +255,7 @@
         },
         {
           "date": "2026-08-20",
-          "value": 395
+          "value": 399
         }
       ],
       "name": "Facebook"
@@ -260,7 +264,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 23187,
+      "value": 25803,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -452,6 +456,10 @@
         {
           "date": "2026-08-19",
           "value": 23187
+        },
+        {
+          "date": "2026-08-20",
+          "value": 25803
         }
       ]
     },
@@ -459,7 +467,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 37,
+      "value": 38,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -547,6 +555,10 @@
         {
           "date": "2026-08-19",
           "value": 37
+        },
+        {
+          "date": "2026-08-20",
+          "value": 38
         }
       ]
     },
@@ -554,7 +566,7 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 2794,
+      "value": 2847,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -626,6 +638,10 @@
         {
           "date": "2026-08-19",
           "value": 2794
+        },
+        {
+          "date": "2026-08-20",
+          "value": 2847
         }
       ]
     },
@@ -633,7 +649,7 @@
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 9134,
+      "value": 9123,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -713,6 +729,10 @@
         {
           "date": "2026-08-19",
           "value": 9134
+        },
+        {
+          "date": "2026-08-20",
+          "value": 9123
         }
       ]
     },
@@ -795,6 +815,10 @@
         },
         {
           "date": "2026-08-19",
+          "value": 367
+        },
+        {
+          "date": "2026-08-20",
           "value": 367
         }
       ]
