@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 28309,
+      "value": 32825,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -125,14 +125,14 @@
         },
         {
           "date": "2026-08-20",
-          "value": 28309
+          "value": 32825
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 428,
+      "value": 439,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -255,7 +255,7 @@
         },
         {
           "date": "2026-08-20",
-          "value": 428
+          "value": 439
         }
       ],
       "name": "Facebook"
@@ -264,7 +264,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 27735,
+      "value": 29197,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -459,7 +459,7 @@
         },
         {
           "date": "2026-08-20",
-          "value": 27735
+          "value": 29197
         }
       ]
     },
