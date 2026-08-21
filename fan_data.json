@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 66556,
+      "value": 75706,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -130,13 +130,17 @@
         {
           "date": "2026-08-21",
           "value": 66556
+        },
+        {
+          "date": "2026-08-22",
+          "value": 75706
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 576,
+      "value": 609,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -264,6 +268,10 @@
         {
           "date": "2026-08-21",
           "value": 576
+        },
+        {
+          "date": "2026-08-22",
+          "value": 609
         }
       ],
       "name": "Facebook"
@@ -272,7 +280,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 36836,
+      "value": 40154,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -472,6 +480,10 @@
         {
           "date": "2026-08-21",
           "value": 36836
+        },
+        {
+          "date": "2026-08-22",
+          "value": 40154
         }
       ]
     },
@@ -575,6 +587,10 @@
         {
           "date": "2026-08-21",
           "value": 39
+        },
+        {
+          "date": "2026-08-22",
+          "value": 39
         }
       ]
     },
@@ -669,7 +685,7 @@
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 9721,
+      "value": 9821,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -757,6 +773,10 @@
         {
           "date": "2026-08-21",
           "value": 9721
+        },
+        {
+          "date": "2026-08-22",
+          "value": 9821
         }
       ]
     },
