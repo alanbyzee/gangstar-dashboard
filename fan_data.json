@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 88759,
+      "value": 97092,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -134,13 +134,17 @@
         {
           "date": "2026-08-22",
           "value": 88759
+        },
+        {
+          "date": "2026-08-23",
+          "value": 97092
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 715,
+      "value": 836,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -272,6 +276,10 @@
         {
           "date": "2026-08-22",
           "value": 715
+        },
+        {
+          "date": "2026-08-23",
+          "value": 836
         }
       ],
       "name": "Facebook"
@@ -280,7 +288,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 47496,
+      "value": 52537,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -484,6 +492,10 @@
         {
           "date": "2026-08-22",
           "value": 47496
+        },
+        {
+          "date": "2026-08-23",
+          "value": 52537
         }
       ]
     },
@@ -491,7 +503,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 39,
+      "value": 42,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -591,6 +603,10 @@
         {
           "date": "2026-08-22",
           "value": 39
+        },
+        {
+          "date": "2026-08-23",
+          "value": 42
         }
       ]
     },
@@ -598,7 +614,7 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 3145,
+      "value": 3165,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -682,6 +698,10 @@
         {
           "date": "2026-08-22",
           "value": 3145
+        },
+        {
+          "date": "2026-08-23",
+          "value": 3165
         }
       ]
     },
