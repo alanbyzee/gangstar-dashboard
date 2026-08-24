@@ -6,7 +6,7 @@
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 114043,
+      "value": 129740,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -141,14 +141,14 @@
         },
         {
           "date": "2026-08-24",
-          "value": 114043
+          "value": 129740
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 1004,
+      "value": 1047,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -287,7 +287,7 @@
         },
         {
           "date": "2026-08-24",
-          "value": 1004
+          "value": 1047
         }
       ],
       "name": "Facebook"
@@ -296,7 +296,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 57920,
+      "value": 60989,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -504,6 +504,10 @@
         {
           "date": "2026-08-23",
           "value": 57920
+        },
+        {
+          "date": "2026-08-24",
+          "value": 60989
         }
       ]
     },
@@ -622,7 +626,7 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 3198,
+      "value": 3268,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -713,7 +717,7 @@
         },
         {
           "date": "2026-08-24",
-          "value": 3198
+          "value": 3268
         }
       ]
     },
@@ -721,7 +725,7 @@
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 10723,
+      "value": 10923,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -820,7 +824,7 @@
         },
         {
           "date": "2026-08-24",
-          "value": 10723
+          "value": 10923
         }
       ]
     },
