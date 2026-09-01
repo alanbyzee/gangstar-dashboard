@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-31",
+  "updated_at": "2026-09-01",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
@@ -166,13 +166,17 @@
         {
           "date": "2026-08-31",
           "value": 191224
+        },
+        {
+          "date": "2026-09-01",
+          "value": 191224
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 2089,
+      "value": 2159,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -336,6 +340,10 @@
         {
           "date": "2026-08-31",
           "value": 2089
+        },
+        {
+          "date": "2026-09-01",
+          "value": 2159
         }
       ],
       "name": "Facebook"
@@ -344,7 +352,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 77274,
+      "value": 77682,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -580,6 +588,10 @@
         {
           "date": "2026-08-31",
           "value": 77274
+        },
+        {
+          "date": "2026-09-01",
+          "value": 77682
         }
       ]
     },
@@ -817,7 +829,7 @@
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 19824,
+      "value": 20243,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -941,6 +953,10 @@
         {
           "date": "2026-08-31",
           "value": 19824
+        },
+        {
+          "date": "2026-09-01",
+          "value": 20243
         }
       ]
     },
