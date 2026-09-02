@@ -54,6 +54,9 @@ body{
 .tab{padding:8px 16px;border-radius:10px;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;border:1px solid transparent;background:transparent;transition:.18s;white-space:nowrap}
 .tab:hover{color:var(--ink)}
 .tab.active{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 4px 12px rgba(109,40,217,.28)}
+.tab-toggle{padding:8px 16px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;border:1px dashed #c4b5fd;background:#faf5ff;color:#7c3aed;transition:.18s;white-space:nowrap;font-family:inherit}
+.tab-toggle:hover{background:#f3e8ff;border-color:#7c3aed}
+.tab-toggle.on{border-style:solid;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 4px 12px rgba(109,40,217,.28)}
 .spacer{flex:1}
 .upd{font-size:12px;color:var(--muted);white-space:nowrap;flex:1 1 100%}
 .undo-btn{margin-left:10px;padding:8px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:6px}
@@ -703,24 +706,25 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 <div class="topbar">
   <div class="brand"><span class="dot"></span>Gangstar 运营看板</div>
   <div class="tabs">
-    <div class="tab active" data-view="sa">📅 南亚社群排期</div>
-    <div class="tab" data-view="fan">📊 粉丝监控</div>
+    <div class="tab active" data-view="fan">📊 粉丝监控</div>
     <div class="tab" data-view="feedback">💬 玩家反馈</div>
+    <div class="tab" data-view="sa" id="tab-sa" style="display:none">📅 南亚社群排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
     <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
+    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期">📅 社群排期</button>
   </div>
   <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）">↩ 撤销</button>
   <div class="upd" id="upd">数据更新于 —</div>
 </div>
 
 <div class="stage">
-  <div class="view scroll active" id="view-sa">
+  <div class="view scroll" id="view-sa">
     <div class="southasia" id="southAsiaView"></div>
   </div>
   <div class="view scroll" id="view-regional">
     <div class="regional" id="regionalView"></div>
   </div>
-  <div class="view scroll" id="view-fan">
+  <div class="view scroll active" id="view-fan">
     <div class="fan">
       <div class="fan-head">
         <div>
@@ -1251,8 +1255,31 @@ function activateTab(v){
   if(v==='regional') renderRegional();
 }
 tabs.forEach(t=>t.onclick=()=>activateTab(t.dataset.view));
+// 南亚社群排期：默认隐藏，可一键展开/收起（2026-09-02）
+const saToggle=document.getElementById('saToggle');
+const tabSa=document.getElementById('tab-sa');
+saToggle.onclick=()=>{
+  const show = tabSa.style.display==='none';
+  tabSa.style.display = show ? '' : 'none';
+  saToggle.textContent = show ? '✕ 收起社群排期' : '📅 社群排期';
+  saToggle.classList.toggle('on', show);
+  lsSet('sa_visible', show ? '1' : '0');
+  if(show) activateTab('sa');
+  else if(document.getElementById('view-sa').classList.contains('active')) activateTab('fan');
+};
 // 刷新后停留在上次所在的看板（而非重置到第一个）
-setTimeout(()=>{ const sv=lsGet('gst_active_tab'); if(sv) activateTab(sv); },0);
+setTimeout(()=>{
+  const sv=lsGet('gst_active_tab');
+  const saVisible = lsGet('sa_visible')==='1';
+  if(saVisible){
+    tabSa.style.display='';
+    saToggle.textContent='✕ 收起社群排期';
+    saToggle.classList.add('on');
+  }
+  if(sv==='sa' && saVisible) activateTab('sa');
+  else if(sv && sv!=='sa' && sv!=='regional') activateTab(sv);
+  else activateTab('fan');
+},0);
 document.getElementById('undoBtn').onclick=doUndo;
 
 // ===== 工具函数 =====
@@ -2632,6 +2659,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
