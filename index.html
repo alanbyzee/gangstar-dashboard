@@ -1539,10 +1539,10 @@ function renderInsights(data){
 <text x="${s.p_labelX}" y="${s.labelY}" text-anchor="${anchor}" dominant-baseline="central" font-size="11.5" font-weight="700" fill="#334155">${esc(s.name)} ${(s.pct).toFixed(1)}%</text>`;
   }).join('\n  ');
 
-  const p_pieSvg=`<svg width="${p_pieW}" height="${p_pieH}" viewBox="0 0 ${p_pieW} ${p_pieH}" class="pie-svg">
-    <circle p_cx="${p_cx}" p_cy="${p_cy}" r="${p_ro+20}" fill="#f8fafc"/>
+  const pieSvg=`<svg width="${p_pieW}" height="${p_pieH}" viewBox="0 0 ${p_pieW} ${p_pieH}" class="pie-svg">
+    <circle cx="${p_cx}" cy="${p_cy}" r="${p_ro+20}" fill="#f8fafc"/>
     ${p_allSegs.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('\n    ')}
-    <circle p_cx="${p_cx}" p_cy="${p_cy}" r="${p_ri-2}" fill="#fff"/>
+    <circle cx="${p_cx}" cy="${p_cy}" r="${p_ri-2}" fill="#fff"/>
     <text x="${p_cx}" y="${p_cy-6}" text-anchor="middle" font-size="24" font-weight="900" fill="#1e293b">${fmt(total)}</text>
     <text x="${p_cx}" y="${p_cy+12}" text-anchor="middle" font-size="10.5" fill="#94a3b8">总粉丝</text>
     ${p_leaders}
@@ -2795,6 +2795,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
