@@ -1494,46 +1494,58 @@ function renderInsights(data){
   const pieSize=260, cx=pieSize/2, cy=pieSize/2, ro=100, ri=58;
   const pi2=Math.PI*2;
   let accAngle=-Math.PI/2;
-  const segs=order.map((k,i)=>{
+  // 占比环形图：引导线 + 左右分列标签（杜绝重叠）
+  const pieW=320, pieH=300, pcx=pieW/2, pcy=pieH/2-10, pro=95, pri=54;
+  const pi2=Math.PI*2;
+  let accAngle=-Math.PI/2;
+  const allSegs=order.map((k,i)=>{
     const v=vals[i];
+    const pct=total?v/total*100:0;
     if(v<=0) return null;
-    const pct=v/total*100;
-    if(pct<0.05) return null;
-    const span=pct/100*pi2;
+    const span=Math.max(pct/100*pi2, 0.003);
     const start=accAngle, end=accAngle+span;
     accAngle=end;
     const largeArc=span>Math.PI?1:0;
-    // outer point
-    const x1=cx+ro*Math.cos(start), y1=cy+ro*Math.sin(start);
-    const x2=cx+ro*Math.cos(end),   y2=cy+ro*Math.sin(end);
-    // inner point
-    const ix1=cx+ri*Math.cos(start), iy1=cy+ri*Math.sin(start);
-    const ix2=cx+ri*Math.cos(end),   iy2=cy+ri*Math.sin(end);
-    const path=`M ${ix1} ${iy1} L ${x1} ${y1} A ${ro} ${ro} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${ri} ${ri} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
-    // label position (mid-angle, outside)
+    const x1=pcx+pro*Math.cos(start), y1=pcy+pro*Math.sin(start);
+    const x2=pcx+pro*Math.cos(end),   y2=pcy+pro*Math.sin(end);
+    const ix1=pcx+pri*Math.cos(start), iy1=pcy+pri*Math.sin(start);
+    const ix2=pcx+pri*Math.cos(end),   iy2=pcy+pri*Math.sin(end);
+    const path=`M ${ix1} ${iy1} L ${x1} ${y1} A ${pro} ${pro} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${pri} ${pri} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
     const mid=(start+end)/2;
-    const lr=ro+28;
-    const lx=cx+lr*Math.cos(mid), ly=cy+lr*Math.sin(mid);
-    // anchor based on side
-    const anchor=lx>cx?'start':lx<cx?'end':'middle';
-    return {name:names[i], color:colors[i], val:v, pct, path, lx, ly, anchor};
+    const elbowR=pro+14;
+    const ex=pcx+elbowR*Math.cos(mid), ey=pcy+elbowR*Math.sin(mid);
+    const isRight=mid>-Math.PI/2 && mid<Math.PI/2;
+    const labelX=isRight ? pcx+pro+52 : pcx-pro-52;
+    return {name:names[i], color:colors[i], val:v, pct, path, mid, ex, ey, labelX, isRight};
   }).filter(Boolean);
 
-  // label SVG elements
-  const labelEls=segs.map(s=>
-    `<text x="${s.lx}" y="${s.ly}" text-anchor="${s.anchor}" dominant-baseline="central" font-size="12" font-weight="700" fill="#334155">${esc(s.name)} ${(s.pct).toFixed(1)}%</text>`
-  ).join('');
+  // sort into left/right columns by angle, then assign Y with spacing
+  const leftCol=allSegs.filter(s=>!s.isRight).sort((a,b)=>a.mid-b.mid);
+  const rightCol=allSegs.filter(s=>s.isRight).sort((a,b)=>a.mid-b.mid);
+  const labelSpacing=22;
+  const totalH=Math.max(leftCol.length,rightCol.length)*labelSpacing;
+  const topY=pcy-totalH/2;
+  let ly=topY;
+  leftCol.forEach(s=>{s.labelY=ly;ly+=labelSpacing;});
+  ly=topY;
+  rightCol.forEach(s=>{s.labelY=ly;ly+=labelSpacing;});
 
-  const pieSvg=`<svg width="${pieSize}" height="${pieSize+20}" viewBox="0 0 ${pieSize} ${pieSize+20}" class="pie-svg">
-    <circle cx="${cx}" cy="${cy}" r="${ro+22}" fill="#f8fafc"/>
-    <!-- segments -->
-    ${segs.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('')}
-    <!-- center circle -->
-    <circle cx="${cx}" cy="${cy}" r="${ri-2}" fill="#fff"/>
-    <text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="26" font-weight="900" fill="#1e293b">${fmt(total)}</text>
-    <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="11" fill="#94a3b8">总粉丝</text>
-    <!-- external labels -->
-    ${labelEls}
+  // build leader lines + labels
+  const leaders=allSegs.map(s=>{
+    const cornerX=s.isRight?s.labelX-8:s.labelX+8;
+    const pts=`${pcx+pro*Math.cos(s.mid)},${pcy+pro*Math.sin(s.mid)} ${s.ex},${s.ey} ${cornerX},${s.labelY}`;
+    const anchor=s.isRight?'start':'end';
+    return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="1.5" opacity=".55"/>
+<text x="${s.labelX}" y="${s.labelY}" text-anchor="${anchor}" dominant-baseline="central" font-size="11.5" font-weight="700" fill="#334155">${esc(s.name)} ${(s.pct).toFixed(1)}%</text>`;
+  }).join('\n  ');
+
+  const pieSvg=`<svg width="${pieW}" height="${pieH}" viewBox="0 0 ${pieW} ${pieH}" class="pie-svg">
+    <circle pcx="${pcx}" pcy="${pcy}" r="${pro+20}" fill="#f8fafc"/>
+    ${allSegs.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('\n    ')}
+    <circle pcx="${pcx}" pcy="${pcy}" r="${pri-2}" fill="#fff"/>
+    <text x="${pcx}" y="${pcy-6}" text-anchor="middle" font-size="24" font-weight="900" fill="#1e293b">${fmt(total)}</text>
+    <text x="${pcx}" y="${pcy+12}" text-anchor="middle" font-size="10.5" fill="#94a3b8">总粉丝</text>
+    ${leaders}
   </svg>`;
 
   // bottom legend
@@ -2783,6 +2795,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
