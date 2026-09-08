@@ -349,21 +349,19 @@ body{
 .wk-inline b{font-weight:800}
 .wk-inline .up{color:var(--ok)}
 
-/* ---- 右面板：平台占比条形图 ---- */
-.fb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.fb-total{font-size:13px;color:var(--muted)}
-.fb-total b{font-size:20px;color:var(--ink);font-weight:900}
-.fb-count{font-size:11.5px;color:var(--muted);background:#f1f5f9;padding:2px 8px;border-radius:10px}
-.fb-chart{display:flex;flex-direction:column;gap:7px;flex:1}
-.fb-row{display:flex;align-items:center;gap:10px}
-.fb-label{display:flex;align-items:center;gap:6px;width:96px;flex:none;font-size:12px;font-weight:700}
-.fb-label .dot{width:10px;height:10px;border-radius:3px;flex:none}
-.fb-label .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fb-bar-wrap{flex:1;height:24px;background:#f1f5f9;border-radius:12px;overflow:hidden;position:relative}
-.fb-bar{height:100%;border-radius:12px;transition:width .4s ease;min-width:2px}
-.fb-val{width:70px;flex:none;text-align:right;font-size:11.5px}
-.fb-val b{font-weight:800}
-.fb-val small{color:var(--muted);margin-left:2px}
+/* ---- 右面板：平台占比环形图 + 指标卡片 ---- */
+.fb-layout{display:flex;align-items:center;gap:20px;padding:4px 0}
+.fb-donut-wrap{flex:none}
+.fb-donut{display:block}
+.fp-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fp-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;transition:box-shadow .15s,transform .12s}
+.fp-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.08);transform:translateY(-1px)}
+.fp-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.fp-dot{width:9px;height:9px;border-radius:3px;flex:none}
+.fp-name{font-size:11.5px;font-weight:700;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fp-num{font-size:17px;font-weight:900;color:#1e293b;line-height:1.2}
+.fp-pct{font-size:10.5px;color:#94a3b8;font-weight:600}
+@media(max-width:520px){.fb-layout{flex-direction:column;align-items:center}.fp-grid{grid-template-columns:1fr 1fr}}
 .badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
 
 /* 卡片动能行 */
@@ -1497,12 +1495,33 @@ function renderInsights(data){
   const colors=order.map(k=>p[k]?.color||'#999');
   const total=vals.reduce((a,b)=>a+b,0);
 
-  // 占比条形图（横向排序，极端分布下远优于环图）
-  const maxV=Math.max(...vals,1);
-  const barRows=order.map((k,i)=>{
-    const pct=total?vals[i]/total*100:0;
-    const wPct=(vals[i]/maxV*100).toFixed(1);
-    return `<div class="fb-row"><div class="fb-label"><span class="dot" style="background:${colors[i]}"></span><span class="nm">${esc(names[i])}</span></div><div class="fb-bar-wrap"><div class="fb-bar" style="background:${colors[i]};width:${wPct}%"></div></div><div class="fb-val"><b>${fmt(vals[i])}</b><small>${pct.toFixed(1)}%</small></div></div>`;
+  // 占比环形图 + 指标卡片网格（视觉上替代横向条形图）
+  const donutSize=160, cx=donutSize/2, cy=donutSize/2, r=donutSize/2-10, pi2=2*Math.PI;
+  let accAngle=-Math.PI/2; // 从12点方向开始
+  const segs=order.map((k,i)=>{
+    const v=vals[i];
+    if(v<=0) return null;
+    const pct=v/total*100;
+    const span=pct/100*pi2;
+    const start=accAngle, end=accAngle+span;
+    accAngle=end;
+    const largeArc=span>Math.PI?1:0;
+    const x1=cx+r*Math.cos(start), y1=cy+r*Math.sin(start);
+    const x2=cx+r*Math.cos(end),   y2=cy+r*Math.sin(end);
+    return {name:names[i], color:colors[i], val:v, pct,
+      path:`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`};
+  }).filter(Boolean);
+
+  const donutSvg=`<svg width="${donutSize}" height="${donutSize}" viewBox="0 0 ${donutSize} ${donutSize}" class="fb-donut">
+    <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="#f8fafc"/>
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="22" font-weight="900" fill="#1e293b">${fmt(total)}</text>
+    <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="10" fill="#94a3b8">总粉丝</text>
+    ${segs.map(s=>`<path d="${s.path}" fill="${s.color}" opacity=".88"/>`).join('')}
+  </svg>`;
+
+  const cards=order.map((k,i)=>{
+    const v=vals[i], pct=total?v/total*100:0;
+    return `<div class="fp-card"><div class="fp-top"><span class="fp-dot" style="background:${colors[i]}"></span><span class="fp-name">${esc(names[i])}</span></div><div class="fp-num">${fmt(v)}</div><div class="fp-pct">${pct.toFixed(1)}%</div></div>`;
   }).join('');
 
   // 本周涨粉总结（总结性段落，非罗列；与右侧平台占比框平齐）
@@ -1560,11 +1579,10 @@ function renderInsights(data){
     </div>
     <div class="panel">
       <h3><span class="em">🥧</span> 平台粉丝占比</h3>
-      <div class="fb-head">
-        <div class="fb-total"><b>${fmt(total)}</b> 总粉丝</div>
-        <span class="fb-count">${order.length} 平台</span>
+      <div class="fb-layout">
+        <div class="fb-donut-wrap">${donutSvg}</div>
+        <div class="fp-grid">${cards}</div>
       </div>
-      <div class="fb-chart">${barRows}</div>
     </div>`;
 
   const saveBtn=document.getElementById('targetSave');
@@ -2743,6 +2761,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
