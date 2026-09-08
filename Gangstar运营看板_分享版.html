@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="diQUHOt9CQ9EXcwwX0tu2k">
-<head data-page-node-id="gg1JoRzhK4y31jTW05qHcu">
-<meta charset="UTF-8" data-page-node-id="HEHHKLJrg6cQtKQlHOEgHo">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="NtawbfEzVHgbUwXZ3gBjuN">
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gangstar 运营看板</title>
-<meta name="build" content="2026-08-07T0017" data-page-node-id="oDUd90s3jYb7QnSiKWzzAf">
+<meta name="build" content="2026-08-07T0017">
 <style>
 :root{
   --bg:#eef1f7;
@@ -826,71 +826,71 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
-<body data-page-node-id="ewMkbuyXvOVaH931gq5V9D">
+<body>
 
-<div class="topbar" data-page-node-id="ra15HQ5FwlPCaMM5QJdHmf">
-  <div class="brand" data-page-node-id="B6X6G6yfYBrKyi0xrM4J5u"><span class="dot" data-page-node-id="GcloCG8Z4bzaTIa4QhhPRS"></span>Gangstar 运营看板</div>
-  <div class="tabs" data-page-node-id="UJoovId3PjuC7sAmHiHdOC">
-    <div class="tab active" data-view="fan" data-page-node-id="nvjwteal1vtKQ6yvl8fUDD">📊 粉丝监控</div>
-    <div class="tab" data-view="feedback" data-page-node-id="GcYJ6qnvUoL2yU4FDf6KIq">💬 玩家反馈</div>
-    <div class="tab" data-view="issues" data-page-node-id="gcj7lImrCx3R8qH2VE0a89">🐞 Issue Tracker</div>
-    <div class="tab" data-view="content" data-page-node-id="JkugpnBLEdotQsvLtJugKE">📈 Content</div>
-    <div class="tab" data-view="sa" id="tab-sa" style="display:none" data-page-node-id="hb1X4Ejj45PFZ4nhEj6wCs">📅 南亚社群排期</div>
+<div class="topbar">
+  <div class="brand"><span class="dot"></span>Gangstar 运营看板</div>
+  <div class="tabs">
+    <div class="tab active" data-view="fan">📊 粉丝监控</div>
+    <div class="tab" data-view="feedback">💬 玩家反馈</div>
+    <div class="tab" data-view="issues">🐞 Issue Tracker</div>
+    <div class="tab" data-view="content">📈 Content</div>
+    <div class="tab" data-view="sa" id="tab-sa" style="display:none">📅 南亚社群排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
-    <div class="tab" data-view="regional" style="display:none" data-page-node-id="kL00rYvzycFRXGb3eP4QxY">📝 区域素材</div>
-    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期" data-page-node-id="R7xwXC9kjJUwB1i2IocOHE">📅 社群排期</button>
+    <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
+    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期">📅 社群排期</button>
   </div>
-  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）" data-page-node-id="GvhElBJn3QKIpKrS0Hd72w">↩ 撤销</button>
-  <div class="upd" id="upd" data-page-node-id="yyF2g0T8R96X0ajvEAkH3a">数据更新于 —</div>
+  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）">↩ 撤销</button>
+  <div class="upd" id="upd">数据更新于 —</div>
 </div>
 
-<div class="stage" data-page-node-id="D8AgO7vLv47nt7AqXrBA3f">
-  <div class="view scroll" id="view-sa" data-page-node-id="JdgeKOiEGE6MQyvAK0BB3v">
-    <div class="southasia" id="southAsiaView" data-page-node-id="HKETyFFYtB3NIPXJcUkOG0"></div>
+<div class="stage">
+  <div class="view scroll" id="view-sa">
+    <div class="southasia" id="southAsiaView"></div>
   </div>
-  <div class="view scroll" id="view-regional" data-page-node-id="xv9WdqmTSEIc6HXSGmhkii">
-    <div class="regional" id="regionalView" data-page-node-id="lZyN7nuZhwsz9aeMzydZKT"></div>
+  <div class="view scroll" id="view-regional">
+    <div class="regional" id="regionalView"></div>
   </div>
-  <div class="view scroll active" id="view-fan" data-page-node-id="nxfeQ0lbbufW59n8QsD3XG">
-    <div class="fan" data-page-node-id="opg8VwoyHmDwDCzESnjc7Q">
-      <div class="fan-head" data-page-node-id="7JAaPm6TK5cHlm0ngCVFV9">
-        <div data-page-node-id="eA8tgzfFIRYmf9Im8INeka">
-          <h2 data-page-node-id="PIqzA6PsuWUPbkzt0W9AQI">📊 区域社媒粉丝监控</h2>
-          <div class="sub" data-page-node-id="L2FCNrfXrGn5XBMM8j0vAR">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
+  <div class="view scroll active" id="view-fan">
+    <div class="fan">
+      <div class="fan-head">
+        <div>
+          <h2>📊 区域社媒粉丝监控</h2>
+          <div class="sub">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
         </div>
-        <div class="toolbar" data-page-node-id="wc1MuGxIqhv4SrX7wLfqYW">
-          <button class="refresh" id="refreshBtn" data-page-node-id="K1FMtdAcWy388HA1xViYcv">
-            <span class="spin" data-page-node-id="ILo79t75TQ0GPZLhLdTVQW"></span>
-            <span class="btn-text" data-page-node-id="r1Uqc4n5ckLz69eBnCgofb">🔄 刷新粉丝数</span>
+        <div class="toolbar">
+          <button class="refresh" id="refreshBtn">
+            <span class="spin"></span>
+            <span class="btn-text">🔄 刷新粉丝数</span>
           </button>
-          <span class="status" id="status" data-page-node-id="IpA6ZgL3YAOwRYZoZHSjgB"></span>
+          <span class="status" id="status"></span>
         </div>
       </div>
 
-      <div class="overview" id="summary" data-page-node-id="SqcBbrfUddSBUvAQDyjaGy"></div>
+      <div class="overview" id="summary"></div>
 
-      <div class="cc-overview" id="ccOverview" data-page-node-id="oV4QkHoPGqWMHgYIMDvPzv"></div>
+      <div class="cc-overview" id="ccOverview"></div>
 
-      <div class="insights" id="insights" data-page-node-id="tM3AVoount3LJQJWIrJpj0"></div>
+      <div class="insights" id="insights"></div>
 
-      <div class="plat-grid" id="platforms" data-page-node-id="v8AV4f6rJhjVAoTfP8y3ar"></div>
+      <div class="plat-grid" id="platforms"></div>
     </div>
   </div>
-  <div class="view scroll" id="view-feedback" data-page-node-id="Ey0maBXeBUNuzN5VzqZ21R">
-    <div class="feedback" id="feedbackView" data-page-node-id="dCZIAwFZSZl2UMVpF6VUfs"></div>
+  <div class="view scroll" id="view-feedback">
+    <div class="feedback" id="feedbackView"></div>
   </div>
-  <div class="view scroll" id="view-issues" data-page-node-id="i4MXHbZgDPz9iFvag3WS9C">
-    <div class="issues" id="issuesView" data-page-node-id="8ml013AH6f8Bn6wzvvW20Y"></div>
+  <div class="view scroll" id="view-issues">
+    <div class="issues" id="issuesView"></div>
   </div>
-  <div class="view scroll" id="view-content" data-page-node-id="qhAsDB97TYMdQ7eS3sFZV9">
-    <div class="content-perf" id="contentView" data-page-node-id="hAoJpfTq9espMbxrSUSFrW"></div>
+  <div class="view scroll" id="view-content">
+    <div class="content-perf" id="contentView"></div>
   </div>
 </div>
 
 <!-- Toast 通知 -->
-<div class="toast" id="toast" data-page-node-id="OpQTFY3Xc5MJArmYDXQOZh"></div>
+<div class="toast" id="toast"></div>
 
-<footer data-page-node-id="DtT3RZee9g2PqSv5zuaK7O">Gangstar Mirage City · 区域发行运营看板</footer>
+<footer>Gangstar Mirage City · 区域发行运营看板</footer>
 
 <script>
 // HQ 公线排期数据（提取自 HQ排期日历.html，供南亚社群排期合并视图使用）
@@ -3233,6 +3233,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -6347,9 +6348,70 @@ function showChTip(el,e){
 function hideChTip(){chTip.style.display='none';var gs=document.querySelectorAll('.ch-hover');for(var i=0;i<gs.length;i++)gs[i].style.display='none';}
 document.addEventListener('mouseover',function(e){if(isChHit(e.target))showChTip(e.target,e);});
 document.addEventListener('mousemove',function(e){if(chTip.style.display==='block'&&isChHit(e.target))moveChTip(e);});
-document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});function renderFeedback(){
+document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});
+
+// ===== Player Voice：Top 请求分类 + Topic Trend =====
+function renderPlayerVoice(){
+  const topics=CC_DATA.topics;
+  const total=topics.reduce((s,t)=>s+t.mentions,0);
+  const pos=topics.filter(t=>t.sentiment>=70).reduce((s,t)=>s+t.mentions,0);
+  const neg=topics.filter(t=>t.sentiment<50).reduce((s,t)=>s+t.mentions,0);
+  const neu=total-pos-neg;
+  const actionable=topics.filter(t=>/Pending|Reviewing/.test(t.status)).reduce((s,t)=>s+t.mentions,0);
+  const cats={};topics.forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+t.mentions;});
+  const catOrder=['Gameplay','Vehicles','Technical','Commercial'];
+  const stats=[
+    {n:'Total Feedback',v:fmt(total),base:total},
+    {n:'Positive',v:fmt(pos),c:'green',base:pos},
+    {n:'Neutral',v:fmt(neu),c:'gray',base:neu},
+    {n:'Negative',v:fmt(neg),c:'red',base:neg},
+    {n:'Actionable',v:fmt(actionable),c:'blue',base:actionable}
+  ];
+  const catHtml=catOrder.map(c=>`<div class="pv-cat"><span class="pv-cat-name">${c}</span><span class="pv-cat-cnt">${cats[c]?fmt(cats[c]):0} mentions</span></div>`).join('');
+  const rows=[...topics].sort((a,b)=>b.mentions-a.mentions);
+  const rowsHtml=rows.map(t=>`<tr data-base="${t.mentions}">
+    <td style="font-weight:700">${esc(t.topic)}</td>
+    <td><span class="pill gray">${esc(t.cat)}</span></td>
+    <td class="pv-mentions" style="text-align:right;font-weight:800">${fmt(t.mentions)}</td>
+    <td style="text-align:right" class="${t.wow>=0?'wow-up':'wow-down'}">${t.wow>=0?'+':''}${t.wow}%</td>
+    <td style="text-align:right">${t.sentiment}% ${t.sentiment>=70?'🟢':t.sentiment<50?'🔴':'🟡'}</td>
+    <td><span class="prio ${t.priority.toLowerCase()}">${t.priority}</span></td>
+    <td><span class="pill ${/Pending|New|Validated/.test(t.status)?'amber':/Reviewing|Reported/.test(t.status)?'blue':'green'}">${esc(t.status)}</span></td>
+    <td><div class="trend-bar" style="width:90px"><i style="width:${Math.max(4,Math.round(t.mentions/total*100*3))}%"></i></div></td>
+    <td style="width:54px">${sparkline(t.spark,'hd-spark')}</td>
+  </tr>`).join('');
+
+  return `<div class="cc-section">
+    <div class="cc-sec-head"><span class="cc-emoji">🗣️</span><h3>Player Voice</h3><span class="cc-sub">玩家真实需求与舆情 · 自动分类</span></div>
+    <div class="issue-stats" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px">
+      ${stats.map(s=>`<div class="istat"><div class="is-val pv-stat" data-base="${s.base}" ${s.c?'style="color:var(--'+(s.c==='green'?'ok':s.c==='red'?'err':s.c==='blue'?'brand2':'muted')+')"':''}>${s.v}</div><div class="is-name">${s.n}</div></div>`).join('')}
+    </div>
+    <div class="perf-card" style="margin-bottom:12px">
+      <div class="cc-sec-head" style="margin:0 0 10px"><h5 style="font-size:13px;font-weight:800">Top Player Requests by Category</h5></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">${catHtml}</div>
+    </div>
+    <div class="perf-card">
+      <div class="cc-sec-head" style="margin:0 0 10px">
+        <h5 style="font-size:13px;font-weight:800">Topic Trend</h5>
+        <div style="margin-left:auto;display:flex;gap:6px" id="pvRange">
+          <button class="filter-sel pv-rng" data-f="1" style="padding:5px 12px;background:var(--brand);color:#fff;border-color:var(--brand)">7 Days</button>
+          <button class="filter-sel pv-rng" data-f="4.2">30 Days</button>
+          <button class="filter-sel pv-rng" data-f="11">90 Days</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="trend-table"><thead><tr>
+          <th>Topic</th><th>Category</th><th style="text-align:right">Mentions</th><th style="text-align:right">WoW</th>
+          <th style="text-align:right">Sentiment</th><th>Priority</th><th>Status</th><th style="text-align:right">Share</th><th></th>
+        </tr></thead><tbody id="pvBody">${rowsHtml}</tbody></table>
+      </div>
+    </div>
+  </div>`;
+}
+function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
-  var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
+  var html=renderPlayerVoice()+'\n'+
+    '<h2>💬 玩家反馈 · 印度市场态度</h2>'+
     '<div class="sub">每周由助手整理两份周报（官号后台 / 玩家社区），提炼主题、过滤无效反馈，供团队与老板快速掌握印度玩家对 GST 的态度、玩法认知与市场风评</div>';
   if(weeks.length){
     html+='<div class="att-track"><span class="att-track-label">📈 态度走向（长期）：</span>'+
@@ -6365,6 +6427,28 @@ document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip(
   root.innerHTML=html;
   root.querySelector('.add-week-btn').onclick=openWeekModal;
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
+  // Player Voice 7/30/90-day range toggle
+  var pvBtns=root.querySelectorAll('.pv-rng');
+  pvBtns.forEach(function(btn){
+    btn.onclick=function(){
+      var f=parseFloat(btn.dataset.f)||1;
+      pvBtns.forEach(function(b){
+        var on=(b===btn);
+        b.style.background=on?'var(--brand)':'#fff';
+        b.style.color=on?'#fff':'var(--ink)';
+        b.style.borderColor=on?'var(--brand)':'var(--line)';
+      });
+      root.querySelectorAll('.pv-stat').forEach(function(el){
+        var base=Number(el.dataset.base)||0;
+        el.textContent=fmt(Math.round(base*f));
+      });
+      root.querySelectorAll('#pvBody tr[data-base]').forEach(function(tr){
+        var base=Number(tr.dataset.base)||0;
+        var cell=tr.querySelector('.pv-mentions');
+        if(cell) cell.textContent=fmt(Math.round(base*f));
+      });
+    };
+  });
 }
 function wkBlock(w,wi){
   function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
