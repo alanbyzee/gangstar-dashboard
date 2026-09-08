@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-CN" data-page-node-id="PG3IOuCgmmheOVGFl4cFo7">
+<head data-page-node-id="CCofoCECYSnJr2QrPigaq8">
+<meta charset="UTF-8" data-page-node-id="EI05aNAcCTC7Ouz7ZUaO9E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="vq3QtgOln1pR3V1m5SCfDZ">
 <title>Gangstar 运营看板</title>
-<meta name="build" content="2026-08-07T0017">
+<meta name="build" content="2026-08-07T0017" data-page-node-id="a2L1dEBVr04LVUJXKxanGh">
 <style>
 :root{
   --bg:#eef1f7;
@@ -109,10 +109,12 @@ body{
 
 /* 概览区：上行=距上线+总粉丝(2卡)，下行=5平台摘要(等宽) */
 .overview{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
-.ov-row-top{display:grid;grid-template-columns:200px 1fr;gap:14px}
-@media(max-width:680px){.ov-row-top{grid-template-columns:1fr}}
+.ov-row-top{display:grid;grid-template-columns:1fr;gap:14px}
 .ov{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow-sm);transition:.2s}
 .ov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.ov--wide{display:flex;align-items:center;gap:16px}
+.ov--wide .k{font-size:12px;color:var(--muted);white-space:nowrap}
+.ov--wide .v{font-size:28px;font-weight:900;margin:0;letter-spacing:-.5px}
 .ov .k{font-size:12px;color:var(--muted)}
 .ov .v{font-size:26px;font-weight:800;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ov .v small{font-size:13px;color:var(--muted);font-weight:600}
@@ -340,10 +342,11 @@ body{
 .mission-pct{margin-left:auto;font-size:22px;font-weight:900;color:var(--brand2);flex:none;line-height:1}
 .prog{height:14px;background:#eef2f7;border-radius:9px;overflow:hidden;margin-bottom:10px;box-shadow:inset 0 1px 2px rgba(16,24,40,.06)}
 .prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--brand2),var(--brand));border-radius:9px;transition:width .6s}
-.mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:8px}
-.mission-cell{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted)}
-.mission-cell b{font-weight:800;color:var(--ink);font-size:13px}
+.mission-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr .9fr;gap:6px 14px;margin-bottom:8px}
+.mission-cell{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--muted)}
+.mission-cell b{font-weight:900;color:var(--ink);font-size:15px;line-height:1.2}
 .mission-cell .v-ok{color:var(--ok)}
+.mission-cell--fan b{color:var(--brand);font-size:17px}
 .target-edit{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);margin-top:auto;padding-top:8px;border-top:1px solid #f0f0f0}
 .target-edit input{width:72px;padding:4px 7px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-weight:700;color:var(--ink)}
 .target-edit button{font-size:11px;padding:4px 10px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:6px;cursor:pointer;font-weight:700;transition:.15s}
@@ -696,61 +699,61 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
-<body>
+<body data-page-node-id="f8tAWdtiSCoGzHAMxg4XqX">
 
-<div class="topbar">
-  <div class="brand"><span class="dot"></span>Gangstar 运营看板</div>
-  <div class="tabs">
-    <div class="tab active" data-view="fan">📊 粉丝监控</div>
-    <div class="tab" data-view="feedback">💬 玩家反馈</div>
-    <div class="tab" data-view="sa" id="tab-sa" style="display:none">📅 南亚社群排期</div>
+<div class="topbar" data-page-node-id="xqonJkAfHBFNgCKq48DKot">
+  <div class="brand" data-page-node-id="RFNLVzaToMQVADjRJnFJUo"><span class="dot" data-page-node-id="gWKkG7XVYpuqB5PHHXrHhd"></span>Gangstar 运营看板</div>
+  <div class="tabs" data-page-node-id="HPWFLpEFWk14rpQqeM2isc">
+    <div class="tab active" data-view="fan" data-page-node-id="LhZk2C7t4fLYE8hoNiMsYG">📊 粉丝监控</div>
+    <div class="tab" data-view="feedback" data-page-node-id="5bGXHK6CCspsuPJHhqMyx7">💬 玩家反馈</div>
+    <div class="tab" data-view="sa" id="tab-sa" style="display:none" data-page-node-id="f9rNo16Htlp3GmxzQ23haq">📅 南亚社群排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
-    <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
-    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期">📅 社群排期</button>
+    <div class="tab" data-view="regional" style="display:none" data-page-node-id="JHXbvmip4ICy4jsuKla6qw">📝 区域素材</div>
+    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期" data-page-node-id="lfmBTC1ZE60Jk5sBcEFTpY">📅 社群排期</button>
   </div>
-  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）">↩ 撤销</button>
-  <div class="upd" id="upd">数据更新于 —</div>
+  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）" data-page-node-id="JiMIRB2qpwBSB9fGO8sBu6">↩ 撤销</button>
+  <div class="upd" id="upd" data-page-node-id="LAZBFFxerT7SohYuBqz6U5">数据更新于 —</div>
 </div>
 
-<div class="stage">
-  <div class="view scroll" id="view-sa">
-    <div class="southasia" id="southAsiaView"></div>
+<div class="stage" data-page-node-id="rOUMDBA5tmOomVYGybO19N">
+  <div class="view scroll" id="view-sa" data-page-node-id="2KhW1za6O7UQCOlCQ8WjSS">
+    <div class="southasia" id="southAsiaView" data-page-node-id="IIlTCjrU4Zv93GY0i624p0"></div>
   </div>
-  <div class="view scroll" id="view-regional">
-    <div class="regional" id="regionalView"></div>
+  <div class="view scroll" id="view-regional" data-page-node-id="2ic37r9DuQ4fF0WcXOuuU6">
+    <div class="regional" id="regionalView" data-page-node-id="hBR7bYaPMvylpRKzLpVhL8"></div>
   </div>
-  <div class="view scroll active" id="view-fan">
-    <div class="fan">
-      <div class="fan-head">
-        <div>
-          <h2>📊 区域社媒粉丝监控</h2>
-          <div class="sub">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
+  <div class="view scroll active" id="view-fan" data-page-node-id="W5yC9ls9ULq2foAhpe4qG8">
+    <div class="fan" data-page-node-id="kAISqFpYIkOjD5YwN80whi">
+      <div class="fan-head" data-page-node-id="NHGk8zqIbXCiAugQgtT4sp">
+        <div data-page-node-id="sA2vtTbs2U2XGrEJrzfGdd">
+          <h2 data-page-node-id="FICvCiggkOq0cnsUr0t8Hi">📊 区域社媒粉丝监控</h2>
+          <div class="sub" data-page-node-id="afDpU4U777bxsAbGKi0SK0">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
         </div>
-        <div class="toolbar">
-          <button class="refresh" id="refreshBtn">
-            <span class="spin"></span>
-            <span class="btn-text">🔄 刷新粉丝数</span>
+        <div class="toolbar" data-page-node-id="L2TXUJ1O40dFUyOTFZaPwT">
+          <button class="refresh" id="refreshBtn" data-page-node-id="zmDLgfugrfe9nZaINphDkw">
+            <span class="spin" data-page-node-id="PJlhBxLDewBcT1oTZvQbw7"></span>
+            <span class="btn-text" data-page-node-id="IlxQSA0k8bodgQVaprLhHe">🔄 刷新粉丝数</span>
           </button>
-          <span class="status" id="status"></span>
+          <span class="status" id="status" data-page-node-id="kcoCU06IlZp1aCY6eAawg4"></span>
         </div>
       </div>
 
-      <div class="overview" id="summary"></div>
+      <div class="overview" id="summary" data-page-node-id="QfQUjcn3lQ0EFxFZHEzwhy"></div>
 
-      <div class="insights" id="insights"></div>
+      <div class="insights" id="insights" data-page-node-id="4n6N6A1NVX9BWi3r1dOee8"></div>
 
-      <div class="plat-grid" id="platforms"></div>
+      <div class="plat-grid" id="platforms" data-page-node-id="FldqCUwSkApNj1YytePneV"></div>
     </div>
   </div>
-  <div class="view scroll" id="view-feedback">
-    <div class="feedback" id="feedbackView"></div>
+  <div class="view scroll" id="view-feedback" data-page-node-id="2DXUpR2jGUYbysFAwW264F">
+    <div class="feedback" id="feedbackView" data-page-node-id="HKC8KYW4qBWIAN5erUVbx7"></div>
   </div>
 </div>
 
 <!-- Toast 通知 -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" data-page-node-id="3ei7zaFd2WBJWY9JFBmAEM"></div>
 
-<footer>Gangstar Mirage City · 区域发行运营看板</footer>
+<footer data-page-node-id="pHs9g0CyUB4zA6lwiHhYe7">Gangstar Mirage City · 区域发行运营看板</footer>
 
 <script>
 // HQ 公线排期数据（提取自 HQ排期日历.html，供南亚社群排期合并视图使用）
@@ -1445,11 +1448,10 @@ function renderFans(data){
     return `<span class="wk-flat">${L} ±0</span>`;
   }
 
-  // 概览区：上行=距上线+总粉丝(2卡)，下行=5平台摘要(等宽)
+  // 概览区：上行=距上线(单卡)，下行=平台统一表格
   document.getElementById('summary').innerHTML=`
     <div class="ov-row-top">
-      <div class="ov"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-      <div class="ov"><div class="k">社区总粉丝（${order.length} 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
+      <div class="ov ov--wide"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
     </div>
     <div class="uni-panel">
       <div class="uni-head"><span>平台</span><span>粉丝占比</span><span class="r">粉丝数</span><span class="r">本周涨粉</span></div>
@@ -1539,10 +1541,11 @@ function renderInsights(data){
       </div>
       <div class="prog"><i style="width:${prog.toFixed(1)}%"></i></div>
       <div class="mission-grid">
-        <div class="mission-cell"><span>社区总粉丝</span><b>${fmt(total)}</b></div>
+        <div class="mission-cell mission-cell--fan"><span>社区总粉丝（${order.length} 平台）</span><b>${fmt(total)}${weeklyTotal>0?`<small class="wk-total" style="font-size:11px;margin-left:4px">本周 ▲+${fmt(weeklyTotal)}</small>`:''}</b></div>
         <div class="mission-cell"><span>目标</span><b>${fmt(target)}</b></div>
         <div class="mission-cell"><span>完成度</span><b>${prog.toFixed(1)}%</b></div>
-        <div class="mission-cell"><span>日均需</span><b class="v-ok">+${needDaily.toFixed(0)}</b><span> / ${dl}天</span></div>
+        <div class="mission-cell"><span>日均需</span><b class="v-ok">+${needDaily.toFixed(0)}</b><small style="font-size:10px">/${dl}天</small></div>
+        <div class="mission-cell"><span>距目标</span><b style="color:${remain>0?'var(--ink)':'var(--ok)'}">${remain>0?fmt(remain):'✅'}</b></div>
       </div>
       ${summaryHtml?`<div class="wk-inline">${summaryHtml}</div>`:''}
       <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
@@ -2725,6 +2728,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
