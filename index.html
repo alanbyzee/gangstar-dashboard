@@ -118,18 +118,23 @@ body{
 .ov .v small{font-size:13px;color:var(--muted);font-weight:600}
 
 /* 统一平台表（占比条形 + 数值 + 周涨，合并原卡片网格与占比面板） */
-.uni-panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow-sm)}
-.uni-head{display:flex;align-items:center;gap:8px;padding:0 4px 10px;font-size:11px;color:#94a3b8;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-.uni-cl{flex:none}
-.uni-row{display:flex;align-items:center;gap:12px;padding:7px 4px;border-radius:10px;transition:background .15s}
+/* 统一平台表：grid 精确对齐 + 细条形 + 真实占比% + 色块图标 */
+.uni-panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px 12px;box-shadow:var(--shadow-sm)}
+.uni-head{display:grid;grid-template-columns:184px 1fr 88px 100px;align-items:center;gap:14px;padding:0 6px 12px;margin-bottom:6px;border-bottom:1px solid var(--line);font-size:11px;color:#94a3b8;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.uni-head .r{text-align:right}
+.uni-row{display:grid;grid-template-columns:184px 1fr 88px 100px;align-items:center;gap:14px;padding:9px 6px;border-radius:12px;transition:background .15s}
 .uni-row:hover{background:#f8fafc}
-.uni-info{display:flex;align-items:center;gap:8px;width:110px;flex:none}
-.uni-dot{width:10px;height:10px;border-radius:3px;flex:none}
-.uni-name{font-size:13px;font-weight:700;color:#334155;white-space:nowrap}
-.uni-track{flex:1;height:26px;background:#f1f5f9;border-radius:13px;overflow:hidden;position:relative;min-width:0}
-.uni-fill{height:100%;border-radius:13px;transition:width .6s cubic-bezier(.22,1,.36,1);min-width:3px}
-.uni-val{width:80px;flex:none;text-align:right;font-size:14px;font-weight:900;color:#1e293b}
-.uni-wk{width:100px;flex:none;text-align:right;font-size:12px;font-weight:700}
+.uni-info{display:flex;align-items:center;gap:10px;min-width:0}
+.uni-ic{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;letter-spacing:.3px}
+.uni-meta{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.uni-name{font-size:13.5px;font-weight:800;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uni-handle{font-size:10.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uni-trackwrap{display:flex;align-items:center;gap:10px;min-width:0}
+.uni-track{flex:1;height:9px;background:#eef2f7;border-radius:6px;overflow:hidden;min-width:0}
+.uni-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.22,1,.36,1);min-width:2px}
+.uni-pct{width:40px;flex:none;text-align:right;font-size:11px;font-weight:700;color:#64748b;font-variant-numeric:tabular-nums}
+.uni-val{text-align:right;font-size:15px;font-weight:900;color:#0f172a;font-variant-numeric:tabular-nums}
+.uni-wk{text-align:right}
 
 /* 本周涨粉标签（共用） */
 .wk-up{font-size:11px;font-weight:700;color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
@@ -1447,8 +1452,8 @@ function renderFans(data){
       <div class="ov"><div class="k">社区总粉丝（${order.length} 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
     </div>
     <div class="uni-panel">
-      <div class="uni-head"><span class="uni-cl">平台</span><span class="uni-cl" style="flex:1">占比</span><span class="uni-cl" style="width:80px;text-align:right">粉丝数</span><span class="uni-cl" style="width:100px;text-align:right">本周涨粉</span></div>
-      ${(() => { const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _colors=order.map(k=>p[k]?.color||'#999'), _mV=Math.max(..._vals,1); return order.map((k, i) => { const v=_vals[i], bP=v>0?Math.max(v/_mV*100,1.5):0, wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'<span class="wk-up">▲+'+fmt(wg.diff)+'</span>':wg.diff<0?'<span class="wk-down">▼'+fmt(wg.diff)+'</span>':'<span class="wk-flat">±0</span>'):'<span class="wk-flat">—</span>'; return '<div class="uni-row"><div class="uni-info"><span class="uni-dot" style="background:'+_colors[i]+'"></span><span class="uni-name">'+esc(_names[i])+'</span></div><div class="uni-track"><div class="uni-fill" style="background:'+_colors[i]+';width:'+bP+'%"></div></div><div class="uni-val">'+(v>0?fmt(v):'—')+'</div><div class="uni-wk">'+wT+'</div></div>'; }).join(''); })()}
+      <div class="uni-head"><span>平台</span><span>粉丝占比</span><span class="r">粉丝数</span><span class="r">本周涨粉</span></div>
+      ${(() => { const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _handles=order.map(k=>p[k]?.handle||''), _colors=order.map(k=>p[k]?.color||'#999'), _total=_vals.reduce((a,b)=>a+b,0)||1; return order.map((k,i)=>{ const v=_vals[i], pct=v>0?Math.round(v/_total*100):0, wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'<span class="wk-up">▲ +'+fmt(wg.diff)+'</span>':wg.diff<0?'<span class="wk-down">▼ '+fmt(wg.diff)+'</span>':'<span class="wk-flat">±0</span>'):'<span class="wk-flat">—</span>'; const init=(_names[i]||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'?'; return '<div class="uni-row"><div class="uni-info"><span class="uni-ic" style="background:'+_colors[i]+'">'+init+'</span><span class="uni-meta"><span class="uni-name">'+esc(_names[i])+'</span><span class="uni-handle">'+esc(_handles[i])+'</span></span></div><div class="uni-trackwrap"><div class="uni-track"><div class="uni-fill" style="background:'+_colors[i]+';width:'+pct+'%"></div></div><span class="uni-pct">'+pct+'%</span></div><div class="uni-val">'+(v>0?fmt(v):'—')+'</div><div class="uni-wk">'+wT+'</div></div>'; }).join(''); })()}
     </div>`;
 
   // 平台卡片（每张含：图标/名称/handle/数值/周增长/折线图/note/链接）
@@ -2720,6 +2725,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
