@@ -349,15 +349,22 @@ body{
 .wk-inline b{font-weight:800}
 .wk-inline .up{color:var(--ok)}
 
-/* ---- 右面板：平台占比环形图（外标签+底部图例） ---- */
-.pie-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px}
-.pie-svg{display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.08))}
-.pie-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;margin-top:12px}
-.pie-leg-item{display:flex;align-items:center;gap:6px;font-size:11.5px}
-.pie-leg-dot{width:12px;height:12px;border-radius:3px;flex:none}
-.pie-leg-name{font-weight:700;color:#334155;white-space:nowrap}
-.pie-leg-pct{font-weight:800;color:#1e293b;margin:0 2px 0 4px}
-.pie-leg-val{color:#94a3b8;font-size:10.5px}.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
+/* ---- 平台占比：横向条形图 ---- */
+.pct-panel{padding:4px 0}
+.pct-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.pct-total{font-size:22px;font-weight:900;color:#1e293b;letter-spacing:-0.5px}
+.pct-total-label{font-size:12px;color:#94a3b8;font-weight:600}
+.pct-badge{background:#f1f5f9;color:#64748b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.pct-list{display:flex;flex-direction:column;gap:10px}
+.pct-row{display:flex;align-items:center;gap:12px}
+.pct-info{display:flex;align-items:center;gap:8px;width:110px;flex:none}
+.pct-dot{width:10px;height:10px;border-radius:3px;flex:none}
+.pct-name{font-size:12.5px;font-weight:700;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct-track{flex:1;height:28px;background:#f1f5f9;border-radius:14px;overflow:hidden;position:relative;min-width:0}
+.pct-fill{height:100%;border-radius:14px;transition:width .6s cubic-bezier(.22,1,.36,1);min-width:3px}
+.pct-meta{width:80px;flex:none;display:flex;align-items:baseline;gap:4px;justify-content:flex-end}
+.pct-val{font-size:13px;font-weight:900;color:#1e293b}
+.pct-pct{font-size:11px;color:#94a3b8;font-weight:600}.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
 
 /* 卡片动能行 */
 .momentum{display:flex;gap:10px;flex-wrap:wrap;margin-top:1px}
@@ -1494,69 +1501,16 @@ function renderInsights(data){
   const pieSize=260, cx=pieSize/2, cy=pieSize/2, ro=100, ri=58;
   const pi2=Math.PI*2;
   let accAngle=-Math.PI/2;
-  // 占比环形图：引导线 + 左右分列标签（杜绝重叠）
-  const p_pieW=320, p_pieH=300, p_cx=p_pieW/2, p_cy=p_pieH/2-10, p_ro=95, p_ri=54;
-  const p_pi2=Math.PI*2;
-  let p_accAngle=-Math.PI/2;
-  const p_allSegs=order.map((k,i)=>{
+    // 占比横向条形图（稳定可靠，适配任意分布）
+  const maxV=Math.max(...vals,1);
+  const pctRows=order.map((k,i)=>{
     const v=vals[i];
     const pct=total?v/total*100:0;
-    if(v<=0) return null;
-    const span=Math.max(pct/100*p_pi2, 0.003);
-    const start=p_accAngle, end=p_accAngle+span;
-    p_accAngle=end;
-    const largeArc=span>Math.PI?1:0;
-    const x1=p_cx+p_ro*Math.cos(start), y1=p_cy+p_ro*Math.sin(start);
-    const x2=p_cx+p_ro*Math.cos(end),   y2=p_cy+p_ro*Math.sin(end);
-    const ix1=p_cx+p_ri*Math.cos(start), iy1=p_cy+p_ri*Math.sin(start);
-    const ix2=p_cx+p_ri*Math.cos(end),   iy2=p_cy+p_ri*Math.sin(end);
-    const path=`M ${ix1} ${iy1} L ${x1} ${y1} A ${p_ro} ${p_ro} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${p_ri} ${p_ri} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
-    const mid=(start+end)/2;
-    const p_elbowR=p_ro+14;
-    const ex=p_cx+p_elbowR*Math.cos(mid), ey=p_cy+p_elbowR*Math.sin(mid);
-    const isRight=mid>-Math.PI/2 && mid<Math.PI/2;
-    const p_labelX=isRight ? p_cx+p_ro+52 : p_cx-p_ro-52;
-    return {name:names[i], color:colors[i], val:v, pct, path, mid, ex, ey, p_labelX, isRight};
-  }).filter(Boolean);
-
-  // sort into left/right columns by angle, then assign Y with spacing
-  const p_leftCol=p_allSegs.filter(s=>!s.isRight).sort((a,b)=>a.mid-b.mid);
-  const p_rightCol=p_allSegs.filter(s=>s.isRight).sort((a,b)=>a.mid-b.mid);
-  const p_labelSpacing=22;
-  const p_totalH=Math.max(p_leftCol.length,p_rightCol.length)*p_labelSpacing;
-  const p_topY=p_cy-p_totalH/2;
-  let ly=p_topY;
-  p_leftCol.forEach(s=>{s.labelY=ly;ly+=p_labelSpacing;});
-  ly=p_topY;
-  p_rightCol.forEach(s=>{s.labelY=ly;ly+=p_labelSpacing;});
-
-  // build leader lines + labels
-  const p_leaders=p_allSegs.map(s=>{
-    const cornerX=s.isRight?s.p_labelX-8:s.p_labelX+8;
-    const pts=`${p_cx+p_ro*Math.cos(s.mid)},${p_cy+p_ro*Math.sin(s.mid)} ${s.ex},${s.ey} ${cornerX},${s.labelY}`;
-    const anchor=s.isRight?'start':'end';
-    return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="1.5" opacity=".55"/>
-<text x="${s.p_labelX}" y="${s.labelY}" text-anchor="${anchor}" dominant-baseline="central" font-size="11.5" font-weight="700" fill="#334155">${esc(s.name)} ${(s.pct).toFixed(1)}%</text>`;
-  }).join('\n  ');
-
-  const pieSvg=`<svg width="${p_pieW}" height="${p_pieH}" viewBox="0 0 ${p_pieW} ${p_pieH}" class="pie-svg">
-    <circle cx="${p_cx}" cy="${p_cy}" r="${p_ro+20}" fill="#f8fafc"/>
-    ${p_allSegs.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('\n    ')}
-    <circle cx="${p_cx}" cy="${p_cy}" r="${p_ri-2}" fill="#fff"/>
-    <text x="${p_cx}" y="${p_cy-6}" text-anchor="middle" font-size="24" font-weight="900" fill="#1e293b">${fmt(total)}</text>
-    <text x="${p_cx}" y="${p_cy+12}" text-anchor="middle" font-size="10.5" fill="#94a3b8">总粉丝</text>
-    ${p_leaders}
-  </svg>`;
-
-  // bottom legend
-  const legendHtml=order.map((k,i)=>{
-    const v=vals[i];
-    const pct=total?v/total*100:0;
-    return `<div class="pie-leg-item">
-      <span class="pie-leg-dot" style="background:${colors[i]}"></span>
-      <span class="pie-leg-name">${esc(names[i])}</span>
-      <span class="pie-leg-pct">${pct.toFixed(1)}%</span>
-      <span class="pie-leg-val">${v>0?fmt(v):'—'}</span>
+    const barPct=v>0?Math.max(v/maxV*100,1.5):0;
+    return `<div class="pct-row">
+      <div class="pct-info"><span class="pct-dot" style="background:${colors[i]}"></span><span class="pct-name">${esc(names[i])}</span></div>
+      <div class="pct-track"><div class="pct-fill" style="background:${colors[i]};width:${barPct}%"></div></div>
+      <div class="pct-meta"><span class="pct-val">${v>0?fmt(v):'—'}</span><span class="pct-pct">${pct.toFixed(1)}%</span></div>
     </div>`;
   }).join('');// 本周涨粉总结（总结性段落，非罗列；与右侧平台占比框平齐）
   const grows=order.map(k=>({name:p[k]?.name||k,wg:weeklyGrowth(p[k])}));
@@ -1611,11 +1565,15 @@ function renderInsights(data){
       ${summaryHtml?`<div class="wk-inline">${summaryHtml}</div>`:''}
       <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
     </div>
-    <div class="panel">
-      <h3><span class="em">🥧</span> 各平台粉丝量占比</h3>
-      <div class="pie-wrap">
-        ${pieSvg}
-        <div class="pie-legend">${legendHtml}</div>
+        <div class="panel">
+      <h3><span class="em">🥧</span> 各平台粉丝占比</h3>
+      <div class="pct-panel">
+        <div class="pct-head">
+          <span class="pct-total">${fmt(total)}</span>
+          <span class="pct-total-label">总粉丝</span>
+          <span class="pct-badge">${order.length} 个平台</span>
+        </div>
+        <div class="pct-list">${pctRows}</div>
       </div>
     </div>`;
 
@@ -2795,6 +2753,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
