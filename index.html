@@ -1495,57 +1495,57 @@ function renderInsights(data){
   const pi2=Math.PI*2;
   let accAngle=-Math.PI/2;
   // 占比环形图：引导线 + 左右分列标签（杜绝重叠）
-  const pieW=320, pieH=300, pcx=pieW/2, pcy=pieH/2-10, pro=95, pri=54;
-  const pi2=Math.PI*2;
-  let accAngle=-Math.PI/2;
-  const allSegs=order.map((k,i)=>{
+  const p_pieW=320, p_pieH=300, p_cx=p_pieW/2, p_cy=p_pieH/2-10, p_ro=95, p_ri=54;
+  const p_pi2=Math.PI*2;
+  let p_accAngle=-Math.PI/2;
+  const p_allSegs=order.map((k,i)=>{
     const v=vals[i];
     const pct=total?v/total*100:0;
     if(v<=0) return null;
-    const span=Math.max(pct/100*pi2, 0.003);
-    const start=accAngle, end=accAngle+span;
-    accAngle=end;
+    const span=Math.max(pct/100*p_pi2, 0.003);
+    const start=p_accAngle, end=p_accAngle+span;
+    p_accAngle=end;
     const largeArc=span>Math.PI?1:0;
-    const x1=pcx+pro*Math.cos(start), y1=pcy+pro*Math.sin(start);
-    const x2=pcx+pro*Math.cos(end),   y2=pcy+pro*Math.sin(end);
-    const ix1=pcx+pri*Math.cos(start), iy1=pcy+pri*Math.sin(start);
-    const ix2=pcx+pri*Math.cos(end),   iy2=pcy+pri*Math.sin(end);
-    const path=`M ${ix1} ${iy1} L ${x1} ${y1} A ${pro} ${pro} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${pri} ${pri} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
+    const x1=p_cx+p_ro*Math.cos(start), y1=p_cy+p_ro*Math.sin(start);
+    const x2=p_cx+p_ro*Math.cos(end),   y2=p_cy+p_ro*Math.sin(end);
+    const ix1=p_cx+p_ri*Math.cos(start), iy1=p_cy+p_ri*Math.sin(start);
+    const ix2=p_cx+p_ri*Math.cos(end),   iy2=p_cy+p_ri*Math.sin(end);
+    const path=`M ${ix1} ${iy1} L ${x1} ${y1} A ${p_ro} ${p_ro} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${p_ri} ${p_ri} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
     const mid=(start+end)/2;
-    const elbowR=pro+14;
-    const ex=pcx+elbowR*Math.cos(mid), ey=pcy+elbowR*Math.sin(mid);
+    const p_elbowR=p_ro+14;
+    const ex=p_cx+p_elbowR*Math.cos(mid), ey=p_cy+p_elbowR*Math.sin(mid);
     const isRight=mid>-Math.PI/2 && mid<Math.PI/2;
-    const labelX=isRight ? pcx+pro+52 : pcx-pro-52;
-    return {name:names[i], color:colors[i], val:v, pct, path, mid, ex, ey, labelX, isRight};
+    const p_labelX=isRight ? p_cx+p_ro+52 : p_cx-p_ro-52;
+    return {name:names[i], color:colors[i], val:v, pct, path, mid, ex, ey, p_labelX, isRight};
   }).filter(Boolean);
 
   // sort into left/right columns by angle, then assign Y with spacing
-  const leftCol=allSegs.filter(s=>!s.isRight).sort((a,b)=>a.mid-b.mid);
-  const rightCol=allSegs.filter(s=>s.isRight).sort((a,b)=>a.mid-b.mid);
-  const labelSpacing=22;
-  const totalH=Math.max(leftCol.length,rightCol.length)*labelSpacing;
-  const topY=pcy-totalH/2;
-  let ly=topY;
-  leftCol.forEach(s=>{s.labelY=ly;ly+=labelSpacing;});
-  ly=topY;
-  rightCol.forEach(s=>{s.labelY=ly;ly+=labelSpacing;});
+  const p_leftCol=p_allSegs.filter(s=>!s.isRight).sort((a,b)=>a.mid-b.mid);
+  const p_rightCol=p_allSegs.filter(s=>s.isRight).sort((a,b)=>a.mid-b.mid);
+  const p_labelSpacing=22;
+  const p_totalH=Math.max(p_leftCol.length,p_rightCol.length)*p_labelSpacing;
+  const p_topY=p_cy-p_totalH/2;
+  let ly=p_topY;
+  p_leftCol.forEach(s=>{s.labelY=ly;ly+=p_labelSpacing;});
+  ly=p_topY;
+  p_rightCol.forEach(s=>{s.labelY=ly;ly+=p_labelSpacing;});
 
   // build leader lines + labels
-  const leaders=allSegs.map(s=>{
-    const cornerX=s.isRight?s.labelX-8:s.labelX+8;
-    const pts=`${pcx+pro*Math.cos(s.mid)},${pcy+pro*Math.sin(s.mid)} ${s.ex},${s.ey} ${cornerX},${s.labelY}`;
+  const p_leaders=p_allSegs.map(s=>{
+    const cornerX=s.isRight?s.p_labelX-8:s.p_labelX+8;
+    const pts=`${p_cx+p_ro*Math.cos(s.mid)},${p_cy+p_ro*Math.sin(s.mid)} ${s.ex},${s.ey} ${cornerX},${s.labelY}`;
     const anchor=s.isRight?'start':'end';
     return `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="1.5" opacity=".55"/>
-<text x="${s.labelX}" y="${s.labelY}" text-anchor="${anchor}" dominant-baseline="central" font-size="11.5" font-weight="700" fill="#334155">${esc(s.name)} ${(s.pct).toFixed(1)}%</text>`;
+<text x="${s.p_labelX}" y="${s.labelY}" text-anchor="${anchor}" dominant-baseline="central" font-size="11.5" font-weight="700" fill="#334155">${esc(s.name)} ${(s.pct).toFixed(1)}%</text>`;
   }).join('\n  ');
 
-  const pieSvg=`<svg width="${pieW}" height="${pieH}" viewBox="0 0 ${pieW} ${pieH}" class="pie-svg">
-    <circle pcx="${pcx}" pcy="${pcy}" r="${pro+20}" fill="#f8fafc"/>
-    ${allSegs.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('\n    ')}
-    <circle pcx="${pcx}" pcy="${pcy}" r="${pri-2}" fill="#fff"/>
-    <text x="${pcx}" y="${pcy-6}" text-anchor="middle" font-size="24" font-weight="900" fill="#1e293b">${fmt(total)}</text>
-    <text x="${pcx}" y="${pcy+12}" text-anchor="middle" font-size="10.5" fill="#94a3b8">总粉丝</text>
-    ${leaders}
+  const p_pieSvg=`<svg width="${p_pieW}" height="${p_pieH}" viewBox="0 0 ${p_pieW} ${p_pieH}" class="pie-svg">
+    <circle p_cx="${p_cx}" p_cy="${p_cy}" r="${p_ro+20}" fill="#f8fafc"/>
+    ${p_allSegs.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('\n    ')}
+    <circle p_cx="${p_cx}" p_cy="${p_cy}" r="${p_ri-2}" fill="#fff"/>
+    <text x="${p_cx}" y="${p_cy-6}" text-anchor="middle" font-size="24" font-weight="900" fill="#1e293b">${fmt(total)}</text>
+    <text x="${p_cx}" y="${p_cy+12}" text-anchor="middle" font-size="10.5" fill="#94a3b8">总粉丝</text>
+    ${p_leaders}
   </svg>`;
 
   // bottom legend
@@ -2795,6 +2795,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
