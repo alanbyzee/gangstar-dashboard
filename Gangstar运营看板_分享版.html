@@ -117,14 +117,19 @@ body{
 .ov .v{font-size:26px;font-weight:800;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ov .v small{font-size:13px;color:var(--muted);font-weight:600}
 
-/* 下行：5平台等宽摘要卡 */
-.ov-row-plats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-@media(max-width:900px){.ov-row-plats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:600px){.ov-row-plats{grid-template-columns:repeat(2,1fr)}}
-.ov-plat{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 15px;box-shadow:var(--shadow-sm);transition:.2s}
-.ov-plat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.ov-plat .op-name{font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:600}
-.ov-plat .op-val{font-size:24px;font-weight:800;display:flex;align-items:center;gap:7px;flex-wrap:wrap;line-height:1.2}
+/* 统一平台表（占比条形 + 数值 + 周涨，合并原卡片网格与占比面板） */
+.uni-panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow-sm)}
+.uni-head{display:flex;align-items:center;gap:8px;padding:0 4px 10px;font-size:11px;color:#94a3b8;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.uni-cl{flex:none}
+.uni-row{display:flex;align-items:center;gap:12px;padding:7px 4px;border-radius:10px;transition:background .15s}
+.uni-row:hover{background:#f8fafc}
+.uni-info{display:flex;align-items:center;gap:8px;width:110px;flex:none}
+.uni-dot{width:10px;height:10px;border-radius:3px;flex:none}
+.uni-name{font-size:13px;font-weight:700;color:#334155;white-space:nowrap}
+.uni-track{flex:1;height:26px;background:#f1f5f9;border-radius:13px;overflow:hidden;position:relative;min-width:0}
+.uni-fill{height:100%;border-radius:13px;transition:width .6s cubic-bezier(.22,1,.36,1);min-width:3px}
+.uni-val{width:80px;flex:none;text-align:right;font-size:14px;font-weight:900;color:#1e293b}
+.uni-wk{width:100px;flex:none;text-align:right;font-size:12px;font-weight:700}
 
 /* 本周涨粉标签（共用） */
 .wk-up{font-size:11px;font-weight:700;color:var(--ok);background:#ecfdf5;border:1px solid #a7f3d0;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center}
@@ -349,22 +354,7 @@ body{
 .wk-inline b{font-weight:800}
 .wk-inline .up{color:var(--ok)}
 
-/* ---- 平台占比：横向条形图 ---- */
-.pct-panel{padding:4px 0}
-.pct-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.pct-total{font-size:22px;font-weight:900;color:#1e293b;letter-spacing:-0.5px}
-.pct-total-label{font-size:12px;color:#94a3b8;font-weight:600}
-.pct-badge{background:#f1f5f9;color:#64748b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
-.pct-list{display:flex;flex-direction:column;gap:10px}
-.pct-row{display:flex;align-items:center;gap:12px}
-.pct-info{display:flex;align-items:center;gap:8px;width:110px;flex:none}
-.pct-dot{width:10px;height:10px;border-radius:3px;flex:none}
-.pct-name{font-size:12.5px;font-weight:700;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pct-track{flex:1;height:28px;background:#f1f5f9;border-radius:14px;overflow:hidden;position:relative;min-width:0}
-.pct-fill{height:100%;border-radius:14px;transition:width .6s cubic-bezier(.22,1,.36,1);min-width:3px}
-.pct-meta{width:80px;flex:none;display:flex;align-items:baseline;gap:4px;justify-content:flex-end;background:rgba(255,255,255,0.88);padding:2px 6px 2px 12px;border-radius:8px;margin-left:-10px;position:relative;z-index:1}
-.pct-val{font-size:13px;font-weight:900;color:#1e293b}
-.pct-pct{font-size:11px;color:#94a3b8;font-weight:600}.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 3px 10px rgba(217,119,6,.3)}
 
 /* 卡片动能行 */
 .momentum{display:flex;gap:10px;flex-wrap:wrap;margin-top:1px}
@@ -1456,8 +1446,9 @@ function renderFans(data){
       <div class="ov"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
       <div class="ov"><div class="k">社区总粉丝（${order.length} 平台）</div><div class="v">${fmt(totalAll)}${totalWg>0?`<small class="wk-total">本周 ▲+${fmt(totalWg)}</small>`:''}</div></div>
     </div>
-    <div class="ov-row-plats">
-      ${order.map(k=>`<div class="ov-plat"><div class="op-name">${esc(p[k]?.name||k)}</div><div class="op-val">${fmt(p[k]?.value||0)}${wkTag(weeklyGrowth(p[k]),'本周')}</div></div>`).join('')}
+    <div class="uni-panel">
+      <div class="uni-head"><span class="uni-cl">平台</span><span class="uni-cl" style="flex:1">占比</span><span class="uni-cl" style="width:80px;text-align:right">粉丝数</span><span class="uni-cl" style="width:100px;text-align:right">本周涨粉</span></div>
+      ${(() => { const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _colors=order.map(k=>p[k]?.color||'#999'), _mV=Math.max(..._vals,1); return order.map((k, i) => { const v=_vals[i], bP=v>0?Math.max(v/_mV*100,1.5):0, wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'<span class="wk-up">▲+'+fmt(wg.diff)+'</span>':wg.diff<0?'<span class="wk-down">▼'+fmt(wg.diff)+'</span>':'<span class="wk-flat">±0</span>'):'<span class="wk-flat">—</span>'; return '<div class="uni-row"><div class="uni-info"><span class="uni-dot" style="background:'+_colors[i]+'"></span><span class="uni-name">'+esc(_names[i])+'</span></div><div class="uni-track"><div class="uni-fill" style="background:'+_colors[i]+';width:'+bP+'%"></div></div><div class="uni-val">'+(v>0?fmt(v):'—')+'</div><div class="uni-wk">'+wT+'</div></div>'; }).join(''); })()}
     </div>`;
 
   // 平台卡片（每张含：图标/名称/handle/数值/周增长/折线图/note/链接）
@@ -1497,22 +1488,8 @@ function renderInsights(data){
   const colors=order.map(k=>p[k]?.color||'#999');
   const total=vals.reduce((a,b)=>a+b,0);
 
-      // 占比环形图：外标签 + 底部图例（适配极端分布）
-  const pieSize=260, cx=pieSize/2, cy=pieSize/2, ro=100, ri=58;
-  const pi2=Math.PI*2;
-  let accAngle=-Math.PI/2;
-    // 占比横向条形图（稳定可靠，适配任意分布）
-  const maxV=Math.max(...vals,1);
-  const pctRows=order.map((k,i)=>{
-    const v=vals[i];
-    const pct=total?v/total*100:0;
-    const barPct=v>0?Math.max(v/maxV*100,1.5):0;
-    return `<div class="pct-row">
-      <div class="pct-info"><span class="pct-dot" style="background:${colors[i]}"></span><span class="pct-name">${esc(names[i])}</span></div>
-      <div class="pct-track"><div class="pct-fill" style="background:${colors[i]};width:${barPct}%"></div></div>
-      <div class="pct-meta"><span class="pct-val">${v>0?fmt(v):'—'}</span><span class="pct-pct">${pct.toFixed(1)}%</span></div>
-    </div>`;
-  }).join('');// 本周涨粉总结（总结性段落，非罗列；与右侧平台占比框平齐）
+    // 占比条形图（已合并到概览区统一表格，此处保留变量供目标进度使用）
+  // (pctRows 已合并到 renderFans 概览区统一表格)// 本周涨粉总结（总结性段落，非罗列；与右侧平台占比框平齐）
   const grows=order.map(k=>({name:p[k]?.name||k,wg:weeklyGrowth(p[k])}));
   const valid=grows.filter(g=>g.wg).sort((a,b)=>b.wg.diff-a.wg.diff);
   const best=valid[0];
@@ -1565,16 +1542,6 @@ function renderInsights(data){
       ${summaryHtml?`<div class="wk-inline">${summaryHtml}</div>`:''}
       <div class="target-edit">目标值 <input id="targetInput" type="number" value="${target}" min="1"> <button id="targetSave">设为目标</button></div>
     </div>
-        <div class="panel">
-      <h3><span class="em">🥧</span> 各平台粉丝占比</h3>
-      <div class="pct-panel">
-        <div class="pct-head">
-          <span class="pct-total">${fmt(total)}</span>
-          <span class="pct-total-label">总粉丝</span>
-          <span class="pct-badge">${order.length} 个平台</span>
-        </div>
-        <div class="pct-list">${pctRows}</div>
-      </div>
     </div>`;
 
   const saveBtn=document.getElementById('targetSave');
@@ -2753,6 +2720,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
