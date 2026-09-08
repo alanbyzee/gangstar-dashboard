@@ -79,7 +79,9 @@ body{
 .view.scroll{overflow:auto;padding-right:2px}
 
 /* ===== 粉丝监控 ===== */
-.fan{padding:14px 24px 28px;max-width:1180px;margin:0 auto}
+.fan{padding:14px 24px 28px;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.35fr .65fr;gap:16px;align-items:start}
+.fan>.plat-grid{grid-column:1/-1}
+@media(max-width:860px){.fan{grid-template-columns:1fr}}
 .fan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .fan h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .fan .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
@@ -107,7 +109,7 @@ body{
 .toast.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 
-/* 概览区：上行=距上线+总粉丝(2卡)，下行=5平台摘要(等宽) */
+/* 概览区：平台统一表格（与目标面板 .fan grid 并排） */
 .overview{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
 .ov-row-top{display:grid;grid-template-columns:1fr;gap:14px}
 .ov{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow-sm);transition:.2s}
@@ -326,10 +328,9 @@ body{
 .pc .lk{font-size:11px;color:var(--brand);text-decoration:none;word-break:break-all}
 .pc .lk:hover{text-decoration:underline}
 
-/* ===== 洞察区：作战进度 + 占比（等高双栏） ===== */
-.insights{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;align-items:stretch}
+/* ===== 洞察区：目标进度（与平台表并排） ===== */
+.insights{margin-bottom:18px}
 .insights>.panel{display:flex;flex-direction:column}
-@media(max-width:760px){.insights{grid-template-columns:1fr}}
 .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow-sm);transition:.2s}
 .panel:hover{box-shadow:var(--shadow-md)}
 .panel h3{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:7px}
@@ -1448,11 +1449,8 @@ function renderFans(data){
     return `<span class="wk-flat">${L} ±0</span>`;
   }
 
-  // 概览区：上行=距上线(单卡)，下行=平台统一表格
+  // 概览区：平台统一表格（距上线已移除，总粉丝融入目标面板）
   document.getElementById('summary').innerHTML=`
-    <div class="ov-row-top">
-      <div class="ov ov--wide"><div class="k">距上线 8/20</div><div class="v">D-${d}</div></div>
-    </div>
     <div class="uni-panel">
       <div class="uni-head"><span>平台</span><span>粉丝占比</span><span class="r">粉丝数</span><span class="r">本周涨粉</span></div>
       ${(() => { const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _handles=order.map(k=>p[k]?.handle||''), _colors=order.map(k=>p[k]?.color||'#999'), _total=_vals.reduce((a,b)=>a+b,0)||1; return order.map((k,i)=>{ const v=_vals[i], pct=v>0?Math.round(v/_total*100):0, wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'<span class="wk-up">▲ +'+fmt(wg.diff)+'</span>':wg.diff<0?'<span class="wk-down">▼ '+fmt(wg.diff)+'</span>':'<span class="wk-flat">±0</span>'):'<span class="wk-flat">—</span>'; const init=(_names[i]||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'?'; return '<div class="uni-row"><div class="uni-info"><span class="uni-ic" style="background:'+_colors[i]+'">'+init+'</span><span class="uni-meta"><span class="uni-name">'+esc(_names[i])+'</span><span class="uni-handle">'+esc(_handles[i])+'</span></span></div><div class="uni-trackwrap"><div class="uni-track"><div class="uni-fill" style="background:'+_colors[i]+';width:'+pct+'%"></div></div><span class="uni-pct">'+pct+'%</span></div><div class="uni-val">'+(v>0?fmt(v):'—')+'</div><div class="uni-wk">'+wT+'</div></div>'; }).join(''); })()}
@@ -2728,6 +2726,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
