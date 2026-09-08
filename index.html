@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-CN" data-page-node-id="CeQV1QI2agUiC1wilrhgET">
+<head data-page-node-id="5gmnKD1diAgIoDtquzd1Ea">
+<meta charset="UTF-8" data-page-node-id="CToDOkWmHgwaxvm6qM6VxC">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="EBFFDsEWjNXzrDOvpPgnkk">
 <title>Gangstar 运营看板</title>
-<meta name="build" content="2026-08-07T0017">
+<meta name="build" content="2026-08-07T0017" data-page-node-id="GJPJ3YfLCLIDTUnEQNbC5A">
 <style>
 :root{
   --bg:#eef1f7;
@@ -823,74 +823,108 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .issue-stats{grid-template-columns:repeat(2,1fr)} .issue-board{grid-template-columns:1fr}
 }
 
+/* ===== 交互微动效 ===== */
+/* 卡片/区块入场：淡入上移 */
+.cc-section,.kpi,.istat,.icard,.perf-card,.cc-card,.health,.uni-row,.pc,.pv-cat{
+  animation:fadeUp .42s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* 入场级联（同容器内依次浮现） */
+.kpi-grid .kpi:nth-child(1){animation-delay:.02s}.kpi-grid .kpi:nth-child(2){animation-delay:.06s}.kpi-grid .kpi:nth-child(3){animation-delay:.10s}.kpi-grid .kpi:nth-child(4){animation-delay:.14s}
+.kpi-grid .kpi:nth-child(5){animation-delay:.18s}.kpi-grid .kpi:nth-child(6){animation-delay:.22s}.kpi-grid .kpi:nth-child(7){animation-delay:.26s}.kpi-grid .kpi:nth-child(8){animation-delay:.30s}
+.issue-stats .istat:nth-child(1){animation-delay:.02s}.issue-stats .istat:nth-child(2){animation-delay:.06s}.issue-stats .istat:nth-child(3){animation-delay:.10s}
+.issue-stats .istat:nth-child(4){animation-delay:.14s}.issue-stats .istat:nth-child(5){animation-delay:.18s}.issue-stats .istat:nth-child(6){animation-delay:.22s}
+
+/* 悬浮抬升 */
+.kpi,.cc-card,.health,.perf-card{transition:box-shadow .2s ease,transform .2s ease}
+.kpi:hover,.cc-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,36,51,.10)}
+.icard{transition:border-color .15s,box-shadow .15s,transform .15s}
+
+/* Tab / 按钮按压反馈 */
+.tab{transition:color .2s ease,background .2s ease,border-color .2s ease,transform .12s ease}
+.tab:active{transform:scale(.96)}
+.filter-sel{transition:all .18s ease}
+.filter-sel:hover{border-color:var(--brand);color:var(--brand)}
+.filter-sel:active{transform:scale(.97)}
+.pv-rng{transition:all .18s ease}
+.pv-rng:active{transform:scale(.96)}
+
+/* 条形动效：宽度平滑过渡（载入即生长） */
+.uni-fill,.trend-bar i,.pct-fill{transition:width .7s cubic-bezier(.22,1,.36,1)}
+
+/* 模态淡入放大（与现有 sa-pop 叠加增强） */
+.sa-modal-bg{animation:sa-fade .18s ease}
+.sa-modal{animation:popIn .26s cubic-bezier(.22,1,.36,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+
+/* 关注点闪烁：新内容提示 */
+.sdot{transition:transform .2s ease}
+.icard:hover .ic-topic{color:var(--brand)}
+
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
-<body>
+<body data-page-node-id="2IRDup9s2wMRG3wnNLn2HM">
 
-<div class="topbar">
-  <div class="brand"><span class="dot"></span>Gangstar 运营看板</div>
-  <div class="tabs">
-    <div class="tab active" data-view="fan">📊 粉丝监控</div>
-    <div class="tab" data-view="feedback">💬 玩家反馈</div>
-    <div class="tab" data-view="issues">🐞 Issue Tracker</div>
-    <div class="tab" data-view="content">📈 Content</div>
-    <div class="tab" data-view="sa" id="tab-sa" style="display:none">📅 南亚社群排期</div>
+<div class="topbar" data-page-node-id="mtkDXpktKQRJ61Z3wilmzX">
+  <div class="brand" data-page-node-id="XQPbpgQTxONfFCPTotTppZ"><span class="dot" data-page-node-id="3SlfFr0EFgfkayiR6iemuU"></span>Gangstar 运营看板</div>
+  <div class="tabs" data-page-node-id="7RxOCd2TxyN26BMsF15x63">
+    <div class="tab active" data-view="fan" data-page-node-id="WdezKlU3Y93Agd3N10t52C">📊 粉丝监控</div>
+    <div class="tab" data-view="feedback" data-page-node-id="KIVIeUVFV0sXK45Cj1KbMb">💬 玩家反馈</div>
+    <div class="tab" data-view="issues" data-page-node-id="QdYyAPbzFO97WpNmoCG2mk">🐞 问题追踪</div>
+    <div class="tab" data-view="sa" id="tab-sa" style="display:none" data-page-node-id="Zl2iFypyq4THVF3LBQ5lea">📅 南亚社群排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
-    <div class="tab" data-view="regional" style="display:none">📝 区域素材</div>
-    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期">📅 社群排期</button>
+    <div class="tab" data-view="regional" style="display:none" data-page-node-id="miY8ov6h8HcZzAxMRAKtPE">📝 区域素材</div>
+    <button class="tab-toggle" id="saToggle" title="显示/隐藏南亚社群排期" data-page-node-id="WfTxACDHqivbCwPipGPF7Q">📅 社群排期</button>
   </div>
-  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）">↩ 撤销</button>
-  <div class="upd" id="upd">数据更新于 —</div>
+  <button class="undo-btn" id="undoBtn" title="撤销上一步操作（⌘Z / Ctrl+Z）" data-page-node-id="PXtXFm9FJ9LzvZpn3RMNsF">↩ 撤销</button>
+  <div class="upd" id="upd" data-page-node-id="I1M3FJsYJMSZZ7lg2ZNzWI">数据更新于 —</div>
 </div>
 
-<div class="stage">
-  <div class="view scroll" id="view-sa">
-    <div class="southasia" id="southAsiaView"></div>
+<div class="stage" data-page-node-id="2IENKUEUpVuuLW61Qq2Hcz">
+  <div class="view scroll" id="view-sa" data-page-node-id="OUoq1xIzpphKMWfjzUg91A">
+    <div class="southasia" id="southAsiaView" data-page-node-id="ei40AFiuBqqmGr8nNUAsjI"></div>
   </div>
-  <div class="view scroll" id="view-regional">
-    <div class="regional" id="regionalView"></div>
+  <div class="view scroll" id="view-regional" data-page-node-id="EVGehaoJkL49EMG8koPmub">
+    <div class="regional" id="regionalView" data-page-node-id="UsuRbcuxZWY3LcYAMSiolR"></div>
   </div>
-  <div class="view scroll active" id="view-fan">
-    <div class="fan">
-      <div class="fan-head">
-        <div>
-          <h2>📊 区域社媒粉丝监控</h2>
-          <div class="sub">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
+  <div class="view scroll active" id="view-fan" data-page-node-id="mzVEWzKKssJ2HkTlT0h61J">
+    <div class="fan" data-page-node-id="vpKqiRQofKiiWaumO4WJfs">
+      <div class="fan-head" data-page-node-id="jpp8PaZ2LlcrfO2WGzWWTE">
+        <div data-page-node-id="Anup03wLW6ccB7MA0kw0FD">
+          <h2 data-page-node-id="UtEGnW3hThDr6WJW1ukmHr">📊 区域社媒粉丝监控</h2>
+          <div class="sub" data-page-node-id="uhQFznCxCULU3Satf0Kb5z">IG / FB / YTB / X / DC 实时追踪 · 点击「刷新」后台自动读取最新数据</div>
         </div>
-        <div class="toolbar">
-          <button class="refresh" id="refreshBtn">
-            <span class="spin"></span>
-            <span class="btn-text">🔄 刷新粉丝数</span>
+        <div class="toolbar" data-page-node-id="Sjo08Gf1fCn4aPPMBWzNlv">
+          <button class="refresh" id="refreshBtn" data-page-node-id="1xPPLG13GJaOqJioBKnyXJ">
+            <span class="spin" data-page-node-id="VjPBEQ3UFs5pEAv1PEjO7t"></span>
+            <span class="btn-text" data-page-node-id="fiNuq6CbIebVWI6Vk2VZ62">🔄 刷新粉丝数</span>
           </button>
-          <span class="status" id="status"></span>
+          <span class="status" id="status" data-page-node-id="zwazpUr4hZAjzr7X3WfErm"></span>
         </div>
       </div>
 
-      <div class="overview" id="summary"></div>
+      <div class="overview" id="summary" data-page-node-id="vFlte2Gw5sdZgu2pPtpFmm"></div>
 
-      <div class="cc-overview" id="ccOverview"></div>
+      <div class="cc-overview" id="ccOverview" data-page-node-id="tGJWQgDQbIq7HQ6plW4w1s"></div>
 
-      <div class="insights" id="insights"></div>
+      <div class="insights" id="insights" data-page-node-id="Yryo9Id2WKHm5ohk1a93BT"></div>
 
-      <div class="plat-grid" id="platforms"></div>
+      <div class="plat-grid" id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
     </div>
   </div>
-  <div class="view scroll" id="view-feedback">
-    <div class="feedback" id="feedbackView"></div>
+  <div class="view scroll" id="view-feedback" data-page-node-id="6mXTomwoVcsT13rItCYRPl">
+    <div class="feedback" id="feedbackView" data-page-node-id="OrnGWmQP5WDDZbFCYgFF3S"></div>
   </div>
-  <div class="view scroll" id="view-issues">
-    <div class="issues" id="issuesView"></div>
-  </div>
-  <div class="view scroll" id="view-content">
-    <div class="content-perf" id="contentView"></div>
+  <div class="view scroll" id="view-issues" data-page-node-id="zysr41qAth61i8bCB2ivAy">
+    <div class="issues" id="issuesView" data-page-node-id="NT36Fewygbz7KeorNHYgkc"></div>
   </div>
 </div>
 
 <!-- Toast 通知 -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" data-page-node-id="3KXQlZj91Ndei8V1WQbE1X"></div>
 
-<footer>Gangstar Mirage City · 区域发行运营看板</footer>
+<footer data-page-node-id="8cCxBK5Y2HeuBo5tiiTmxx">Gangstar Mirage City · 区域发行运营看板</footer>
 
 <script>
 // HQ 公线排期数据（提取自 HQ排期日历.html，供南亚社群排期合并视图使用）
@@ -1375,10 +1409,11 @@ window.HQ_DATA = {
 <script>
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
-const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional'),issues:document.getElementById('view-issues'),content:document.getElementById('view-content')};
+const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional'),issues:document.getElementById('view-issues')};
 function activateTab(v){
   const t=[...tabs].find(x=>x.dataset.view===v);
   if(!t||t.style.display==='none') return; // 跳过被隐藏的 tab（如区域素材）
+  if(!views[v]) return; // 该视图不存在（如已删除的 content）时安全跳过
   tabs.forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
   Object.values(views).forEach(x=>x.classList.remove('active'));
@@ -1389,7 +1424,6 @@ function activateTab(v){
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
   if(v==='issues') renderIssues();
-  if(v==='content') renderContent();
 }
 tabs.forEach(t=>t.onclick=()=>activateTab(t.dataset.view));
 // 南亚社群排期：默认隐藏，可一键展开/收起（2026-09-02）
@@ -1414,7 +1448,7 @@ setTimeout(()=>{
     saToggle.classList.add('on');
   }
   if(sv==='sa' && saVisible) activateTab('sa');
-  else if(sv && sv!=='sa' && sv!=='regional') activateTab(sv);
+  else if(sv && sv!=='sa' && sv!=='regional' && sv!=='content') activateTab(sv);
   else activateTab('fan');
 },0);
 document.getElementById('undoBtn').onclick=doUndo;
@@ -1596,16 +1630,7 @@ const CC_DATA={
     {id:'ISS-165',topic:'Heists Content',volume:510,priority:'P2',source:'YouTube',owner:'Content',status:'New',created:'2026-09-06',updated:'2026-09-06',devResp:'',playerComm:''},
     {id:'ISS-160',topic:'Cars Customization',volume:330,priority:'P3',source:'IG',owner:'Product',status:'Validated',created:'2026-09-04',updated:'2026-09-07',devResp:'',playerComm:''}
   ],
-  content:[
-    {content:'Bike Meme #7',platform:'Instagram',type:'Meme',topic:'Bike',creator:'@gst_meme',date:'2026-09-06',reach:1200000,views:980000,er:8.4,comments:12400,shares:8800,saves:5200,newFollowers:2431},
-    {content:'Mission Clip #3',platform:'Instagram',type:'Gameplay',topic:'Missions',creator:'@gst_clips',date:'2026-09-05',reach:850000,views:710000,er:6.2,comments:8900,shares:5400,saves:3100,newFollowers:1820},
-    {content:'Creator Reel',platform:'YouTube',type:'Creator',topic:'Bike',creator:'@rooklyn_rider',date:'2026-09-04',reach:620000,views:540000,er:5.1,comments:6200,shares:3100,saves:2400,newFollowers:1120},
-    {content:'Launch Trailer',platform:'YouTube',type:'Announcement',topic:'General',creator:'GST Official',date:'2026-08-20',reach:2100000,views:1800000,er:4.4,comments:21000,shares:15000,saves:9000,newFollowers:4200},
-    {content:'Guns Showcase',platform:'Instagram',type:'Gameplay',topic:'Combat',creator:'@gst_clips',date:'2026-09-03',reach:540000,views:460000,er:5.8,comments:6100,shares:2900,saves:2200,newFollowers:980},
-    {content:'Meme Static #12',platform:'Facebook',type:'Meme',topic:'Meme',creator:'@gst_fun',date:'2026-09-02',reach:380000,views:320000,er:4.9,comments:4200,shares:2100,saves:1500,newFollowers:640},
-    {content:'Event Teaser',platform:'Discord',type:'Event',topic:'General',creator:'GST Official',date:'2026-09-07',reach:95000,views:80000,er:9.2,comments:3400,shares:600,saves:400,newFollowers:520},
-    {content:'Creator Collab',platform:'YouTube',type:'Creator',topic:'Missions',creator:'@india_gamer',date:'2026-09-01',reach:460000,views:390000,er:5.5,comments:4800,shares:2400,saves:1800,newFollowers:910}
-  ],
+
   creators:{total:1212,active:557,published:323,highPerf:39,viewsTotal:8400000,engTotal:512000},
   regional:{
     'India':{followers:268000,growth:14.2,er:6.8,sentiment:84,feedback:1820,creators:980},
@@ -1615,6 +1640,12 @@ const CC_DATA={
   }
 };
 const CC_ISSUE_STATES=['New','Validated','Reported to Dev','In Progress','Fixed','Communicated'];
+
+// 状态/类别中文标签映射（数据内部仍用英文 key，仅展示用）
+const ISSUE_LABEL={'New':'新建','Validated':'已确认','Reported to Dev':'已报开发','In Progress':'处理中','Fixed':'已修复','Communicated':'已同步','Pending Dev Review':'待开发评审','Reviewing':'评审中','Pending':'待处理'};
+const CAT_LABEL={'Gameplay':'玩法','Vehicles':'载具','Technical':'技术','Commercial':'商业','Meme':'梗图','General':'综合'};
+function stateLabel(s){return ISSUE_LABEL[s]||s;}
+function catLabel(c){return CAT_LABEL[c]||c;}
 
 // 迷你 sparkline（竖条）
 function sparkline(arr,cls){
@@ -1658,8 +1689,8 @@ function computeHealth(data){
   // TODO: 以下三项接真实 engagement/activity/response 数据后替换
   const engScore=74, actScore=68, respScore=82;
   const overall=Math.round(growthScore*0.28+sentScore*0.30+engScore*0.18+actScore*0.12+respScore*0.12);
-  let status='green',label='Healthy';
-  if(overall<60){status='red';label='Risk';} else if(overall<78){status='amber';label='Attention';}
+  let status='green',label='健康';
+  if(overall<60){status='red';label='风险';} else if(overall<78){status='amber';label='关注';}
   return {overall,status,label,growthScore,sentScore,engScore,actScore,respScore,growRate:Math.round(growRate*10)/10,wg,total};
 }
 
@@ -1687,11 +1718,11 @@ function renderCommandCenter(data){
   const topTopic=[...CC_DATA.topics].sort((a,b)=>b.wow-a.wow)[0];
   const negTopic=[...CC_DATA.topics].sort((a,b)=>a.sentiment-b.sentiment)[0];
   const insights=[
-    {e:'🏍️',t:`<b>${esc(topTopic.topic)}</b> 相关需求本周 <span class="ii-num">+${topTopic.wow}%</span> WoW，成为玩家最高频 Feature Request（${topTopic.mentions} mentions）。`},
+    {e:'🏍️',t:`<b>${esc(topTopic.topic)}</b> 相关需求本周 <span class="ii-num">周环比 +${topTopic.wow}%</span>，成为玩家最高频功能诉求（${topTopic.mentions} 条提及）。`},
     {e:'🎯',t:`<b>Missions</b> 类反馈增长 <span class="ii-num">+24%</span>，玩家对长期内容消耗需求明显增加。`},
-    {e:'⚠️',t:`<b>Server Lag</b> 负面反馈 <span class="ii-num">-8%</span> WoW，技术类舆情正在改善（状态 In Progress）。`},
-    {e:'📈',t:`<b>Meme</b> 类内容平均 ER 高于 Gameplay 内容 <span class="ii-num">31%</span>，建议加大 Meme 供给。`},
-    {e:'💬',t:`本周社群主话题：<b>${topTheme ? esc(topTheme.theme.slice(0,40)+'…') : '—'}</b>，整体非负反馈约 ${sent.pos}%。`}
+    {e:'⚠️',t:`<b>Server Lag</b> 负面反馈 <span class="ii-num">周环比 -8%</span>，技术类舆情正在改善（状态：处理中）。`},
+    {e:'📈',t:`<b>Meme</b> 类内容平均互动率高于 Gameplay 内容 <span class="ii-num">31%</span>，建议加大 Meme 供给。`},
+    {e:'💬',t:`本周社群主话题：<b>${topTheme ? esc(topTheme.theme.slice(0,40)+'…') : '—'}</b>，整体正面反馈约 ${sent.pos}%。`}
   ];
 
   // Action Center（来自 issue mock + 反馈待处理）
@@ -1699,10 +1730,10 @@ function renderCommandCenter(data){
   const issUrgent=CC_DATA.issues.filter(i=>i.priority==='P1'&&!/(Fixed|Communicated)/.test(i.status)).length;
   const fbPending=CC_DATA.topics.filter(t=>t.status==='Pending').length;
   const actions=[
-    {c:issUrgent,dot:'red',t:`${issUrgent} 个高优先级 Issue 待处理`},
+    {c:issUrgent,dot:'red',t:`${issUrgent} 个高优先级问题待处理`},
     {c:fbPending,dot:'amber',t:`${fbPending} 个玩家需求待分类评审`},
-    {c:issPending,dot:'amber',t:`${issPending} 个 Issue 等待 Dev 更新`},
-    {c:CC_DATA.issues.filter(i=>i.status==='Communicated').length,dot:'green',t:`${CC_DATA.issues.filter(i=>i.status==='Communicated').length} 个 Issue 已同步玩家`}
+    {c:issPending,dot:'amber',t:`${issPending} 个问题等待开发更新`},
+    {c:CC_DATA.issues.filter(i=>i.status==='Communicated').length,dot:'green',t:`${CC_DATA.issues.filter(i=>i.status==='Communicated').length} 个问题已同步玩家`}
   ];
 
   // Alerts（异常检测：基于真实粉丝 + mock 阈值）
@@ -1714,21 +1745,21 @@ function renderCommandCenter(data){
 
   // KPI 卡
   const kpis=[
-    {n:'Total Followers',v:fmt(h.total),wow:(h.wg>0?'+':'')+fmt(h.wg),up:h.wg>=0,spark:spark},
-    {n:'New Followers (WoW)',v:(h.wg>0?'+':'')+fmt(h.wg),wow:(h.growRate>0?'+':'')+h.growRate+'%',up:h.growRate>=0,spark:spark},
-    {n:'Active Users',v:'42.8K',wow:'+6.1%',up:true,spark:[60,62,65,63,68,70,72]},
-    {n:'Engagement Rate',v:'6.8%',wow:'+0.4pt',up:true,spark:[5,5.2,5.5,6,6.3,6.6,6.8]},
-    {n:'Feedback Collected',v:String(sent.total),wow:'本周',up:true,spark:[40,55,60,58,62,65,70]},
-    {n:'Positive Sentiment',v:sent.pos+'%',wow:'稳定',up:true,spark:[70,72,75,78,80,82,84]},
-    {n:'Negative Sentiment',v:sent.neg+'%',wow:sent.neg>15?'⚠️':'正常',up:sent.neg<=15,spark:[20,18,16,15,14,13,12]},
-    {n:'Active Creators',v:String(CC_DATA.creators.active),wow:'+4.2%',up:true,spark:[40,45,48,50,52,54,56]}
+    {n:'总粉丝数',v:fmt(h.total),wow:(h.wg>0?'+':'')+fmt(h.wg),up:h.wg>=0,spark:spark},
+    {n:'新增粉丝(周)',v:(h.wg>0?'+':'')+fmt(h.wg),wow:(h.growRate>0?'+':'')+h.growRate+'%',up:h.growRate>=0,spark:spark},
+    {n:'活跃用户',v:'42.8K',wow:'+6.1%',up:true,spark:[60,62,65,63,68,70,72]},
+    {n:'互动率',v:'6.8%',wow:'+0.4pt',up:true,spark:[5,5.2,5.5,6,6.3,6.6,6.8]},
+    {n:'收集反馈',v:String(sent.total),wow:'本周',up:true,spark:[40,55,60,58,62,65,70]},
+    {n:'正面情绪',v:sent.pos+'%',wow:'稳定',up:true,spark:[70,72,75,78,80,82,84]},
+    {n:'负面情绪',v:sent.neg+'%',wow:sent.neg>15?'⚠️':'正常',up:sent.neg<=15,spark:[20,18,16,15,14,13,12]},
+    {n:'活跃创作者',v:String(CC_DATA.creators.active),wow:'+4.2%',up:true,spark:[40,45,48,50,52,54,56]}
   ];
 
   const dimRow=(name,val,chg,up,sparkArr)=>`<div class="hdim"><div class="hd-name">${name}${up>=0?'<span class="sdot green"></span>':'<span class="sdot red"></span>'}</div><div class="hd-val">${val}</div><div class="hd-chg ${up>=0?'hd-up':'hd-down'}">${up>=0?'▲':'▼'} ${chg}</div><div class="hd-spark">${sparkline(sparkArr)}</div></div>`;
 
   el.innerHTML=`
     <div class="cc-section">
-      <div class="cc-sec-head"><span class="cc-emoji">🩺</span><h3>Community Health Score</h3><span class="cc-sub">实时综合社群健康度</span></div>
+      <div class="cc-sec-head"><span class="cc-emoji">🩺</span><h3>社区健康分</h3><span class="cc-sub">实时综合社群健康度</span></div>
       <div class="health">
         <div class="health-main">
           <div class="health-score" style="color:${h.status==='green'?'var(--ok)':h.status==='amber'?'var(--warn)':'var(--err)'}">${h.overall}<small>/100</small></div>
@@ -1736,17 +1767,17 @@ function renderCommandCenter(data){
           <div class="health-label">更新于 ${data.updated_at}</div>
         </div>
         <div class="health-dims">
-          ${dimRow('Community Growth',h.growthScore,(h.growRate>0?'+':'')+h.growRate+'%',h.growRate,[40,48,55,60,68,74,80])}
-          ${dimRow('Engagement',h.engScore,'+0.4pt',1,[50,52,55,58,60,63,66])}
-          ${dimRow('Player Sentiment',h.sentScore,sent.pos+'%',1,[60,65,70,75,78,82,84])}
-          ${dimRow('Community Activity',h.actScore,'+3.1%',1,[45,48,50,52,55,58,60])}
-          ${dimRow('Response Rate',h.respScore,'+1.5%',1,[70,72,75,78,80,82,84])}
+          ${dimRow('社群增长',h.growthScore,(h.growRate>0?'+':'')+h.growRate+'%',h.growRate,[40,48,55,60,68,74,80])}
+          ${dimRow('互动',h.engScore,'+0.4pt',1,[50,52,55,58,60,63,66])}
+          ${dimRow('玩家情绪',h.sentScore,sent.pos+'%',1,[60,65,70,75,78,82,84])}
+          ${dimRow('社群活跃',h.actScore,'+3.1%',1,[45,48,50,52,55,58,60])}
+          ${dimRow('响应速度',h.respScore,'+1.5%',1,[70,72,75,78,80,82,84])}
         </div>
       </div>
     </div>
 
     <div class="cc-section">
-      <div class="cc-sec-head"><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">WoW 环比 · 30天趋势</span></div>
+      <div class="cc-sec-head"><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">周环比 · 30天趋势</span></div>
       <div class="kpi-grid">
         ${kpis.map(k=>`
           <div class="kpi">
@@ -1762,15 +1793,15 @@ function renderCommandCenter(data){
 
     <div class="cc-three">
       <div class="cc-card">
-        <h4>💡 This Week's Insights</h4>
+        <h4>💡 本周洞察</h4>
         ${insights.map(i=>`<div class="insight-item"><span class="ii-emoji">${i.e}</span><div>${i.t}</div></div>`).join('')}
       </div>
       <div class="cc-card">
-        <h4>🎯 Action Center</h4>
+        <h4>🎯 行动中心</h4>
         ${actions.map(a=>`<div class="action-row"><span class="sdot ${a.dot}"></span><span style="flex:1">${a.t}</span><span class="ar-count">${a.c}</span></div>`).join('')}
       </div>
       <div class="cc-card">
-        <h4>🚨 Alerts</h4>
+        <h4>🚨 预警</h4>
         ${alerts.slice(0,5).map(a=>`<div class="alert-item"><span class="al-ico">${a.ico}</span><div>${a.t}</div></div>`).join('')}
       </div>
     </div>`;
@@ -1788,23 +1819,23 @@ function renderIssues(){
   const rate=iss.length?Math.round(resolved/iss.length*100):0;
 
   const stats=[
-    {v:iss.length,n:'Total Issues',accent:true},
-    {v:cnt('New'),n:'New'},
-    {v:cnt('Reported to Dev'),n:'Reported to Dev'},
-    {v:cnt('In Progress'),n:'In Progress'},
-    {v:cnt('Fixed')+cnt('Communicated'),n:'Resolved'},
-    {v:cnt('Communicated'),n:'Communicated'}
+    {v:iss.length,n:'问题总数',accent:true},
+    {v:cnt('New'),n:'新建'},
+    {v:cnt('Reported to Dev'),n:'已报开发'},
+    {v:cnt('In Progress'),n:'处理中'},
+    {v:cnt('Fixed')+cnt('Communicated'),n:'已解决'},
+    {v:cnt('Communicated'),n:'已同步'}
   ];
 
   el.innerHTML=`
     <div class="fan-head" style="grid-column:1/-1">
-      <div><h2>🐞 Issue Tracker</h2><div class="sub">玩家反馈 → Dev 闭环 · Resolution Rate <b style="color:var(--ok)">${rate}%</b>（${resolved}/${iss.length} 已解决并同步）</div></div>
+      <div><h2>🐞 问题追踪</h2><div class="sub">玩家反馈 → 开发闭环 · 解决率 <b style="color:var(--ok)">${rate}%</b>（${resolved}/${iss.length} 已解决并同步）</div></div>
     </div>
     <div class="issue-stats" style="grid-column:1/-1">
       ${stats.map(s=>`<div class="istat ${s.accent?'accent':''}"><div class="is-val">${s.v}</div><div class="is-name">${s.n}</div></div>`).join('')}
     </div>
     <div class="content-toolbar" style="grid-column:1/-1">
-      <input id="issSearch" class="filter-sel" style="flex:1;min-width:200px" placeholder="🔍 搜索 Topic / Owner / Source…">
+      <input id="issSearch" class="filter-sel" style="flex:1;min-width:200px" placeholder="🔍 搜索 主题 / 负责人 / 来源…">
       <select id="issPrio" class="filter-sel"><option value="">全部优先级</option><option>P1</option><option>P2</option><option>P3</option></select>
       <span class="cc-sec-head" style="margin:0"><span class="cc-sub">点击卡片查看 / 修改处理记录</span></span>
     </div>
@@ -1816,10 +1847,10 @@ function renderIssues(){
     const pq=el.querySelector('#issPrio').value;
     board.innerHTML=CC_ISSUE_STATES.map(st=>{
       const list=iss.filter(i=>i.status===st && (!q||(i.topic+i.owner+i.source).toLowerCase().includes(q)) && (!pq||i.priority===pq));
-      return `<div class="icol"><h5>${st}<span class="c-count">${list.length}</span></h5>${
+      return `<div class="icol"><h5>${stateLabel(st)}<span class="c-count">${list.length}</span></h5>${
         list.map(i=>`<div class="icard" data-id="${i.id}" onclick="openIssue('${i.id}')">
           <div class="ic-topic">${esc(i.topic)}</div>
-          <div class="ic-meta"><span class="ic-vol">${i.volume} mentions</span><span class="prio ${i.priority.toLowerCase()}">${i.priority}</span></div>
+          <div class="ic-meta"><span class="ic-vol">${i.volume} 条提及</span><span class="prio ${i.priority.toLowerCase()}">${i.priority}</span></div>
           <div class="ic-meta"><span>${esc(i.source)} · ${esc(i.owner)}</span></div>
         </div>`).join('')||'<div style="font-size:11px;color:var(--muted);padding:6px">—</div>'
       }</div>`;
@@ -1837,12 +1868,12 @@ function openIssue(id){
   const ta='width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);font-family:inherit;background:#fff';
   bg.innerHTML=`<div class="sa-modal">
     <h3>${esc(i.topic)} <span style="font-size:12px;color:var(--muted);font-weight:600">${i.id}</span></h3>
-    <div style="font-size:12.5px;color:var(--muted);margin:-8px 0 14px">${i.volume} mentions · ${esc(i.source)} · Owner: ${esc(i.owner)}</div>
+    <div style="font-size:12.5px;color:var(--muted);margin:-8px 0 14px">${i.volume} 条提及 · ${esc(i.source)} · 负责人：${esc(i.owner)}</div>
     <label>状态</label>
-    <select id="issStatus">${CC_ISSUE_STATES.map(s=>`<option ${s===i.status?'selected':''}>${s}</option>`).join('')}</select>
-    <label>Dev Response</label>
+    <select id="issStatus">${CC_ISSUE_STATES.map(s=>`<option value="${s}" ${s===i.status?'selected':''}>${stateLabel(s)}</option>`).join('')}</select>
+    <label>开发回复</label>
     <textarea id="issDev" style="${ta};height:64px;resize:vertical">${esc(i.devResp||'')}</textarea>
-    <label>Player Communication</label>
+    <label>玩家沟通</label>
     <textarea id="issComm" style="${ta};height:52px;resize:vertical">${esc(i.playerComm||'')}</textarea>
     <div class="sa-modal-btns"><button class="btn-cancel" type="button" onclick="this.closest('.sa-modal-bg').remove()">取消</button><button class="btn-save" type="button" onclick="saveIssue('${i.id}')">保存</button></div>
   </div>`;
@@ -1856,84 +1887,11 @@ function saveIssue(id){
   i.devResp=bg.querySelector('#issDev').value;
   i.playerComm=bg.querySelector('#issComm').value;
   i.updated=new Date().toISOString().slice(0,10);
-  if(bg)bg.remove(); renderIssues(); showToast('✅ Issue '+id+' 已更新','ok');
+  if(bg)bg.remove(); renderIssues(); showToast('✅ 问题 '+id+' 已更新','ok');
 }
 function closeModal(){const m=document.querySelector('.sa-modal-bg');if(m)m.remove();}
 
-// ============================================================
-//  Content Performance
-// ============================================================
-function renderContent(){
-  const el=document.getElementById('contentView');
-  if(!el) return;
-  const rows=CC_DATA.content;
-  const platforms=[...new Set(rows.map(r=>r.platform))];
-  const types=[...new Set(rows.map(r=>r.type))];
 
-  // Insight 计算
-  const byTopic={}; rows.forEach(r=>{byTopic[r.topic]=(byTopic[r.topic]||0)+r.newFollowers;});
-  const topTopics=Object.entries(byTopic).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const byType={}; rows.forEach(r=>{byType[r.type]=(byType[r.type]||0)+r.views;});
-  const topTypes=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const byPlat={}; rows.forEach(r=>{byPlat[r.platform]=(byPlat[r.platform]||0)+r.reach;});
-  const topPlat=Object.entries(byPlat).sort((a,b)=>b[1]-a[1])[0];
-  const totalNew=rows.reduce((s,r)=>s+r.newFollowers,0);
-
-  el.innerHTML=`
-    <div class="fan-head" style="grid-column:1/-1">
-      <div><h2>📈 Content Performance</h2><div class="sub">内容效果分析 · 本周新增粉丝 <b style="color:var(--brand)">+${fmt(totalNew)}</b></div></div>
-    </div>
-    <div class="content-toolbar" style="grid-column:1/-1">
-      <select id="ctPlat" class="filter-sel"><option value="">全部平台</option>${platforms.map(p=>`<option>${p}</option>`).join('')}</select>
-      <select id="ctType" class="filter-sel"><option value="">全部类型</option>${types.map(t=>`<option>${t}</option>`).join('')}</select>
-      <span class="cc-sub" style="margin-left:auto">点击表头排序</span>
-    </div>
-    <div class="perf-card" style="grid-column:1/-1;overflow-x:auto">
-      <table class="trend-table" id="ctTable">
-        <thead><tr>
-          <th data-k="content">Content</th><th data-k="platform">Platform</th><th data-k="type">Type</th>
-          <th data-k="topic">Topic</th><th data-k="reach" style="text-align:right">Reach</th>
-          <th data-k="views" style="text-align:right">Views</th><th data-k="er" style="text-align:right">ER</th>
-          <th data-k="comments" style="text-align:right">Comments</th><th data-k="shares" style="text-align:right">Shares</th>
-          <th data-k="newFollowers" style="text-align:right">New Followers</th>
-        </tr></thead>
-        <tbody id="ctBody"></tbody>
-      </table>
-    </div>
-    <div class="perf-card" style="grid-column:1/-1">
-      <div class="cc-sec-head"><span class="cc-emoji">🏆</span><h3>Content Insight</h3></div>
-      <div class="perf-insights">
-        <div class="perf-ins-col"><h5>Top Performing Topics</h5>${topTopics.map((t,i)=>`<div class="perf-rank"><span class="rk ${i===0?'t1':''}">${i+1}</span>${esc(t[0])}<b style="margin-left:auto;color:var(--ok)">+${fmt(t[1])}</b></div>`).join('')}</div>
-        <div class="perf-ins-col"><h5>Top Performing Formats</h5>${topTypes.map((t,i)=>`<div class="perf-rank"><span class="rk ${i===0?'t1':''}">${i+1}</span>${esc(t[0])}<b style="margin-left:auto;color:var(--brand2)">${fmt(t[1])}</b></div>`).join('')}</div>
-        <div class="perf-ins-col"><h5>Top Platform</h5><div class="perf-rank"><span class="rk t1">1</span>${esc(topPlat[0])}<b style="margin-left:auto;color:var(--brand)">${fmt(topPlat[1])}</b></div><div style="font-size:12px;color:var(--muted);margin-top:8px">本周最佳内容类型：<b>${esc(topTypes[0][0])}</b></div></div>
-      </div>
-    </div>
-    <div class="perf-card" style="grid-column:1/-1">
-      <div class="cc-sec-head"><span class="cc-emoji">🔗</span><h3>Content → Follower Conversion</h3><span class="cc-sub">本周 +${fmt(totalNew)} 粉丝来源分解</span></div>
-      <div class="conv-bar">${topTopics.slice(0,5).map((t,i)=>{const pct=Math.round(t[1]/totalNew*100);const cols=['#6d28d9','#2563eb','#10b981','#f59e0b','#ef4444'];return `<span style="width:${pct}%;background:${cols[i]}">${pct>8?esc(t[0])+' '+pct+'%':''}</span>`;}).join('')}</div>
-      ${topTopics.slice(0,5).map((t,i)=>{const pct=Math.round(t[1]/totalNew*100);const cols=['#6d28d9','#2563eb','#10b981','#f59e0b','#ef4444'];return `<div class="perf-rank"><span class="rk ${i===0?'t1':''}">${i+1}</span><span style="width:10px;height:10px;border-radius:3px;background:${cols[i]}"></span>${esc(t[0])}<b style="margin-left:auto">+${fmt(t[1])} · ${pct}%</b></div>`;}).join('')}
-    </div>`;
-
-  const body=el.querySelector('#ctBody');
-  let sortK='newFollowers',sortAsc=false;
-  function draw(){
-    const pf=el.querySelector('#ctPlat').value, tf=el.querySelector('#ctType').value;
-    let d=rows.filter(r=>(!pf||r.platform===pf)&&(!tf||r.type===tf));
-    d.sort((a,b)=>{const x=a[sortK],y=b[sortK];return sortAsc?(x>y?1:-1):(x<y?1:-1);});
-    body.innerHTML=d.map(r=>`<tr>
-      <td style="font-weight:700">${esc(r.content)}</td><td>${esc(r.platform)}</td><td><span class="pill gray">${esc(r.type)}</span></td>
-      <td>${esc(r.topic)}</td>
-      <td style="text-align:right">${fmt(r.reach)}</td><td style="text-align:right">${fmt(r.views)}</td>
-      <td style="text-align:right"><b style="color:var(--ok)">${r.er}%</b></td>
-      <td style="text-align:right">${fmt(r.comments)}</td><td style="text-align:right">${fmt(r.shares)}</td>
-      <td style="text-align:right"><b style="color:var(--brand)">+${fmt(r.newFollowers)}</b></td>
-    </tr>`).join('');
-  }
-  draw();
-  el.querySelector('#ctPlat').onchange=draw;
-  el.querySelector('#ctType').onchange=draw;
-  el.querySelectorAll('#ctTable th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!k)return;if(sortK===k)sortAsc=!sortAsc;else{sortK=k;sortAsc=false;}draw();});
-}
 
 function renderFans(data){
   document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
@@ -3233,6 +3191,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -6361,48 +6320,48 @@ function renderPlayerVoice(){
   const cats={};topics.forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+t.mentions;});
   const catOrder=['Gameplay','Vehicles','Technical','Commercial'];
   const stats=[
-    {n:'Total Feedback',v:fmt(total),base:total},
-    {n:'Positive',v:fmt(pos),c:'green',base:pos},
-    {n:'Neutral',v:fmt(neu),c:'gray',base:neu},
-    {n:'Negative',v:fmt(neg),c:'red',base:neg},
-    {n:'Actionable',v:fmt(actionable),c:'blue',base:actionable}
+    {n:'反馈总数',v:fmt(total),base:total},
+    {n:'正面',v:fmt(pos),c:'green',base:pos},
+    {n:'中性',v:fmt(neu),c:'gray',base:neu},
+    {n:'负面',v:fmt(neg),c:'red',base:neg},
+    {n:'可行动',v:fmt(actionable),c:'blue',base:actionable}
   ];
-  const catHtml=catOrder.map(c=>`<div class="pv-cat"><span class="pv-cat-name">${c}</span><span class="pv-cat-cnt">${cats[c]?fmt(cats[c]):0} mentions</span></div>`).join('');
+  const catHtml=catOrder.map(c=>`<div class="pv-cat"><span class="pv-cat-name">${catLabel(c)}</span><span class="pv-cat-cnt">${cats[c]?fmt(cats[c]):0} 条提及</span></div>`).join('');
   const rows=[...topics].sort((a,b)=>b.mentions-a.mentions);
   const rowsHtml=rows.map(t=>`<tr data-base="${t.mentions}">
     <td style="font-weight:700">${esc(t.topic)}</td>
-    <td><span class="pill gray">${esc(t.cat)}</span></td>
+    <td><span class="pill gray">${catLabel(t.cat)}</span></td>
     <td class="pv-mentions" style="text-align:right;font-weight:800">${fmt(t.mentions)}</td>
     <td style="text-align:right" class="${t.wow>=0?'wow-up':'wow-down'}">${t.wow>=0?'+':''}${t.wow}%</td>
     <td style="text-align:right">${t.sentiment}% ${t.sentiment>=70?'🟢':t.sentiment<50?'🔴':'🟡'}</td>
     <td><span class="prio ${t.priority.toLowerCase()}">${t.priority}</span></td>
-    <td><span class="pill ${/Pending|New|Validated/.test(t.status)?'amber':/Reviewing|Reported/.test(t.status)?'blue':'green'}">${esc(t.status)}</span></td>
+    <td><span class="pill ${/Pending|New|Validated/.test(t.status)?'amber':/Reviewing|Reported/.test(t.status)?'blue':'green'}">${stateLabel(t.status)}</span></td>
     <td><div class="trend-bar" style="width:90px"><i style="width:${Math.max(4,Math.round(t.mentions/total*100*3))}%"></i></div></td>
     <td style="width:54px">${sparkline(t.spark,'hd-spark')}</td>
   </tr>`).join('');
 
   return `<div class="cc-section">
-    <div class="cc-sec-head"><span class="cc-emoji">🗣️</span><h3>Player Voice</h3><span class="cc-sub">玩家真实需求与舆情 · 自动分类</span></div>
+    <div class="cc-sec-head"><span class="cc-emoji">🗣️</span><h3>玩家心声</h3><span class="cc-sub">玩家真实需求与舆情 · 自动分类</span></div>
     <div class="issue-stats" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px">
       ${stats.map(s=>`<div class="istat"><div class="is-val pv-stat" data-base="${s.base}" ${s.c?'style="color:var(--'+(s.c==='green'?'ok':s.c==='red'?'err':s.c==='blue'?'brand2':'muted')+')"':''}>${s.v}</div><div class="is-name">${s.n}</div></div>`).join('')}
     </div>
     <div class="perf-card" style="margin-bottom:12px">
-      <div class="cc-sec-head" style="margin:0 0 10px"><h5 style="font-size:13px;font-weight:800">Top Player Requests by Category</h5></div>
+      <div class="cc-sec-head" style="margin:0 0 10px"><h5 style="font-size:13px;font-weight:800">按类别的热点玩家诉求</h5></div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">${catHtml}</div>
     </div>
     <div class="perf-card">
       <div class="cc-sec-head" style="margin:0 0 10px">
-        <h5 style="font-size:13px;font-weight:800">Topic Trend</h5>
+        <h5 style="font-size:13px;font-weight:800">话题趋势</h5>
         <div style="margin-left:auto;display:flex;gap:6px" id="pvRange">
-          <button class="filter-sel pv-rng" data-f="1" style="padding:5px 12px;background:var(--brand);color:#fff;border-color:var(--brand)">7 Days</button>
-          <button class="filter-sel pv-rng" data-f="4.2">30 Days</button>
-          <button class="filter-sel pv-rng" data-f="11">90 Days</button>
+          <button class="filter-sel pv-rng" data-f="1" style="padding:5px 12px;background:var(--brand);color:#fff;border-color:var(--brand)">近7天</button>
+          <button class="filter-sel pv-rng" data-f="4.2">近30天</button>
+          <button class="filter-sel pv-rng" data-f="11">近90天</button>
         </div>
       </div>
       <div style="overflow-x:auto">
         <table class="trend-table"><thead><tr>
-          <th>Topic</th><th>Category</th><th style="text-align:right">Mentions</th><th style="text-align:right">WoW</th>
-          <th style="text-align:right">Sentiment</th><th>Priority</th><th>Status</th><th style="text-align:right">Share</th><th></th>
+          <th>话题</th><th>类别</th><th style="text-align:right">提及数</th><th style="text-align:right">周环比</th>
+          <th style="text-align:right">情绪</th><th>优先级</th><th>状态</th><th style="text-align:right">占比</th><th></th>
         </tr></thead><tbody id="pvBody">${rowsHtml}</tbody></table>
       </div>
     </div>
