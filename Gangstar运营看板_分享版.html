@@ -802,6 +802,19 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .filter-sel{padding:7px 12px;border:1px solid var(--line);border-radius:9px;font-size:12.5px;font-weight:600;background:#fff;color:var(--ink);cursor:pointer;font-family:inherit}
 .filter-sel:focus{outline:none;border-color:var(--brand)}
 .perf-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow-sm);margin-bottom:14px}
+/* 按类别热点诉求：彩色卡片网格 */
+.pv-cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pv-cat{position:relative;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 15px 16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
+.pv-cat:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(16,24,40,.10)}
+.pv-cat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c,#64748b)}
+.pv-cat-dot{width:11px;height:11px;border-radius:50%;background:var(--c,#64748b);flex:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--c,#64748b) 16%,transparent)}
+.pv-cat-body{flex:1;min-width:0}
+.pv-cat-name{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.2px}
+.pv-cat-cnt{font-size:21px;font-weight:900;color:var(--ink);line-height:1.15;margin-top:1px}
+.pv-cat-cnt span{font-size:11px;font-weight:700;color:var(--muted)}
+.pv-cat-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:#f1f5f9}
+.pv-cat-bar i{display:block;height:100%;background:var(--c,#64748b);border-radius:0 3px 0 0}
+
 .perf-insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .perf-ins-col h5{font-size:12.5px;font-weight:800;margin-bottom:8px;color:var(--brand)}
 .perf-rank{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12.5px}
@@ -1645,6 +1658,10 @@ const CC_ISSUE_STATES=['New','Validated','Reported to Dev','In Progress','Fixed'
 // 状态/类别中文标签映射（数据内部仍用英文 key，仅展示用）
 const ISSUE_LABEL={'New':'新建','Validated':'已确认','Reported to Dev':'已报开发','In Progress':'处理中','Fixed':'已修复','Communicated':'已同步','Pending Dev Review':'待开发评审','Reviewing':'评审中','Pending':'待处理'};
 const CAT_LABEL={'Gameplay':'玩法','Vehicles':'载具','Technical':'技术','Commercial':'商业','Meme':'梗图','General':'综合'};
+// 每个类别独立配色（用于「按类别热点诉求」卡片与话题表类别标签）
+const CAT_COLORS={'Gameplay':'#8b5cf6','Vehicles':'#f97316','Technical':'#0ea5e9','Commercial':'#10b981','Meme':'#ec4899','General':'#64748b'};
+function catColor(c){return CAT_COLORS[c]||'#64748b';}
+function catPillStyle(c){var col=catColor(c);return 'background:'+col+'1f;color:'+col+';border-color:'+col+'55';}
 function stateLabel(s){return ISSUE_LABEL[s]||s;}
 function catLabel(c){return CAT_LABEL[c]||c;}
 
@@ -1768,14 +1785,13 @@ function derivePlayerVoice(rangeDays){
     var prio=(sentiment!=null&&sentiment<55)?'P1':(ms.some(function(o){return o.it.type==='sug';})?'P2':'P3');
     return {topic:tp.label,cat:tp.cat,mentions:n,sentiment:sentiment,priority:prio,items:ms};
   }).filter(function(t){return t.mentions>0;});
-  // 按周聚类算 spark / 周环比（用过滤后的真实周分布，按 Count 加权）
+  // 按周聚类算 spark（用过滤后的真实周分布，按 Count 加权）
   var byWeek={};
   filt.forEach(function(o){ if(o.ws){ var k=o.ws.getTime(); (byWeek[k]=byWeek[k]||[]).push(o); } });
   var wkKeys=Object.keys(byWeek).map(Number).sort(function(a,b){return a-b;});
   topics.forEach(function(t){
     var wk=wkKeys.map(function(k){ return t.items.filter(function(o){return o.ws&&o.ws.getTime()===k;}).reduce(function(s,o){return s+cnt(o);},0); });
     t.spark=wk.slice(-7);
-    if(wk.length>=2){ var a=wk[wk.length-2],b=wk[wk.length-1]; t.wow = a? Math.round((b-a)/a*100) : (b?100:0); } else t.wow=null;
   });
   topics.sort(function(a,b){return b.mentions-a.mentions;});
   return {total:total,pos:pos,neu:neu,neg:neg,act:act,catCnt:catCnt,topics:topics};
@@ -1816,7 +1832,6 @@ function renderCommandCenter(data){
 
   // Alerts（异常检测：基于真实粉丝 + mock 阈值）
   const alerts=[];
-  dvAll.topics.forEach(t=>{ if(t.wow!=null && t.wow>=25) alerts.push({ico:'🚀',t:`<b>${esc(t.topic)}</b> 反馈量周环比 +${t.wow}%，需求激增`}); });
   if(h.growRate<0) alerts.push({ico:'⚠️',t:`总粉丝周增长转负（${h.growRate}%），需排查流失`});
   if(negTopic) alerts.push({ico:'⚠️',t:`<b>${esc(negTopic.topic)}</b> 负面情绪最集中（正面占比仅 ${negTopic.sentiment}%），仍为最高风险项`});
   if(sent.neg>15) alerts.push({ico:'🔴',t:`负面情感占比 ${sent.neg}%，超过 15% 预警线`});
@@ -1855,7 +1870,7 @@ function renderCommandCenter(data){
     </div>
 
     <div class="cc-section">
-      <div class="cc-sec-head"><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">周环比 · 30天趋势</span></div>
+      <div class="cc-sec-head"><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">近30天趋势</span></div>
       <div class="kpi-grid">
         ${kpis.map(k=>`
           <div class="kpi">
@@ -3285,6 +3300,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -7074,20 +7090,25 @@ function renderPlayerVoice(rangeDays){
     {n:'可行动',v:fmt(dv.act),c:'blue'}
   ];
   var catOrder=Object.keys(dv.catCnt).sort(function(a,b){return dv.catCnt[b]-dv.catCnt[a];});
-  var catHtml=catOrder.map(function(c){return '<div class="pv-cat"><span class="pv-cat-name">'+catLabel(c)+'</span><span class="pv-cat-cnt">'+fmt(dv.catCnt[c])+' 条</span></div>';}).join('');
+  var catMax=catOrder.length?dv.catCnt[catOrder[0]]:1;
+  var catHtml=catOrder.map(function(c){
+    var col=catColor(c), pct=Math.round(dv.catCnt[c]/catMax*100);
+    return '<div class="pv-cat" style="--c:'+col+'">'+
+      '<span class="pv-cat-dot"></span>'+
+      '<div class="pv-cat-body"><div class="pv-cat-name">'+catLabel(c)+'</div>'+
+      '<div class="pv-cat-cnt">'+fmt(dv.catCnt[c])+' <span>条</span></div></div>'+
+      '<div class="pv-cat-bar"><i style="width:'+pct+'%"></i></div>'+
+    '</div>';
+  }).join('');
   var rowsHtml=dv.topics.map(function(t){
     var sentHtml = t.sentiment==null ? '—' : (t.sentiment+'% '+(t.sentiment>=70?'🟢':t.sentiment<50?'🔴':'🟡'));
-    var wowHtml = t.wow==null ? '—' : ((t.wow>=0?'+':'')+t.wow+'%');
-    var wowCls = t.wow==null?'':(t.wow>=0?'wow-up':'wow-down');
     var share = dv.total? Math.round(t.mentions/dv.total*100):0;
     return '<tr data-base="'+t.mentions+'">'+
       '<td style="font-weight:700">'+esc(t.topic)+'</td>'+
-      '<td><span class="pill gray">'+catLabel(t.cat)+'</span></td>'+
+      '<td><span class="pill" style="'+catPillStyle(t.cat)+'">'+catLabel(t.cat)+'</span></td>'+
       '<td class="pv-mentions" style="text-align:right;font-weight:800">'+fmt(t.mentions)+'</td>'+
-      '<td style="text-align:right" class="'+wowCls+'">'+wowHtml+'</td>'+
       '<td style="text-align:right">'+sentHtml+'</td>'+
       '<td><span class="prio '+t.priority.toLowerCase()+'">'+t.priority+'</span></td>'+
-      '<td><span class="pill amber">待处理</span></td>'+
       '<td><div class="trend-bar" style="width:90px"><i style="width:'+Math.max(4,Math.min(100,share*3))+'%"></i></div></td>'+
       '<td style="width:54px">'+sparkline(t.spark,'hd-spark')+'</td>'+
     '</tr>';
@@ -7099,7 +7120,7 @@ function renderPlayerVoice(rangeDays){
     '</div>'+
     '<div class="perf-card" style="margin-bottom:12px">'+
       '<div class="cc-sec-head" style="margin:0 0 10px"><h5 style="font-size:13px;font-weight:800">按类别的热点玩家诉求</h5></div>'+
-      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'+catHtml+'</div>'+
+      '<div class="pv-cat-grid">'+catHtml+'</div>'+
     '</div>'+
     '<div class="perf-card">'+
       '<div class="cc-sec-head" style="margin:0 0 10px">'+
@@ -7111,8 +7132,8 @@ function renderPlayerVoice(rangeDays){
         '</div>'+
       '</div>'+
       '<div style="overflow-x:auto"><table class="trend-table"><thead><tr>'+
-        '<th>话题</th><th>类别</th><th style="text-align:right">反馈条数</th><th style="text-align:right">周环比</th>'+
-        '<th style="text-align:right">情绪</th><th>优先级</th><th>状态</th><th style="text-align:right">占比</th><th></th>'+
+        '<th>话题</th><th>类别</th><th style="text-align:right">反馈条数</th>'+
+        '<th style="text-align:right">情绪</th><th>优先级</th><th style="text-align:right">占比</th><th></th>'+
       '</tr></thead><tbody id="pvBody">'+rowsHtml+'</tbody></table></div>'+
     '</div>'+
   '</div>';
