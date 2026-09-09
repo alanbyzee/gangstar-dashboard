@@ -1705,24 +1705,97 @@ function feedbackSentiment(){
 }
 
 // Community Command Center 首页头部
+// ===== 玩家心声：全部从真实 FEEDBACK_DATA 派生 =====
+function pvParseDate(s){
+  if(!s) return null;
+  s=String(s).trim();
+  var m=s.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
+  if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+  m=s.match(/^(\d{1,2})[月.](\d{1,2})[日]?/);
+  if(m) return new Date(2026,+m[1]-1,+m[2]);
+  return null;
+}
+function pvMonday(d){ var x=new Date(d); var day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); x.setHours(0,0,0,0); return x; }
+// 真实反馈文本 → 自动聚类话题（关键词打分，最高命中胜出）
+var PV_TOPICS=[
+  {key:'vehicles',label:'载具与交通',cat:'Vehicles',kw:['自行车','单车','bike','火车','train','飞机','plane','車','车','汽','摩托','改装','车库','garage','出租车','taxi','驾驶','载具','vehicle','船','boat','马','horse']},
+  {key:'gameplay',label:'任务与玩法',cat:'Gameplay',kw:['任务','mission','玩法','开放世界','open world','经营','挑战','challenge','模式','mode','关卡','level','副本','活动','event','内容','content','地图','map','战斗','combat','枪','gun','武器','射击']},
+  {key:'technical',label:'性能与稳定',cat:'Technical',kw:['卡顿','延迟','lag','崩溃','crash','闪退','加载','loading','网络','network','服务器','server','bug','错误','报错','掉帧','帧','fps','ping','花屏','黑屏','卡死','冻结','freeze','性能','优化','optimi','加载界面']},
+  {key:'visual',label:'画质与视觉',cat:'General',kw:['画质','图形','graphic','视觉','贴图','texture','光影','画面','渲染','天空','sky','雨','rain','天气','山脉','山','水','water','太阳','sun','粉']},
+  {key:'local',label:'本地化语言',cat:'General',kw:['印地语','hindi','语言','language','翻译','字幕','本地化']},
+  {key:'commercial',label:'商业化系统',cat:'Commercial',kw:['钱','奖励','reward','付费','iap','内购','价格','price','皮肤','skin','转账','money','经济','economy','钻石','diamond','币','coin','现金','cash']},
+  {key:'social',label:'社交与系统',cat:'General',kw:['帮派','gang','公会','guild','好友','friend','邀请','invite','聊天','chat','免打扰','dnd','名称','改名','name','组队','party','交易','trade']}
+];
+function pvTopicOf(text){
+  text=String(text||'').toLowerCase();
+  var best=null,bs=0;
+  PV_TOPICS.forEach(function(tp){ var sc=0; tp.kw.forEach(function(k){ if(text.indexOf(k.toLowerCase())>=0) sc++; }); if(sc>bs){bs=sc;best=tp;} });
+  return best||{key:'other',label:'其他',cat:'General'};
+}
+// rangeDays: 7 / 30 / 'all' —— 按真实日期窗口过滤，全部指标由过滤后的真实条目计算
+function derivePlayerVoice(rangeDays){
+  rangeDays = rangeDays || 'all';
+  var fb=getFeedback(); var weeks=fb.weeks||[];
+  var items=[];
+  weeks.forEach(function(w){
+    (w.community||[]).forEach(function(it){
+      var d=pvParseDate(it.date);
+      items.push({it:it,d:d,ws:d?pvMonday(d):null});
+    });
+  });
+  var maxD=null; items.forEach(function(o){ if(o.d&&(!maxD||o.d>maxD)) maxD=o.d; });
+  var filt=items.filter(function(o){
+    if(!o.d) return rangeDays==='all';
+    if(rangeDays==='all') return true;
+    return (maxD-o.d)/86400000 <= rangeDays;
+  });
+  var total=filt.length,pos=0,neu=0,neg=0,act=0;
+  filt.forEach(function(o){ var t=o.it.type;
+    if(t==='good'){pos++;} else if(t==='bad'){neg++;act++;}
+    else {neu++; if(t==='sug')act++;}
+  });
+  var catCnt={};
+  filt.forEach(function(o){ var tp=pvTopicOf((o.it.theme||'')+' '+(o.it.orig||'')); catCnt[tp.cat]=(catCnt[tp.cat]||0)+1; });
+  var topics=PV_TOPICS.map(function(tp){
+    var ms=filt.filter(function(o){return pvTopicOf((o.it.theme||'')+' '+(o.it.orig||'')).key===tp.key;});
+    var n=ms.length, g=ms.filter(function(o){return o.it.type==='good';}).length, b=ms.filter(function(o){return o.it.type==='bad';}).length;
+    var gb=g+b, sentiment=gb?Math.round(g/gb*100):null;
+    var prio=(sentiment!=null&&sentiment<55)?'P1':(ms.some(function(o){return o.it.type==='sug';})?'P2':'P3');
+    return {topic:tp.label,cat:tp.cat,mentions:n,sentiment:sentiment,priority:prio,items:ms};
+  }).filter(function(t){return t.mentions>0;});
+  // 按周聚类算 spark / 周环比（用过滤后的真实周分布）
+  var byWeek={};
+  filt.forEach(function(o){ if(o.ws){ var k=o.ws.getTime(); (byWeek[k]=byWeek[k]||[]).push(o); } });
+  var wkKeys=Object.keys(byWeek).map(Number).sort(function(a,b){return a-b;});
+  topics.forEach(function(t){
+    var wk=wkKeys.map(function(k){ return t.items.filter(function(o){return o.ws&&o.ws.getTime()===k;}).length; });
+    t.spark=wk.slice(-7);
+    if(wk.length>=2){ var a=wk[wk.length-2],b=wk[wk.length-1]; t.wow = a? Math.round((b-a)/a*100) : (b?100:0); } else t.wow=null;
+  });
+  topics.sort(function(a,b){return b.mentions-a.mentions;});
+  return {total:total,pos:pos,neu:neu,neg:neg,act:act,catCnt:catCnt,topics:topics};
+}
+
 function renderCommandCenter(data){
   const el=document.getElementById('ccOverview');
   if(!el) return;
   const h=computeHealth(data);
   const sent=feedbackSentiment();
+  const fbWeeks=getFeedback().weeks||[]; const fbItems=fbWeeks.reduce(function(s,w){return s+((w.community||[]).length);},0); const fbWkCounts=fbWeeks.map(function(w){return (w.community||[]).length;});
   const topfb=getFeedback().weeks&&getFeedback().weeks[0];
   const topTheme=(topfb&&topfb.community&&topfb.community[0])?topfb.community[0]:null;
   const spark=totalHistorySpark(data);
 
   // 本周洞察（真实数据为主 + 标注来源）
-  const topTopic=[...CC_DATA.topics].sort((a,b)=>b.wow-a.wow)[0];
-  const negTopic=[...CC_DATA.topics].sort((a,b)=>a.sentiment-b.sentiment)[0];
-  const insights=[
-    {e:'🏍️',t:`<b>${esc(topTopic.topic)}</b> 相关需求本周 <span class="ii-num">周环比 +${topTopic.wow}%</span>，成为玩家最高频功能诉求（${topTopic.mentions} 条提及）。`},
-    {e:'🎯',t:`<b>Missions</b> 类反馈增长 <span class="ii-num">+24%</span>，玩家对长期内容消耗需求明显增加。`},
-    {e:'⚠️',t:`<b>Server Lag</b> 负面反馈 <span class="ii-num">周环比 -8%</span>，技术类舆情正在改善（状态：处理中）。`},
-    {e:'📈',t:`<b>Meme</b> 类内容平均互动率高于 Gameplay 内容 <span class="ii-num">31%</span>，建议加大 Meme 供给。`},
-    {e:'💬',t:`本周社群主话题：<b>${topTheme ? esc(topTheme.theme.slice(0,40)+'…') : '—'}</b>，整体正面反馈约 ${sent.pos}%。`}
+  var dvAll=derivePlayerVoice('all');
+  var topTopic=dvAll.topics[0];
+  var negTopic=dvAll.topics.filter(function(t){return t.sentiment!=null;}).sort(function(a,b){return a.sentiment-b.sentiment;})[0];
+  var insights=[
+    topTopic?{e:'🏍️',t:'<b>'+esc(topTopic.topic)+'</b> 是玩家反馈最集中的话题，累计 <span class="ii-num">'+topTopic.mentions+' 条</span> 反馈（占总量约 '+Math.round(topTopic.mentions/dvAll.total*100)+'%）。'}:{e:'🏍️',t:'本期暂无足够反馈用于聚类。'},
+    {e:'🎯',t:'共回收 <b>'+dvAll.total+'</b> 条玩家反馈，其中 <b>'+dvAll.act+'</b> 条为可行动诉求（建议 + 问题/Bug）。'},
+    negTopic?{e:'⚠️',t:'<b>'+esc(negTopic.topic)+'</b> 负面情绪最集中（正面占比仅 '+negTopic.sentiment+'%），建议优先排入开发 backlog。'}:{e:'⚠️',t:'当前无明显负面聚集话题。'},
+    {e:'📈',t:'正面反馈约 <b>'+sent.pos+'%</b>，中性/诉求 '+sent.neu+' 条，整体态度'+(sent.neg>20?'承压':'平稳')+'。'},
+    {e:'💬',t:'本周社群主话题：<b>'+(topTheme?esc(topTheme.theme.slice(0,40)+'…'):'—')+'</b>，整体正面反馈约 '+sent.pos+'%。'}
   ];
 
   // Action Center（来自 issue mock + 反馈待处理）
@@ -1738,9 +1811,9 @@ function renderCommandCenter(data){
 
   // Alerts（异常检测：基于真实粉丝 + mock 阈值）
   const alerts=[];
-  CC_DATA.topics.forEach(t=>{ if(t.wow>=25) alerts.push({ico:'🚀',t:`<b>${esc(t.topic)}</b> 反馈量周环比 +${t.wow}%，需求激增`}); });
+  dvAll.topics.forEach(t=>{ if(t.wow!=null && t.wow>=25) alerts.push({ico:'🚀',t:`<b>${esc(t.topic)}</b> 反馈量周环比 +${t.wow}%，需求激增`}); });
   if(h.growRate<0) alerts.push({ico:'⚠️',t:`总粉丝周增长转负（${h.growRate}%），需排查流失`});
-  alerts.push({ico:'⚠️',t:`<b>Server Lag</b> 负面占比 ${negTopic.sentiment}% 仍为最高风险项`});
+  if(negTopic) alerts.push({ico:'⚠️',t:`<b>${esc(negTopic.topic)}</b> 负面情绪最集中（正面占比仅 ${negTopic.sentiment}%），仍为最高风险项`});
   if(sent.neg>15) alerts.push({ico:'🔴',t:`负面情感占比 ${sent.neg}%，超过 15% 预警线`});
 
   // KPI 卡
@@ -1749,7 +1822,7 @@ function renderCommandCenter(data){
     {n:'新增粉丝(周)',v:(h.wg>0?'+':'')+fmt(h.wg),wow:(h.growRate>0?'+':'')+h.growRate+'%',up:h.growRate>=0,spark:spark},
     {n:'活跃用户',v:'42.8K',wow:'+6.1%',up:true,spark:[60,62,65,63,68,70,72]},
     {n:'互动率',v:'6.8%',wow:'+0.4pt',up:true,spark:[5,5.2,5.5,6,6.3,6.6,6.8]},
-    {n:'收集反馈',v:String(sent.total),wow:'本周',up:true,spark:[40,55,60,58,62,65,70]},
+    {n:'收集反馈',v:String(fbItems),wow:'累计',up:true,spark:fbWkCounts.length?fbWkCounts:[0]},
     {n:'正面情绪',v:sent.pos+'%',wow:'稳定',up:true,spark:[70,72,75,78,80,82,84]},
     {n:'负面情绪',v:sent.neg+'%',wow:sent.neg>15?'⚠️':'正常',up:sent.neg<=15,spark:[20,18,16,15,14,13,12]},
     {n:'活跃创作者',v:String(CC_DATA.creators.active),wow:'+4.2%',up:true,spark:[40,45,48,50,52,54,56]}
@@ -3207,6 +3280,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -8640,66 +8714,65 @@ document.addEventListener('mousemove',function(e){if(chTip.style.display==='bloc
 document.addEventListener('mouseout',function(e){if(isChHit(e.target))hideChTip();});
 
 // ===== Player Voice：Top 请求分类 + Topic Trend =====
-function renderPlayerVoice(){
-  const topics=CC_DATA.topics;
-  const total=topics.reduce((s,t)=>s+t.mentions,0);
-  const pos=topics.filter(t=>t.sentiment>=70).reduce((s,t)=>s+t.mentions,0);
-  const neg=topics.filter(t=>t.sentiment<50).reduce((s,t)=>s+t.mentions,0);
-  const neu=total-pos-neg;
-  const actionable=topics.filter(t=>/Pending|Reviewing/.test(t.status)).reduce((s,t)=>s+t.mentions,0);
-  const cats={};topics.forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+t.mentions;});
-  const catOrder=['Gameplay','Vehicles','Technical','Commercial'];
-  const stats=[
-    {n:'反馈总数',v:fmt(total),base:total},
-    {n:'正面',v:fmt(pos),c:'green',base:pos},
-    {n:'中性',v:fmt(neu),c:'gray',base:neu},
-    {n:'负面',v:fmt(neg),c:'red',base:neg},
-    {n:'可行动',v:fmt(actionable),c:'blue',base:actionable}
-  ];
-  const catHtml=catOrder.map(c=>`<div class="pv-cat"><span class="pv-cat-name">${catLabel(c)}</span><span class="pv-cat-cnt">${cats[c]?fmt(cats[c]):0} 条提及</span></div>`).join('');
-  const rows=[...topics].sort((a,b)=>b.mentions-a.mentions);
-  const rowsHtml=rows.map(t=>`<tr data-base="${t.mentions}">
-    <td style="font-weight:700">${esc(t.topic)}</td>
-    <td><span class="pill gray">${catLabel(t.cat)}</span></td>
-    <td class="pv-mentions" style="text-align:right;font-weight:800">${fmt(t.mentions)}</td>
-    <td style="text-align:right" class="${t.wow>=0?'wow-up':'wow-down'}">${t.wow>=0?'+':''}${t.wow}%</td>
-    <td style="text-align:right">${t.sentiment}% ${t.sentiment>=70?'🟢':t.sentiment<50?'🔴':'🟡'}</td>
-    <td><span class="prio ${t.priority.toLowerCase()}">${t.priority}</span></td>
-    <td><span class="pill ${/Pending|New|Validated/.test(t.status)?'amber':/Reviewing|Reported/.test(t.status)?'blue':'green'}">${stateLabel(t.status)}</span></td>
-    <td><div class="trend-bar" style="width:90px"><i style="width:${Math.max(4,Math.round(t.mentions/total*100*3))}%"></i></div></td>
-    <td style="width:54px">${sparkline(t.spark,'hd-spark')}</td>
-  </tr>`).join('');
 
-  return `<div class="cc-section">
-    <div class="cc-sec-head"><span class="cc-emoji">🗣️</span><h3>玩家心声</h3><span class="cc-sub">玩家真实需求与舆情 · 自动分类</span></div>
-    <div class="issue-stats" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px">
-      ${stats.map(s=>`<div class="istat"><div class="is-val pv-stat" data-base="${s.base}" ${s.c?'style="color:var(--'+(s.c==='green'?'ok':s.c==='red'?'err':s.c==='blue'?'brand2':'muted')+')"':''}>${s.v}</div><div class="is-name">${s.n}</div></div>`).join('')}
-    </div>
-    <div class="perf-card" style="margin-bottom:12px">
-      <div class="cc-sec-head" style="margin:0 0 10px"><h5 style="font-size:13px;font-weight:800">按类别的热点玩家诉求</h5></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">${catHtml}</div>
-    </div>
-    <div class="perf-card">
-      <div class="cc-sec-head" style="margin:0 0 10px">
-        <h5 style="font-size:13px;font-weight:800">话题趋势</h5>
-        <div style="margin-left:auto;display:flex;gap:6px" id="pvRange">
-          <button class="filter-sel pv-rng" data-f="1" style="padding:5px 12px;background:var(--brand);color:#fff;border-color:var(--brand)">近7天</button>
-          <button class="filter-sel pv-rng" data-f="4.2">近30天</button>
-          <button class="filter-sel pv-rng" data-f="11">近90天</button>
-        </div>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="trend-table"><thead><tr>
-          <th>话题</th><th>类别</th><th style="text-align:right">提及数</th><th style="text-align:right">周环比</th>
-          <th style="text-align:right">情绪</th><th>优先级</th><th>状态</th><th style="text-align:right">占比</th><th></th>
-        </tr></thead><tbody id="pvBody">${rowsHtml}</tbody></table>
-      </div>
-    </div>
-  </div>`;
+function renderPlayerVoice(rangeDays){
+  rangeDays = rangeDays || 'all';
+  var dv = derivePlayerVoice(rangeDays);
+  var stats=[
+    {n:'反馈总数',v:fmt(dv.total),base:dv.total},
+    {n:'正面',v:fmt(dv.pos),c:'green'},
+    {n:'中性/诉求',v:fmt(dv.neu),c:'gray'},
+    {n:'负面/Bug',v:fmt(dv.neg),c:'red'},
+    {n:'可行动',v:fmt(dv.act),c:'blue'}
+  ];
+  var catOrder=Object.keys(dv.catCnt).sort(function(a,b){return dv.catCnt[b]-dv.catCnt[a];});
+  var catHtml=catOrder.map(function(c){return '<div class="pv-cat"><span class="pv-cat-name">'+catLabel(c)+'</span><span class="pv-cat-cnt">'+fmt(dv.catCnt[c])+' 条</span></div>';}).join('');
+  var rowsHtml=dv.topics.map(function(t){
+    var sentHtml = t.sentiment==null ? '—' : (t.sentiment+'% '+(t.sentiment>=70?'🟢':t.sentiment<50?'🔴':'🟡'));
+    var wowHtml = t.wow==null ? '—' : ((t.wow>=0?'+':'')+t.wow+'%');
+    var wowCls = t.wow==null?'':(t.wow>=0?'wow-up':'wow-down');
+    var share = dv.total? Math.round(t.mentions/dv.total*100):0;
+    return '<tr data-base="'+t.mentions+'">'+
+      '<td style="font-weight:700">'+esc(t.topic)+'</td>'+
+      '<td><span class="pill gray">'+catLabel(t.cat)+'</span></td>'+
+      '<td class="pv-mentions" style="text-align:right;font-weight:800">'+fmt(t.mentions)+'</td>'+
+      '<td style="text-align:right" class="'+wowCls+'">'+wowHtml+'</td>'+
+      '<td style="text-align:right">'+sentHtml+'</td>'+
+      '<td><span class="prio '+t.priority.toLowerCase()+'">'+t.priority+'</span></td>'+
+      '<td><span class="pill amber">待处理</span></td>'+
+      '<td><div class="trend-bar" style="width:90px"><i style="width:'+Math.max(4,Math.min(100,share*3))+'%"></i></div></td>'+
+      '<td style="width:54px">'+sparkline(t.spark,'hd-spark')+'</td>'+
+    '</tr>';
+  }).join('');
+  return '<div class="cc-section">'+
+    '<div class="cc-sec-head"><span class="cc-emoji">🗣️</span><h3>玩家心声</h3><span class="cc-sub">真实玩家反馈自动聚类（来源：玩家反馈周报）</span></div>'+
+    '<div class="issue-stats" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px">'+
+      stats.map(function(s){return '<div class="istat"><div class="is-val" '+(s.c?'style="color:var(--'+(s.c==='green'?'ok':s.c==='red'?'err':s.c==='blue'?'brand2':'muted')+')"':'')+'>'+s.v+'</div><div class="is-name">'+s.n+'</div></div>';}).join('')+
+    '</div>'+
+    '<div class="perf-card" style="margin-bottom:12px">'+
+      '<div class="cc-sec-head" style="margin:0 0 10px"><h5 style="font-size:13px;font-weight:800">按类别的热点玩家诉求</h5></div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'+catHtml+'</div>'+
+    '</div>'+
+    '<div class="perf-card">'+
+      '<div class="cc-sec-head" style="margin:0 0 10px">'+
+        '<h5 style="font-size:13px;font-weight:800">话题趋势（自动聚类）</h5>'+
+        '<div style="margin-left:auto;display:flex;gap:6px" id="pvRange">'+
+          '<button class="filter-sel pv-rng" data-f="7">近7天</button>'+
+          '<button class="filter-sel pv-rng" data-f="30">近30天</button>'+
+          '<button class="filter-sel pv-rng on" data-f="all" style="background:var(--brand);color:#fff;border-color:var(--brand)">全部</button>'+
+        '</div>'+
+      '</div>'+
+      '<div style="overflow-x:auto"><table class="trend-table"><thead><tr>'+
+        '<th>话题</th><th>类别</th><th style="text-align:right">反馈条数</th><th style="text-align:right">周环比</th>'+
+        '<th style="text-align:right">情绪</th><th>优先级</th><th>状态</th><th style="text-align:right">占比</th><th></th>'+
+      '</tr></thead><tbody id="pvBody">'+rowsHtml+'</tbody></table></div>'+
+    '</div>'+
+  '</div>';
 }
+
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
-  var html=renderPlayerVoice()+'\n'+
+  var html='<div id="pvWrap">'+renderPlayerVoice('all')+'</div>\n'+
     '<h2>💬 玩家反馈 · 印度市场态度</h2>'+
     '<div class="sub">每周由助手整理两份周报（官号后台 / 玩家社区），提炼主题、过滤无效反馈，供团队与老板快速掌握印度玩家对 GST 的态度、玩法认知与市场风评</div>';
   if(weeks.length){
@@ -8716,26 +8789,20 @@ function renderFeedback(){
   root.innerHTML=html;
   root.querySelector('.add-week-btn').onclick=openWeekModal;
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
-  // Player Voice 7/30/90-day range toggle
+  // Player Voice 时间范围切换（真实数据按日期窗口过滤并重渲染）
   var pvBtns=root.querySelectorAll('.pv-rng');
   pvBtns.forEach(function(btn){
     btn.onclick=function(){
-      var f=parseFloat(btn.dataset.f)||1;
+      var f=btn.dataset.f;
       pvBtns.forEach(function(b){
         var on=(b===btn);
+        b.classList.toggle('on',on);
         b.style.background=on?'var(--brand)':'#fff';
         b.style.color=on?'#fff':'var(--ink)';
         b.style.borderColor=on?'var(--brand)':'var(--line)';
       });
-      root.querySelectorAll('.pv-stat').forEach(function(el){
-        var base=Number(el.dataset.base)||0;
-        el.textContent=fmt(Math.round(base*f));
-      });
-      root.querySelectorAll('#pvBody tr[data-base]').forEach(function(tr){
-        var base=Number(tr.dataset.base)||0;
-        var cell=tr.querySelector('.pv-mentions');
-        if(cell) cell.textContent=fmt(Math.round(base*f));
-      });
+      var wrap=root.querySelector('#pvWrap');
+      if(wrap) wrap.innerHTML=renderPlayerVoice(f);
     };
   });
 }
