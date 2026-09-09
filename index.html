@@ -263,8 +263,9 @@ body{
 .sent-seg.sug{background:linear-gradient(135deg,#fde047,#eab308);color:#1e293b}
 .sent-seg.bad{background:linear-gradient(135deg,#ef4444,#dc2626)}
 .sent-total{font-size:11.5px;color:var(--muted);margin:7px 0 4px;font-weight:600}
-/* 左官号 / 右社群 两栏 */
+/* 左官号 / 右社群 两栏（合并后变单栏） */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:4px 0 6px}
+.two-col.one{grid-template-columns:1fr}
 @media(max-width:860px){.two-col{grid-template-columns:1fr}}
 .src-col{background:#fbfcfe;border:1px solid #eef2f7;border-radius:14px;padding:15px 16px}
 .src-head{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:800;margin:0 0 11px;color:#1e293b}
@@ -1738,7 +1739,7 @@ function derivePlayerVoice(rangeDays){
   var fb=getFeedback(); var weeks=fb.weeks||[];
   var items=[];
   weeks.forEach(function(w){
-    (w.community||[]).forEach(function(it){
+    (w.community||[]).concat(w.official||[]).forEach(function(it){
       var d=pvParseDate(it.date);
       items.push({it:it,d:d,ws:d?pvMonday(d):null});
     });
@@ -1749,26 +1750,30 @@ function derivePlayerVoice(rangeDays){
     if(rangeDays==='all') return true;
     return (maxD-o.d)/86400000 <= rangeDays;
   });
-  var total=filt.length,pos=0,neu=0,neg=0,act=0;
-  filt.forEach(function(o){ var t=o.it.type;
-    if(t==='good'){pos++;} else if(t==='bad'){neg++;act++;}
-    else {neu++; if(t==='sug')act++;}
+  function cnt(o){ return Number(o.it.count)||0; }
+  var total=0,pos=0,neu=0,neg=0,act=0;
+  filt.forEach(function(o){ var c=cnt(o), t=o.it.type;
+    total+=c;
+    if(t==='good'){pos+=c;} else if(t==='bad'){neg+=c;act+=c;}
+    else {neu+=c; if(t==='sug')act+=c;}
   });
   var catCnt={};
-  filt.forEach(function(o){ var tp=pvTopicOf((o.it.theme||'')+' '+(o.it.orig||'')); catCnt[tp.cat]=(catCnt[tp.cat]||0)+1; });
+  filt.forEach(function(o){ var c=cnt(o); var tp=pvTopicOf((o.it.theme||'')+' '+(o.it.orig||'')); catCnt[tp.cat]=(catCnt[tp.cat]||0)+c; });
   var topics=PV_TOPICS.map(function(tp){
     var ms=filt.filter(function(o){return pvTopicOf((o.it.theme||'')+' '+(o.it.orig||'')).key===tp.key;});
-    var n=ms.length, g=ms.filter(function(o){return o.it.type==='good';}).length, b=ms.filter(function(o){return o.it.type==='bad';}).length;
+    var n=ms.reduce(function(s,o){return s+cnt(o);},0);
+    var g=ms.filter(function(o){return o.it.type==='good';}).reduce(function(s,o){return s+cnt(o);},0);
+    var b=ms.filter(function(o){return o.it.type==='bad';}).reduce(function(s,o){return s+cnt(o);},0);
     var gb=g+b, sentiment=gb?Math.round(g/gb*100):null;
     var prio=(sentiment!=null&&sentiment<55)?'P1':(ms.some(function(o){return o.it.type==='sug';})?'P2':'P3');
     return {topic:tp.label,cat:tp.cat,mentions:n,sentiment:sentiment,priority:prio,items:ms};
   }).filter(function(t){return t.mentions>0;});
-  // 按周聚类算 spark / 周环比（用过滤后的真实周分布）
+  // 按周聚类算 spark / 周环比（用过滤后的真实周分布，按 Count 加权）
   var byWeek={};
   filt.forEach(function(o){ if(o.ws){ var k=o.ws.getTime(); (byWeek[k]=byWeek[k]||[]).push(o); } });
   var wkKeys=Object.keys(byWeek).map(Number).sort(function(a,b){return a-b;});
   topics.forEach(function(t){
-    var wk=wkKeys.map(function(k){ return t.items.filter(function(o){return o.ws&&o.ws.getTime()===k;}).length; });
+    var wk=wkKeys.map(function(k){ return t.items.filter(function(o){return o.ws&&o.ws.getTime()===k;}).reduce(function(s,o){return s+cnt(o);},0); });
     t.spark=wk.slice(-7);
     if(wk.length>=2){ var a=wk[wk.length-2],b=wk[wk.length-1]; t.wow = a? Math.round((b-a)/a*100) : (b?100:0); } else t.wow=null;
   });
@@ -1781,7 +1786,7 @@ function renderCommandCenter(data){
   if(!el) return;
   const h=computeHealth(data);
   const sent=feedbackSentiment();
-  const fbWeeks=getFeedback().weeks||[]; const fbItems=fbWeeks.reduce(function(s,w){return s+((w.community||[]).length);},0); const fbWkCounts=fbWeeks.map(function(w){return (w.community||[]).length;});
+  const fbWeeks=getFeedback().weeks||[]; const fbItems=fbWeeks.reduce(function(s,w){return s+((w.community||[]).concat(w.official||[])).reduce(function(a,it){return a+(Number(it.count)||0);},0);},0); const fbWkCounts=fbWeeks.map(function(w){return ((w.community||[]).concat(w.official||[])).reduce(function(a,it){return a+(Number(it.count)||0);},0);});
   const topfb=getFeedback().weeks&&getFeedback().weeks[0];
   const topTheme=(topfb&&topfb.community&&topfb.community[0])?topfb.community[0]:null;
   const spark=totalHistorySpark(data);
@@ -3280,6 +3285,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -5738,12 +5744,12 @@ var FEEDBACK_DATA = {
   "weeks": [
     {
       "week": "8.31 - 9.6",
-      "attitude": "负面",
-      "summary": "本周回收 **22 条** 玩家反馈（Instagram(18)、YouTube(10)、Discord(6)）。 正面 2 条，集中在枪械手感、内容好评等； **中性诉求 8 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 12 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
+      "attitude": "波动",
+      "summary": "本周回收 **22 条** 玩家反馈（Instagram(18)、YouTube(10)、Discord(6)）。 正面 2 条，集中在枪械手感、内容好评等； **中性诉求 8 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 12 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**波动**。",
       "dims": {
         "attitude": {
-          "label": "负面",
-          "detail": "本周回收 22 条代表性反馈（含提及量 3）；正面 2 / 中性(建议) 8 / 负面·Bug 12 条。"
+          "label": "波动",
+          "detail": "本周回收 22 条代表性反馈（含提及量 468）；正面 2 / 中性(建议) 8 / 负面·Bug 12 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
@@ -5751,7 +5757,7 @@ var FEEDBACK_DATA = {
         },
         "reputation": {
           "label": "风评承压",
-          "detail": "负面/Bug 占比偏高（约 100%），集中在崩溃、卡顿与网络问题。"
+          "detail": "负面/Bug 占比偏高（约 33%），集中在崩溃、卡顿与网络问题。"
         },
         "engagement": {
           "label": "活跃",
@@ -5764,7 +5770,7 @@ var FEEDBACK_DATA = {
       "community": [
         {
           "theme": "最佳游戏",
-          "count": 0,
+          "count": 100,
           "type": "good",
           "orig": "Best game",
           "channel": "IG, DC",
@@ -5773,7 +5779,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "玩游戏时设备经常卡顿",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "Device lagging a lot while playing",
           "channel": "IG, DC",
@@ -5791,7 +5797,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "出租车事件错误",
-          "count": 0,
+          "count": 45,
           "type": "bad",
           "orig": "taxi event bug",
           "channel": "IG, YTB, DC",
@@ -5800,7 +5806,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "汽车喇叭不响",
-          "count": 0,
+          "count": 10,
           "type": "bad",
           "orig": "Car horn not working",
           "channel": "IG",
@@ -5809,7 +5815,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 任务期间麦克风/通讯系统重置\n\n玩家开始任务时需要手动重新启用麦克风/通讯系统。\n\n麦克风有时会在进入任务时自动禁用或重置。\n\n这会导致玩家与队友失去联系。\n\n2. 团队通讯应保持开启状态\n\n如果玩家在开始任务前已启用麦克风/通讯系统，则应在整个任务过程中保持开启状态。\n\n建议：保留玩家的麦克风/语音通讯状态，而不是每次都要求玩家重新启用。\n\n3. 部落战通讯问题\n\n玩家还强调了可靠的部落和部落战通讯系统的重要性，尤其是在任务期间与队友协调时。",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "1. Mic / communication system resets during missions\n\nWhen starting a mission, players need to manually enable the microphone/communication system again.\nThe mic can sometimes automatically disable or reset when entering a mission.\nThis can cause players to lose communication with their teammates.\n\n2. Team communication should persist\n\nIf players have already enabled the mic/communication system before starting a mission, it should remain enabled throughout the mission.\nSuggestion: preserve the player's mic/voice communication state instead of requiring them to re-enable it every time.\n\n3. Clan Wars communication issue\n\nPlayer also highlights the need for a reliable clan and Clan Wars communication system, particularly when coordinating with teammates during missions.",
           "channel": "IG",
@@ -5818,7 +5824,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "加上自行车、火车和飞机",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add bikes and train and airplane",
           "channel": "IG, DC, YTB",
@@ -5827,7 +5833,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加在 PvP 和街头赛车中更换车辆的选项",
-          "count": 0,
+          "count": 25,
           "type": "bad",
           "orig": "Add option to change car in pvp and street racing",
           "channel": "IG",
@@ -5836,7 +5842,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "很抱歉，您不符合此服务问题的条件。",
-          "count": 0,
+          "count": 12,
           "type": "bad",
           "orig": "We are sorry but you are not eligible for this service issue",
           "channel": "IG",
@@ -5854,7 +5860,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加陀螺仪",
-          "count": 0,
+          "count": 23,
           "type": "sug",
           "orig": "Add gyro in the game",
           "channel": "IG, YTB, DC",
@@ -5863,7 +5869,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加印地语",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "Add hindi language",
           "channel": "IG, YTB",
@@ -5872,7 +5878,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "带上第一人称视角",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Bring first person camera",
           "channel": "IG",
@@ -5881,7 +5887,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "粉红色的天空虫",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "pink sky bug",
           "channel": "IG",
@@ -5890,7 +5896,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "改进游戏用户界面",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "improve game ui",
           "channel": "YTB",
@@ -5899,7 +5905,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "缩小游戏规模",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Decrease game size",
           "channel": "YTB",
@@ -5908,7 +5914,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "针对低端手机优化游戏",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Optimize the game for low end phones",
           "channel": "YTB",
@@ -5917,7 +5923,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加单人游戏模式",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "Add singleplayer mode",
           "channel": "YTB",
@@ -5926,7 +5932,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "我们爱你们，这款游戏的开发者们！",
-          "count": 0,
+          "count": 70,
           "type": "good",
           "orig": "We love you developers of this game",
           "channel": "IG, YTB",
@@ -5935,7 +5941,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加名称更改选项",
-          "count": 0,
+          "count": 25,
           "type": "bad",
           "orig": "Add name change option",
           "channel": "IG, YTB, DC",
@@ -5944,7 +5950,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "无法调用云",
-          "count": 0,
+          "count": 3,
           "type": "bad",
           "orig": "Unable to call cloud",
           "channel": "IG",
@@ -5961,7 +5967,7 @@ var FEEDBACK_DATA = {
           "date": "8月31日"
         }
       ],
-      "communitySummary": "本周社群反馈共 22 条，主要来自 Instagram(18)、YouTube(10)、Discord(6)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 100%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 22 条，主要来自 Instagram(18)、YouTube(10)、Discord(6)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 33%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
@@ -5981,20 +5987,20 @@ var FEEDBACK_DATA = {
     },
     {
       "week": "8.24 - 8.30",
-      "attitude": "负面",
-      "summary": "本周回收 **100 条** 玩家反馈（Instagram(93)、Discord(32)、YouTube(6)）。 正面 5 条，集中在枪械手感、内容好评等； **中性诉求 42 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 53 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
+      "attitude": "波动",
+      "summary": "本周回收 **100 条** 玩家反馈（Instagram(93)、Discord(32)、YouTube(6)）。 正面 5 条，集中在枪械手感、内容好评等； **中性诉求 42 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 53 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**波动**。",
       "dims": {
         "attitude": {
-          "label": "负面",
-          "detail": "本周回收 100 条代表性反馈（含提及量 11）；正面 5 / 中性(建议) 42 / 负面·Bug 53 条。"
+          "label": "波动",
+          "detail": "本周回收 100 条代表性反馈（含提及量 1260）；正面 5 / 中性(建议) 42 / 负面·Bug 53 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
           "detail": "玩家集中提出：增加救护车等紧急服务、在游戏中添加自行车、增加银行和银行抢劫任务 等玩法/内容建议。"
         },
         "reputation": {
-          "label": "风评承压",
-          "detail": "负面/Bug 占比偏高（约 82%），集中在崩溃、卡顿与网络问题。"
+          "label": "风评健康",
+          "detail": "负面/Bug 占比偏高（约 16%），集中在崩溃、卡顿与网络问题。"
         },
         "engagement": {
           "label": "活跃",
@@ -6160,7 +6166,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加自行车",
-          "count": 0,
+          "count": 21,
           "type": "sug",
           "orig": "Add bikes to the game",
           "channel": "IG",
@@ -6169,7 +6175,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加银行和银行抢劫任务",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Add banks and bank robbery mission",
           "channel": "IG",
@@ -6178,7 +6184,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "将多人游戏玩家上限提高到 20 人以上。",
-          "count": 0,
+          "count": 1,
           "type": "sug",
           "orig": "Increase multiplayer player limit more than 20",
           "channel": "IG",
@@ -6187,7 +6193,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增大地图尺寸",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "Increase map size",
           "channel": "IG",
@@ -6196,7 +6202,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加直升机和船只",
-          "count": 0,
+          "count": 15,
           "type": "sug",
           "orig": "Add helicopter and boat",
           "channel": "IG",
@@ -6205,7 +6211,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加动物/宠物",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "add animals / pets",
           "channel": "IG",
@@ -6214,7 +6220,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加名称更改选项",
-          "count": 0,
+          "count": 4,
           "type": "sug",
           "orig": "Add name change option",
           "channel": "IG",
@@ -6223,7 +6229,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "角色无法从箱子里出来，他被困住了。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "Charcter unable to come out of boxes he is stuck",
           "channel": "IG",
@@ -6241,7 +6247,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "无法登录/您不符合使用服务的条件",
-          "count": 0,
+          "count": 3,
           "type": "bad",
           "orig": "unable to log in / you are not eligable to enjoy the services",
           "channel": "IG",
@@ -6250,7 +6256,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加氏族/帮派系统",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "Add clan/gang system",
           "channel": "IG",
@@ -6259,7 +6265,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加手机从口袋里弹出的动画效果",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Add animation of phone coming out of pocket",
           "channel": "IG",
@@ -6268,7 +6274,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加转账系统",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Add money transfer system",
           "channel": "IG",
@@ -6277,7 +6283,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "支持的设备发布列表",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "release list of supported devices",
           "channel": "IG",
@@ -6286,7 +6292,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "用户无法出售赃车",
-          "count": 0,
+          "count": 1,
           "type": "bad",
           "orig": "user cant sell stolen car",
           "channel": "IG",
@@ -6331,7 +6337,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加自行车",
-          "count": 0,
+          "count": 200,
           "type": "sug",
           "orig": "Add bikes to the game",
           "channel": "IG, YTB, DC",
@@ -6340,7 +6346,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加僵尸",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "add zombies",
           "channel": "IG",
@@ -6349,7 +6355,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "加雨",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "add rain",
           "channel": "IG",
@@ -6358,7 +6364,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加帮派功能和帮派战争",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add gang features and gang war",
           "channel": "IG, DC, YTB",
@@ -6367,7 +6373,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "用户进入水中，位于城市下方",
-          "count": 0,
+          "count": 19,
           "type": "bad",
           "orig": "User went in water, under the city",
           "channel": "IG, DC, YTB",
@@ -6376,7 +6382,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "天空是粉色的，但天空没有加载出来。",
-          "count": 0,
+          "count": 3,
           "type": "bad",
           "orig": "Sky is pink not loading the sky",
           "channel": "IG",
@@ -6385,7 +6391,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加转账系统",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Add money transfer system",
           "channel": "IG",
@@ -6394,7 +6400,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加山脉",
-          "count": 0,
+          "count": 1,
           "type": "sug",
           "orig": "add mountains",
           "channel": "IG",
@@ -6403,7 +6409,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加免打扰功能，这样我们就不会收到任何邀请。",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Add DND feature via which we do not receive any invite",
           "channel": "IG",
@@ -6412,7 +6418,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加名称更改选项",
-          "count": 0,
+          "count": 25,
           "type": "sug",
           "orig": "Add name change option",
           "channel": "IG",
@@ -6430,7 +6436,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加印地语",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "Add hindi language",
           "channel": "IG",
@@ -6439,7 +6445,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "画面精美，游戏体验极佳。",
-          "count": 0,
+          "count": 250,
           "type": "good",
           "orig": "Great game with great graphics",
           "channel": "IG, DC, YTB",
@@ -6448,7 +6454,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏卡在更新中",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "game stuck in update",
           "channel": "IG, DC",
@@ -6457,7 +6463,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏有很多精彩的任务。",
-          "count": 0,
+          "count": 60,
           "type": "good",
           "orig": "game has great missions",
           "channel": "IG, DC",
@@ -6466,7 +6472,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提升驾驶体验",
-          "count": 0,
+          "count": 20,
           "type": "sug",
           "orig": "Improve driving experience",
           "channel": "IG",
@@ -6475,7 +6481,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加可自定义按钮",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Add customizable buttons",
           "channel": "IG",
@@ -6484,7 +6490,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "任务中麦克风无法工作",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Mic is not working in missons",
           "channel": "IG",
@@ -6493,7 +6499,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "汽车修理厂进度停滞在20%。",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "car workshop stuck at 20%",
           "channel": "IG, DC",
@@ -6529,7 +6535,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加自行车",
-          "count": 0,
+          "count": 70,
           "type": "sug",
           "orig": "Add bikes to the game",
           "channel": "DC, IG",
@@ -6538,7 +6544,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "向音乐播放器添加更多歌曲",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "add more songs to music player",
           "channel": "IG",
@@ -6547,7 +6553,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "高速追逐画面会出现很多延迟。",
-          "count": 0,
+          "count": 1,
           "type": "bad",
           "orig": "High speed chases have a lot of lag",
           "channel": "IG",
@@ -6556,7 +6562,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加印地语",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add hindi language",
           "channel": "IG, DC",
@@ -6565,7 +6571,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加更多任务",
-          "count": 0,
+          "count": 10,
           "type": "sug",
           "orig": "add more missions in the game",
           "channel": "IG, DC",
@@ -6574,7 +6580,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "玩游戏时手机发热很严重",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "Phone is heating a lot while playing the game",
           "channel": "IG, DC",
@@ -6583,7 +6589,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加更改名称的选项",
-          "count": 0,
+          "count": 15,
           "type": "sug",
           "orig": "Add an option to change name",
           "channel": "IG, DC",
@@ -6592,7 +6598,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加保镖",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Add bodyguards in the game",
           "channel": "IG",
@@ -6601,7 +6607,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加 fpp 选项",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Add fpp option",
           "channel": "IG",
@@ -6610,7 +6616,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "当我们撞到他们时，NPC 正走在路中间",
-          "count": 0,
+          "count": 4,
           "type": "bad",
           "orig": "NPC goinginside the road when we hit them",
           "channel": "IG",
@@ -6619,7 +6625,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "最佳游戏",
-          "count": 0,
+          "count": 75,
           "type": "good",
           "orig": "Best game",
           "channel": "IG, DC",
@@ -6628,7 +6634,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "和朋友一起玩游戏时，尝试打开麦克风时蓝牙设备断开了连接。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "When playing with friends and trying to open mic the bluetooth device is disconnected",
           "channel": "IG",
@@ -6637,7 +6643,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "“力量之言”出租车任务有bug。",
-          "count": 0,
+          "count": 30,
           "type": "bad",
           "orig": "Word of power taxi mission is bugged",
           "channel": "IG, DC",
@@ -6655,7 +6661,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "玩家在城市下方的水中重生",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "Player spawning in water under the city",
           "channel": "IG",
@@ -6664,7 +6670,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "意外的高延迟/高延迟峰值\n\n玩家报告称，尽管拥有稳定且高质量的 Wi-Fi 连接，但延迟峰值仍突然达到 999 毫秒。\n\n峰值似乎发生在游戏的关键时刻，严重影响游戏体验。\n\n这可能表明是服务器/网络连接问题，而非玩家自身的网络连接问题。",
-          "count": 0,
+          "count": 4,
           "type": "bad",
           "orig": "Unexpected high ping / latency spikes\n\nPlayer reports sudden ping spikes reaching 999ms, despite having a stable/high-quality Wi-Fi connection.\nSpikes appear to happen during crucial moments of gameplay, negatively affecting the experience.\nCould indicate a server/network connectivity issue rather than the player's internet connection.",
           "channel": "IG",
@@ -6673,7 +6679,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "2. 无明显弹痕受到伤害\n\n玩家报告受到伤害，即使他们看起来并未被子弹击中。\n\n可能是命中判定、同步问题或伤害同步问题。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "2. Damage received without visible bullet hits\n\nPlayer reports taking damage even when they do not appear to be hit by bullets.\nPossible issue with hit registration, desync, or damage synchronization.",
           "channel": "IG",
@@ -6682,7 +6688,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提高漂移时的手刹响应速度和车辆控制性能。",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "improve handbrake responsiveness and vehicle control while drifting.",
           "channel": "IG",
@@ -6691,7 +6697,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "新增可解锁角色",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "Add new unlockable character",
           "channel": "IG",
@@ -6700,7 +6706,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "卡在加载界面",
-          "count": 0,
+          "count": 12,
           "type": "bad",
           "orig": "Stuck on loading screen",
           "channel": "IG, DC",
@@ -6709,7 +6715,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏画面真酷",
-          "count": 0,
+          "count": 35,
           "type": "good",
           "orig": "Game graphics are really cool",
           "channel": "IG, DC, YTB",
@@ -6718,7 +6724,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "通过 Facebook 添加帐户",
-          "count": 0,
+          "count": 2,
           "type": "good",
           "orig": "add account via facebook",
           "channel": "IG",
@@ -6727,7 +6733,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 地图略显空旷\n\n玩家感觉当前地图缺乏活力和多样性。\n\n建议：扩展地图，增加更多区域和城市，使世界更加生机勃勃。",
-          "count": 0,
+          "count": 4,
           "type": "sug",
           "orig": "1. Map feels empty\n\nPlayer feels the current map lacks activity and variety.\nSuggestion: expand the map with more areas and cities to make the world feel more alive.",
           "channel": "IG",
@@ -6736,7 +6742,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "2. 增加NPC活动\n\n玩家希望地图上出现更多NPC和车辆。\n\n建议增加更多车辆竞速和NPC战斗，以打造更具活力的开放世界体验。",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "2. Increase NPC activity\n\nPlayer wants more NPCs and traffic across the map.\nSpecifically suggests adding more traffic races and NPC fights to create a more dynamic open-world experience.",
           "channel": "IG",
@@ -6745,7 +6751,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "3. 添加更多隐藏/秘密地点\n\n玩家希望探索更多秘密地点和隐藏区域。\n\n这可以提升探索体验，并让玩家有更多理由探索地图。",
-          "count": 0,
+          "count": 2,
           "type": "sug",
           "orig": "3. Add more hidden/secret locations\n\nPlayer would like secret locations and hidden areas to explore.\nThis could improve exploration and give players more reasons to explore the map.",
           "channel": "IG",
@@ -6754,7 +6760,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "汽车喇叭不响了",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "Horn is not working in car",
           "channel": "IG, DC",
@@ -6772,7 +6778,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "很多使用 3GB 内存的用户都遇到了粉色天空问题。",
-          "count": 0,
+          "count": 9,
           "type": "bad",
           "orig": "A lot of people with 3 gb ram are having pink sky issue",
           "channel": "IG",
@@ -6781,7 +6787,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "红色圆柱体不会通过子弹爆炸，请改用手榴弹",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "Red cylinders are not blasting via bulletshave to use grenades",
           "channel": "IG",
@@ -6790,7 +6796,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 尼克森公司珠宝劫案——侦察任务软锁\n\n在尼克森公司珠宝劫案侦察任务结束时，玩家进入地下停车场。\n\n一段过场动画播放完毕，任务结束，但之后游戏控制停止响应。\n\n过场动画结束后，玩家无法移动或控制角色。\n\n2. 可能存在任务进度/控制锁定问题\n\n该问题似乎在完成侦察目标并到达地下停车场后稳定出现。\n\n可能是任务结束后的过场动画或任务完成动画导致的软锁。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "1. Nyxen Corp Jewelry Heist – Recon Mission Soft Lock\n\nAt the end of the Nyxen Corp Jewelry Heist Recon mission, the player enters the underground parking area.\nA cutscene plays and the mission ends, but afterward the game controls stop responding.\nThe player is unable to move or control their character after the cutscene.\n\n2. Possible mission progression/control lock\n\nThe issue appears to occur consistently after completing the recon objective and reaching the underground parking area.\nMay be a soft lock caused by the post-mission cutscene or mission completion sequence.",
           "channel": "IG",
@@ -6799,7 +6805,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "为好友添加取消好友和屏蔽好友的选项。",
-          "count": 0,
+          "count": 10,
           "type": "bad",
           "orig": "Add unfriend option along with block option for friends",
           "channel": "IG, YTB, DC",
@@ -6808,7 +6814,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. Facebook 登录 - “不符合服务资格”错误\n\n玩家无法通过 Facebook 登录其现有的 Gangstar Mirage City 账号。\n\n其 Facebook 账号仍然显示 Gangstar Mirage City 账号处于激活状态并已关联。\n\n然而，尝试登录时立即显示错误信息：“抱歉，您不符合服务资格。”\n\n玩家请求帮助以恢复/访问其旧账号。\n\n2. 账号恢复/登录问题\n\n该问题似乎影响的是现有/之前已关联的账号，而非新账号。\n\n可能与 Facebook 身份验证、账号关联或资格验证有关。\n\n设备：OPPO A17",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "1. Facebook login – “Not eligible to enjoy the service” error\n\nPlayer is unable to log in to their existing Gangstar Mirage City account through Facebook.\nTheir Facebook account still shows that the Gangstar Mirage City account is active and linked.\nHowever, attempting to log in immediately shows the error: “We are sorry, but you are not eligible to enjoy the service.”\nPlayer is requesting help to recover/access their old account.\n\n2. Account recovery / login issue\n\nThe issue appears to affect an existing/previously linked account, rather than a new account.\nPotentially related to Facebook authentication, account linking, or eligibility verification.\n\nDevice: OPPO A17",
           "channel": "IG",
@@ -6817,7 +6823,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "无法购买战斗通行证",
-          "count": 0,
+          "count": 3,
           "type": "bad",
           "orig": "unable to buy battlepass",
           "channel": "IG",
@@ -6826,7 +6832,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 大厅玩家容量过少\n\n由于大厅空间有限，主播们很难管理想要加入的观众。\n\n当很多观众想要一起玩游戏时，这个问题就更加棘手了。\n\n2. 添加房间/自定义大厅系统\n\n建议：引入房间系统，玩家可以创建私人/自定义房间，并邀请或允许更多玩家加入。\n\n这将使主播更容易与他们的粉丝一起玩游戏，而不会受到标准大厅容量的限制。",
-          "count": 0,
+          "count": 1,
           "type": "bad",
           "orig": "1. Lobby player capacity is too limited\n\nStreamers are finding it difficult to manage viewers who want to join them because lobby space is limited.\nThis becomes especially challenging when many viewers want to play together.\n\n2. Add a room/custom lobby system\n\nSuggestion: introduce a room system where players can create a private/custom room and invite or allow more players to join.\nThis would make it easier for streamers to play with their communities without being restricted by the standard lobby capacity.",
           "channel": "IG",
@@ -6835,7 +6841,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "部分已完成的任务未显示为已完成。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "some missions which have been completed do not show as completed",
           "channel": "IG",
@@ -6844,7 +6850,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 剧情推进受冷却时间影响\n\n玩家认为冷却系统不必要地打断了剧情推进。\n\n完成几个剧情任务后，他们被迫等待 4-6 小时，甚至可能长达 1-2 天才能继续。\n\n2. 移除或缩短剧情冷却时间\n\n建议：移除剧情任务中的这些基于时间的冷却时间。\n\n剧情推进应该基于任务完成情况和叙事进度，而不是实时等待。\n\n3. 优化剧情流程\n\n冷却时间打断了玩家的节奏，使他们难以保持对剧情的兴趣。\n\n允许玩家无需长时间等待即可继续任务，将提供更流畅、更沉浸式的剧情体验。",
-          "count": 0,
+          "count": 4,
           "type": "bad",
           "orig": "1. Story progression is interrupted by cooldown timers\n\nPlayer feels the cooldown system unnecessarily interrupts story progression.\nAfter playing through several story missions, they are forced to wait 4–6 hours, and potentially 1–2 days, before continuing.\n\n2. Remove or reduce story cooldowns\n\nSuggestion: remove these time-based cooldowns from story missions.\nStory progression should instead be based on mission completion and narrative progression, rather than real-time waiting.\n\n3. Improve story flow\n\nThe cooldowns break the player's momentum and make it difficult to stay engaged with the story.\nAllowing players to continue missions without long waits would provide a smoother and more immersive story experience.",
           "channel": "IG, DC",
@@ -6853,7 +6859,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加本地音乐选项",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "add local music option",
           "channel": "IG, DC",
@@ -6862,7 +6868,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提高汽车速度",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Increase speed of cars",
           "channel": "IG, DC",
@@ -6871,7 +6877,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在游戏中添加赌场",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "add casino in game",
           "channel": "IG, DC",
@@ -6880,7 +6886,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加氏族系统",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "add clan system",
           "channel": "IG, DC",
@@ -6889,7 +6895,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 街头声望奖励发放错误\n\n玩家在领取 50 点街头声望奖励前拥有 56,880 点街头声望。\n\n领取奖励后，玩家的街头声望仍然保持在 56,880，没有增加。\n\n玩家报告称，之后的街头声望奖励似乎也缺失了。\n\n2. 街头声望奖励/进度未更新\n\n尽管玩家已领取奖励，但“人脉”进度界面仍显示其街头声望为 56,880。\n\n这可能表明街头声望奖励分配存在问题，或者街头声望计数器未正确更新。\n\n玩家 ID：555544941791",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "1. Street Cred not being awarded correctly\n\nPlayer had 56,880 Street Cred before claiming a 50 Street Cred reward.\nAfter claiming the reward, their Street Cred remained at 56,880 instead of increasing.\nPlayer reports that subsequent Street Cred rewards also appear to be missing.\n\n2. Street Cred reward/progression not updating\n\nThe Connections progression screen shows the player at 56,880 Street Cred, despite rewards being claimed.\nThis may indicate an issue with Street Cred reward allocation or the Street Cred counter not updating correctly.\n\nPlayer ID: 555544941791",
           "channel": "IG, DC",
@@ -6898,7 +6904,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "被通缉期间，呼叫 C1OUD 使用“清除通缉等级”功能。（0/1）任务存在漏洞。",
-          "count": 0,
+          "count": 8,
           "type": "bad",
           "orig": "CALL C1OUD to use Clear Wanted Level while wanted. (0/1) mission is bugged",
           "channel": "IG, DC",
@@ -6906,7 +6912,7 @@ var FEEDBACK_DATA = {
           "date": "8月29日"
         }
       ],
-      "communitySummary": "本周社群反馈共 100 条，主要来自 Instagram(93)、Discord(32)、YouTube(6)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 82%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 100 条，主要来自 Instagram(93)、Discord(32)、YouTube(6)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 16%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
@@ -6998,20 +7004,20 @@ var FEEDBACK_DATA = {
     },
     {
       "week": "8.3 - 8.9",
-      "attitude": "中性",
-      "summary": "本周回收 **22 条** 玩家反馈（Instagram(22)）。 **中性诉求 11 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 11 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**中性**。",
+      "attitude": "负面",
+      "summary": "本周回收 **22 条** 玩家反馈（Instagram(22)）。 **中性诉求 11 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 11 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
       "dims": {
         "attitude": {
-          "label": "中性",
-          "detail": "本周回收 22 条代表性反馈；正面 0 / 中性(建议) 11 / 负面·Bug 11 条。"
+          "label": "负面",
+          "detail": "本周回收 22 条代表性反馈（含提及量 971）；正面 0 / 中性(建议) 11 / 负面·Bug 11 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
           "detail": "玩家集中提出：在游戏中添加自行车/摩托车、增加直升机、飞机、喷气式飞机和功能齐、增加更多种类的车辆，包括超级跑车、豪 等玩法/内容建议。"
         },
         "reputation": {
-          "label": "风评健康",
-          "detail": "整体风评可控，负面反馈零星、多为单点 Bug 报告。"
+          "label": "风评承压",
+          "detail": "负面/Bug 占比偏高（约 44%），集中在崩溃、卡顿与网络问题。"
         },
         "engagement": {
           "label": "活跃",
@@ -7024,7 +7030,7 @@ var FEEDBACK_DATA = {
       "community": [
         {
           "theme": "在游戏中添加自行车/摩托车",
-          "count": 0,
+          "count": 150,
           "type": "sug",
           "orig": "Add bikes/motorcycles to the game",
           "channel": "IG",
@@ -7033,7 +7039,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加直升机、飞机、喷气式飞机和功能齐全的机场",
-          "count": 0,
+          "count": 100,
           "type": "sug",
           "orig": "Add helicopters, airplanes, jets, and functional airports",
           "channel": "IG",
@@ -7042,7 +7048,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加更多种类的车辆，包括超级跑车、豪华轿车和定制选项",
-          "count": 0,
+          "count": 50,
           "type": "sug",
           "orig": "Add more diverse vehicles, supercars, luxury cars, and customization options",
           "channel": "IG",
@@ -7051,7 +7057,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "请求添加新任务、无尽任务、空/水任务和新鲜内容",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Request for new missions, endless missions, air/water missions, and fresh content",
           "channel": "IG",
@@ -7060,7 +7066,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在汽车改装店内或附近重新启动游戏后，游戏卡死或角色生成在地下。",
-          "count": 0,
+          "count": 80,
           "type": "bad",
           "orig": "Game freezes or character spawns underground after restarting inside or near the car mod shop",
           "channel": "IG",
@@ -7069,7 +7075,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加银行/转账系统，以便与朋友共享货币",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add a banking/money transfer system to share currency with friends",
           "channel": "IG",
@@ -7078,7 +7084,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加更多角色服装、捆绑包和定制系统（例如，兔女郎服装、沙龙）",
-          "count": 0,
+          "count": 50,
           "type": "sug",
           "orig": "Add more character outfits, bundle packs, and customization systems (e.g., bunny outfit, salons)",
           "channel": "IG",
@@ -7087,7 +7093,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在角色机制中加入恋爱/女友系统",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Add a romance/girlfriend system into the character mechanics",
           "channel": "IG",
@@ -7096,7 +7102,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "为精确的第三人称视角 (TPP) 瞄准控制添加陀螺仪支持",
-          "count": 0,
+          "count": 35,
           "type": "sug",
           "orig": "Add gyroscope support for precise third-person perspective (TPP) aiming controls",
           "channel": "IG",
@@ -7105,7 +7111,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "加载过程中出现bug，进入车库后加载进度卡在20%。",
-          "count": 0,
+          "count": 60,
           "type": "bad",
           "orig": "Loading bug where entering a garage freeze-locks at 20% loading progress",
           "channel": "IG",
@@ -7114,7 +7120,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "高等级体验感觉重复性太高；进度系统依赖于重复完成现有任务，只是难度有所提升。",
-          "count": 0,
+          "count": 40,
           "type": "bad",
           "orig": "High-level experience feels repetitive; progression system relies on repeating existing missions with scaled numbers",
           "channel": "IG",
@@ -7123,7 +7129,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提高每日货币兑换限额或降低战斗通行证/商店价格等级",
-          "count": 0,
+          "count": 40,
           "type": "bad",
           "orig": "Increase the daily money conversion limits or lower battle pass/store pricing tiers",
           "channel": "IG",
@@ -7132,7 +7138,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "扩展自然地图边界、地块、海滩区域，或添加以印度为主题的地图环境",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "Expand the physical map boundaries, properties, beach areas, or include an Indian-themed map environment",
           "channel": "IG",
@@ -7141,7 +7147,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提升车辆操控性能、漂移性能以及发动机声浪的听觉体验",
-          "count": 0,
+          "count": 10,
           "type": "bad",
           "orig": "Improve car handling mechanics, drifting, and the auditory quality of engine sounds",
           "channel": "IG",
@@ -7150,7 +7156,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "对经济规模的不满；任务和黑钱奖励的货币结构太低",
-          "count": 0,
+          "count": 40,
           "type": "bad",
           "orig": "Discontent regarding economy scaling; currency reward structures from missions and Dirty Money payouts are too low",
           "channel": "IG",
@@ -7159,7 +7165,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "玩家报告称，即使获得了超过 2000 点街头声望值，等级进度条仍然完全卡住。",
-          "count": 0,
+          "count": 40,
           "type": "bad",
           "orig": "Player reports that the level progression meter is completely stuck even after claiming 2,000+ street cred points",
           "channel": "IG",
@@ -7168,7 +7174,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加一套完善的组织、联盟、家族宅邸和公共盔甲/车库存储基础设施系统",
-          "count": 0,
+          "count": 15,
           "type": "sug",
           "orig": "Add a comprehensive organization, alliance, family house, and communal armor/garage storage infrastructure system",
           "channel": "IG",
@@ -7177,7 +7183,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "出现不明严重显示故障，导致设备屏幕完全锁定和冻结。",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Unspecified severe display glitch causing the device screen to lock up and freeze entirely",
           "channel": "IG",
@@ -7186,7 +7192,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "实现功能齐全的仪表盘视角和专用的第一人称视角模式，方便车辆驾驶。",
-          "count": 0,
+          "count": 10,
           "type": "sug",
           "orig": "Implement functional interior dashboard viewpoints and a dedicated first-person camera mode for vehicle driving",
           "channel": "IG",
@@ -7195,7 +7201,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "动画方面的抱怨指出，近战格斗动画反应迟钝，缺乏冲击力。",
-          "count": 0,
+          "count": 25,
           "type": "bad",
           "orig": "Animation complaints detailing that melee hand-to-hand combat animations feel unresponsive and lack impact",
           "channel": "IG",
@@ -7204,7 +7210,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "更新“改装版”特殊载具变体，使其能够直接输入角色信息并整合直接武器系统。",
-          "count": 0,
+          "count": 15,
           "type": "bad",
           "orig": "Update the 'Tricked Out' special vehicle variant to allow direct character entry and incorporate direct weapon systems",
           "channel": "IG",
@@ -7213,7 +7219,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加与各个角色语音相匹配的逼真唇形同步配置",
-          "count": 0,
+          "count": 60,
           "type": "bad",
           "orig": "Add realistic lip-sync configurations matched to individual character voice lines",
           "channel": "IG",
@@ -7221,24 +7227,24 @@ var FEEDBACK_DATA = {
           "date": "8月9日"
         }
       ],
-      "communitySummary": "本周社群反馈共 22 条，主要来自 Instagram(22)。 中性诉求以载具/任务/画质等玩法建议为主； 整体以建议与好评为主。",
+      "communitySummary": "本周社群反馈共 22 条，主要来自 Instagram(22)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 44%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
           "note": "22 条"
         }
       ],
-      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 维持玩法内容与设备适配的沟通节奏。",
+      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 需重点跟进崩溃/网络类 Bug，避免上线期口碑受损。",
       "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
     },
     {
       "week": "7.6 - 7.12",
-      "attitude": "负面",
-      "summary": "本周回收 **37 条** 玩家反馈（Instagram(33)、YouTube(5)、Discord(5)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 17 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 19 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
+      "attitude": "波动",
+      "summary": "本周回收 **37 条** 玩家反馈（Instagram(33)、YouTube(5)、Discord(5)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 17 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 19 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**波动**。",
       "dims": {
         "attitude": {
-          "label": "负面",
-          "detail": "本周回收 37 条代表性反馈（含提及量 17）；正面 1 / 中性(建议) 17 / 负面·Bug 19 条。"
+          "label": "波动",
+          "detail": "本周回收 37 条代表性反馈（含提及量 1061）；正面 1 / 中性(建议) 17 / 负面·Bug 19 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
@@ -7246,7 +7252,7 @@ var FEEDBACK_DATA = {
         },
         "reputation": {
           "label": "风评承压",
-          "detail": "负面/Bug 占比偏高（约 76%），集中在崩溃、卡顿与网络问题。"
+          "detail": "负面/Bug 占比偏高（约 33%），集中在崩溃、卡顿与网络问题。"
         },
         "engagement": {
           "label": "活跃",
@@ -7259,7 +7265,7 @@ var FEEDBACK_DATA = {
       "community": [
         {
           "theme": "在游戏中添加自行车/摩托车/超级摩托车",
-          "count": 0,
+          "count": 150,
           "type": "sug",
           "orig": "Add bikes/motorcycles/superbikes to the game",
           "channel": "IG",
@@ -7268,7 +7274,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加更多新任务、新故事情节内容或角色故事情节",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add more new missions, new storyline content, or character storylines",
           "channel": "IG",
@@ -7277,7 +7283,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "性能问题、卡顿和游戏延迟",
-          "count": 0,
+          "count": 30,
           "type": "bad",
           "orig": "Performance issues, freezing, and game lag",
           "channel": "IG",
@@ -7286,7 +7292,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "最后一个敌人消失，任务检查点被截断在地下。",
-          "count": 0,
+          "count": 35,
           "type": "bad",
           "orig": "Last enemy vanishes and mission checkpoint clips under the ground",
           "channel": "IG",
@@ -7295,7 +7301,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏内麦克风在抢劫或任务期间会自动关闭。",
-          "count": 0,
+          "count": 60,
           "type": "bad",
           "orig": "In-game microphone automatically turns off during heists or missions",
           "channel": "IG",
@@ -7304,7 +7310,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在地图上添加军事基地",
-          "count": 0,
+          "count": 23,
           "type": "sug",
           "orig": "Add military base to the map",
           "channel": "IG",
@@ -7313,7 +7319,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加更多多人合作抢劫任务",
-          "count": 0,
+          "count": 20,
           "type": "sug",
           "orig": "Add more multi-player co-op heist missions",
           "channel": "IG",
@@ -7322,7 +7328,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "改进游戏内导航系统，使其显示车辆的最短路径。",
-          "count": 0,
+          "count": 20,
           "type": "sug",
           "orig": "Improve in-game navigation system to show shortest paths for vehicles",
           "channel": "IG",
@@ -7331,7 +7337,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加角色扮演职业（警察局、酒店、汽车经销店、送货员、医生）",
-          "count": 0,
+          "count": 30,
           "type": "sug",
           "orig": "Add roleplay jobs (police station, hotel, car dealership, delivery, doctor)",
           "channel": "IG",
@@ -7349,7 +7355,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "为游戏添加印地语故事情节、翻译或完整语音配音",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add Hindi story-line, translation, or full voice dubbing into the game",
           "channel": "IG",
@@ -7358,7 +7364,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加扩展开放地图、可自定义车辆、服装、房屋和动态天气",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add expanded open map, customizable cars, outfits, houses, and dynamic weather",
           "channel": "IG",
@@ -7367,7 +7373,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加陀螺仪控制和TPP灵敏度配置",
-          "count": 0,
+          "count": 30,
           "type": "sug",
           "orig": "Add gyroscope controls and TPP sensitivity configurations",
           "channel": "IG",
@@ -7385,7 +7391,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加银行选项，以便存款、取款或转账。",
-          "count": 0,
+          "count": 30,
           "type": "sug",
           "orig": "Add banking options to deposit, withdraw, or transfer money",
           "channel": "IG",
@@ -7421,7 +7427,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加无障碍建筑内部空间和功能性产权",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "Add accessible building interiors and functional property ownership",
           "channel": "IG",
@@ -7430,7 +7436,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在开放世界机制中加入宠物系统和女友互动功能",
-          "count": 0,
+          "count": 9,
           "type": "sug",
           "orig": "Add pet system and girlfriend interactions to the open-world mechanics",
           "channel": "IG",
@@ -7439,7 +7445,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提高车辆音效的真实性，消除高频刺耳感",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Improve realism of vehicle sound profiles to remove high-pitch irritation",
           "channel": "IG",
@@ -7448,7 +7454,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "完成调查后，解锁的现金奖励未能转入钱包总余额。",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Unlocked cash reward failed to transfer to total wallet balance upon completing a survey",
           "channel": "IG",
@@ -7457,7 +7463,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "多人游戏排队人数过多会导致数分钟的加载阻塞。",
-          "count": 0,
+          "count": 60,
           "type": "bad",
           "orig": "Heavy multiplayer queue constraints create multi-minute loading blockages",
           "channel": "IG",
@@ -7466,7 +7472,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏内车库菜单在验证进度​​达到 20% 时永久锁定。",
-          "count": 0,
+          "count": 60,
           "type": "bad",
           "orig": "In-game garage menu locks up permanently at 20% validation status",
           "channel": "IG",
@@ -7475,7 +7481,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "全明星PvP竞技场小丑对战彻底破坏了射击按钮、武器切换和手雷的使用。",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "All-Star PvP Arena Joker match completely breaks fire buttons, gun swaps, and grenades",
           "channel": "IG",
@@ -7484,7 +7490,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "无关的车辆和多用途车辆会随机出现在高速超级跑车的前方。",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "Unrelated cars and utility vehicles randomly spawn directly ahead of fast supercars",
           "channel": "IG",
@@ -7493,7 +7499,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "杰基走私贩任务的进度不会超过 25 个追踪单位。",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "Jackie Smuggler's Run mission progression does not increase past 25 tracking units",
           "channel": "IG",
@@ -7502,7 +7508,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "由于车辆碰撞模型存在缺陷，泽西德比任务在“夺取娜塔莉的车”阶段出现故障。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "The Jersey Derby mission bugs out during \"Get Natalie's Car\" stage due to faulty vehicle collision models",
           "channel": "IG",
@@ -7511,7 +7517,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "合作抢劫模式配置不会保存检查点，强制从头开始完整重玩。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "Co-op Heist configuration does not save checkpoints, forcing full segment replays from the start",
           "channel": "IG",
@@ -7520,7 +7526,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "黑市销售车辆追踪限制仅在计时器完全结束后才会支付奖励。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "Vehicle tracking limits for black-market sales register payment rewards only after complete timers elapse",
           "channel": "IG",
@@ -7547,7 +7553,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "精准任务在50级时不会出现在追踪列表中。",
-          "count": 0,
+          "count": 9,
           "type": "bad",
           "orig": "Pinpoint missions do not populate or become available within tracking lists at Level 50",
           "channel": "DC",
@@ -7565,7 +7571,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "服务器连接严重中断会导致网络验证状态降至 1000 毫秒延迟限制。",
-          "count": 0,
+          "count": 40,
           "type": "bad",
           "orig": "Severe server connectivity drops drop network validation states to 1000ms latency limits",
           "channel": "DC, IG, YTB",
@@ -7574,7 +7580,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "“在 OSB 抢劫（困难）中至少完成 1 项精英挑战”参数追踪存在漏洞",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "\"Complete at least 1 Elite challenge in OSB Heist (Hard)\" parameter tracking is bugged",
           "channel": "DC, IG, YTB",
@@ -7583,7 +7589,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "普遍的反馈都称赞这款开放世界游戏是高水准的杰作或佳作。",
-          "count": 0,
+          "count": 200,
           "type": "good",
           "orig": "General feedback praising the open-world game as a high-tier masterpiece or banger",
           "channel": "DC, IG, YTB",
@@ -7591,7 +7597,7 @@ var FEEDBACK_DATA = {
           "date": "7月9日"
         }
       ],
-      "communitySummary": "本周社群反馈共 37 条，主要来自 Instagram(33)、YouTube(5)、Discord(5)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 76%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 37 条，主要来自 Instagram(33)、YouTube(5)、Discord(5)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 33%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
@@ -7616,7 +7622,7 @@ var FEEDBACK_DATA = {
       "dims": {
         "attitude": {
           "label": "波动",
-          "detail": "本周回收 18 条代表性反馈（含提及量 7）；正面 1 / 中性(建议) 13 / 负面·Bug 4 条。"
+          "detail": "本周回收 18 条代表性反馈（含提及量 230）；正面 1 / 中性(建议) 13 / 负面·Bug 4 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
@@ -7624,7 +7630,7 @@ var FEEDBACK_DATA = {
         },
         "reputation": {
           "label": "风评健康",
-          "detail": "负面/Bug 占比偏高（约 29%），集中在崩溃、卡顿与网络问题。"
+          "detail": "整体风评可控，负面反馈零星、多为单点 Bug 报告。"
         },
         "engagement": {
           "label": "活跃",
@@ -7637,7 +7643,7 @@ var FEEDBACK_DATA = {
       "community": [
         {
           "theme": "在游戏中添加摩托车/自行车",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "Add motorcycles/bikes to the game",
           "channel": "IG",
@@ -7646,7 +7652,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加更多超级跑车、豪华轿车以及特定车型，例如奔驰G级和宝马M4。",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "Add more supercars, luxury cars, and specific models like G-Wagon and BMW M4",
           "channel": "IG",
@@ -7655,7 +7661,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加多个特定职业、企业和建筑物，例如送货员、警察局、酒店、汽车展厅和购物中心。",
-          "count": 0,
+          "count": 12,
           "type": "sug",
           "orig": "Add multiple specific jobs, businesses, and buildings like delivery, police station, hotel, car showroom, and shopping mall",
           "channel": "IG",
@@ -7664,7 +7670,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加更多大型劫案来赚钱",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "Add more big heists to earn money",
           "channel": "IG",
@@ -7673,7 +7679,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加角色扮演服务器",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Add role-play servers",
           "channel": "IG",
@@ -7682,7 +7688,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加炫酷的服装选项以供个性化定制",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Add cool clothing options for customisation",
           "channel": "IG",
@@ -7691,7 +7697,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏会导致设备过热和严重卡顿。",
-          "count": 0,
+          "count": 9,
           "type": "bad",
           "orig": "Game causes devices to overheat and experience heavy lag",
           "channel": "IG",
@@ -7718,7 +7724,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "为任务理解添加印地语版本/翻译支持",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "Add Hindi language version/translation support for missions comprehension",
           "channel": "IG",
@@ -7727,7 +7733,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加飞行载具（例如直升机）和地图扩展元素（例如火车或新城市）。",
-          "count": 0,
+          "count": 15,
           "type": "sug",
           "orig": "Add flying vehicles like helicopters and map expansion elements like trains or a new city",
           "channel": "IG",
@@ -7745,7 +7751,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "尽情享受移动版 GTA 5 的画面质量、车辆设计和开放世界体验。",
-          "count": 0,
+          "count": 35,
           "type": "good",
           "orig": "Appreciate the graphics quality, vehicle designs, and open-world GTA 5 experience style on mobile",
           "channel": "IG",
@@ -7790,7 +7796,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "玩家报告称，可用任务已用完或未收到新的任务目标。",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Player reports running out of available missions or not receiving new mission objectives",
           "channel": "IG",
@@ -7798,7 +7804,7 @@ var FEEDBACK_DATA = {
           "date": "5月9日"
         }
       ],
-      "communitySummary": "本周社群反馈共 18 条，主要来自 Instagram(17)、Discord(1)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 29%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 18 条，主要来自 Instagram(17)、Discord(1)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 13%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
@@ -7809,7 +7815,7 @@ var FEEDBACK_DATA = {
           "note": "1 条"
         }
       ],
-      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 需重点跟进崩溃/网络类 Bug，避免上线期口碑受损。",
+      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 维持玩法内容与设备适配的沟通节奏。",
       "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
     },
     {
@@ -7819,7 +7825,7 @@ var FEEDBACK_DATA = {
       "dims": {
         "attitude": {
           "label": "负面",
-          "detail": "本周回收 27 条代表性反馈（含提及量 18）；正面 1 / 中性(建议) 10 / 负面·Bug 16 条。"
+          "detail": "本周回收 27 条代表性反馈（含提及量 406）；正面 1 / 中性(建议) 10 / 负面·Bug 16 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
@@ -7827,7 +7833,7 @@ var FEEDBACK_DATA = {
         },
         "reputation": {
           "label": "风评承压",
-          "detail": "负面/Bug 占比偏高（约 44%），集中在崩溃、卡顿与网络问题。"
+          "detail": "负面/Bug 占比偏高（约 37%），集中在崩溃、卡顿与网络问题。"
         },
         "engagement": {
           "label": "活跃",
@@ -7840,7 +7846,7 @@ var FEEDBACK_DATA = {
       "community": [
         {
           "theme": "在游戏中添加自行车/摩托车",
-          "count": 0,
+          "count": 60,
           "type": "sug",
           "orig": "Add bikes / motorcycles to the game",
           "channel": "IG, YTB",
@@ -7849,7 +7855,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加更多任务/抢劫和支线任务",
-          "count": 0,
+          "count": 20,
           "type": "sug",
           "orig": "Add more missions / heists and side tasks",
           "channel": "IG, YTB",
@@ -7858,7 +7864,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "由于“走私者行动”收益追踪故障，无法完成杰基公司的任务。",
-          "count": 0,
+          "count": 30,
           "type": "bad",
           "orig": "Unable to complete Jackie's Firm mission due to Smuggler's Run earnings tracking glitch",
           "channel": "IG",
@@ -7867,7 +7873,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "车辆喇叭不响",
-          "count": 0,
+          "count": 45,
           "type": "bad",
           "orig": "Vehicle horns are not working",
           "channel": "IG, DC, YTB",
@@ -7876,7 +7882,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "敌人/NPC 会掉落到地面/道路下方，导致在任务中无法将其消灭（在 40 级抢劫任务和一般帮派消灭任务中会遇到这种情况）",
-          "count": 0,
+          "count": 10,
           "type": "bad",
           "orig": "Enemies/NPCs fall beneath the ground/road making them impossible to eliminate during missions (encountered at level 40 Heist and general gang elimination task)",
           "channel": "IG",
@@ -7885,7 +7891,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增建带车库的私人住宅/公寓，用于停放车辆",
-          "count": 0,
+          "count": 10,
           "type": "sug",
           "orig": "Add personal house / apartment with a garage to store vehicles",
           "channel": "IG",
@@ -7894,7 +7900,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "加入引人入胜的故事情节、抢劫团伙、银行抢劫和火车劫案。",
-          "count": 0,
+          "count": 5,
           "type": "sug",
           "orig": "Add deep storyline, robbery gangfires, bank robberies, and train heists",
           "channel": "IG",
@@ -7903,7 +7909,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏体验受到严重延迟或高延迟问题的影响",
-          "count": 0,
+          "count": 13,
           "type": "bad",
           "orig": "Game experience suffers from severe lagging or high ping issues",
           "channel": "IG",
@@ -7930,7 +7936,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "进入Turbo Flare汽车改装店时，加载画面卡在20%。",
-          "count": 0,
+          "count": 17,
           "type": "bad",
           "orig": "Loading screen stuck at 20% when entering the Turbo Flare car modshop",
           "channel": "IG",
@@ -7939,7 +7945,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "当点击汽车商店出售汽车时，就会触发地图故障。",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Falling under the map glitch occurs when clicking to sell a car at the car shop",
           "channel": "IG",
@@ -7948,7 +7954,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "在一次任务中，NPC被困在卡车里，因此免疫常规武器的攻击。",
-          "count": 0,
+          "count": 5,
           "type": "bad",
           "orig": "NPC got stuck inside a truck rendering them immune to conventional weapons in a mission",
           "channel": "IG",
@@ -7984,7 +7990,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "已完成的街头挑战/活动任务无法获得可领取的代币。",
-          "count": 0,
+          "count": 2,
           "type": "bad",
           "orig": "Completed street challenge / boom event tasks fail to award claimable tokens",
           "channel": "IG",
@@ -8029,7 +8035,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "请求建立结构化的帮派/氏族体系，以便加入或创建不同的派系",
-          "count": 0,
+          "count": 34,
           "type": "sug",
           "orig": "Request for a structural gang / clan system to join or create distinct factions",
           "channel": "IG",
@@ -8038,7 +8044,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "将多人服务器大厅人数上限提高至 50 人，并添加角色扮演服务器",
-          "count": 0,
+          "count": 6,
           "type": "sug",
           "orig": "Increase multiplayer server lobby size limits up to 50 players and add roleplay servers",
           "channel": "IG",
@@ -8047,7 +8053,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "请求提供第一人称视角 (FPP) 车辆驾驶内景摄像头选项",
-          "count": 0,
+          "count": 3,
           "type": "sug",
           "orig": "Request for an FPP (First Person Perspective) vehicle driving interior camera option",
           "channel": "IG",
@@ -8056,7 +8062,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加印地语语音或文本本地化",
-          "count": 0,
+          "count": 68,
           "type": "sug",
           "orig": "Add Hindi language voice or text localizations",
           "channel": "IG",
@@ -8074,7 +8080,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏整体质量和游戏体验普遍获得高度评价。",
-          "count": 0,
+          "count": 40,
           "type": "good",
           "orig": "General high praise for the overall game quality and enjoyable experience",
           "channel": "IG, YTB",
@@ -8082,7 +8088,7 @@ var FEEDBACK_DATA = {
           "date": "4月9日"
         }
       ],
-      "communitySummary": "本周社群反馈共 27 条，主要来自 Instagram(26)、YouTube(4)、Discord(2)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 44%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 27 条，主要来自 Instagram(26)、YouTube(4)、Discord(2)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 37%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
@@ -8102,16 +8108,205 @@ var FEEDBACK_DATA = {
     },
     {
       "week": "3.9 - 3.15",
-      "attitude": "中性",
-      "summary": "本周回收 **16 条** 玩家反馈（Instagram(16)、YouTube(9)、Discord(5)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 8 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 7 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**中性**。",
+      "attitude": "负面",
+      "summary": "本周回收 **16 条** 玩家反馈（Instagram(16)、YouTube(9)、Discord(5)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 8 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 7 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
       "dims": {
         "attitude": {
-          "label": "中性",
-          "detail": "本周回收 16 条代表性反馈；正面 1 / 中性(建议) 8 / 负面·Bug 7 条。"
+          "label": "负面",
+          "detail": "本周回收 16 条代表性反馈（含提及量 492）；正面 1 / 中性(建议) 8 / 负面·Bug 7 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
           "detail": "玩家集中提出：在游戏中添加摩托车/自行车、添加第一人称视角（FPP模式）、增加印地语选项和配音 等玩法/内容建议。"
+        },
+        "reputation": {
+          "label": "风评承压",
+          "detail": "负面/Bug 占比偏高（约 44%），集中在崩溃、卡顿与网络问题。"
+        },
+        "engagement": {
+          "label": "活跃",
+          "detail": "玩家在 Instagram 等渠道持续发声，反馈意愿强。"
+        }
+      },
+      "official": [],
+      "officialSummary": "",
+      "officialPlatforms": [],
+      "community": [
+        {
+          "theme": "在游戏中添加摩托车/自行车",
+          "count": 80,
+          "type": "sug",
+          "orig": "Add motorcycles/bikes to the game",
+          "channel": "IG, YTB",
+          "note": "https://drive.google.com/file/d/1WxoD-C03YtI3u0V3jFcqKWSMReSdDVAm/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "添加第一人称视角（FPP模式）",
+          "count": 10,
+          "type": "sug",
+          "orig": "Add first person camera perspective (FPP mode)",
+          "channel": "IG, YTB",
+          "note": "https://drive.google.com/file/d/1-YUmtDr9aEwTu3kLYiGh5_JkBqYwRfnd/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "PvP/手雷控制模式匹配超时和连接问题",
+          "count": 60,
+          "type": "bad",
+          "orig": "PvP / Grenade Control mode matchmaking time out and connectivity issues",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1k0M1W6WzrlOjE6MVw25LmFm5gKshrnLG/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "增加印地语选项和配音",
+          "count": 10,
+          "type": "sug",
+          "orig": "Add Hindi language option and voice dubbing",
+          "channel": "IG, YTB",
+          "note": "https://drive.google.com/file/d/1WuK7kws2L4wU4dCdl3lmnoM57SRppKRP/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "游戏内语音模式故障导致蓝牙耳机断开连接",
+          "count": 25,
+          "type": "bad",
+          "orig": "In-game voice mode glitch disconnects Bluetooth earphones",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1OGMj_F4EE_TyITs4sB6_WEg7ckNby92b/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "游戏优化问题导致低端设备出现卡顿",
+          "count": 30,
+          "type": "bad",
+          "orig": "Game optimization issues leading to lag on low-end devices",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1Q1jBBK4y2LtY_rC1VHbjxPhH6QmJ0IFz/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "天空盒纹理出现故障，完全变成粉红色。",
+          "count": 45,
+          "type": "bad",
+          "orig": "Skybox texture glitches and turns entirely pink",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1DgXmUvF5Lf8R84HQVTFTaL0fcguYOTwE/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "新活动任务积分和奖励计算不正确。",
+          "count": 20,
+          "type": "bad",
+          "orig": "New events mission points and rewards are not calculating properly",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1Ww_HHO76uXksTHmqVLjTRJSldrPcd1Zj/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "增加可供购买和存放车辆的功能性住宅/车库",
+          "count": 15,
+          "type": "sug",
+          "orig": "Add functional residential homes/garages for purchasing and vehicle storage",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1QoA_MqO5Tqu3qTDE7zCne0OJbx3EyQYq/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "添加诸如降雨之类的环境天气变化",
+          "count": 50,
+          "type": "sug",
+          "orig": "Add environmental weather transitions such as rain",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1Q1jBBK4y2LtY_rC1VHbjxPhH6QmJ0IFz/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "扩大地图边界，纳入更多城市中心",
+          "count": 5,
+          "type": "sug",
+          "orig": "Expand the physical map boundaries and include additional urban centers",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1AVRoHIJLcv2myDvOpXMMZdqFxOPjxQVp/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "对卓越的环境设计和引人入胜的故事情节赞不绝口",
+          "count": 80,
+          "type": "good",
+          "orig": "Praise for exceptional environment design and engaging storyline",
+          "channel": "IG, YTB",
+          "note": "https://drive.google.com/file/d/1pfKZELgwBORfjeVUSUwAbHyZWL7OmHLG/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "增加更全面的银行抢劫案和多阶段抢劫任务",
+          "count": 12,
+          "type": "sug",
+          "orig": "Add more comprehensive bank robberies and multi-stage heist missions",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1EW05Fepy3Pc90MTFKBR4YVjtuFCpqt-e/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "为游戏内经济系统添加玩家间电汇机制。",
+          "count": 15,
+          "type": "sug",
+          "orig": "Add a player-to-player wire transfer mechanic for the in-game economy",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10JZmi2V7dAphwQ-3M3B0HcnCbxL0c9LQ/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "突然出现的图形素材会导致车辆碰撞序列",
+          "count": 10,
+          "type": "bad",
+          "orig": "Sudden graphic asset pop-in causes vehicle crash sequences",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1QzE2vvgg0gO-H9M3TRTgQywHM0-K41C5/view?usp=drive_web",
+          "date": "3月9日"
+        },
+        {
+          "theme": "系统验证后，地图上的所有陆地纹理都会消失。",
+          "count": 25,
+          "type": "bad",
+          "orig": "Complete map landmass textures disappear upon system authentication",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1X2tEQaFNIYmhfIt2pXchlHOLncScSqVT/view?usp=drive_web",
+          "date": "3月9日"
+        }
+      ],
+      "communitySummary": "本周社群反馈共 16 条，主要来自 Instagram(16)、YouTube(9)、Discord(5)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 44%，集中在崩溃、卡顿与网络延迟。",
+      "communityPlatforms": [
+        {
+          "name": "Instagram",
+          "note": "16 条"
+        },
+        {
+          "name": "YouTube",
+          "note": "9 条"
+        },
+        {
+          "name": "Discord",
+          "note": "5 条"
+        }
+      ],
+      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 需重点跟进崩溃/网络类 Bug，避免上线期口碑受损。",
+      "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
+    },
+    {
+      "week": "2.9 - 2.15",
+      "attitude": "波动",
+      "summary": "本周回收 **18 条** 玩家反馈（Instagram(18)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 11 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 6 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**波动**。",
+      "dims": {
+        "attitude": {
+          "label": "波动",
+          "detail": "本周回收 18 条代表性反馈（含提及量 1020）；正面 1 / 中性(建议) 11 / 负面·Bug 6 条。"
+        },
+        "comprehension": {
+          "label": "关注玩法内容",
+          "detail": "玩家集中提出：添加自行车/摩托车、增加更多车型/印度产汽车/超级跑车、提升画面质量和阴影效果 等玩法/内容建议。"
         },
         "reputation": {
           "label": "风评健康",
@@ -8127,197 +8322,8 @@ var FEEDBACK_DATA = {
       "officialPlatforms": [],
       "community": [
         {
-          "theme": "在游戏中添加摩托车/自行车",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add motorcycles/bikes to the game",
-          "channel": "IG, YTB",
-          "note": "https://drive.google.com/file/d/1WxoD-C03YtI3u0V3jFcqKWSMReSdDVAm/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "添加第一人称视角（FPP模式）",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add first person camera perspective (FPP mode)",
-          "channel": "IG, YTB",
-          "note": "https://drive.google.com/file/d/1-YUmtDr9aEwTu3kLYiGh5_JkBqYwRfnd/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "PvP/手雷控制模式匹配超时和连接问题",
-          "count": 0,
-          "type": "bad",
-          "orig": "PvP / Grenade Control mode matchmaking time out and connectivity issues",
-          "channel": "IG, YTB, DC",
-          "note": "https://drive.google.com/file/d/1k0M1W6WzrlOjE6MVw25LmFm5gKshrnLG/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "增加印地语选项和配音",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add Hindi language option and voice dubbing",
-          "channel": "IG, YTB",
-          "note": "https://drive.google.com/file/d/1WuK7kws2L4wU4dCdl3lmnoM57SRppKRP/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "游戏内语音模式故障导致蓝牙耳机断开连接",
-          "count": 0,
-          "type": "bad",
-          "orig": "In-game voice mode glitch disconnects Bluetooth earphones",
-          "channel": "IG, YTB, DC",
-          "note": "https://drive.google.com/file/d/1OGMj_F4EE_TyITs4sB6_WEg7ckNby92b/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "游戏优化问题导致低端设备出现卡顿",
-          "count": 0,
-          "type": "bad",
-          "orig": "Game optimization issues leading to lag on low-end devices",
-          "channel": "IG, YTB, DC",
-          "note": "https://drive.google.com/file/d/1Q1jBBK4y2LtY_rC1VHbjxPhH6QmJ0IFz/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "天空盒纹理出现故障，完全变成粉红色。",
-          "count": 0,
-          "type": "bad",
-          "orig": "Skybox texture glitches and turns entirely pink",
-          "channel": "IG, YTB, DC",
-          "note": "https://drive.google.com/file/d/1DgXmUvF5Lf8R84HQVTFTaL0fcguYOTwE/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "新活动任务积分和奖励计算不正确。",
-          "count": 0,
-          "type": "bad",
-          "orig": "New events mission points and rewards are not calculating properly",
-          "channel": "IG, YTB, DC",
-          "note": "https://drive.google.com/file/d/1Ww_HHO76uXksTHmqVLjTRJSldrPcd1Zj/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "增加可供购买和存放车辆的功能性住宅/车库",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add functional residential homes/garages for purchasing and vehicle storage",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/1QoA_MqO5Tqu3qTDE7zCne0OJbx3EyQYq/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "添加诸如降雨之类的环境天气变化",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add environmental weather transitions such as rain",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/1Q1jBBK4y2LtY_rC1VHbjxPhH6QmJ0IFz/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "扩大地图边界，纳入更多城市中心",
-          "count": 0,
-          "type": "sug",
-          "orig": "Expand the physical map boundaries and include additional urban centers",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/1AVRoHIJLcv2myDvOpXMMZdqFxOPjxQVp/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "对卓越的环境设计和引人入胜的故事情节赞不绝口",
-          "count": 0,
-          "type": "good",
-          "orig": "Praise for exceptional environment design and engaging storyline",
-          "channel": "IG, YTB",
-          "note": "https://drive.google.com/file/d/1pfKZELgwBORfjeVUSUwAbHyZWL7OmHLG/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "增加更全面的银行抢劫案和多阶段抢劫任务",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add more comprehensive bank robberies and multi-stage heist missions",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/1EW05Fepy3Pc90MTFKBR4YVjtuFCpqt-e/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "为游戏内经济系统添加玩家间电汇机制。",
-          "count": 0,
-          "type": "sug",
-          "orig": "Add a player-to-player wire transfer mechanic for the in-game economy",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/10JZmi2V7dAphwQ-3M3B0HcnCbxL0c9LQ/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "突然出现的图形素材会导致车辆碰撞序列",
-          "count": 0,
-          "type": "bad",
-          "orig": "Sudden graphic asset pop-in causes vehicle crash sequences",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/1QzE2vvgg0gO-H9M3TRTgQywHM0-K41C5/view?usp=drive_web",
-          "date": "3月9日"
-        },
-        {
-          "theme": "系统验证后，地图上的所有陆地纹理都会消失。",
-          "count": 0,
-          "type": "bad",
-          "orig": "Complete map landmass textures disappear upon system authentication",
-          "channel": "IG",
-          "note": "https://drive.google.com/file/d/1X2tEQaFNIYmhfIt2pXchlHOLncScSqVT/view?usp=drive_web",
-          "date": "3月9日"
-        }
-      ],
-      "communitySummary": "本周社群反馈共 16 条，主要来自 Instagram(16)、YouTube(9)、Discord(5)。 中性诉求以载具/任务/画质等玩法建议为主； 整体以建议与好评为主。",
-      "communityPlatforms": [
-        {
-          "name": "Instagram",
-          "note": "16 条"
-        },
-        {
-          "name": "YouTube",
-          "note": "9 条"
-        },
-        {
-          "name": "Discord",
-          "note": "5 条"
-        }
-      ],
-      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 维持玩法内容与设备适配的沟通节奏。",
-      "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
-    },
-    {
-      "week": "2.9 - 2.15",
-      "attitude": "负面",
-      "summary": "本周回收 **18 条** 玩家反馈（Instagram(18)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 11 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 6 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
-      "dims": {
-        "attitude": {
-          "label": "负面",
-          "detail": "本周回收 18 条代表性反馈（含提及量 1）；正面 1 / 中性(建议) 11 / 负面·Bug 6 条。"
-        },
-        "comprehension": {
-          "label": "关注玩法内容",
-          "detail": "玩家集中提出：添加自行车/摩托车、增加更多车型/印度产汽车/超级跑车、提升画面质量和阴影效果 等玩法/内容建议。"
-        },
-        "reputation": {
-          "label": "风评承压",
-          "detail": "负面/Bug 占比偏高（约 100%），集中在崩溃、卡顿与网络问题。"
-        },
-        "engagement": {
-          "label": "活跃",
-          "detail": "玩家在 Instagram 等渠道持续发声，反馈意愿强。"
-        }
-      },
-      "official": [],
-      "officialSummary": "",
-      "officialPlatforms": [],
-      "community": [
-        {
           "theme": "添加自行车/摩托车",
-          "count": 0,
+          "count": 150,
           "type": "sug",
           "orig": "Add bikes / motorcycles",
           "channel": "IG",
@@ -8326,7 +8332,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加更多车型/印度产汽车/超级跑车",
-          "count": 0,
+          "count": 100,
           "type": "sug",
           "orig": "Add more cars / Indian cars / supercars",
           "channel": "IG",
@@ -8335,7 +8341,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提升画面质量和阴影效果",
-          "count": 0,
+          "count": 20,
           "type": "sug",
           "orig": "Improve graphics quality and shadows",
           "channel": "IG",
@@ -8344,7 +8350,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加印地语支持",
-          "count": 0,
+          "count": 100,
           "type": "sug",
           "orig": "Add Hindi language support",
           "channel": "IG",
@@ -8353,7 +8359,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "NPC生成不佳，且经常突然出现NPC。",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Poor NPC generation and sudden pop-ins",
           "channel": "IG",
@@ -8362,7 +8368,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "增加新的任务和特色职业（警察、消防员等）",
-          "count": 0,
+          "count": 30,
           "type": "sug",
           "orig": "Add new missions and unique jobs (Police, Firefighter, etc.)",
           "channel": "IG",
@@ -8371,7 +8377,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加新服装和自定义角色外观",
-          "count": 0,
+          "count": 25,
           "type": "sug",
           "orig": "Add new clothes and custom character appearances",
           "channel": "IG",
@@ -8380,7 +8386,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "加上银行、ATM抢劫和在线支付系统",
-          "count": 0,
+          "count": 10,
           "type": "sug",
           "orig": "Add banking, ATM robbery, and online payment systems",
           "channel": "IG",
@@ -8389,7 +8395,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加机场、飞机和直升机",
-          "count": 0,
+          "count": 65,
           "type": "sug",
           "orig": "Add airports, aeroplanes, and helicopters",
           "channel": "IG",
@@ -8398,7 +8404,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加玩家房屋/购买可互动（坐、睡）的别墅",
-          "count": 0,
+          "count": 25,
           "type": "sug",
           "orig": "Add player houses / buy villas with interaction (sit, sleep)",
           "channel": "IG",
@@ -8407,7 +8413,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "汽车商店下载卡在 20% / 地下字符剪辑",
-          "count": 0,
+          "count": 40,
           "type": "bad",
           "orig": "Car shop download stuck at 20% / character clips underground",
           "channel": "IG",
@@ -8416,7 +8422,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "角色在劫案发生后，于犯罪总部大楼内静止不动。",
-          "count": 0,
+          "count": 50,
           "type": "bad",
           "orig": "Character freezes at Criminal HQ building after heists",
           "channel": "IG",
@@ -8434,7 +8440,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "调整车辆操控并修复手机延迟",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Adjust vehicle handling and fix phone lag",
           "channel": "IG",
@@ -8443,7 +8449,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "实施帮派排名和好友管理系统",
-          "count": 0,
+          "count": 90,
           "type": "sug",
           "orig": "Implement gang ranking and friend management systems",
           "channel": "IG",
@@ -8452,7 +8458,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "提高出租车任务的货币奖励",
-          "count": 0,
+          "count": 20,
           "type": "bad",
           "orig": "Increase currency rewards for taxi missions",
           "channel": "IG",
@@ -8461,7 +8467,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加加油站等逼真功能",
-          "count": 0,
+          "count": 4,
           "type": "sug",
           "orig": "Add realistic features like petrol pumps",
           "channel": "IG",
@@ -8470,7 +8476,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "对核心游戏玩法和任务体验的赞扬",
-          "count": 0,
+          "count": 250,
           "type": "good",
           "orig": "Praise for core gameplay and mission experience",
           "channel": "IG",
@@ -8478,32 +8484,32 @@ var FEEDBACK_DATA = {
           "date": "2月9日"
         }
       ],
-      "communitySummary": "本周社群反馈共 18 条，主要来自 Instagram(18)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 100%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 18 条，主要来自 Instagram(18)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 15%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
           "note": "18 条"
         }
       ],
-      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 需重点跟进崩溃/网络类 Bug，避免上线期口碑受损。",
+      "trend": "走向：玩家关注点从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 维持玩法内容与设备适配的沟通节奏。",
       "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
     },
     {
       "week": "1.5 - 1.11",
-      "attitude": "负面",
-      "summary": "本周回收 **14 条** 玩家反馈（Instagram(14)、Discord(1)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 5 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 8 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**负面**。",
+      "attitude": "波动",
+      "summary": "本周回收 **14 条** 玩家反馈（Instagram(14)、Discord(1)）。 正面 1 条，集中在枪械手感、内容好评等； **中性诉求 5 条**，以载具、任务、画质等玩法建议为主； **负面/Bug 8 条**，集中在网络延迟、卡顿与若干崩溃。 整体态度：**波动**。",
       "dims": {
         "attitude": {
-          "label": "负面",
-          "detail": "本周回收 14 条代表性反馈（含提及量 5）；正面 1 / 中性(建议) 5 / 负面·Bug 8 条。"
+          "label": "波动",
+          "detail": "本周回收 14 条代表性反馈（含提及量 214）；正面 1 / 中性(建议) 5 / 负面·Bug 8 条。"
         },
         "comprehension": {
           "label": "关注玩法内容",
           "detail": "玩家集中提出：1. 添加宠物系统\n\n在游戏中引入宠、为角色配音、添加氏族系统 等玩法/内容建议。"
         },
         "reputation": {
-          "label": "风评承压",
-          "detail": "负面/Bug 占比偏高（约 60%），集中在崩溃、卡顿与网络问题。"
+          "label": "风评健康",
+          "detail": "负面/Bug 占比偏高（约 20%），集中在崩溃、卡顿与网络问题。"
         },
         "engagement": {
           "label": "平稳",
@@ -8552,7 +8558,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "加载卡在 20%",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "Loading stuck at 20%",
           "channel": "IG",
@@ -8561,7 +8567,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加氏族系统",
-          "count": 0,
+          "count": 30,
           "type": "sug",
           "orig": "add clan system",
           "channel": "IG, DC",
@@ -8579,7 +8585,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "高延迟和过热问题",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "High ping and overheating issue",
           "channel": "IG",
@@ -8588,7 +8594,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "添加自行车",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "add bikes",
           "channel": "IG",
@@ -8597,7 +8603,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "这款游戏真的很好玩，我们很喜欢玩。",
-          "count": 0,
+          "count": 60,
           "type": "good",
           "orig": "The game is really good and we love playing it",
           "channel": "IG",
@@ -8606,7 +8612,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "任务不足",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "Lack of missions",
           "channel": "IG",
@@ -8615,7 +8621,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "1. 车辆改装店导致玩家掉落地图下方\n\n当玩家进入车辆改装店时，角色/车辆似乎会掉入水中/地图下方。\n\n截图显示玩家进入改装店区域后被淹没在水中。\n\n这似乎是车辆改装店的位置/碰撞问题。\n\n2. 可能的地图碰撞/传送问题\n\n玩家进入改装店后，位置不正确。\n\n可能与错误的生成/传送坐标或该位置缺少地图碰撞有关。",
-          "count": 0,
+          "count": 15,
           "type": "bad",
           "orig": "1. Vehicle Mod Shop causes player to fall through the map\n\nWhen the player enters the Vehicle Mod Shop, the character/vehicle appears to fall down into the water/under the map.\nThe screenshot shows the player submerged in water after entering the mod shop area.\nThis appears to be a location/collision issue with the Vehicle Mod Shop.\n\n2. Possible map collision / teleportation issue\n\nThe player is not correctly positioned inside the mod shop after entering it.\nCould be related to incorrect spawn/teleport coordinates or missing map collision at the location.",
           "channel": "IG",
@@ -8624,7 +8630,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "游戏中添加雨水",
-          "count": 0,
+          "count": 40,
           "type": "sug",
           "orig": "Add rain in game",
           "channel": "IG",
@@ -8633,7 +8639,7 @@ var FEEDBACK_DATA = {
         },
         {
           "theme": "汽车喇叭不响了",
-          "count": 0,
+          "count": 6,
           "type": "bad",
           "orig": "Horn is not working in car",
           "channel": "IG",
@@ -8641,7 +8647,7 @@ var FEEDBACK_DATA = {
           "date": "1月9日"
         }
       ],
-      "communitySummary": "本周社群反馈共 14 条，主要来自 Instagram(14)、Discord(1)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 60%，集中在崩溃、卡顿与网络延迟。",
+      "communitySummary": "本周社群反馈共 14 条，主要来自 Instagram(14)、Discord(1)。 中性诉求以载具/任务/画质等玩法建议为主； 负面与 Bug 占比约 20%，集中在崩溃、卡顿与网络延迟。",
       "communityPlatforms": [
         {
           "name": "Instagram",
@@ -8789,13 +8795,14 @@ function renderFeedback(){
   root.innerHTML=html;
   root.querySelector('.add-week-btn').onclick=openWeekModal;
   root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
-  // Player Voice 时间范围切换（真实数据按日期窗口过滤并重渲染）
-  var pvBtns=root.querySelectorAll('.pv-rng');
-  pvBtns.forEach(function(btn){
-    btn.onclick=function(){
+  // Player Voice 时间范围切换（委托到稳定父节点，重渲染后按钮仍有效）
+  if(!root.dataset.pvBound){
+    root.dataset.pvBound='1';
+    root.addEventListener('click',function(e){
+      var btn=e.target.closest && e.target.closest('.pv-rng'); if(!btn) return;
       var f=btn.dataset.f;
-      pvBtns.forEach(function(b){
-        var on=(b===btn);
+      root.querySelectorAll('.pv-rng').forEach(function(b){
+        var on=(b.dataset.f===f);
         b.classList.toggle('on',on);
         b.style.background=on?'var(--brand)':'#fff';
         b.style.color=on?'#fff':'var(--ink)';
@@ -8803,8 +8810,8 @@ function renderFeedback(){
       });
       var wrap=root.querySelector('#pvWrap');
       if(wrap) wrap.innerHTML=renderPlayerVoice(f);
-    };
-  });
+    });
+  }
 }
 function wkBlock(w,wi){
   function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
@@ -8813,10 +8820,11 @@ function wkBlock(w,wi){
   var comSeg=segOf(w.community||[]);
   var allC=(w.official||[]).concat(w.community||[]);
   var cgO=segOf(allC);
-  function srcCol(key,sumKey,platKey,label,cls,dot){
-    var cmts=w[key]||[];
-    var summary=w[sumKey]||'';
-    var plats=w[platKey]||[];
+    function srcCol(key,sumKey,platKey,label,cls,dot){
+      var isArr=Array.isArray(key);
+      var cmts=isArr?key:(w[key]||[]);
+      var summary=isArr?'':(w[sumKey]||'');
+      var plats=isArr?[]:(w[platKey]||[]);
     function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
     var groups={good:[],sug:[],bad:[]};
     cmts.forEach(function(it){groups[bucket(it.type||'oth')].push(it);});
@@ -8863,35 +8871,28 @@ function wkBlock(w,wi){
     return sorted.map(function(it){var c=Number(it.count)||0;var wd=Math.max(8,Math.round(c/max*100));return '<div class="top-row"><span class="top-name" title="'+fbEsc(it.theme||'')+'">'+fbEsc(it.theme||'')+'</span><span class="top-bar"><i style="width:'+wd+'%"></i></span><span class="top-val">'+c+'</span></div>';}).join('');
   }
   var kpi='<div class="kpi-row">'+
-    '<div class="kpi-card"><div class="kpi-label">总反馈量 · Total VoC</div><div class="kpi-val">'+cgO.t+'</div><div class="kpi-sub">官号 '+offSeg.t+' · 社群 '+comSeg.t+'</div></div>'+
+    '<div class="kpi-card"><div class="kpi-label">总反馈量 · Total VoC</div><div class="kpi-val">'+cgO.t+'</div><div class="kpi-sub">官号 + 社群 合并口径</div></div>'+
     '<div class="kpi-card kp"><div class="kpi-label">非负占比 · Non-negative</div><div class="kpi-val">'+cgO.np+'%</div><div class="kpi-sub">'+(cgO.g+cgO.s)+' 非负提及</div></div>'+
     '<div class="kpi-card ks"><div class="kpi-label">中性占比 · Neutral</div><div class="kpi-val">'+cgO.sp+'%</div><div class="kpi-sub">'+cgO.s+' 提及</div></div>'+
     '<div class="kpi-card kb"><div class="kpi-label">负面情绪率 · Negative</div><div class="kpi-val">'+cgO.bp+'%</div><div class="kpi-sub">'+cgO.b+' 提及</div></div>'+
     '<div class="kpi-card kn"><div class="kpi-label">净情绪指数</div><div class="kpi-val">'+(cgO.gp-cgO.bp>=0?'+':'')+(cgO.gp-cgO.bp)+'%</div><div class="kpi-sub">正面 − 负面</div></div>'+
     '</div>';
-  var donuts='<div class="donut-row">'+
-    '<div class="donut-box"><div class="donut-cap">官号后台 · 情感构成</div>'+donut(offSeg,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+offSeg.g+'<span class="lg s"></span>中性 '+offSeg.s+'<span class="lg b"></span>负面 '+offSeg.b+'</div></div>'+
-    '<div class="donut-box"><div class="donut-cap">玩家社群 · 情感构成</div>'+donut(comSeg,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+comSeg.g+'<span class="lg s"></span>中性 '+comSeg.s+'<span class="lg b"></span>负面 '+comSeg.b+'</div></div>'+
-    '</div>';
-  var tops='<div class="top-block"><div class="top-h">🔥 高频主题 Top（按提及量）</div><div class="top-cols">'+
-    '<div class="top-col"><div class="top-col-h">官方账号</div>'+topRows(w.official,5)+'</div>'+
-    '<div class="top-col"><div class="top-col-h">玩家社群</div>'+topRows(w.community,5)+'</div>'+
-    '</div></div>';
+  var donuts='<div class="donut-row"><div class="donut-box" style="margin:0 auto"><div class="donut-cap">合并反馈 · 情感构成</div>'+donut(cgO,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+cgO.g+'<span class="lg s"></span>中性 '+cgO.s+'<span class="lg b"></span>负面 '+cgO.b+'</div></div></div>';
+  var tops='<div class="top-block"><div class="top-h">🔥 高频主题 Top（按提及量）</div>'+topRows(allC,8)+'</div>';
   var ct=cgO.t;
   var cbar=ct>0?'<div class="sent-wrap comb"><div class="sent-bar">'+
     (cgO.gp>0?'<div class="sent-seg good" style="width:'+cgO.gp+'%">正面 '+cgO.g+' · '+cgO.gp+'%</div>':'')+
     (cgO.sp>0?'<div class="sent-seg sug" style="width:'+cgO.sp+'%">中性 '+cgO.s+' · '+cgO.sp+'%</div>':'')+
     (cgO.bp>0?'<div class="sent-seg bad" style="width:'+cgO.bp+'%">负面 '+cgO.b+' · '+cgO.bp+'%</div>':'')+
-    '</div><div class="sent-total">官号 + 社群合计 '+ct+' 提及 · 整体态度：'+(w.attitude||'—')+'</div></div>':'';
+    '</div><div class="sent-total">本周合计 '+ct+' 提及 · 整体态度：'+(w.attitude||'—')+'</div></div>':'';
   return '<div class="wk-block">'+
     '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
     '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
     '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
     (w.summary?'<div class="wk-summary insight"><div class="ins-h">🔑 核心洞察</div>'+fbRich(w.summary)+'</div>':'')+
     kpi+donuts+tops+cbar+
-    '<div class="two-col">'+
-      srcCol('official','officialSummary','officialPlatforms','官方账号 · 后台','col-official','#4338ca')+
-      srcCol('community','communitySummary','communityPlatforms','玩家社群','col-community','#c2410c')+
+    '<div class="two-col one">'+
+      srcCol(allC,'','','玩家反馈 · 合并','col-merged','#6d28d9')+
     '</div>'+
     (w.trend?'<div class="wk-trend"><b>📌 本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
     (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
