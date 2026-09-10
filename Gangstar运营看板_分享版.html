@@ -996,12 +996,12 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
    Layout & visual hierarchy only. No data or logic changed.
    All rules scoped to .fan so other tabs are unaffected.
    ============================================================ */
-#view-fan{background:#0b0e14}
+#view-fan{background:#eef1f7}
 .fan{
-  --bg:#0b0e14; --card:#141a24; --card2:#1a212d; --ink:#e8edf5; --muted:#8b97a8;
-  --line:#222b39; --line2:#2b3647; --brand:#8b5cf6; --brand2:#3b82f6; --brand-soft:#1c1733;
-  --ok:#34d399; --err:#f87171; --warn:#fbbf24; --radius:16px;
-  --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 12px 34px rgba(0,0,0,.45);
+  --bg:#eef1f7; --card:#ffffff; --card2:#f4f6fa; --ink:#1a2230; --muted:#64748b;
+  --line:#e6eaf1; --line2:#eef2f7; --brand:#8b5cf6; --brand2:#3b82f6; --brand-soft:#f3eefe;
+  --ok:#16a34a; --err:#dc2626; --warn:#d97706; --radius:16px;
+  --shadow-sm:0 1px 3px rgba(15,23,42,.06); --shadow-md:0 12px 34px rgba(15,23,42,.08);
   display:block; max-width:1480px; margin:0 auto; padding:30px 36px 64px;
   color:var(--ink);
   background:transparent;
@@ -1017,20 +1017,20 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .fan-block{margin-bottom:60px}
 .fan .fan-block:last-child{margin-bottom:0}
 .fan .cc-sec-head{display:flex;align-items:center;gap:12px;margin:0 0 20px}
-.fan .cc-sec-head .cc-num{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--brand);background:var(--brand-soft);border:1px solid #2e2550;padding:3px 9px;border-radius:8px;font-variant-numeric:tabular-nums}
+.fan .cc-sec-head .cc-num{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--brand);background:var(--brand-soft);border:1px solid #e9defb;padding:3px 9px;border-radius:8px;font-variant-numeric:tabular-nums}
 .fan .cc-sec-head h3{font-size:20px;font-weight:800;letter-spacing:.3px;margin:0}
 .fan .cc-sec-head .cc-emoji{font-size:18px;opacity:.9}
 .fan .cc-sec-head .cc-sub{font-size:12.5px;color:var(--muted);margin-left:auto;font-weight:600}
 
 /* ===== 01 HERO (Goal) ===== */
-.fan .goal-card{background:linear-gradient(160deg,#161d2b,#11161f);border:1px solid var(--line2);border-radius:20px;padding:30px 34px;box-shadow:var(--shadow-md);margin-bottom:60px}
+.fan .goal-card{background:linear-gradient(160deg,#ffffff,#f7f9fc);border:1px solid var(--line);border-radius:20px;padding:30px 34px;box-shadow:var(--shadow-md);margin-bottom:60px}
 .fan .hero{display:flex;flex-direction:column;gap:22px}
 .fan .hero-row{display:flex;align-items:flex-end;gap:40px;flex-wrap:wrap}
 .fan .hero-cur .hero-k{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.4px;margin-bottom:6px;text-transform:uppercase}
-.fan .hero-cur .hero-v{font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#ffffff,#c9d4e6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fan .hero-cur .hero-v{font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;color:var(--ink);font-variant-numeric:tabular-nums}
 .fan .hero-cur .hero-delta{margin-top:8px;font-size:13px;font-weight:800;display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:8px}
-.fan .hero-cur .hero-delta.up{color:var(--ok);background:rgba(52,211,153,.12)}
-.fan .hero-cur .hero-delta.down{color:var(--err);background:rgba(248,113,113,.12)}
+.fan .hero-cur .hero-delta.up{color:var(--ok);background:rgba(22,163,74,.1)}
+.fan .hero-cur .hero-delta.down{color:var(--err);background:rgba(220,38,38,.1)}
 .fan .hero-prog{display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:4px}
 .fan .hero-prog-v{font-size:40px;font-weight:900;line-height:1;color:var(--brand2);letter-spacing:-1px;font-variant-numeric:tabular-nums}
 .fan .hero-prog-v span{font-size:20px;font-weight:800;margin-left:1px}
@@ -1038,20 +1038,20 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .hero-tgt{margin-left:auto;text-align:right;padding-bottom:4px}
 .fan .hero-tgt-v{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
 .fan .hero-tgt-k{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
-.fan .hero-bar{height:14px;background:#0c1119;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.fan .hero-bar{height:14px;background:#eef2f7;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .fan .hero-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:10px}
 .fan .hero-meta{display:flex;align-items:center;gap:22px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:600}
 .fan .hero-meta b{color:var(--ink);font-weight:800}
 .fan .hero-meta .up{color:var(--ok)}
 .fan .hero-meta .t-up{color:var(--ok)}
 .fan .hero-edit{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--muted)}
-.fan .hero-edit input{width:84px;padding:5px 9px;border:1px solid var(--line2);border-radius:7px;background:#0c1119;color:var(--ink);font-size:12.5px;font-weight:700}
+.fan .hero-edit input{width:84px;padding:5px 9px;border:1px solid var(--line2);border-radius:7px;background:#f4f6fa;color:var(--ink);font-size:12.5px;font-weight:700}
 .fan .hero-edit button{border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:5px 13px;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px}
 
 /* ===== 02 PLATFORM FAN BASE (metric grid) ===== */
 .fan .plat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:0}
 .fan .pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;transition:border-color .15s,transform .15s}
-.fan .pc:hover{border-color:var(--line2);transform:translateY(-2px)}
+.fan .pc:hover{border-color:var(--brand);transform:translateY(-2px)}
 .fan .pc-bar{display:none}
 .fan .pc-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
 .fan .pc-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex:none}
@@ -1064,10 +1064,10 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .pc-val{font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
 .fan .pc-val small{display:none}
 .fan .pc-share{margin:10px 0 0}
-.fan .pc-share-bar{height:5px;background:#0c1119;border-radius:5px;overflow:hidden}
+.fan .pc-share-bar{height:5px;background:#eef2f7;border-radius:5px;overflow:hidden}
 .fan .pc-share-bar i{display:block;height:100%;border-radius:5px;opacity:.9}
 .fan .pc-share-pct{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:5px;display:block}
-.fan .pc-note{font-size:10.5px;color:var(--warn);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:7px;padding:5px 8px;line-height:1.4;margin-top:9px}
+.fan .pc-note{font-size:10.5px;color:var(--warn);background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.28);border-radius:7px;padding:5px 8px;line-height:1.4;margin-top:9px}
 
 /* ===== 03 FOLLOWER GROWTH (single large chart) ===== */
 .fan .charts-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow-sm);margin-bottom:0}
@@ -1088,12 +1088,12 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .cc-overview{display:block;margin:0}
 .fan .health{display:flex;flex-direction:column;gap:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 30px;box-shadow:var(--shadow-sm)}
 .fan .health-main{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0}
-.fan .health-score{font-size:78px;font-weight:900;line-height:1;letter-spacing:-3px;font-variant-numeric:tabular-nums}
+.fan .health-score{font-size:78px;font-weight:900;line-height:1;letter-spacing:-3px;color:var(--ink);font-variant-numeric:tabular-nums}
 .fan .health-score small{font-size:24px;color:var(--muted);font-weight:700;letter-spacing:0}
 .fan .health-status{margin-top:12px;font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:7px;padding:5px 16px;border-radius:20px}
-.fan .health-status.green{background:rgba(52,211,153,.14);color:#6ee7b7}
-.fan .health-status.amber{background:rgba(251,191,36,.16);color:#fcd34d}
-.fan .health-status.red{background:rgba(248,113,113,.16);color:#fca5a5}
+.fan .health-status.green{background:rgba(22,163,74,.12);color:#15803d}
+.fan .health-status.amber{background:rgba(217,119,6,.12);color:#b45309}
+.fan .health-status.red{background:rgba(220,38,38,.12);color:#b91c1c}
 .fan .health-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:12px;text-transform:uppercase}
 .fan .health-dims{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .fan .hdim{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;display:flex;flex-direction:column;gap:5px}
@@ -1126,7 +1126,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .ins-h{font-size:14px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:7px;color:var(--ink)}
 .fan .ins-col .ins-h:not(:first-child){margin-top:20px}
 .fan .ins-col:first-child .insight-item{counter-increment:ins;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--line)}
-.fan .ins-col:first-child .insight-item::before{content:counter(ins,decimal-leading-zero);position:absolute;left:0;top:14px;width:32px;height:32px;border-radius:9px;background:var(--brand-soft);border:1px solid #2e2550;color:var(--brand);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.fan .ins-col:first-child .insight-item::before{content:counter(ins,decimal-leading-zero);position:absolute;left:0;top:14px;width:32px;height:32px;border-radius:9px;background:var(--brand-soft);border:1px solid #e9defb;color:var(--brand);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
 .fan .ins-col:first-child .insight-item:last-child{border-bottom:none}
 .fan .insight-item{display:flex;gap:0;font-size:13px;line-height:1.6;color:var(--ink)}
 .fan .insight-item .ii-emoji{display:none}
@@ -3614,6 +3614,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
