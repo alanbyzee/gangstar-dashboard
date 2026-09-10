@@ -990,6 +990,180 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .sdot{transition:transform .2s ease}
 .icard:hover .ic-topic{color:var(--brand)}
 
+
+/* ============================================================
+   FANS TAB — EXECUTIVE REDESIGN (dark / premium / clear hierarchy)
+   Layout & visual hierarchy only. No data or logic changed.
+   All rules scoped to .fan so other tabs are unaffected.
+   ============================================================ */
+#view-fan{background:#0b0e14}
+.fan{
+  --bg:#0b0e14; --card:#141a24; --card2:#1a212d; --ink:#e8edf5; --muted:#8b97a8;
+  --line:#222b39; --line2:#2b3647; --brand:#8b5cf6; --brand2:#3b82f6; --brand-soft:#1c1733;
+  --ok:#34d399; --err:#f87171; --warn:#fbbf24; --radius:16px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 12px 34px rgba(0,0,0,.45);
+  display:block; max-width:1480px; margin:0 auto; padding:30px 36px 64px;
+  color:var(--ink);
+  background:transparent;
+}
+.fan *{box-sizing:border-box}
+
+/* page header */
+.fan .fan-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:42px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.fan .fan-head h2{font-size:22px;font-weight:800;letter-spacing:.3px}
+.fan .fan-head .sub{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* section block + header */
+.fan .fan-block{margin-bottom:60px}
+.fan .fan-block:last-child{margin-bottom:0}
+.fan .cc-sec-head{display:flex;align-items:center;gap:12px;margin:0 0 20px}
+.fan .cc-sec-head .cc-num{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--brand);background:var(--brand-soft);border:1px solid #2e2550;padding:3px 9px;border-radius:8px;font-variant-numeric:tabular-nums}
+.fan .cc-sec-head h3{font-size:20px;font-weight:800;letter-spacing:.3px;margin:0}
+.fan .cc-sec-head .cc-emoji{font-size:18px;opacity:.9}
+.fan .cc-sec-head .cc-sub{font-size:12.5px;color:var(--muted);margin-left:auto;font-weight:600}
+
+/* ===== 01 HERO (Goal) ===== */
+.fan .goal-card{background:linear-gradient(160deg,#161d2b,#11161f);border:1px solid var(--line2);border-radius:20px;padding:30px 34px;box-shadow:var(--shadow-md);margin-bottom:60px}
+.fan .hero{display:flex;flex-direction:column;gap:22px}
+.fan .hero-row{display:flex;align-items:flex-end;gap:40px;flex-wrap:wrap}
+.fan .hero-cur .hero-k{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.4px;margin-bottom:6px;text-transform:uppercase}
+.fan .hero-cur .hero-v{font-size:58px;font-weight:900;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#ffffff,#c9d4e6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fan .hero-cur .hero-delta{margin-top:8px;font-size:13px;font-weight:800;display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:8px}
+.fan .hero-cur .hero-delta.up{color:var(--ok);background:rgba(52,211,153,.12)}
+.fan .hero-cur .hero-delta.down{color:var(--err);background:rgba(248,113,113,.12)}
+.fan .hero-prog{display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:4px}
+.fan .hero-prog-v{font-size:40px;font-weight:900;line-height:1;color:var(--brand2);letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.fan .hero-prog-v span{font-size:20px;font-weight:800;margin-left:1px}
+.fan .hero-prog-k{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px;letter-spacing:.3px}
+.fan .hero-tgt{margin-left:auto;text-align:right;padding-bottom:4px}
+.fan .hero-tgt-v{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.fan .hero-tgt-k{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+.fan .hero-bar{height:14px;background:#0c1119;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.fan .hero-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:10px}
+.fan .hero-meta{display:flex;align-items:center;gap:22px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:600}
+.fan .hero-meta b{color:var(--ink);font-weight:800}
+.fan .hero-meta .up{color:var(--ok)}
+.fan .hero-meta .t-up{color:var(--ok)}
+.fan .hero-edit{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.fan .hero-edit input{width:84px;padding:5px 9px;border:1px solid var(--line2);border-radius:7px;background:#0c1119;color:var(--ink);font-size:12.5px;font-weight:700}
+.fan .hero-edit button{border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:5px 13px;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px}
+
+/* ===== 02 PLATFORM FAN BASE (metric grid) ===== */
+.fan .plat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:0}
+.fan .pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;transition:border-color .15s,transform .15s}
+.fan .pc:hover{border-color:var(--line2);transform:translateY(-2px)}
+.fan .pc-bar{display:none}
+.fan .pc-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.fan .pc-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex:none}
+.fan .pc-titles{min-width:0;flex:1}
+.fan .pc-name{font-size:13px;font-weight:800;color:var(--ink)}
+.fan .pc-handle{display:none}
+.fan .pc-link{font-size:14px;color:var(--muted);text-decoration:none;flex:none;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:7px}
+.fan .pc-link:hover{background:var(--brand-soft);color:var(--brand)}
+.fan .pc-valrow{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.fan .pc-val{font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.fan .pc-val small{display:none}
+.fan .pc-share{margin:10px 0 0}
+.fan .pc-share-bar{height:5px;background:#0c1119;border-radius:5px;overflow:hidden}
+.fan .pc-share-bar i{display:block;height:100%;border-radius:5px;opacity:.9}
+.fan .pc-share-pct{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:5px;display:block}
+.fan .pc-note{font-size:10.5px;color:var(--warn);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:7px;padding:5px 8px;line-height:1.4;margin-top:9px}
+
+/* ===== 03 FOLLOWER GROWTH (single large chart) ===== */
+.fan .charts-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow-sm);margin-bottom:0}
+.fan .charts-head{display:none}
+.fan .charts-grid{display:none}
+.fan .mc{display:flex;flex-direction:column;gap:14px}
+.fan .mc-legend{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.fan .mc-leg{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:600}
+.fan .mc-leg i{width:12px;height:12px;border-radius:3px;flex:none}
+.fan .mc-leg b{color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums}
+.fan .mc-leg em{font-style:normal;font-weight:800}
+.fan .mc-leg em.up{color:var(--ok)} .fan .mc-leg em.down{color:var(--err)}
+.fan .mc-svg{width:100%;height:auto;display:block}
+.fan .mc-cap{font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.5}
+.fan .mc-empty{font-size:13px;color:var(--muted);padding:20px;text-align:center}
+
+/* ===== 04 COMMUNITY HEALTH (score center) ===== */
+.fan .cc-overview{display:block;margin:0}
+.fan .health{display:flex;flex-direction:column;gap:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 30px;box-shadow:var(--shadow-sm)}
+.fan .health-main{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0}
+.fan .health-score{font-size:78px;font-weight:900;line-height:1;letter-spacing:-3px;font-variant-numeric:tabular-nums}
+.fan .health-score small{font-size:24px;color:var(--muted);font-weight:700;letter-spacing:0}
+.fan .health-status{margin-top:12px;font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:7px;padding:5px 16px;border-radius:20px}
+.fan .health-status.green{background:rgba(52,211,153,.14);color:#6ee7b7}
+.fan .health-status.amber{background:rgba(251,191,36,.16);color:#fcd34d}
+.fan .health-status.red{background:rgba(248,113,113,.16);color:#fca5a5}
+.fan .health-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:12px;text-transform:uppercase}
+.fan .health-dims{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fan .hdim{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;display:flex;flex-direction:column;gap:5px}
+.fan .hdim .hd-name{font-size:11px;color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.fan .hdim .hd-val{font-size:20px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.fan .hdim .hd-chg{font-size:11px;font-weight:700}
+.fan .hdim .hd-up{color:var(--ok)} .fan .hdim .hd-down{color:var(--err)}
+.fan .hdim .hd-spark{height:22px;display:flex;align-items:flex-end;gap:2px;margin-top:2px}
+.fan .hdim .hd-spark i{flex:1;background:var(--brand);border-radius:2px 2px 0 0;opacity:.55;min-height:2px}
+
+/* ===== 05 CORE OPERATING METRICS (4-col) ===== */
+.fan .kpi-wrap{margin:0}
+.fan .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.fan .kpi .kpi-name{font-size:12px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
+.fan .kpi .kpi-val{font-size:28px;font-weight:900;margin-top:8px;letter-spacing:-.6px;color:var(--ink);font-variant-numeric:tabular-nums}
+.fan .kpi .kpi-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.fan .kpi .kpi-wow{font-size:12px;font-weight:800}
+.fan .kpi .kpi-wow.up{color:var(--ok)} .fan .kpi .kpi-wow.down{color:var(--err)} .fan .kpi .kpi-wow.flat{color:var(--muted)}
+.fan .kpi .kpi-spark{height:26px;display:flex;align-items:flex-end;gap:2px;width:60px}
+.fan .kpi .kpi-spark i{flex:1;background:linear-gradient(180deg,var(--brand),var(--brand2));border-radius:2px 2px 0 0;opacity:.6;min-height:3px}
+
+/* ===== 06 WEEKLY INSIGHTS (editorial) ===== */
+.fan .insights-wrap{margin:0;counter-reset:ins}
+.fan .ins-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.fan .ins-col{display:flex;flex-direction:column}
+.fan .ins-summary-box{display:flex;gap:11px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.6;color:var(--ink);margin-bottom:18px}
+.fan .ins-summary-box b{color:var(--brand2)}
+.fan .ins-summary-ico{font-size:18px;flex:none}
+.fan .ins-h{font-size:14px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:7px;color:var(--ink)}
+.fan .ins-col .ins-h:not(:first-child){margin-top:20px}
+.fan .ins-col:first-child .insight-item{counter-increment:ins;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--line)}
+.fan .ins-col:first-child .insight-item::before{content:counter(ins,decimal-leading-zero);position:absolute;left:0;top:14px;width:32px;height:32px;border-radius:9px;background:var(--brand-soft);border:1px solid #2e2550;color:var(--brand);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.fan .ins-col:first-child .insight-item:last-child{border-bottom:none}
+.fan .insight-item{display:flex;gap:0;font-size:13px;line-height:1.6;color:var(--ink)}
+.fan .insight-item .ii-emoji{display:none}
+.fan .insight-item b{color:var(--brand2);font-weight:800}
+.fan .insight-item .ii-num{color:var(--ok);font-weight:800}
+.fan .action-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--ink)}
+.fan .action-row:last-child{border-bottom:none}
+.fan .action-row .ar-count{font-weight:900;font-size:15px;min-width:30px;text-align:right;color:var(--ink)}
+.fan .alert-item{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--ink)}
+.fan .alert-item:last-child{border-bottom:none}
+.fan .alert-item .al-ico{font-size:14px;flex:none}
+
+/* ===== responsive ===== */
+@media(max-width:1100px){
+  .fan{max-width:100%;padding:24px 20px 48px}
+  .fan .health-dims{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:860px){
+  .fan .fan-block{margin-bottom:44px}
+  .fan .goal-card{margin-bottom:44px}
+  .fan .hero-row{gap:24px}
+  .fan .hero-cur .hero-v{font-size:46px}
+  .fan .hero-tgt{margin-left:0;text-align:left}
+  .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .ins-grid{grid-template-columns:1fr}
+  .fan .health-dims{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .fan{padding:18px 14px 40px}
+  .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .kpi-grid{grid-template-columns:1fr}
+  .fan .health-dims{grid-template-columns:1fr}
+  .fan .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
+  .fan .hero-prog,.fan .hero-tgt{text-align:left}
+  .fan .hero-meta{gap:14px}
+  .fan .hero-edit{margin-left:0}
+}
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
@@ -1038,31 +1212,31 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <!-- 2. 各平台粉丝基数 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-emoji">📱</span><h3>各平台粉丝基数</h3><span class="cc-sub">7 平台 · 按粉丝数降序</span></div>
+        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>各平台粉丝基数</h3><span class="cc-sub">7 平台 · 按粉丝数降序</span></div>
         <div class="plat-grid" id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
       </section>
 
       <!-- 3. 平台涨粉折线图 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-emoji">📈</span><h3>平台涨粉折线图</h3><span class="cc-sub">最近 30 天趋势</span></div>
+        <div class="cc-sec-head"><span class="cc-num">03</span><span class="cc-emoji">📈</span><h3>各平台涨粉趋势折线图</h3><span class="cc-sub">增长指数 · 跨平台对比</span></div>
         <div class="charts-section" id="charts" data-page-node-id="chartsSection"></div>
       </section>
 
       <!-- 4. 社区健康分 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-emoji">🩺</span><h3>社区健康分</h3><span class="cc-sub">综合社群健康度</span></div>
+        <div class="cc-sec-head"><span class="cc-num">04</span><span class="cc-emoji">🩺</span><h3>社区健康分</h3><span class="cc-sub">综合社群健康度</span></div>
         <div class="cc-overview" id="healthSection" data-page-node-id="tGJWQgDQbIq7HQ6plW4w1s"></div>
       </section>
 
       <!-- 5. 核心运营指标 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">近 30 天趋势</span></div>
+        <div class="cc-sec-head"><span class="cc-num">05</span><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">近 30 天趋势</span></div>
         <div class="kpi-wrap" id="kpiSection"></div>
       </section>
 
       <!-- 6. 本周洞察 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-emoji">💡</span><h3>本周洞察</h3><span class="cc-sub">玩家反馈 · 行动 · 预警</span></div>
+        <div class="cc-sec-head"><span class="cc-num">06</span><span class="cc-emoji">💡</span><h3>本周洞察</h3><span class="cc-sub">玩家反馈 · 行动 · 预警</span></div>
         <div class="insights-wrap" id="insights" data-page-node-id="Yryo9Id2WKHm5ohk1a93BT"></div>
       </section>
     </div>
@@ -1958,17 +2132,41 @@ function derivePlayerVoice(rangeDays){
 }
 
 // ===== 统一折线图区：各平台增长趋势（从平台卡片中提取） =====
+function drawMultiChart(p){
+  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort(function(a,b){return (p[b]&&p[b].value||0)-(p[a]&&p[a].value||0);});
+  var dset={};
+  order.forEach(function(k){(p[k]&&p[k].history||[]).forEach(function(h){dset[h.date]=1;});});
+  var dates=Object.keys(dset).sort();
+  var N=dates.length;
+  if(N<2) return '<div class="mc-empty">数据不足，无法绘制趋势图</div>';
+  var series=order.map(function(k){
+    var hist=dedupeHistory((p[k]&&p[k].history)||[]);
+    var map={}; hist.forEach(function(h){map[h.date]=h.value;});
+    var last=null; var vals=dates.map(function(d){ if(map[d]!=null) last=map[d]; return last; });
+    var base=vals[0]||1;
+    return {color:(p[k]&&p[k].color)||'#888', name:(p[k]&&p[k].name)||k, vals:vals.map(function(v){return base>0? v/base*100:0;}), cur:(p[k]&&p[k].value)||0, wg:weeklyGrowth(p[k])};
+  }).filter(function(s){return s.cur>0;});
+  var maxY=0; series.forEach(function(s){s.vals.forEach(function(v){if(v>maxY)maxY=v;});});
+  maxY=maxY||100;
+  var W=1000,H=280,PL=44,PR=14,PT=14,PB=30;
+  function X(i){return PL+(N<=1?0:i/(N-1))*(W-PL-PR);}
+  function Y(v){return PT+(1-v/maxY)*(H-PT-PB);}
+  var grid='';
+  for(var g=0;g<=4;g++){var gy=PT+(g/4)*(H-PT-PB); grid+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#222b39" stroke-width="1"/>';}
+  function fmtD(d){var pp=d.split('-');return pp[1]+'/'+pp[2];}
+  var xt=[]; [0,Math.floor((N-1)/2),N-1].forEach(function(i){xt.push('<text x="'+X(i)+'" y="'+(H-10)+'" fill="#8b97a8" font-size="11" text-anchor="middle">'+fmtD(dates[i])+'</text>');});
+  var yt='';
+  for(var g2=0;g2<=4;g2++){var val=Math.round(maxY*(1-g2/4));var gy2=PT+(g2/4)*(H-PT-PB); yt+='<text x="'+(PL-8)+'" y="'+(gy2+4)+'" fill="#8b97a8" font-size="10" text-anchor="end">'+val+'</text>';}
+  var paths=series.map(function(s){var pts=s.vals.map(function(v,i){return X(i)+','+Y(v);}).join(' '); return '<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>';}).join('');
+  var svg='<svg class="mc-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="各平台涨粉趋势">'+grid+yt+paths+xt.join('')+'</svg>';
+  var legend='<div class="mc-legend">'+series.map(function(s){var w=s.wg?(s.wg.diff>0?'+':'')+fmt(s.wg.diff):'—'; return '<span class="mc-leg"><i style="background:'+s.color+'"></i>'+esc(s.name)+' <b>'+fmt(s.cur)+'</b> <em class="'+(s.wg&&s.wg.diff>=0?'up':'down')+'">'+w+'</em></span>';}).join('')+'</div>';
+  return '<div class="mc">'+legend+svg+'<div class="mc-cap">增长指数（各平台首个记录点 = 100），便于跨平台对比增长动能 · 横轴为记录日期</div></div>';
+}
+
 function renderPlatformCharts(data){
   const el=document.getElementById('charts');
   if(!el) return;
-  const p=data.platforms;
-  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
-  el.innerHTML='<div class="charts-grid">'+order.map(k=>{
-    const pl=p[k]; if(!pl) return '';
-    const hist=dedupeHistory(pl.history||[]);
-    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-    return '<div class="chart-card"><div class="chart-card-head"><span class="chart-card-ic" style="background:'+pl.color+'">'+((PLATFORM_ICONS&&PLATFORM_ICONS[k])||initial)+'</span><span class="chart-card-name">'+esc(pl.name)+'</span><span class="chart-card-val">'+fmt(pl.value)+'</span></div>'+drawChart(hist,pl.color,PLATFORM_EVENTS[k])+'</div>';
-  }).join('')+'</div>';
+  el.innerHTML=drawMultiChart(data.platforms);
 }
 
 function renderCommandCenter(data){
@@ -2191,17 +2389,20 @@ function renderGoalProgress(data){
   const dl=daysTo(GOAL_MONTH_DATE);
   const needDaily=dl>0?remain/dl:0;
   const over= total>target ? (total/target).toFixed(1) : null;
-  el.innerHTML='<div class="goal-top"><div class="goal-d">D-<b>'+dl+'</b></div><div class="goal-title"><h3>🎯 粉丝目标进度</h3><div class="goal-sub">目标日 '+GOAL_MONTH_DATE+'（上线后一个月）· 当前社区总粉丝 <b>'+fmt(total)+'</b></div></div><div class="goal-pct '+(prog>=100?'done':'')+'">'+prog.toFixed(1)+'<span>%</span></div></div>'
-    +'<div class="goal-bar"><i style="width:'+prog+'%"></i></div>'
-    +'<div class="goal-grid">'
-      +'<div><span>社区总粉丝</span><b>'+fmt(total)+'</b></div>'
-      +'<div><span>目标</span><b>'+fmt(target)+'</b></div>'
-      +'<div><span>完成度</span><b>'+prog.toFixed(1)+'%</b></div>'
-      +'<div><span>距目标</span><b class="'+(remain>0?'':'t-up')+'">'+(remain>0?fmt(remain):'✅ 已达成')+'</b></div>'
-      +'<div><span>日均需增</span><b class="t-up">'+(remain>0?('+'+needDaily.toFixed(0)):'—')+'</b><small>'+(remain>0?('/'+dl+'天'):'')+'</small></div>'
+  el.innerHTML='<div class="hero">'
+    +'<div class="hero-row">'
+      +'<div class="hero-cur"><div class="hero-k">当前社区总粉丝</div><div class="hero-v">'+fmt(total)+'</div><div class="hero-delta '+(totalWg>=0?'up':'down')+'">'+(totalWg>=0?'▲':'▼')+' '+fmt(Math.abs(totalWg))+' 本周</div></div>'
+      +'<div class="hero-prog"><div class="hero-prog-v">'+prog.toFixed(1)+'<span>%</span></div><div class="hero-prog-k">目标进度</div></div>'
+      +'<div class="hero-tgt"><div class="hero-tgt-v">'+fmt(target)+'</div><div class="hero-tgt-k">首日目标</div></div>'
     +'</div>'
-    +(over?('<div class="goal-note">🎉 已超越首日目标 <b>'+over+'×</b>，本周净增 <b class="t-up">+'+fmt(totalWg)+'</b></div>'):('<div class="goal-note">本周全平台净增 <b class="t-up">+'+fmt(totalWg)+'</b></div>'))
-    +'<div class="goal-edit">目标值 <input id="targetInput" type="number" value="'+target+'" min="1"> <button id="targetSave">设为目标</button></div>';
+    +'<div class="hero-bar"><i style="width:'+prog+'%"></i></div>'
+    +'<div class="hero-meta">'
+      +(remain>0?'<span>距目标 <b>'+fmt(remain)+'</b></span><span>日均需增 <b class="up">+'+needDaily.toFixed(0)+'</b> / '+dl+' 天</span>':'<span class="t-up">✅ 已达成首日目标</span>')
+      +(over?'<span class="t-up">🎉 超越首日目标 '+over+'×</span>':'')
+      +'<span>目标日 <b>'+GOAL_MONTH_DATE+'</b></span>'
+      +'<span class="hero-edit">目标值 <input id="targetInput" type="number" value="'+target+'" min="1"> <button id="targetSave">设为目标</button></span>'
+    +'</div>'
+  +'</div>';
   const saveBtn=document.getElementById('targetSave');
   if(saveBtn) saveBtn.onclick=()=>{
     const v=Number(document.getElementById('targetInput').value);
@@ -3413,6 +3614,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
