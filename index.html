@@ -1084,75 +1084,80 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .mc-cap{font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.5}
 .fan .mc-empty{font-size:13px;color:var(--muted);padding:20px;text-align:center}
 
-/* ===== 04 HEALTH + KPI SINGLE ROW ===== */
+/* ===== 04 HEALTH + KPI — POLISHED LAYOUT ===== */
 .fan .health-kpi-merged{display:block}
 .fan .health-kpi-merged #healthSection{margin:0}
 .fan .health-kpi-merged #kpiSection{margin:0}
 
-/* Single row: health card (with dims) + 5 KPI cards */
-.fan .hk-row{display:grid;grid-template-columns:180px repeat(5,1fr);gap:14px;align-items:stretch}
+/* Main container: left health col + right KPI grid */
+.fan .hk-layout{display:flex;gap:18px;align-items:stretch}
 
-/* Health card — compact vertical with inline dims */
-.fan .health{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 14px;box-shadow:var(--shadow-sm);gap:8px}
-.fan .health-main{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
-.fan .health-score{font-size:36px;font-weight:900;line-height:1;letter-spacing:-1.2px;font-variant-numeric:tabular-nums}
-.fan .health-score small{font-size:14px;color:var(--muted);font-weight:700}
-.fan .health-status{font-size:11.5px;font-weight:800;display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:14px}
+/* ---- LEFT: Health Score Card (fixed width) ---- */
+.fan .hk-health-col{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:0}
+.fan .health{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 16px;box-shadow:var(--shadow-sm);height:100%;gap:0}
+.fan .health-main{display:flex;flex-direction:column;align-items:center;text-align:center;padding-bottom:14px;border-bottom:1px solid var(--line2);gap:3px}
+.fan .health-score{font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
+.fan .health-score small{font-size:15px;color:var(--muted);font-weight:700}
+.fan .health-status{font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;margin-top:2px}
 .fan .health-status.green{background:rgba(22,163,74,.12);color:#15803d}
 .fan .health-status.amber{background:rgba(217,119,6,.12);color:#b45309}
 .fan .health-status.red{background:rgba(220,38,38,.12);color:#b91c1c}
-.fan .health-label{font-size:9.5px;color:var(--muted);font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px}
+.fan .health-label{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:4px}
+.fan .health-verdict{font-size:11px;font-weight:800;color:var(--muted);margin-top:6px;line-height:1.4;padding:0 4px}
 
-/* Dims inside health card — compact vertical list */
-.fan .health-dims{display:flex;flex-direction:column;gap:3px;margin-top:auto;border-top:1px solid var(--line2);padding-top:8px}
-.fan .hdim{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:3px 0;border-bottom:1px solid var(--line2)}
+/* Dimension rows inside health card */
+.fan .health-dims{display:flex;flex-direction:column;gap:0;padding-top:12px;flex:1}
+.fan .hdim{display:flex;align-items:center;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--line2)}
 .fan .hdim:last-child{border-bottom:none}
-.fan .hdim .hd-name{font-size:9.5px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:3px}
-.fan .hdim .hd-val{font-size:13px;font-weight:900;font-variant-numeric:tabular-nums}
-.fan .hdim .hd-chg{font-size:9px;font-weight:700;margin-left:auto}
+.fan .hdim .hd-name{font-size:11px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:4px}
+.fan .hdim .hd-val{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
+.fan .hdim .hd-chg{font-size:10px;font-weight:700;margin-left:auto}
 .fan .hdim .hd-up{color:var(--ok)} .fan .hdim .hd-down{color:var(--err)}
-.fan .hdim .hd-spark{display:none} /* hide sparkline in compact mode */
+.fan .hdim .hd-spark{display:none}
 
-/* KPI cards */
+/* ---- RIGHT: KPI Cards Grid (auto-fit) ---- */
+.fan .hk-kpi-col{flex:1;min-width:0}
+.fan .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .fan .kpi-wrap{margin:0}
-.fan .kpi-grid{display:contents}
-.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
-.fan .kpi .kpi-name{font-size:11.5px;color:var(--ink);font-weight:800;display:flex;align-items:center;gap:5px}
-.fan .kpi .kpi-val{font-size:26px;font-weight:900;margin-top:6px;letter-spacing:-.5px;color:var(--ink);font-variant-numeric:tabular-nums}
-.fan .kpi .kpi-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;gap:8px;border-top:1px solid var(--line2)}
-.fan .kpi .kpi-wow{font-size:11.5px;font-weight:800}
+
+/* KPI card — strict 3-layer hierarchy */
+.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;height:100%}
+/* Layer 1: Name (top) */
+.fan .kpi .kpi-name{font-size:11.5px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;gap:5px}
+/* Layer 2: Value (center, prominent) */
+.fan .kpi .kpi-val{font-size:30px;font-weight:900;margin-top:8px;letter-spacing:-.8px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1}
+/* Layer 3: Foot (bottom, pushed down) */
+.fan .kpi .kpi-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;gap:8px;border-top:1px solid var(--line2)}
+.fan .kpi .kpi-wow{font-size:12px;font-weight:800}
 .fan .kpi .kpi-wow.up{color:var(--ok)} .fan .kpi .kpi-wow.down{color:var(--err)} .fan .kpi .kpi-wow.flat{color:var(--muted)}
 .fan .kpi .kpi-spark{height:24px;display:flex;align-items:end;gap:2px;width:56px}
 .fan .kpi .kpi-spark i{flex:1;background:linear-gradient(180deg,var(--brand),var(--brand2));border-radius:2px 2px 0 0;opacity:.55;min-height:3px}
-/* Data methodology subtitle */
-.fan .kpi .kpi-method{font-size:9.5px;color:var(--muted);font-weight:600;margin-top:4px;line-height:1.3;opacity:.8}
+/* Methodology subtitle (between value & foot) */
+.fan .kpi .kpi-method{font-size:9.5px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.35;opacity:.75}
+/* Interpretation note (above foot border) */
+.fan .kpi .kpi-note{font-size:10.5px;font-weight:800;color:var(--brand);margin-top:6px;line-height:1.4;padding-top:8px;border-top:1px dashed var(--line2)}
 
-/* Executive summary banner (rich takeaway) */
-.fan .hk-summary{display:flex;align-items:center;flex-wrap:wrap;gap:12px;background:linear-gradient(90deg,var(--brand-soft),var(--card2));border:1px solid var(--line);border-radius:14px;padding:13px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+/* ---- Executive Summary Banner ---- */
+.fan .hk-summary{display:flex;align-items:center;flex-wrap:wrap;gap:12px;background:linear-gradient(90deg,var(--brand-soft),var(--card2));border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin-bottom:18px;box-shadow:var(--shadow-sm)}
 .fan .hk-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;font-weight:900;padding:6px 14px;border-radius:20px}
 .fan .hk-badge.green{background:rgba(22,163,74,.14);color:#15803d}
 .fan .hk-badge.amber{background:rgba(217,119,6,.16);color:#b45309}
 .fan .hk-badge.red{background:rgba(220,38,38,.14);color:#b91c1c}
 .fan .hk-sum-txt{font-size:12.5px;color:var(--ink);line-height:1.55;font-weight:600;flex:1;min-width:280px}
 .fan .hk-sum-txt b{color:var(--brand);font-weight:900}
-/* Health verdict tagline under score */
-.fan .health-verdict{font-size:10.5px;font-weight:800;color:var(--muted);margin-top:5px;text-align:center;line-height:1.35;padding:0 2px}
-/* KPI interpretation note */
-.fan .kpi .kpi-note{font-size:10px;font-weight:800;color:var(--brand);margin-top:5px;line-height:1.35;padding-top:5px;border-top:1px dashed var(--line2)}
 
 /* ===== responsive ===== */
 @media(max-width:1200px){
-  .fan .hk-row1{grid-template-columns:180px repeat(2,1fr)}
-  .fan .hk-row1 .kpi:nth-child(3){grid-column:1/-1}
-  .fan .hk-row2{grid-template-columns:repeat(3,1fr)}
+  .fan .hk-health-col{width:230px}
+  .fan .kpi-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
 }
 @media(max-width:1100px){
   .fan{max-width:100%;padding:24px 20px 48px}
   .fan .plat-grid{grid-template-columns:repeat(3,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(3,1fr)}
-  .fan .hk-row1{grid-template-columns:1fr}
-  .fan .hk-row1 .kpi:nth-child(3){grid-column:auto}
-  .fan .hk-row2{grid-template-columns:repeat(3,1fr)}
+  .fan .hk-layout{flex-direction:column}
+  .fan .hk-health-col{width:100%}
+  .fan .kpi-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 }
 @media(max-width:860px){
   .fan .fan-block{margin-bottom:44px}
@@ -1161,9 +1166,9 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .hero-cur .hero-v{font-size:46px}
   .fan .hero-tgt{margin-left:0;text-align:left}
   .fan .ins-grid{grid-template-columns:1fr}
-  .fan .hk-row2{grid-template-columns:repeat(2,1fr)}
   .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:560px){
   .fan{padding:18px 14px 40px}
@@ -1173,8 +1178,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .hero-meta{gap:14px}
   .fan .hero-edit{margin-left:0}
   .fan .charts-grid{grid-template-columns:1fr}
-  .fan .hk-row1{grid-template-columns:1fr}
-  .fan .hk-row2{grid-template-columns:1fr}
+  .fan .kpi-grid{grid-template-columns:1fr}
 }
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
@@ -2288,9 +2292,9 @@ function renderCommandCenter(data){
         +'<span class="hk-badge '+h.status+'">健康度 '+h.overall+'/100 · '+h.label+'</span>'
         +'<span class="hk-sum-txt">本周净增 <b>+'+fmt(h.wg)+'</b>（'+h.growRate+'%），整体'+verdictTxt+'；玩家情绪'+(sent.neg>15?'承压':'平稳')+'（负面 '+sent.neg+'%）。<b>建议：</b>'+rec+'。</span>'
       +'</div>'
-      +'<div class="hk-row">'
-      /* 健康分卡（含5维度 + 结论标签） */
-      +'<div id="healthSection"><div class="health"><div class="health-main">'
+      +'<div class="hk-layout">'
+      /* 左栏：健康分卡（含5维度 + 结论标签） */
+      +'<div class="hk-health-col"><div id="healthSection"><div class="health"><div class="health-main">'
         +'<div class="health-score" style="color:'+hColor+'">'+h.overall+'<small>/100</small></div>'
         +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
         +'<div class="health-label">综合评分 · 5维加权</div>'
@@ -2302,9 +2306,12 @@ function renderCommandCenter(data){
           +dimRow('情绪',h.sentScore,sent.pos+'%',1,dimSpark(h.sentScore))
           +dimRow('活跃',h.actScore,'+3.1%',1,dimSpark(h.actScore))
           +dimRow('响应',h.respScore,'+1.5%',1,dimSpark(h.respScore))
-        +'</div></div></div>'
+        +'</div></div></div></div>'
+      /* 右栏：KPI 网格 */
+      +'<div class="hk-kpi-col"><div id="kpiSection" class="kpi-grid">'
       /* 5 个 KPI 卡（方法说明 + 含义解读） */
       +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-note">'+k.note+'</div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
+      +'</div></div>'
       +'</div>';
   }
 
@@ -3669,6 +3676,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
