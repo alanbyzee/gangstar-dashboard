@@ -1084,102 +1084,48 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .mc-cap{font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.5}
 .fan .mc-empty{font-size:13px;color:var(--muted);padding:20px;text-align:center}
 
-/* ===== 04 COMMUNITY HEALTH (score center) ===== */
-.fan .cc-overview{display:block;margin:0}
-.fan .health{display:flex;flex-direction:column;gap:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 30px;box-shadow:var(--shadow-sm)}
-.fan .health-main{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0}
-.fan .health-score{font-size:78px;font-weight:900;line-height:1;letter-spacing:-3px;color:var(--ink);font-variant-numeric:tabular-nums}
-.fan .health-score small{font-size:24px;color:var(--muted);font-weight:700;letter-spacing:0}
-.fan .health-status{margin-top:12px;font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:7px;padding:5px 16px;border-radius:20px}
-.fan .health-status.green{background:rgba(22,163,74,.12);color:#15803d}
-.fan .health-status.amber{background:rgba(217,119,6,.12);color:#b45309}
-.fan .health-status.red{background:rgba(220,38,38,.12);color:#b91c1c}
-.fan .health-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:12px;text-transform:uppercase}
-.fan .health-dims{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.fan .hdim{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;display:flex;flex-direction:column;gap:5px}
-.fan .hdim .hd-name{font-size:11px;color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:4px}
-.fan .hdim .hd-val{font-size:20px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
-.fan .hdim .hd-chg{font-size:11px;font-weight:700}
-.fan .hdim .hd-up{color:var(--ok)} .fan .hdim .hd-down{color:var(--err)}
-.fan .hdim .hd-spark{height:22px;display:flex;align-items:flex-end;gap:2px;margin-top:2px}
-.fan .hdim .hd-spark i{flex:1;background:var(--brand);border-radius:2px 2px 0 0;opacity:.55;min-height:2px}
-
-/* ===== 04 HEALTH + KPI MERGED BLOCK (modular grid) ===== */
-.fan .health-kpi-merged{display:flex;flex-direction:column;gap:16px}
+/* ===== 04 HEALTH + KPI SINGLE ROW ===== */
+.fan .health-kpi-merged{display:block}
 .fan .health-kpi-merged #healthSection{margin:0}
 .fan .health-kpi-merged #kpiSection{margin:0}
 
-/* Row 1: Health score card (compact) + KPI grid */
-.fan .hk-row1{display:grid;grid-template-columns:200px repeat(4,1fr);gap:14px;align-items:stretch}
+/* Single row: health card (with dims) + 5 KPI cards */
+.fan .hk-row{display:grid;grid-template-columns:180px repeat(5,1fr);gap:14px;align-items:stretch}
 
-/* Health score → compact vertical card */
-.fan .health{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 16px;box-shadow:var(--shadow-sm);gap:6px}
-.fan .health-main{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0}
-.fan .health-score{font-size:40px;font-weight:900;line-height:1;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
-.fan .health-score small{font-size:15px;color:var(--muted);font-weight:700}
-.fan .health-status{font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:16px}
+/* Health card — compact vertical with inline dims */
+.fan .health{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 14px;box-shadow:var(--shadow-sm);gap:8px}
+.fan .health-main{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.fan .health-score{font-size:36px;font-weight:900;line-height:1;letter-spacing:-1.2px;font-variant-numeric:tabular-nums}
+.fan .health-score small{font-size:14px;color:var(--muted);font-weight:700}
+.fan .health-status{font-size:11.5px;font-weight:800;display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:14px}
 .fan .health-status.green{background:rgba(22,163,74,.12);color:#15803d}
 .fan .health-status.amber{background:rgba(217,119,6,.12);color:#b45309}
 .fan .health-status.red{background:rgba(220,38,38,.12);color:#b91c1c}
-.fan .health-label{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:4px}
+.fan .health-label{font-size:9.5px;color:var(--muted);font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px}
 
-/* Row 2: Health dimensions → compact horizontal pills */
-.fan .hk-row2{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.fan .hdim{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-sm)}
-.fan .hdim .hd-name{font-size:11px;color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:4px}
-.fan .hdim .hd-val{font-size:22px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
-.fan .hdim .hd-chg{font-size:11px;font-weight:700}
+/* Dims inside health card — compact vertical list */
+.fan .health-dims{display:flex;flex-direction:column;gap:3px;margin-top:auto;border-top:1px solid var(--line2);padding-top:8px}
+.fan .hdim{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:3px 0;border-bottom:1px solid var(--line2)}
+.fan .hdim:last-child{border-bottom:none}
+.fan .hdim .hd-name{font-size:9.5px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:3px}
+.fan .hdim .hd-val{font-size:13px;font-weight:900;font-variant-numeric:tabular-nums}
+.fan .hdim .hd-chg{font-size:9px;font-weight:700;margin-left:auto}
 .fan .hdim .hd-up{color:var(--ok)} .fan .hdim .hd-down{color:var(--err)}
-.fan .hdim .hd-spark{height:20px;display:flex;align-items:end;gap:2px;margin-top:2px}
-.fan .hdim .hd-spark i{flex:1;background:var(--brand);border-radius:2px 2px 0 0;opacity:.5;min-height:2px}
+.fan .hdim .hd-spark{display:none} /* hide sparkline in compact mode */
 
-/* KPI cards in row1 — adjust to match health card height */
+/* KPI cards */
 .fan .kpi-wrap{margin:0}
-.fan .kpi-grid{display:contents} /* flatten into parent grid */
-.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;justify-content:space-between}
-.fan .kpi .kpi-name{font-size:11.5px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
-.fan .kpi .kpi-val{font-size:24px;font-weight:900;margin-top:6px;letter-spacing:-.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.fan .kpi-grid{display:contents}
+.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.fan .kpi .kpi-name{font-size:11.5px;color:var(--ink);font-weight:800;display:flex;align-items:center;gap:5px}
+.fan .kpi .kpi-val{font-size:26px;font-weight:900;margin-top:6px;letter-spacing:-.5px;color:var(--ink);font-variant-numeric:tabular-nums}
 .fan .kpi .kpi-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;gap:8px;border-top:1px solid var(--line2)}
 .fan .kpi .kpi-wow{font-size:11.5px;font-weight:800}
 .fan .kpi .kpi-wow.up{color:var(--ok)} .fan .kpi .kpi-wow.down{color:var(--err)} .fan .kpi .kpi-wow.flat{color:var(--muted)}
 .fan .kpi .kpi-spark{height:24px;display:flex;align-items:end;gap:2px;width:56px}
 .fan .kpi .kpi-spark i{flex:1;background:linear-gradient(180deg,var(--brand),var(--brand2));border-radius:2px 2px 0 0;opacity:.55;min-height:3px}
-
-/* ===== 05 CORE OPERATING METRICS (4-col) ===== */
-.fan .kpi-wrap{margin:0}
-.fan .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
-.fan .kpi .kpi-name{font-size:12px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
-.fan .kpi .kpi-val{font-size:28px;font-weight:900;margin-top:8px;letter-spacing:-.6px;color:var(--ink);font-variant-numeric:tabular-nums}
-.fan .kpi .kpi-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
-.fan .kpi .kpi-wow{font-size:12px;font-weight:800}
-.fan .kpi .kpi-wow.up{color:var(--ok)} .fan .kpi .kpi-wow.down{color:var(--err)} .fan .kpi .kpi-wow.flat{color:var(--muted)}
-.fan .kpi .kpi-spark{height:26px;display:flex;align-items:flex-end;gap:2px;width:60px}
-.fan .kpi .kpi-spark i{flex:1;background:linear-gradient(180deg,var(--brand),var(--brand2));border-radius:2px 2px 0 0;opacity:.6;min-height:3px}
-
-/* ===== 06 WEEKLY INSIGHTS (editorial) ===== */
-.fan .insights-wrap{margin:0;counter-reset:ins}
-.fan .ins-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}
-.fan .ins-col{display:flex;flex-direction:column}
-.fan .ins-summary-box{display:flex;gap:12px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:13px;line-height:1.65;color:var(--ink);margin-bottom:20px}
-.fan .ins-summary-box b{color:var(--brand2)}
-.fan .ins-summary-ico{font-size:20px;flex:none}
-.fan .ins-h{font-size:15px;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px;color:var(--ink);letter-spacing:.2px}
-.fan .ins-col .ins-h:not(:first-child){margin-top:24px}
-.fan .ins-col:first-child .insight-item{counter-increment:ins;position:relative;padding:16px 0 16px 48px;border-bottom:1px solid var(--line2)}
-.fan .ins-col:first-child .insight-item::before{content:counter(ins,decimal-leading-zero);position:absolute;left:0;top:16px;width:34px;height:34px;border-radius:10px;background:var(--brand-soft);border:1px solid #e9defb;color:var(--brand);font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
-.fan .ins-col:first-child .insight-item:last-child{border-bottom:none}
-.fan .insight-item{display:flex;gap:0;font-size:13.5px;line-height:1.65;color:var(--ink)}
-.fan .insight-item .ii-emoji{display:none}
-.fan .insight-item b{color:var(--brand2);font-weight:800}
-.fan .insight-item .ii-num{color:var(--ok);font-weight:800}
-.fan .action-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line2);font-size:13px;color:var(--ink);transition:background .15s}
-.fan .action-row:hover{background:var(--card2);border-radius:8px;margin:0 -8px;padding:12px 8px}
-.fan .action-row:last-child{border-bottom:none}
-.fan .action-row .ar-count{font-weight:900;font-size:16px;min-width:32px;text-align:right;color:var(--ink)}
-.fan .alert-item{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line2);font-size:13px;line-height:1.55;color:var(--ink)}
-.fan .alert-item:last-child{border-bottom:none}
-.fan .alert-item .al-ico{font-size:15px;flex:none}
+/* Data methodology subtitle */
+.fan .kpi .kpi-method{font-size:9.5px;color:var(--muted);font-weight:600;margin-top:4px;line-height:1.3;opacity:.8}
 
 /* ===== responsive ===== */
 @media(max-width:1200px){
@@ -2292,28 +2238,34 @@ function renderCommandCenter(data){
 
   const dimRow=(name,val,chg,up,sparkArr)=>'<div class="hdim"><div class="hd-name">'+name+(up>=0?'<span class="sdot green"></span>':'<span class="sdot red"></span>')+'</div><div class="hd-val">'+val+'</div><div class="hd-chg '+(up>=0?'hd-up':'hd-down')+'">'+(up>=0?'▲':'▼')+' '+chg+'</div><div class="hd-spark">'+sparkline(sparkArr)+'</div></div>';
 
-  // 4+5. 社区健康 & 核心指标（合并模块化渲染）
+  // 4+5. 社区健康 & 核心指标（单行渲染 + 方法说明）
   const hkEl=document.getElementById('healthKpiSection');
   if(hkEl){
     const hColor=h.status==='green'?'var(--ok)':h.status==='amber'?'var(--warn)':'var(--err)';
-    hkEl.innerHTML=
-      '<div class="hk-row1">'
-        /* 健康分紧凑卡 */
-        +'<div id="healthSection"><div class="health"><div class="health-main">'
-          +'<div class="health-score" style="color:'+hColor+'">'+h.overall+'<small>/100</small></div>'
-          +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
-          +'<div class="health-label">更新于 '+data.updated_at+'</div>'
+    // KPI 方法说明映射
+    const kpiMethods={
+      '总粉丝数':'7 平台粉丝数求和（来自 fan_data.json）',
+      '新增粉丝(周)':'本周最后一天 vs 7天前同日差值',
+      '收集反馈':'玩家反馈看板累计条数（社媒+Discord+NODWIN）',
+      '非负占比':'正面% + 中性%（来自反馈情感分析）',
+      '负面占比':'负面反馈 / 总反馈 × 100'
+    };
+    hkEl.innerHTML='<div class="hk-row">'
+      /* 健康分卡（含5维度） */
+      +'<div id="healthSection"><div class="health"><div class="health-main">'
+        +'<div class="health-score" style="color:'+hColor+'">'+h.overall+'<small>/100</small></div>'
+        +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
+        +'<div class="health-label">综合评分 · 5维加权</div>'
+        +'</div>'
+        +'<div class="health-dims">'
+          +dimRow('增长',h.growthScore,(h.growRate>0?'+':'')+h.growRate+'%',h.growRate,dimSpark(h.growthScore,spark))
+          +dimRow('互动',h.engScore,'+0.4pt',1,dimSpark(h.engScore))
+          +dimRow('情绪',h.sentScore,sent.pos+'%',1,dimSpark(h.sentScore))
+          +dimRow('活跃',h.actScore,'+3.1%',1,dimSpark(h.actScore))
+          +dimRow('响应',h.respScore,'+1.5%',1,dimSpark(h.respScore))
         +'</div></div></div>'
-        /* 4 个 KPI 卡 */
-        +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
-      +'</div>'
-      /* 5 个健康维度 */
-      +'<div class="hk-row2" id="kpiDims">'
-        +dimRow('社群增长',h.growthScore,(h.growRate>0?'+':'')+h.growRate+'%',h.growRate,dimSpark(h.growthScore,spark))
-        +dimRow('互动',h.engScore,'+0.4pt',1,dimSpark(h.engScore))
-        +dimRow('玩家情绪',h.sentScore,sent.pos+'%',1,dimSpark(h.sentScore))
-        +dimRow('社群活跃',h.actScore,'+3.1%',1,dimSpark(h.actScore))
-        +dimRow('响应速度',h.respScore,'+1.5%',1,dimSpark(h.respScore))
+      /* 5 个 KPI 卡（带方法说明） */
+      +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
       +'</div>';
   }
 
@@ -3678,6 +3630,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
