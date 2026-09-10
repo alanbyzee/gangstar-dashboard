@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-09-08",
+  "updated_at": "2026-09-10",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 193350,
+      "value": 200473,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -190,13 +190,17 @@
         {
           "date": "2026-09-08",
           "value": 193350
+        },
+        {
+          "date": "2026-09-10",
+          "value": 200473
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 3306,
+      "value": 3456,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -384,6 +388,10 @@
         {
           "date": "2026-09-08",
           "value": 3306
+        },
+        {
+          "date": "2026-09-10",
+          "value": 3456
         }
       ],
       "name": "Facebook"
@@ -392,7 +400,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 87010,
+      "value": 88334,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -652,6 +660,10 @@
         {
           "date": "2026-09-08",
           "value": 87010
+        },
+        {
+          "date": "2026-09-10",
+          "value": 88334
         }
       ]
     },
@@ -774,7 +786,7 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 3944,
+      "value": 4114,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -898,6 +910,10 @@
         {
           "date": "2026-09-07",
           "value": 3944
+        },
+        {
+          "date": "2026-09-10",
+          "value": 4114
         }
       ]
     },
