@@ -1049,7 +1049,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .hero-edit button{border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:5px 13px;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px}
 
 /* ===== 02 PLATFORM FAN BASE (metric grid) ===== */
-.fan .plat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:0}
+.fan .plat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:0}
 .fan .pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;transition:border-color .15s,transform .15s}
 .fan .pc:hover{border-color:var(--brand);transform:translateY(-2px)}
 .fan .pc-bar{display:none}
@@ -1072,8 +1072,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 /* ===== 03 FOLLOWER GROWTH (single large chart) ===== */
 .fan .charts-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow-sm);margin-bottom:0}
 .fan .charts-head{display:none}
-.fan .charts-grid{display:none}
-.fan .mc{display:flex;flex-direction:column;gap:14px}
+.fan .charts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.fan .mc{display:none}
 .fan .mc-legend{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
 .fan .mc-leg{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:600}
 .fan .mc-leg i{width:12px;height:12px;border-radius:3px;flex:none}
@@ -1104,6 +1104,11 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .hdim .hd-spark{height:22px;display:flex;align-items:flex-end;gap:2px;margin-top:2px}
 .fan .hdim .hd-spark i{flex:1;background:var(--brand);border-radius:2px 2px 0 0;opacity:.55;min-height:2px}
 
+/* ===== 04 HEALTH + KPI MERGED BLOCK ===== */
+.fan .health-kpi-merged{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+.fan .health-kpi-merged #healthSection{margin:0}
+.fan .health-kpi-merged #kpiSection{margin:0}
+
 /* ===== 05 CORE OPERATING METRICS (4-col) ===== */
 .fan .kpi-wrap{margin:0}
 .fan .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -1118,31 +1123,35 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
 /* ===== 06 WEEKLY INSIGHTS (editorial) ===== */
 .fan .insights-wrap{margin:0;counter-reset:ins}
-.fan .ins-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.fan .ins-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}
 .fan .ins-col{display:flex;flex-direction:column}
-.fan .ins-summary-box{display:flex;gap:11px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.6;color:var(--ink);margin-bottom:18px}
+.fan .ins-summary-box{display:flex;gap:12px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:13px;line-height:1.65;color:var(--ink);margin-bottom:20px}
 .fan .ins-summary-box b{color:var(--brand2)}
-.fan .ins-summary-ico{font-size:18px;flex:none}
-.fan .ins-h{font-size:14px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:7px;color:var(--ink)}
-.fan .ins-col .ins-h:not(:first-child){margin-top:20px}
-.fan .ins-col:first-child .insight-item{counter-increment:ins;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--line)}
-.fan .ins-col:first-child .insight-item::before{content:counter(ins,decimal-leading-zero);position:absolute;left:0;top:14px;width:32px;height:32px;border-radius:9px;background:var(--brand-soft);border:1px solid #e9defb;color:var(--brand);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.fan .ins-summary-ico{font-size:20px;flex:none}
+.fan .ins-h{font-size:15px;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px;color:var(--ink);letter-spacing:.2px}
+.fan .ins-col .ins-h:not(:first-child){margin-top:24px}
+.fan .ins-col:first-child .insight-item{counter-increment:ins;position:relative;padding:16px 0 16px 48px;border-bottom:1px solid var(--line2)}
+.fan .ins-col:first-child .insight-item::before{content:counter(ins,decimal-leading-zero);position:absolute;left:0;top:16px;width:34px;height:34px;border-radius:10px;background:var(--brand-soft);border:1px solid #e9defb;color:var(--brand);font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
 .fan .ins-col:first-child .insight-item:last-child{border-bottom:none}
-.fan .insight-item{display:flex;gap:0;font-size:13px;line-height:1.6;color:var(--ink)}
+.fan .insight-item{display:flex;gap:0;font-size:13.5px;line-height:1.65;color:var(--ink)}
 .fan .insight-item .ii-emoji{display:none}
 .fan .insight-item b{color:var(--brand2);font-weight:800}
 .fan .insight-item .ii-num{color:var(--ok);font-weight:800}
-.fan .action-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--ink)}
+.fan .action-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line2);font-size:13px;color:var(--ink);transition:background .15s}
+.fan .action-row:hover{background:var(--card2);border-radius:8px;margin:0 -8px;padding:12px 8px}
 .fan .action-row:last-child{border-bottom:none}
-.fan .action-row .ar-count{font-weight:900;font-size:15px;min-width:30px;text-align:right;color:var(--ink)}
-.fan .alert-item{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--ink)}
+.fan .action-row .ar-count{font-weight:900;font-size:16px;min-width:32px;text-align:right;color:var(--ink)}
+.fan .alert-item{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line2);font-size:13px;line-height:1.55;color:var(--ink)}
 .fan .alert-item:last-child{border-bottom:none}
-.fan .alert-item .al-ico{font-size:14px;flex:none}
+.fan .alert-item .al-ico{font-size:15px;flex:none}
 
 /* ===== responsive ===== */
 @media(max-width:1100px){
   .fan{max-width:100%;padding:24px 20px 48px}
   .fan .health-dims{grid-template-columns:repeat(3,1fr)}
+  .fan .health-kpi-merged{grid-template-columns:1fr}
+  .fan .plat-grid{grid-template-columns:repeat(3,1fr)}
+  .fan .charts-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:860px){
   .fan .fan-block{margin-bottom:44px}
@@ -1153,16 +1162,20 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
   .fan .ins-grid{grid-template-columns:1fr}
   .fan .health-dims{grid-template-columns:repeat(2,1fr)}
+  .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .charts-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:560px){
   .fan{padding:18px 14px 40px}
-  .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .plat-grid{grid-template-columns:1fr}
   .fan .kpi-grid{grid-template-columns:1fr}
   .fan .health-dims{grid-template-columns:1fr}
   .fan .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
   .fan .hero-prog,.fan .hero-tgt{text-align:left}
   .fan .hero-meta{gap:14px}
   .fan .hero-edit{margin-left:0}
+  .fan .charts-grid{grid-template-columns:1fr}
+  .fan .health-kpi-merged{grid-template-columns:1fr}
 }
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
@@ -1222,21 +1235,18 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
         <div class="charts-section" id="charts" data-page-node-id="chartsSection"></div>
       </section>
 
-      <!-- 4. 社区健康分 -->
+      <!-- 4. 社区健康 & 核心指标（合并板块） -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">04</span><span class="cc-emoji">🩺</span><h3>社区健康分</h3><span class="cc-sub">综合社群健康度</span></div>
-        <div class="cc-overview" id="healthSection" data-page-node-id="tGJWQgDQbIq7HQ6plW4w1s"></div>
-      </section>
-
-      <!-- 5. 核心运营指标 -->
-      <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">05</span><span class="cc-emoji">📊</span><h3>核心运营指标</h3><span class="cc-sub">近 30 天趋势</span></div>
-        <div class="kpi-wrap" id="kpiSection"></div>
+        <div class="cc-sec-head"><span class="cc-num">04</span><span class="cc-emoji">🩺</span><h3>社区健康 & 核心指标</h3><span class="cc-sub">健康评分 + 运营 KPI</span></div>
+        <div class="health-kpi-merged" id="healthKpiSection">
+          <div id="healthSection" data-page-node-id="tGJWQgDQbIq7HQ6plW4w1s"></div>
+          <div id="kpiSection"></div>
+        </div>
       </section>
 
       <!-- 6. 本周洞察 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">06</span><span class="cc-emoji">💡</span><h3>本周洞察</h3><span class="cc-sub">玩家反馈 · 行动 · 预警</span></div>
+        <div class="cc-sec-head"><span class="cc-num">05</span><span class="cc-emoji">💡</span><h3>本周洞察</h3><span class="cc-sub">玩家反馈 · 行动 · 预警</span></div>
         <div class="insights-wrap" id="insights" data-page-node-id="Yryo9Id2WKHm5ohk1a93BT"></div>
       </section>
     </div>
@@ -2166,7 +2176,14 @@ function drawMultiChart(p){
 function renderPlatformCharts(data){
   const el=document.getElementById('charts');
   if(!el) return;
-  el.innerHTML=drawMultiChart(data.platforms);
+  const p=data.platforms;
+  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  el.innerHTML='<div class="charts-grid">'+order.map(k=>{
+    const pl=p[k]; if(!pl||!pl.history||pl.history.length<2) return '';
+    const wg=weeklyGrowth(pl);
+    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+    return '<div class="chart-card"><div class="chart-card-head"><div class="chart-card-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial)+'</div><div class="chart-card-name">'+esc(pl.name)+'</div><span class="chart-card-val">'+fmt(pl.value)+'</span></div>'+drawChart(pl.history,pl.color,[])+'</div>';
+  }).join('')+'</div>';
 }
 
 function renderCommandCenter(data){
@@ -3614,6 +3631,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
