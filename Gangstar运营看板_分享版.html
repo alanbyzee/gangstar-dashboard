@@ -1117,11 +1117,13 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
 /* ---- RIGHT: KPI Cards Grid (auto-fit) ---- */
 .fan .hk-kpi-col{flex:1;min-width:0}
-.fan .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.fan .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:stretch}
 .fan .kpi-wrap{margin:0}
 
 /* KPI card — strict 3-layer hierarchy */
-.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;height:100%}
+.fan .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;height:100%;box-sizing:border-box}
+/* body fills remaining space so footer is always pinned to the bottom */
+.fan .kpi .kpi-body{flex:1;display:flex;flex-direction:column;min-height:0}
 /* Layer 1: Name (top) */
 .fan .kpi .kpi-name{font-size:11.5px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;gap:5px}
 /* Layer 2: Value (center, prominent) */
@@ -1149,7 +1151,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 /* ===== responsive ===== */
 @media(max-width:1200px){
   .fan .hk-health-col{width:230px}
-  .fan .kpi-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  .fan .kpi-grid{grid-template-columns:repeat(5,1fr)}
 }
 @media(max-width:1100px){
   .fan{max-width:100%;padding:24px 20px 48px}
@@ -1157,7 +1159,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .charts-grid{grid-template-columns:repeat(3,1fr)}
   .fan .hk-layout{flex-direction:column}
   .fan .hk-health-col{width:100%}
-  .fan .kpi-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .fan .kpi-grid{grid-template-columns:repeat(5,1fr)}
 }
 @media(max-width:860px){
   .fan .fan-block{margin-bottom:44px}
@@ -1168,7 +1170,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .ins-grid{grid-template-columns:1fr}
   .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(2,1fr)}
-  .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .kpi-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:560px){
   .fan{padding:18px 14px 40px}
@@ -1178,7 +1180,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .hero-meta{gap:14px}
   .fan .hero-edit{margin-left:0}
   .fan .charts-grid{grid-template-columns:1fr}
-  .fan .kpi-grid{grid-template-columns:1fr}
+  .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
@@ -2310,7 +2312,7 @@ function renderCommandCenter(data){
       /* 右栏：KPI 网格 */
       +'<div class="hk-kpi-col"><div id="kpiSection" class="kpi-grid">'
       /* 5 个 KPI 卡（方法说明 + 含义解读） */
-      +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-note">'+k.note+'</div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
+      +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-body"><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-note">'+k.note+'</div></div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
       +'</div></div>'
       +'</div>';
   }
@@ -3676,6 +3678,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
