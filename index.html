@@ -1127,6 +1127,19 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 /* Data methodology subtitle */
 .fan .kpi .kpi-method{font-size:9.5px;color:var(--muted);font-weight:600;margin-top:4px;line-height:1.3;opacity:.8}
 
+/* Executive summary banner (rich takeaway) */
+.fan .hk-summary{display:flex;align-items:center;flex-wrap:wrap;gap:12px;background:linear-gradient(90deg,var(--brand-soft),var(--card2));border:1px solid var(--line);border-radius:14px;padding:13px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.fan .hk-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;font-weight:900;padding:6px 14px;border-radius:20px}
+.fan .hk-badge.green{background:rgba(22,163,74,.14);color:#15803d}
+.fan .hk-badge.amber{background:rgba(217,119,6,.16);color:#b45309}
+.fan .hk-badge.red{background:rgba(220,38,38,.14);color:#b91c1c}
+.fan .hk-sum-txt{font-size:12.5px;color:var(--ink);line-height:1.55;font-weight:600;flex:1;min-width:280px}
+.fan .hk-sum-txt b{color:var(--brand);font-weight:900}
+/* Health verdict tagline under score */
+.fan .health-verdict{font-size:10.5px;font-weight:800;color:var(--muted);margin-top:5px;text-align:center;line-height:1.35;padding:0 2px}
+/* KPI interpretation note */
+.fan .kpi .kpi-note{font-size:10px;font-weight:800;color:var(--brand);margin-top:5px;line-height:1.35;padding-top:5px;border-top:1px dashed var(--line2)}
+
 /* ===== responsive ===== */
 @media(max-width:1200px){
   .fan .hk-row1{grid-template-columns:180px repeat(2,1fr)}
@@ -2238,7 +2251,28 @@ function renderCommandCenter(data){
 
   const dimRow=(name,val,chg,up,sparkArr)=>'<div class="hdim"><div class="hd-name">'+name+(up>=0?'<span class="sdot green"></span>':'<span class="sdot red"></span>')+'</div><div class="hd-val">'+val+'</div><div class="hd-chg '+(up>=0?'hd-up':'hd-down')+'">'+(up>=0?'▲':'▼')+' '+chg+'</div><div class="hd-spark">'+sparkline(sparkArr)+'</div></div>';
 
-  // 4+5. 社区健康 & 核心指标（单行渲染 + 方法说明）
+  // 4+5. 社区健康 & 核心指标（单行渲染 + 执行摘要 + 含义解读）
+  // 健康分结论（数据驱动）
+  const dimDefs=[{k:'growthScore',name:'增长'},{k:'engScore',name:'互动'},{k:'sentScore',name:'情绪'},{k:'actScore',name:'活跃'},{k:'respScore',name:'响应'}];
+  const weakDims=dimDefs.filter(d=>h[d.k]<60).map(d=>d.name);
+  const strongDims=dimDefs.filter(d=>h[d.k]>=80).map(d=>d.name);
+  const verdictTxt=weakDims.length
+    ? (strongDims.length?strongDims.join('、')+'稳健，':'')+weakDims.join('、')+'偏弱'
+    : (strongDims.length?strongDims.join('、')+'强劲，':'')+'各项均衡稳健';
+  // 行动建议（来自真实数据）
+  let rec;
+  if(h.growRate<0) rec='排查回落平台流失原因，做定向内容补救';
+  else if(negTopic) rec='优先将「'+String(negTopic.topic).slice(0,18)+'」负面聚集话题排入 backlog';
+  else rec='维持当前节奏，放大头部平台势能';
+  // KPI 含义解读（每个指标意味着什么）
+  const target=Number(localStorage.getItem('gangstar_fan_target')||10000);
+  const overX=h.total>=target?Math.round(h.total/target):0;
+  kpis[0].note=overX?('已超首日 '+fmt(target)+' 目标 '+overX+'×'):'距首日目标 '+fmt(target);
+  kpis[1].note=best?('主要由 '+best.name+' 拉动（占周增 '+bestShare+'%）'):'暂无显著增长';
+  kpis[2].note=fbWeeks.length?(fbWeeks.length+' 周累计回收 · 近 30 天 '+fbItems+' 条'):'累计 '+fbItems+' 条';
+  kpis[3].note=nonNegPct>=80?'情绪面健康':nonNegPct>=65?'情绪面一般':'情绪承压';
+  kpis[4].note=sent.neg>15?('超 15% 预警线，需关注'):sent.neg>10?('接近 15% 预警线'):('安全（预警线 15%）');
+
   const hkEl=document.getElementById('healthKpiSection');
   if(hkEl){
     const hColor=h.status==='green'?'var(--ok)':h.status==='amber'?'var(--warn)':'var(--err)';
@@ -2250,12 +2284,17 @@ function renderCommandCenter(data){
       '非负占比':'正面% + 中性%（来自反馈情感分析）',
       '负面占比':'负面反馈 / 总反馈 × 100'
     };
-    hkEl.innerHTML='<div class="hk-row">'
-      /* 健康分卡（含5维度） */
+    hkEl.innerHTML='<div class="hk-summary">'
+        +'<span class="hk-badge '+h.status+'">健康度 '+h.overall+'/100 · '+h.label+'</span>'
+        +'<span class="hk-sum-txt">本周净增 <b>+'+fmt(h.wg)+'</b>（'+h.growRate+'%），整体'+verdictTxt+'；玩家情绪'+(sent.neg>15?'承压':'平稳')+'（负面 '+sent.neg+'%）。<b>建议：</b>'+rec+'。</span>'
+      +'</div>'
+      +'<div class="hk-row">'
+      /* 健康分卡（含5维度 + 结论标签） */
       +'<div id="healthSection"><div class="health"><div class="health-main">'
         +'<div class="health-score" style="color:'+hColor+'">'+h.overall+'<small>/100</small></div>'
         +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
         +'<div class="health-label">综合评分 · 5维加权</div>'
+        +'<div class="health-verdict">'+verdictTxt+'</div>'
         +'</div>'
         +'<div class="health-dims">'
           +dimRow('增长',h.growthScore,(h.growRate>0?'+':'')+h.growRate+'%',h.growRate,dimSpark(h.growthScore,spark))
@@ -2264,8 +2303,8 @@ function renderCommandCenter(data){
           +dimRow('活跃',h.actScore,'+3.1%',1,dimSpark(h.actScore))
           +dimRow('响应',h.respScore,'+1.5%',1,dimSpark(h.respScore))
         +'</div></div></div>'
-      /* 5 个 KPI 卡（带方法说明） */
-      +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
+      /* 5 个 KPI 卡（方法说明 + 含义解读） */
+      +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-note">'+k.note+'</div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
       +'</div>';
   }
 
@@ -3630,6 +3669,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
