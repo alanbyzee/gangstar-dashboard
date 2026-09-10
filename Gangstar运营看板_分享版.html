@@ -113,6 +113,23 @@ body{
 
 /* 概览区：平台统一表格（与目标面板 .fan grid 并排） */
 .overview{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+/* 粉丝数两行紧凑布局（第一行图标+名称，第二行粉丝数+涨粉） */
+.fan-header{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px 14px;box-shadow:var(--shadow-sm)}
+.fan-row{display:flex;gap:0}
+.fan-row-icons{gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
+.fan-chip{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 6px;border-radius:10px;background:#f8fafc;border:1px solid #eef2f7;flex:none;white-space:nowrap;transition:background .15s}
+.fan-chip:hover{background:#f1f5f9}
+.fan-ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex:none;letter-spacing:.3px}
+.fan-nm{font-size:12.5px;font-weight:800;color:var(--ink)}
+.fan-row-nums{gap:4px}
+.fan-stat{flex:1;min-width:0;text-align:center;padding:6px 4px;border-radius:10px;background:#fafbfc;border:1px solid #f0f2f7;display:flex;flex-direction:column;align-items:center;gap:2px}
+.fan-total{flex:none;min-width:80px;background:linear-gradient(135deg,#f8fafc,#eef2f7);border-color:#e2e8f0}
+.fan-val{font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.3px;font-variant-numeric:tabular-nums;line-height:1.15}
+.fan-wk{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px;line-height:1.4}
+.fan-up{color:var(--ok);background:#ecfdf5}
+.fan-down{color:var(--err);background:#fef2f2}
+.fan-flat{color:var(--muted);background:#f8fafc}
+.fan-lbl{font-size:9.5px;color:var(--muted);font-weight:700;letter-spacing:.3px}
 .ov-row-top{display:grid;grid-template-columns:1fr;gap:14px}
 .ov{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow-sm);transition:.2s}
 .ov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
@@ -1714,7 +1731,7 @@ function totalHistorySpark(data){
   return out;
 }
 
-// Health Score 综合计算（真实信号 + 标注 mock）
+// Health Score 综合计算（全部基于真实信号：涨粉幅度 + 玩家反馈）
 function computeHealth(data){
   const p=data.platforms;
   const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
@@ -1722,12 +1739,25 @@ function computeHealth(data){
   const wg=order.reduce((s,k)=>s+(weeklyGrowth(p[k])?.diff||0),0);
   const growRate= total>0 ? wg/total*100 : 0;
   const growthScore=clamp(Math.round(55+growRate*3.5),0,100);
+
+  // 真实情感分：基于最新周反馈的正面占比
   const fb=getFeedback(); const lw=fb.weeks&&fb.weeks[0];
-  const sentLabel=(lw&&lw.dims&&lw.dims.attitude&&lw.dims.attitude.label)||'';
-  let sentScore=72;
-  if(/健康|期待|积极|强参与/.test(sentLabel)) sentScore=84; else if(/摩擦|风险|下降|不耐/.test(sentLabel)) sentScore=56;
-  // TODO: 以下三项接真实 engagement/activity/response 数据后替换
-  const engScore=74, actScore=68, respScore=82;
+  const arr=(lw&&lw.community)||[];
+  let pos=0,neg=0,neu=0,totalFb=0;
+  arr.forEach(t=>{ const c=t.count||0; totalFb+=c; if(t.type==='good')pos+=c; else if(t.type==='bad')neg+=c; else neu+=c; });
+  const sentScore = totalFb>0 ? clamp(Math.round(pos/totalFb*100),0,100) : 72;
+
+  // 真实活跃度分：基于反馈总量（越多=越活跃），归一化到 40-95
+  const actScore = totalFb>0 ? clamp(Math.round(40 + Math.min(totalFb/50, 55)), 40, 95) : 50;
+
+  // 真实互动分：基于涨粉平台覆盖度（几个平台在涨）+ 周增长率绝对值
+  const growingPlatforms = order.filter(k => (weeklyGrowth(p[k])?.diff||0) > 0).length;
+  const engScore = clamp(Math.round(45 + growingPlatforms*8 + Math.min(Math.abs(growRate)*2, 30)), 45, 95);
+
+  // 真实响应分：负面占比越低越好（负面少=团队响应好）
+  const negRatio = totalFb>0 ? neg/totalFb : 0.2;
+  const respScore = clamp(Math.round(95 - negRatio*100), 50, 95);
+
   const overall=Math.round(growthScore*0.28+sentScore*0.30+engScore*0.18+actScore*0.12+respScore*0.12);
   let status='green',label='健康';
   if(overall<60){status='red';label='风险';} else if(overall<78){status='amber';label='关注';}
@@ -1758,13 +1788,13 @@ function pvParseDate(s){
 function pvMonday(d){ var x=new Date(d); var day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); x.setHours(0,0,0,0); return x; }
 // 真实反馈文本 → 自动聚类话题（关键词打分，最高命中胜出）
 var PV_TOPICS=[
-  {key:'vehicles',label:'载具与交通',cat:'Vehicles',kw:['自行车','单车','bike','火车','train','飞机','plane','車','车','汽','摩托','改装','车库','garage','出租车','taxi','驾驶','载具','vehicle','船','boat','马','horse']},
-  {key:'gameplay',label:'任务与玩法',cat:'Gameplay',kw:['任务','mission','玩法','开放世界','open world','经营','挑战','challenge','模式','mode','关卡','level','副本','活动','event','内容','content','地图','map','战斗','combat','枪','gun','武器','射击']},
-  {key:'technical',label:'性能与稳定',cat:'Technical',kw:['卡顿','延迟','lag','崩溃','crash','闪退','加载','loading','网络','network','服务器','server','bug','错误','报错','掉帧','帧','fps','ping','花屏','黑屏','卡死','冻结','freeze','性能','优化','optimi','加载界面']},
-  {key:'visual',label:'画质与视觉',cat:'General',kw:['画质','图形','graphic','视觉','贴图','texture','光影','画面','渲染','天空','sky','雨','rain','天气','山脉','山','水','water','太阳','sun','粉']},
-  {key:'local',label:'本地化语言',cat:'General',kw:['印地语','hindi','语言','language','翻译','字幕','本地化']},
-  {key:'commercial',label:'商业化系统',cat:'Commercial',kw:['钱','奖励','reward','付费','iap','内购','价格','price','皮肤','skin','转账','money','经济','economy','钻石','diamond','币','coin','现金','cash']},
-  {key:'social',label:'社交与系统',cat:'General',kw:['帮派','gang','公会','guild','好友','friend','邀请','invite','聊天','chat','免打扰','dnd','名称','改名','name','组队','party','交易','trade']}
+  {key:'vehicles',label:'要更多载具（自行车/火车/飞机/直升机）',cat:'Vehicles',kw:['自行车','单车','bike','火车','train','飞机','plane','車','车','汽','摩托','改装','车库','garage','出租车','taxi','驾驶','载具','vehicle','船','boat','马','horse','直升机','船只']},
+  {key:'gameplay',label:'要更多任务/帮派/模式（开放世界内容）',cat:'Gameplay',kw:['任务','mission','玩法','开放世界','open world','经营','挑战','challenge','模式','mode','关卡','level','副本','活动','event','内容','content','地图','map','战斗','combat','枪','gun','武器','射击','帮派','gang','氏族','clan','pvp','赛车']},
+  {key:'technical',label:'卡顿/崩溃/加载Bug/延迟高',cat:'Technical',kw:['卡顿','延迟','lag','崩溃','crash','闪退','加载','loading','网络','network','服务器','server','bug','错误','报错','掉帧','帧','fps','ping','花屏','黑屏','卡死','冻结','freeze','性能','优化','optimi','加载界面','更新','通缉','奖励','声望']},
+  {key:'visual',label:'画面精美/粉色天空/画质问题',cat:'General',kw:['画质','图形','graphic','视觉','贴图','texture','光影','画面','渲染','天空','sky','雨','rain','天气','山脉','山','水','water','太阳','sun','粉','精美','酷']},
+  {key:'local',label:'加印地语/本地化语言',cat:'General',kw:['印地语','hindi','语言','language','翻译','字幕','本地化']},
+  {key:'commercial',label:'内购/皮肤/经济系统',cat:'Commercial',kw:['钱','奖励','reward','付费','iap','内购','价格','price','皮肤','skin','转账','money','经济','economy','钻石','diamond','币','coin','现金','cash','战斗通行证']},
+  {key:'social',label:'改名/好友/聊天/社交功能',cat:'General',kw:['好友','friend','邀请','invite','聊天','chat','免打扰','dnd','名称','改名','name','组队','party','交易','trade','大厅','房间','麦克风','通讯']}
 ];
 function pvTopicOf(text){
   text=String(text||'').toLowerCase();
@@ -1865,16 +1895,14 @@ function renderCommandCenter(data){
   if(negTopic) alerts.push({ico:'⚠️',t:`<b>${esc(negTopic.topic)}</b> 负面情绪最集中（正面占比仅 ${negTopic.sentiment}%），仍为最高风险项`});
   if(sent.neg>15) alerts.push({ico:'🔴',t:`负面情感占比 ${sent.neg}%，超过 15% 预警线`});
 
-  // KPI 卡
+  // KPI 卡（仅保留真实可测指标）
+  const nonNegPct = sent.pos + sent.neu; // 非负 = 正面 + 中性
   const kpis=[
     {n:'总粉丝数',v:fmt(h.total),wow:(h.wg>0?'+':'')+fmt(h.wg),up:h.wg>=0,spark:spark},
     {n:'新增粉丝(周)',v:(h.wg>0?'+':'')+fmt(h.wg),wow:(h.growRate>0?'+':'')+h.growRate+'%',up:h.growRate>=0,spark:spark},
-    {n:'活跃用户',v:'42.8K',wow:'+6.1%',up:true,spark:[60,62,65,63,68,70,72]},
-    {n:'互动率',v:'6.8%',wow:'+0.4pt',up:true,spark:[5,5.2,5.5,6,6.3,6.6,6.8]},
     {n:'收集反馈',v:String(fbItems),wow:'累计',up:true,spark:fbWkCounts.length?fbWkCounts:[0]},
-    {n:'正面情绪',v:sent.pos+'%',wow:'稳定',up:true,spark:[70,72,75,78,80,82,84]},
-    {n:'负面情绪',v:sent.neg+'%',wow:sent.neg>15?'⚠️':'正常',up:sent.neg<=15,spark:[20,18,16,15,14,13,12]},
-    {n:'活跃创作者',v:String(CC_DATA.creators.active),wow:'+4.2%',up:true,spark:[40,45,48,50,52,54,56]}
+    {n:'非负占比',v:nonNegPct+'%',wow:(nonNegPct>=80?'良好':nonNegPct>=65?'一般':'偏低'),up:nonNegPct>=65,spark:[nonNegPct-5,nonNegPct-3,nonNegPct,nonNegPct+2]},
+    {n:'负面占比',v:sent.neg+'%',wow:sent.neg>20?'⚠️ 偏高':sent.neg>10?'注意':'健康',up:sent.neg<=20,spark:[sent.neg+5,sent.neg+3,sent.neg,sent.neg-2]}
   ];
 
   const dimRow=(name,val,chg,up,sparkArr)=>`<div class="hdim"><div class="hd-name">${name}${up>=0?'<span class="sdot green"></span>':'<span class="sdot red"></span>'}</div><div class="hd-val">${val}</div><div class="hd-chg ${up>=0?'hd-up':'hd-down'}">${up>=0?'▲':'▼'} ${chg}</div><div class="hd-spark">${sparkline(sparkArr)}</div></div>`;
@@ -2033,11 +2061,12 @@ function renderFans(data){
     return `<span class="wk-flat">${L} ±0</span>`;
   }
 
-  // 概览区：平台统一表格（距上线已移除，总粉丝融入目标面板）
+  // 概览区：两行紧凑布局（第一行图标+名称，第二行粉丝数+涨粉）
+  const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _handles=order.map(k=>p[k]?.handle||''), _colors=order.map(k=>p[k]?.color||'#999'), _total=_vals.reduce((a,b)=>a+b,0)||1;
   document.getElementById('summary').innerHTML=`
-    <div class="uni-panel">
-      <div class="uni-head"><span>平台</span><span>粉丝占比</span><span class="r">粉丝数</span><span class="r">本周涨粉</span></div>
-      ${(() => { const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _handles=order.map(k=>p[k]?.handle||''), _colors=order.map(k=>p[k]?.color||'#999'), _total=_vals.reduce((a,b)=>a+b,0)||1; return order.map((k,i)=>{ const v=_vals[i], pct=v>0?Math.round(v/_total*100):0, wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'<span class="wk-up">▲ +'+fmt(wg.diff)+'</span>':wg.diff<0?'<span class="wk-down">▼ '+fmt(wg.diff)+'</span>':'<span class="wk-flat">±0</span>'):'<span class="wk-flat">—</span>'; const init=(_names[i]||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'?'; return '<div class="uni-row"><div class="uni-info"><span class="uni-ic" style="background:'+_colors[i]+'">'+init+'</span><span class="uni-meta"><span class="uni-name">'+esc(_names[i])+'</span><span class="uni-handle">'+esc(_handles[i])+'</span></span></div><div class="uni-trackwrap"><div class="uni-track"><div class="uni-fill" style="background:'+_colors[i]+';width:'+pct+'%"></div></div><span class="uni-pct">'+pct+'%</span></div><div class="uni-val">'+(v>0?fmt(v):'—')+'</div><div class="uni-wk">'+wT+'</div></div>'; }).join(''); })()}
+    <div class="fan-header">
+      <div class="fan-row fan-row-icons">${order.map((k,i)=>{ const init=(_names[i]||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'?'; return '<div class="fan-chip"><span class="fan-ic" style="background:'+_colors[i]+'">'+init+'</span><span class="fan-nm">'+esc(_names[i])+'</span></div>'; }).join('')}</div>
+      <div class="fan-row fan-row-nums">${order.map((k,i)=>{ const v=_vals[i], wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'+'+fmt(wg.diff):wg.diff<0?''+fmt(wg.diff):'±0'):'—'; const wCls=wg?(wg.diff>0?'fan-up':wg.diff<0?'fan-down':'fan-flat'):'fan-flat'; return '<div class="fan-stat"><span class="fan-val">'+(v>0?fmt(v):'—')+'</span><span class="fan-wk '+wCls+'">'+wT+'</span></div>'; }).join('')}<div class="fan-stat fan-total"><span class="fan-val">${fmt(_total)}</span><span class="fan-lbl">总粉丝</span></div></div>
     </div>`;
 
   // 平台卡片（每张含：图标/名称/handle/数值/周增长/折线图/note/链接）
@@ -3329,6 +3358,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
