@@ -113,23 +113,42 @@ body{
 
 /* 概览区：平台统一表格（与目标面板 .fan grid 并排） */
 .overview{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
-/* 粉丝数两行紧凑布局（第一行图标+名称，第二行粉丝数+涨粉） */
-.fan-header{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px 14px;box-shadow:var(--shadow-sm)}
-.fan-row{display:flex;gap:0}
-.fan-row-icons{gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
-.fan-chip{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 6px;border-radius:10px;background:#f8fafc;border:1px solid #eef2f7;flex:none;white-space:nowrap;transition:background .15s}
-.fan-chip:hover{background:#f1f5f9}
-.fan-ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex:none;letter-spacing:.3px}
-.fan-nm{font-size:12.5px;font-weight:800;color:var(--ink)}
-.fan-row-nums{gap:4px}
-.fan-stat{flex:1;min-width:0;text-align:center;padding:6px 4px;border-radius:10px;background:#fafbfc;border:1px solid #f0f2f7;display:flex;flex-direction:column;align-items:center;gap:2px}
-.fan-total{flex:none;min-width:80px;background:linear-gradient(135deg,#f8fafc,#eef2f7);border-color:#e2e8f0}
-.fan-val{font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.3px;font-variant-numeric:tabular-nums;line-height:1.15}
-.fan-wk{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px;line-height:1.4}
-.fan-up{color:var(--ok);background:#ecfdf5}
-.fan-down{color:var(--err);background:#fef2f2}
-.fan-flat{color:var(--muted);background:#f8fafc}
-.fan-lbl{font-size:9.5px;color:var(--muted);font-weight:700;letter-spacing:.3px}
+/* ===== 粉丝监控顶部：单行紧凑仪表盘（健康分 | 总粉丝 | 平台快览 | KPI pills） ===== */
+.fan-header{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+/* 健康分徽章（左侧） */
+.fh-health{display:flex;align-items:center;gap:10px;flex:none;padding-right:16px;border-right:2px solid #eef2f7}
+.fh-score{font-size:32px;font-weight:900;line-height:1;letter-spacing:-1px}
+.fh-score-lbl{font-size:11px;color:var(--muted);font-weight:700;line-height:1.2;text-align:center}
+.fh-meta{font-size:10px;color:#94a3b8;font-weight:600}
+/* 总粉丝（中间） */
+.fh-total-block{flex:none;min-width:160px}
+.fh-total-num{font-size:26px;font-weight:900;color:var(--ink);letter-spacing:-.5px;line-height:1.1}
+.fh-total-delta{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:3px;margin-top:2px}
+.fh-d-up{color:#065f46;background:#ecfdf5}.fh-d-down{color:#991b1b;background:#fef2f2}.fh-d-flat{color:#64748b;background:#f8fafc}
+/* 平台快速数字（弹性区） */
+.fh-platforms{display:flex;gap:6px;flex:1;min-width:0;overflow-x:auto;padding-bottom:2px}
+.fh-plat{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 10px;border-radius:10px;background:#f8fafc;border:1px solid #f0f2f7;flex:none;min-width:72px;transition:background .15s}
+.fh-plat:hover{background:#f1f5f9}
+.fh-plat-ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:10px;letter-spacing:.3px}
+.fh-plat-nm{font-size:10px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px;text-align:center}
+.fh-plat-val{font-size:14px;font-weight:900;color:var(--ink);letter-spacing:-.3px;font-variant-numeric:tabular-nums;line-height:1.15}
+.fh-plat-wk{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;line-height:1.3}
+/* KPI pills（右侧） */
+.fh-kpis{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.fh-kpi{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 12px;border-radius:10px;border:1px solid #eef2f7;background:#fafbfc;min-width:64px}
+.fh-kpi-v{font-size:15px;font-weight:900;color:var(--ink);letter-spacing:-.3px}
+.fh-kpi-l{font-size:9px;color:var(--muted);font-weight:700;white-space:nowrap}
+/* ===== 统一折线图区（从平台卡片中提取） ===== */
+.charts-section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow-sm)}
+.charts-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.charts-head h3{margin:0;font-size:14px;font-weight:800;color:var(--ink)}
+.charts-head span{font-size:11px;color:var(--muted);font-weight:600}
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.chart-card{background:#fafbfc;border:1px solid #f0f2f7;border-radius:12px;padding:12px 14px}
+.chart-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.chart-card-ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex:none}
+.chart-card-name{font-size:13px;font-weight:800;color:var(--ink)}
+.chart-card .chart-area{background:#fff;border:1px solid #eef2f7;border-radius:8px;overflow:hidden}
 .ov-row-top{display:grid;grid-template-columns:1fr;gap:14px}
 .ov{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow-sm);transition:.2s}
 .ov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
@@ -964,6 +983,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
       <div class="insights" id="insights" data-page-node-id="Yryo9Id2WKHm5ohk1a93BT"></div>
 
       <div class="plat-grid" id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
+
+      <div class="charts-section" id="charts" data-page-node-id="chartsSection"></div>
     </div>
   </div>
   <div class="view scroll" id="view-feedback" data-page-node-id="6mXTomwoVcsT13rItCYRPl">
@@ -1856,6 +1877,28 @@ function derivePlayerVoice(rangeDays){
   return {total:total,pos:pos,neu:neu,neg:neg,act:act,catCnt:catCnt,topics:topics};
 }
 
+// ===== 统一折线图区：各平台增长趋势（从平台卡片中提取） =====
+function renderPlatformCharts(data){
+  const el=document.getElementById('charts');
+  if(!el) return;
+  const p=data.platforms;
+  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
+  el.innerHTML=`
+    <div class="charts-head">
+      <h3>📈 各平台粉丝趋势</h3>
+      <span>最近 ${FAN_DISPLAY_DAYS||30} 天</span>
+    </div>
+    <div class="charts-grid">${order.map(k=>{
+      const pl=p[k]; if(!pl) return '';
+      const hist=dedupeHistory(pl.history||[]);
+      const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+      return `<div class="chart-card">
+        <div class="chart-card-head"><span class="chart-card-ic" style="background:${pl.color}">${PLATFORM_ICONS[k]||initial}</span><span class="chart-card-name">${esc(pl.name)}</span></div>
+        ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
+      </div>`;
+    }).join('')}</div>`;
+}
+
 function renderCommandCenter(data){
   const el=document.getElementById('ccOverview');
   if(!el) return;
@@ -2061,15 +2104,38 @@ function renderFans(data){
     return `<span class="wk-flat">${L} ±0</span>`;
   }
 
-  // 概览区：两行紧凑布局（第一行图标+名称，第二行粉丝数+涨粉）
+  // 概览区：单行紧凑仪表盘（健康分 | 总粉丝+周增 | 平台快览 | KPI pills）
   const _vals=order.map(k=>p[k]?.value||0), _names=order.map(k=>p[k]?.name||k), _handles=order.map(k=>p[k]?.handle||''), _colors=order.map(k=>p[k]?.color||'#999'), _total=_vals.reduce((a,b)=>a+b,0)||1;
+  const h=computeHealth(data);
+  const sent=feedbackSentiment();
+  const nonNegPct = sent.pos + sent.neu;
+  const wg=h.wg||0, gr=h.growRate||0;
+
   document.getElementById('summary').innerHTML=`
     <div class="fan-header">
-      <div class="fan-row fan-row-icons">${order.map((k,i)=>{ const init=(_names[i]||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'?'; return '<div class="fan-chip"><span class="fan-ic" style="background:'+_colors[i]+'">'+init+'</span><span class="fan-nm">'+esc(_names[i])+'</span></div>'; }).join('')}</div>
-      <div class="fan-row fan-row-nums">${order.map((k,i)=>{ const v=_vals[i], wg=weeklyGrowth(p[k]); const wT=wg?(wg.diff>0?'+'+fmt(wg.diff):wg.diff<0?''+fmt(wg.diff):'±0'):'—'; const wCls=wg?(wg.diff>0?'fan-up':wg.diff<0?'fan-down':'fan-flat'):'fan-flat'; return '<div class="fan-stat"><span class="fan-val">'+(v>0?fmt(v):'—')+'</span><span class="fan-wk '+wCls+'">'+wT+'</span></div>'; }).join('')}<div class="fan-stat fan-total"><span class="fan-val">${fmt(_total)}</span><span class="fan-lbl">总粉丝</span></div></div>
+      <!-- 左：健康分 -->
+      <div class="fh-health">
+        <div>
+          <div class="fh-score" style="color:${h.status==='green'?'var(--ok)':h.status==='amber'?'var(--warn)':'var(--err)'}">${h.overall}<small style="font-size:13px;font-weight:700;color:var(--muted)">/100</small></div>
+          <div class="fh-score-lbl"><span class="sdot ${h.status}"></span>${h.label}</div>
+        </div>
+      </div>
+      <!-- 中：总粉丝 + 周增 -->
+      <div class="fh-total-block">
+        <div class="fh-total-num">${fmt(_total)}</div>
+        <div class="fh-total-delta ${wg>=0?'fh-d-up':wg<0?'fh-d-down':'fh-d-flat'}">${wg>=0?'▲':'▼'} ${Math.abs(wg)>0?(wg>0?'+':'')+fmt(wg):'±0'} 本周</div>
+      </div>
+      <!-- 弹性：各平台快览 -->
+      <div class="fh-platforms">${order.map((k,i)=>{ const v=_vals[i], w=weeklyGrowth(p[k]); const wd=w?.diff||0; const wcls=wd>0?'fh-d-up':wd<0?'fh-d-down':'fh-d-flat'; const init=(_names[i]||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'?'; return '<div class="fh-plat"><span class="fh-plat-ic" style="background:'+_colors[i]+'">'+init+'</span><span class="fh-plat-nm">'+esc(_names[i])+'</span><span class="fh-plat-val">'+(v>0?fmt(v):'—')+'</span><span class="fh-plat-wk '+wcls+'">'+(wd>0?'+':'')+fmt(wd)+'</span></div>'; }).join('')}</div>
+      <!-- 右：KPI pills -->
+      <div class="fh-kpis">
+        <div class="fh-kpi"><span class="fh-kpi-v">${nonNegPct}%</span><span class="fh-kpi-l">非负占比</span></div>
+        <div class="fh-kpi"><span class="fh-kpi-v" style="color:${sent.neg>20?'var(--err)':sent.neg>10?'var(--warn)':'var(--ok)'}">${sent.neg}%</span><span class="fh-kpi-l">负面占比</span></div>
+        <div class="fh-kpi"><span class="fh-kpi-v">${(getFeedback().weeks||[]).reduce(function(s,w){return s+((w.community||[]).concat(w.official||[])).reduce(function(a,it){return a+(Number(it.count)||0);},0);},0)}</span><span class="fh-kpi-l">收集反馈</span></div>
+      </div>
     </div>`;
 
-  // 平台卡片（每张含：图标/名称/handle/数值/周增长/折线图/note/链接）
+  // 平台卡片（纯数据：图标/名称/handle/数值/周增长/note/链接 —— 折线图已提取到 #charts 统一区）
   const el=document.getElementById('platforms');
   if(el){
     el.innerHTML=order.map(k=>{
@@ -2087,11 +2153,13 @@ function renderFans(data){
           <div class="pc-val">${fmt(pl.value)}<small>${esc(pl.label)}</small></div>
           ${wkTag(dailyGrowth(pl),'较昨日')}
         </div>
-        ${drawChart(hist,pl.color,PLATFORM_EVENTS[k])}
         ${pl.note?`<div class="pc-note">📌 ${esc(pl.note)}</div>`:''}
       </div>`;
     }).join('');
   }
+
+  // 统一折线图区（从各平台卡片中提取，放在 CC 下方）
+  renderPlatformCharts(data);
 
   // Command Center 首页头部（Health / KPI / Insights / Action / Alerts）
   renderCommandCenter(data);
@@ -3358,6 +3426,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
