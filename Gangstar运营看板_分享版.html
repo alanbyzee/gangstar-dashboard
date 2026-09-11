@@ -1049,8 +1049,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .hero-edit button{border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:5px 13px;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px}
 
 /* ===== 02 PLATFORM FAN BASE (metric grid) ===== */
-.fan .plat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:0}
-.fan .pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;transition:border-color .15s,transform .15s}
+.fan .plat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:0;align-items:stretch}
+.fan .pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;transition:border-color .15s,transform .15s;display:flex;flex-direction:column;height:100%;box-sizing:border-box}
 .fan .pc:hover{border-color:var(--brand);transform:translateY(-2px)}
 .fan .pc-bar{display:none}
 .fan .pc-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
@@ -1067,7 +1067,10 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .pc-share-bar{height:5px;background:#eef2f7;border-radius:5px;overflow:hidden}
 .fan .pc-share-bar i{display:block;height:100%;border-radius:5px;opacity:.9}
 .fan .pc-share-pct{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:5px;display:block}
-.fan .pc-note{font-size:10.5px;color:var(--warn);background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.28);border-radius:7px;padding:5px 8px;line-height:1.4;margin-top:9px}
+.fan .pc-chart{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);flex:1;display:flex;flex-direction:column;justify-content:center}
+.fan .pc-chart .chart-area{margin-top:0;background:var(--card2);border:1px solid var(--line2);border-radius:10px;padding:7px 5px 3px}
+.fan .pc-chart .chart-area svg{width:100%;height:auto;display:block}
+.fan .pc-note{font-size:10px;color:var(--warn);background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.28);border-radius:7px;padding:5px 8px;line-height:1.4;margin-top:auto;position:relative}
 
 /* ===== 03 FOLLOWER GROWTH (single large chart) ===== */
 .fan .charts-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow-sm);margin-bottom:0}
@@ -1228,21 +1231,15 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
       <!-- 1. 粉丝目标进度 -->
       <div class="goal-card" id="goalProgress" data-page-node-id="vFlte2Gw5sdZgu2pPtpFmm"></div>
 
-      <!-- 2. 各平台粉丝基数 -->
+      <!-- 2. 各平台粉丝基数与趋势分析（数值 + 折线图 合并卡片） -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>各平台粉丝基数</h3><span class="cc-sub">7 平台 · 按粉丝数降序</span></div>
+        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>各平台粉丝基数与趋势分析</h3><span class="cc-sub">7 平台 · 按粉丝数降序</span></div>
         <div class="plat-grid" id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
-      </section>
-
-      <!-- 3. 平台涨粉折线图 -->
-      <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">03</span><span class="cc-emoji">📈</span><h3>各平台涨粉趋势折线图</h3><span class="cc-sub">增长指数 · 跨平台对比</span></div>
-        <div class="charts-section" id="charts" data-page-node-id="chartsSection"></div>
       </section>
 
       <!-- 4. 社区健康 & 核心指标（合并板块） -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">04</span><span class="cc-emoji">🩺</span><h3>社区健康 & 核心指标</h3><span class="cc-sub">健康评分 + 运营 KPI</span></div>
+        <div class="cc-sec-head"><span class="cc-num">03</span><span class="cc-emoji">🩺</span><h3>社区健康 & 核心指标</h3><span class="cc-sub">健康评分 + 运营 KPI</span></div>
         <div class="health-kpi-merged" id="healthKpiSection">
           <div id="healthSection" data-page-node-id="tGJWQgDQbIq7HQ6plW4w1s"></div>
           <div id="kpiSection"></div>
@@ -1251,7 +1248,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <!-- 6. 本周洞察 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">05</span><span class="cc-emoji">💡</span><h3>本周洞察</h3><span class="cc-sub">玩家反馈 · 行动 · 预警</span></div>
+        <div class="cc-sec-head"><span class="cc-num">04</span><span class="cc-emoji">💡</span><h3>本周洞察</h3><span class="cc-sub">玩家反馈 · 行动 · 预警</span></div>
         <div class="insights-wrap" id="insights" data-page-node-id="Yryo9Id2WKHm5ohk1a93BT"></div>
       </section>
     </div>
@@ -2146,51 +2143,6 @@ function derivePlayerVoice(rangeDays){
   return {total:total,pos:pos,neu:neu,neg:neg,act:act,catCnt:catCnt,topics:topics};
 }
 
-// ===== 统一折线图区：各平台增长趋势（从平台卡片中提取） =====
-function drawMultiChart(p){
-  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort(function(a,b){return (p[b]&&p[b].value||0)-(p[a]&&p[a].value||0);});
-  var dset={};
-  order.forEach(function(k){(p[k]&&p[k].history||[]).forEach(function(h){dset[h.date]=1;});});
-  var dates=Object.keys(dset).sort();
-  var N=dates.length;
-  if(N<2) return '<div class="mc-empty">数据不足，无法绘制趋势图</div>';
-  var series=order.map(function(k){
-    var hist=dedupeHistory((p[k]&&p[k].history)||[]);
-    var map={}; hist.forEach(function(h){map[h.date]=h.value;});
-    var last=null; var vals=dates.map(function(d){ if(map[d]!=null) last=map[d]; return last; });
-    var base=vals[0]||1;
-    return {color:(p[k]&&p[k].color)||'#888', name:(p[k]&&p[k].name)||k, vals:vals.map(function(v){return base>0? v/base*100:0;}), cur:(p[k]&&p[k].value)||0, wg:weeklyGrowth(p[k])};
-  }).filter(function(s){return s.cur>0;});
-  var maxY=0; series.forEach(function(s){s.vals.forEach(function(v){if(v>maxY)maxY=v;});});
-  maxY=maxY||100;
-  var W=1000,H=280,PL=44,PR=14,PT=14,PB=30;
-  function X(i){return PL+(N<=1?0:i/(N-1))*(W-PL-PR);}
-  function Y(v){return PT+(1-v/maxY)*(H-PT-PB);}
-  var grid='';
-  for(var g=0;g<=4;g++){var gy=PT+(g/4)*(H-PT-PB); grid+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#222b39" stroke-width="1"/>';}
-  function fmtD(d){var pp=d.split('-');return pp[1]+'/'+pp[2];}
-  var xt=[]; [0,Math.floor((N-1)/2),N-1].forEach(function(i){xt.push('<text x="'+X(i)+'" y="'+(H-10)+'" fill="#8b97a8" font-size="11" text-anchor="middle">'+fmtD(dates[i])+'</text>');});
-  var yt='';
-  for(var g2=0;g2<=4;g2++){var val=Math.round(maxY*(1-g2/4));var gy2=PT+(g2/4)*(H-PT-PB); yt+='<text x="'+(PL-8)+'" y="'+(gy2+4)+'" fill="#8b97a8" font-size="10" text-anchor="end">'+val+'</text>';}
-  var paths=series.map(function(s){var pts=s.vals.map(function(v,i){return X(i)+','+Y(v);}).join(' '); return '<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>';}).join('');
-  var svg='<svg class="mc-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="各平台涨粉趋势">'+grid+yt+paths+xt.join('')+'</svg>';
-  var legend='<div class="mc-legend">'+series.map(function(s){var w=s.wg?(s.wg.diff>0?'+':'')+fmt(s.wg.diff):'—'; return '<span class="mc-leg"><i style="background:'+s.color+'"></i>'+esc(s.name)+' <b>'+fmt(s.cur)+'</b> <em class="'+(s.wg&&s.wg.diff>=0?'up':'down')+'">'+w+'</em></span>';}).join('')+'</div>';
-  return '<div class="mc">'+legend+svg+'<div class="mc-cap">增长指数（各平台首个记录点 = 100），便于跨平台对比增长动能 · 横轴为记录日期</div></div>';
-}
-
-function renderPlatformCharts(data){
-  const el=document.getElementById('charts');
-  if(!el) return;
-  const p=data.platforms;
-  const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
-  el.innerHTML='<div class="charts-grid">'+order.map(k=>{
-    const pl=p[k]; if(!pl||!pl.history||pl.history.length<2) return '';
-    const wg=weeklyGrowth(pl);
-    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-    return '<div class="chart-card"><div class="chart-card-head"><div class="chart-card-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial)+'</div><div class="chart-card-name">'+esc(pl.name)+'</div><span class="chart-card-val">'+fmt(pl.value)+'</span></div>'+drawChart(pl.history,pl.color,[])+'</div>';
-  }).join('')+'</div>';
-}
-
 function renderCommandCenter(data){
   const h=computeHealth(data);
   const sent=feedbackSentiment();
@@ -2436,7 +2388,6 @@ function renderFans(data){
   document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
   renderGoalProgress(data);
   renderPlatformCards(data);
-  renderPlatformCharts(data);
   renderCommandCenter(data);
 }
 
@@ -2474,7 +2425,7 @@ function renderGoalProgress(data){
   };
 }
 
-// ===== 2. 各平台粉丝基数 =====
+// ===== 2. 各平台粉丝基数与趋势（合并卡片：数值 + 折线图 + 备注） =====
 function renderPlatformCards(data){
   const el=document.getElementById('platforms'); if(!el) return;
   const p=data.platforms;
@@ -2486,7 +2437,15 @@ function renderPlatformCards(data){
     const share= total>0?Math.round(v/total*100):0;
     const wg=weeklyGrowth(pl);
     const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-    return '<div class="pc"><div class="pc-bar" style="background:'+pl.color+'"></div><div class="pc-head"><div class="pc-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial)+'</div><div class="pc-titles"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-handle">'+esc(pl.handle||'')+'</div></div><a class="pc-link" href="'+esc(pl.url)+'" target="_blank" rel="noopener" title="打开 '+esc(pl.name)+'">↗</a></div><div class="pc-valrow"><div class="pc-val">'+fmt(v)+'<small>粉丝</small></div>'+wkTag(wg,'本周')+'</div><div class="pc-share"><div class="pc-share-bar"><i style="width:'+share+'%;background:'+pl.color+'"></i></div><span class="pc-share-pct">占总粉丝 '+share+'%</span></div>'+(pl.note?('<div class="pc-note">📌 '+esc(pl.note)+'</div>'):'')+'</div>';
+    const chart=(pl.history&&pl.history.length>=2)?('<div class="pc-chart">'+drawChart(pl.history,pl.color,[])+'</div>'):'';
+    return '<div class="pc">'
+      +'<div class="pc-bar" style="background:'+pl.color+'"></div>'
+      +'<div class="pc-head"><div class="pc-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial)+'</div><div class="pc-titles"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-handle">'+esc(pl.handle||'')+'</div></div><a class="pc-link" href="'+esc(pl.url)+'" target="_blank" rel="noopener" title="打开 '+esc(pl.name)+'">↗</a></div>'
+      +'<div class="pc-valrow"><div class="pc-val">'+fmt(v)+'<small>粉丝</small></div>'+wkTag(wg,'本周')+'</div>'
+      +'<div class="pc-share"><div class="pc-share-bar"><i style="width:'+share+'%;background:'+pl.color+'"></i></div><span class="pc-share-pct">占总粉丝 '+share+'%</span></div>'
+      +chart
+      +(pl.note?('<div class="pc-note">📌 '+esc(pl.note)+'</div>'):'')
+      +'</div>';
   }).join('');
 }
 
@@ -3722,6 +3681,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
