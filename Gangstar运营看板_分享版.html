@@ -4324,6 +4324,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -7979,6 +7980,16 @@ function openWeekModal(){
   var SYNC_PATH="gangstar/state";
   var BACKUP_PATH="gangstar/backups";
   var DEL="__GST_DEL__";
+  /* ===== 本地服务器同步（Firebase 国内不可达时的可达后端） ===== */
+  var LOCAL_BASE="http://127.0.0.1:8787";
+  var localMode=false;
+  function lsGet(){return fetch(LOCAL_BASE+"/api/sync",{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){return j.keys||{};}).catch(function(){return null;});}
+  function lsSet(k,v){var d={};d[k]=(v===DEL?DEL:v);return fetch(LOCAL_BASE+"/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:d})}).then(function(r){return r.json();}).catch(function(){return {ok:false};});}
+  function lsBackup(data){return fetch(LOCAL_BASE+"/api/sync/backup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:data})}).then(function(r){return r.json();}).catch(function(){return {ok:false};});}
+  function lsBackups(){return fetch(LOCAL_BASE+"/api/sync/backups",{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){return j.list||[];}).catch(function(){return [];});}
+  function lsSetMany(obj){return fetch(LOCAL_BASE+"/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:obj})}).then(function(r){return r.json();}).catch(function(){return {ok:false};});}
+  function startLocalPolling(){setInterval(function(){lsGet().then(function(keys){if(keys!==null)applyRemote(keys);});},5000);}
+  function writeKey(k,v){ if(localMode) return lsSet(k,v); if(fbRef) return fbRef.child(k).set(v===DEL?DEL:v); return Promise.resolve(); }
   var SYNC_KEYS=["gangstar_sa_moves","gangstar_regional_moves","gangstar_hidden","gangstar_cancelled","gangstar_edits","gangstar_custom","gangstar_fan_target","gangstar_req_submitted","gangstar_delayed","gangstar_sa_order","gangstar_regional_order","gangstar_hashtag_history"];
   var MY_ID=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   var fbRef=null,fbReady=false,saveTimer=null,pending={},backupTimer=null;
@@ -7986,19 +7997,24 @@ function openWeekModal(){
   var _rm=localStorage.removeItem.bind(localStorage);
   localStorage.setItem=function(k,v){var r=_set(k,v);if(SYNC_KEYS.indexOf(k)>=0)schedule(k,false);return r;};
   localStorage.removeItem=function(k){var r=_rm(k);if(SYNC_KEYS.indexOf(k)>=0)schedule(k,true);return r;};
-  function schedule(k,remove){if(!fbReady||!fbRef)return;pending[k]=!!remove;if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(flush,400);}
+  function schedule(k,remove){if(!fbReady)return;pending[k]=!!remove;if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(flush,400);}
   function flush(){
-    if(!fbReady||!fbRef)return;
+    if(!fbReady)return;
     var pk=pending;pending={};var keys=Object.keys(pk);if(!keys.length)return;
-    var ops=keys.map(function(k){return pk[k]?fbRef.child(k).set(DEL):fbRef.child(k).set(localStorage.getItem(k));});
+    var ops=keys.map(function(k){return writeKey(k, pk[k]?DEL:localStorage.getItem(k));});
     writeMeta();
     Promise.all(ops).then(function(){backupSnapshot();}).catch(function(e){console.warn("[sync] push failed",e);});
   }
-  function writeMeta(){try{fbRef.child("__meta").set({writer:MY_ID,ts:Date.now()});}catch(e){}}
+  function writeMeta(){ if(localMode) return; try{fbRef.child("__meta").set({writer:MY_ID,ts:Date.now()});}catch(e){} }
   function pushAll(){
-    if(!fbReady||!fbRef){toast("未连接云端，改动仅存本地");return;}
+    if(!fbReady){toast(localMode?"本地服务未连接，改动仅存本地":"未连接云端，改动仅存本地");return;}
+    if(localMode){
+      var data={};SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);data[k]=(v===null?DEL:v);});
+      lsSetMany(data).then(function(){backupSnapshot();toast("已上传本地改动 ⇧");}).catch(function(e){console.warn("[sync] pushAll failed",e);toast("上传失败");});
+      return;
+    }
     var ops=[];
-    SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);ops.push(v===null?fbRef.child(k).set(DEL):fbRef.child(k).set(v));});
+    SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);ops.push(writeKey(k, v===null?DEL:v));});
     writeMeta();
     Promise.all(ops).then(function(){backupSnapshot();toast("已上传本地改动 ⇧");}).catch(function(e){console.warn("[sync] pushAll failed",e);toast("上传失败");});
   }
@@ -8023,7 +8039,12 @@ function openWeekModal(){
     }catch(e){}
   }
   function backupSnapshot(){
-    if(!fbReady||!fbRef)return;
+    if(!fbReady)return;
+    if(localMode){
+      var data={};SYNC_KEYS.forEach(function(k){try{data[k]=localStorage.getItem(k);}catch(e){data[k]=null;}});
+      lsBackup(data);
+      return;
+    }
     var data={};SYNC_KEYS.forEach(function(k){try{data[k]=localStorage.getItem(k);}catch(e){data[k]=null;}});
     var ts=Date.now();
     try{firebase.database().ref(BACKUP_PATH+"/"+ts).set({data:data,meta:{writer:MY_ID,ts:ts}});}catch(e){console.warn("[backup] failed",e);}
@@ -8065,7 +8086,19 @@ function openWeekModal(){
     b.style.background=ok?"rgba(16,185,129,.95)":"rgba(120,120,128,.92)";
   }
   function openBackups(){
-    if(!fbReady){toast("未连接云端，无法读取备份");return;}
+    if(!fbReady){toast(localMode?"本地服务未连接，无法读取备份":"未连接云端，无法读取备份");return;}
+    if(localMode){
+      lsBackups().then(function(list){
+        var html='<div id="bkMask" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10001;display:flex;align-items:center;justify-content:center" onclick="if(event.target.id===\'bkMask\')this.remove()"><div style="background:#fff;border-radius:14px;width:380px;max-height:72vh;overflow:auto;padding:18px;font:13px system-ui;color:#111"><h3 style="margin:0 0 10px">本地备份（最近 '+Math.min(list.length,30)+' 条）</h3><div id="bkList">';
+        if(!list.length)html+='<p style="color:#888">暂无备份</p>';
+        list.slice(0,30).forEach(function(it){var d=new Date(it.ts);var t=d.toLocaleString();html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #eee"><span>'+t+'<br><span style="color:#888;font-size:11px">'+it.count+' 个数据块</span></span><button data-ts="'+it.ts+'" style="border:none;background:#4f46e5;color:#fff;border-radius:8px;padding:5px 10px;cursor:pointer">恢复</button></div>';});
+        html+='</div><p style="color:#888;font-size:11px;margin-top:10px">恢复会把该时间点数据写回本地服务并同步</p></div></div>';
+        document.body.insertAdjacentHTML('beforeend',html);
+        var bkList=document.getElementById('bkList');
+        bkList.addEventListener('click',function(e){var b=e.target.closest('button[data-ts]');if(!b)return;var ts=Number(b.getAttribute('data-ts'));var item=list.filter(function(x){return x.ts===ts;})[0];var data=(item&&item.data)||{};SYNC_KEYS.forEach(function(k){if(data[k]!==undefined&&data[k]!==null&&data[k]!==DEL)writeKey(k,data[k]);else writeKey(k,DEL);});writeMeta();backupSnapshot();var m=document.getElementById('bkMask');if(m)m.remove();toast('已恢复备份 '+new Date(ts).toLocaleString());});
+      });
+      return;
+    }
     try{firebase.database().ref(BACKUP_PATH).once("value",function(snap){
       var o=snap.val()||{};var ks=Object.keys(o).map(Number).sort(function(a,b){return b-a;});
       var html='<div id="bkMask" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10001;display:flex;align-items:center;justify-content:center" onclick="if(event.target.id===\'bkMask\')this.remove()"><div style="background:#fff;border-radius:14px;width:380px;max-height:72vh;overflow:auto;padding:18px;font:13px system-ui;color:#111"><h3 style="margin:0 0 10px">云端备份（最近 '+Math.min(ks.length,30)+' 条）</h3><div id="bkList">';
@@ -8096,6 +8129,20 @@ function openWeekModal(){
   }
   function init(){
     ui();
+    lsGet().then(function(keys){
+      if(keys!==null){
+        localMode=true; fbReady=true;
+        applyRemote(keys);
+        setBadge(true);
+        startLocalPolling();
+        try{backupTimer=setInterval(backupSnapshot,5*60*1000);window.addEventListener("beforeunload",backupSnapshot);}catch(e){}
+        toast("已连接本地服务，改动可同步到本机");
+        return;
+      }
+      fallbackFirebase();
+    }).catch(function(){ fallbackFirebase(); });
+  }
+  function fallbackFirebase(){
     loadFirebaseScripts(function(ok){
       if(ok&&typeof firebase!=="undefined"){
         try{
