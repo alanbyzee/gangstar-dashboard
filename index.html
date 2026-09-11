@@ -1093,34 +1093,36 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .health-kpi-merged #kpiSection{margin:0}
 
 /* Main container: left health col + right KPI grid */
-.fan .hk-layout{display:flex;gap:18px;align-items:stretch}
+.fan .hk-layout{display:grid;grid-template-columns:296px 1fr;gap:16px;align-items:stretch}
 
 /* ---- LEFT: Health Score Card (fixed width) ---- */
-.fan .hk-health-col{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:0}
-.fan .health{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 16px;box-shadow:var(--shadow-sm);height:100%;gap:0}
-.fan .health-main{display:flex;flex-direction:column;align-items:center;text-align:center;padding-bottom:14px;border-bottom:1px solid var(--line2);gap:3px}
-.fan .health-score{font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
-.fan .health-score small{font-size:15px;color:var(--muted);font-weight:700}
-.fan .health-status{font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;margin-top:2px}
+.fan .hk-health-col{min-width:0;display:flex;flex-direction:column;gap:0}
+.fan .health{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow-sm);height:100%;box-sizing:border-box;gap:0;grid-template-columns:none}
+/* 顶部：分数(左) + 状态/结论(右) 横向排布，压缩纵向高度 */
+.fan .health-main{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;gap:14px;padding:0 0 12px 0;border:none;border-bottom:1px solid var(--line2)}
+.fan .health-left{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0}
+.fan .health-right{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
+.fan .health-score{font-size:38px;font-weight:900;line-height:1.05;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
+.fan .health-score small{font-size:14px;color:var(--muted);font-weight:700}
+.fan .health-status{font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;margin-top:0}
 .fan .health-status.green{background:rgba(22,163,74,.12);color:#15803d}
 .fan .health-status.amber{background:rgba(217,119,6,.12);color:#b45309}
 .fan .health-status.red{background:rgba(220,38,38,.12);color:#b91c1c}
-.fan .health-label{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:4px}
-.fan .health-verdict{font-size:11px;font-weight:800;color:var(--muted);margin-top:6px;line-height:1.4;padding:0 4px}
+.fan .health-label{font-size:9.5px;color:var(--muted);font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:3px}
+.fan .health-verdict{font-size:10.5px;font-weight:800;color:var(--muted);margin-top:0;line-height:1.4;padding:0;text-align:left}
 
-/* Dimension rows inside health card */
-.fan .health-dims{display:flex;flex-direction:column;gap:0;padding-top:12px;flex:1}
-.fan .hdim{display:flex;align-items:center;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--line2)}
-.fan .hdim:last-child{border-bottom:none}
-.fan .hdim .hd-name{font-size:11px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:4px}
-.fan .hdim .hd-val{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
-.fan .hdim .hd-chg{font-size:10px;font-weight:700;margin-left:auto}
+/* Dimension pills inside health card — 两列紧凑网格 */
+.fan .health-dims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding-top:12px;align-content:start;flex:1}
+.fan .hdim{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;padding:6px 9px;background:var(--card2);border:none;border-radius:8px}
+.fan .hdim .hd-name{font-size:10.5px;color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:flex-start;gap:4px;white-space:nowrap;flex:none}
+.fan .hdim .hd-val{font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;margin-left:auto}
+.fan .hdim .hd-chg{font-size:9.5px;font-weight:700;white-space:nowrap}
 .fan .hdim .hd-up{color:var(--ok)} .fan .hdim .hd-down{color:var(--err)}
 .fan .hdim .hd-spark{display:none}
 
 /* ---- RIGHT: KPI Cards Grid (auto-fit) ---- */
-.fan .hk-kpi-col{flex:1;min-width:0}
-.fan .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:stretch}
+.fan .hk-kpi-col{min-width:0;display:flex;flex-direction:column}
+.fan .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:stretch;flex:1;min-height:0}
 .fan .kpi-wrap{margin:0}
 
 /* KPI card — strict 3-layer hierarchy */
@@ -1143,7 +1145,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .kpi .kpi-note{font-size:10.5px;font-weight:800;color:var(--brand);margin-top:6px;line-height:1.4;padding-top:8px;border-top:1px dashed var(--line2)}
 
 /* ---- Executive Summary Banner ---- */
-.fan .hk-summary{display:flex;align-items:center;flex-wrap:wrap;gap:12px;background:linear-gradient(90deg,var(--brand-soft),var(--card2));border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin-bottom:18px;box-shadow:var(--shadow-sm)}
+.fan .hk-summary{display:flex;align-items:center;flex-wrap:wrap;gap:12px;background:linear-gradient(90deg,var(--brand-soft),var(--card2));border:1px solid var(--line);border-radius:12px;padding:13px 18px;margin-bottom:16px;box-shadow:var(--shadow-sm);width:100%;box-sizing:border-box}
 .fan .hk-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;font-weight:900;padding:6px 14px;border-radius:20px}
 .fan .hk-badge.green{background:rgba(22,163,74,.14);color:#15803d}
 .fan .hk-badge.amber{background:rgba(217,119,6,.16);color:#b45309}
@@ -1153,15 +1155,16 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
 /* ===== responsive ===== */
 @media(max-width:1200px){
-  .fan .hk-health-col{width:230px}
+  .fan .hk-layout{grid-template-columns:264px 1fr}
+  .fan .health-dims{grid-template-columns:1fr}
   .fan .kpi-grid{grid-template-columns:repeat(5,1fr)}
 }
 @media(max-width:1100px){
   .fan{max-width:100%;padding:24px 20px 48px}
   .fan .plat-grid{grid-template-columns:repeat(3,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(3,1fr)}
-  .fan .hk-layout{flex-direction:column}
-  .fan .hk-health-col{width:100%}
+  .fan .hk-layout{grid-template-columns:1fr}
+  .fan .health-dims{grid-template-columns:repeat(5,1fr)}
   .fan .kpi-grid{grid-template-columns:repeat(5,1fr)}
 }
 @media(max-width:860px){
@@ -1174,6 +1177,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(2,1fr)}
   .fan .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .fan .health-dims{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:560px){
   .fan{padding:18px 14px 40px}
@@ -1184,6 +1188,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .hero-edit{margin-left:0}
   .fan .charts-grid{grid-template-columns:1fr}
   .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .health-dims{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
@@ -2249,10 +2254,14 @@ function renderCommandCenter(data){
       +'<div class="hk-layout">'
       /* 左栏：健康分卡（含5维度 + 结论标签） */
       +'<div class="hk-health-col"><div id="healthSection"><div class="health"><div class="health-main">'
+        +'<div class="health-left">'
         +'<div class="health-score" style="color:'+hColor+'">'+h.overall+'<small>/100</small></div>'
-        +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
         +'<div class="health-label">综合评分 · 5维加权</div>'
+        +'</div>'
+        +'<div class="health-right">'
+        +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
         +'<div class="health-verdict">'+verdictTxt+'</div>'
+        +'</div>'
         +'</div>'
         +'<div class="health-dims">'
           +dimRow('增长',h.growthScore,(h.growRate>0?'+':'')+h.growRate+'%',h.growRate,dimSpark(h.growthScore,spark))
@@ -3681,6 +3690,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
