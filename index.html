@@ -4326,6 +4326,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -8077,8 +8078,23 @@ function openWeekModal(){
     bk.textContent="🕘 备份";
     bk.style.cssText="border:none;cursor:pointer;padding:5px 10px;border-radius:8px;background:#0ea5e9;color:#fff;font:12px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.18);";
     bk.onclick=function(){openBackups();};
-    box.appendChild(badge);box.appendChild(up);box.appendChild(bk);
+    var mob=document.createElement("button");
+    mob.textContent="📱 手机同步";
+    mob.style.cssText="border:none;cursor:pointer;padding:5px 10px;border-radius:8px;background:#10b981;color:#fff;font:12px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.18);";
+    mob.onclick=function(){showMobileSync();};
+    box.appendChild(badge);box.appendChild(up);box.appendChild(bk);box.appendChild(mob);
     document.body.appendChild(box);
+  }
+  function showMobileSync(){
+    if(!localMode){toast("未连接本地服务，无法获取手机同步地址");return;}
+    fetch(LOCAL_BASE+"/api/info",{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){
+      var file=j.file||"Gangstar运营看板.html";
+      var urls=(j.ips||[]).map(function(ip){return "http://"+ip+":"+j.port+"/"+file;});
+      if(!urls.length)urls=["http://127.0.0.1:"+j.port+"/"+file];
+      var lis=urls.map(function(u){return '<div style="padding:8px 0;border-bottom:1px solid #eee"><a href="'+u+'" target="_blank" style="color:#4f46e5;word-break:break-all">'+u+'</a></div>';}).join("");
+      var html='<div id="msMask" onclick="if(event.target.id===\'msMask\')this.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10002;display:flex;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;width:440px;max-width:92vw;max-height:80vh;overflow:auto;padding:18px;font:13px system-ui;color:#111"><h3 style="margin:0 0 6px">手机同步地址</h3><p style="color:#666;margin:0 0 10px">在手机浏览器打开以下任一地址，即可与当前 PC 实时同步（需手机与 PC 同一网络，且本机服务在运行）。</p><div id="msList">'+lis+'</div><p style="color:#888;font-size:11px;margin-top:10px">提示：github.io 公开版无法跨设备同步，请改用上方局域网地址。</p><button onclick="document.getElementById(\'msMask\').remove()" style="margin-top:12px;border:none;background:#4f46e5;color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer">关闭</button></div></div>';
+      document.body.insertAdjacentHTML('beforeend',html);
+    }).catch(function(){toast("获取手机同步地址失败");});
   }
   function setBadge(ok){
     var b=document.getElementById("syncBadge");
