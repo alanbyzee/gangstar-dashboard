@@ -413,6 +413,63 @@ body{
 .btn-cancel{background:#fff;color:var(--muted)}
 .btn-save{background:var(--brand);color:#fff;border-color:var(--brand)}
 .fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
+/* ===== 玩家反馈看板重构：周切换 + 全局 Hero + 当周细分（2026-09-11） ===== */
+.fb-week-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+.fb-week-tab{display:flex;flex-direction:column;gap:1px;min-width:108px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px 12px;cursor:pointer;font-family:inherit;transition:.15s;box-shadow:var(--shadow-sm)}
+.fb-week-tab:hover{border-color:var(--brand);transform:translateY(-1px)}
+.fb-week-tab.on{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(109,40,217,.25)}
+.fb-week-tab .wt-iso{font-size:11px;font-weight:700;opacity:.7}
+.fb-week-tab.on .wt-iso{opacity:.85}
+.fb-week-tab .wt-range{font-size:13px;font-weight:800;letter-spacing:-.2px}
+.fb-hero{background:linear-gradient(135deg,#6d28d9 0%,#4f46e5 55%,#2563eb 100%);color:#fff;border-radius:16px;padding:18px 22px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;margin-bottom:6px}
+.fb-hero:before{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.07)}
+.fb-hero-h{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative}
+.fb-hero-eyebrow{font-size:12px;font-weight:800;letter-spacing:.3px;opacity:.92}
+.fb-hero-wk{font-size:13px;font-weight:800;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.fb-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;position:relative}
+.fb-banner-stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 14px;backdrop-filter:blur(2px)}
+.fb-banner-label{font-size:11.5px;font-weight:700;opacity:.85}
+.fb-banner-val{font-size:25px;font-weight:800;letter-spacing:-.5px;margin-top:3px;line-height:1.1}
+.fb-banner-val .u{font-size:13px;font-weight:700;opacity:.8;margin-left:3px}
+.fb-delta{display:inline-block;font-size:12px;font-weight:800;margin-top:5px}
+.fb-delta.up{color:#a7f3d0}.fb-delta.down{color:#fecaca}.fb-delta.flat{color:#fde68a}
+.fb-insight{margin-top:13px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.18);border-radius:11px;padding:11px 14px;font-size:13px;line-height:1.55;position:relative}
+.fb-insight .hl{color:#fff;font-weight:800}
+.fb-weekly{margin-top:18px;padding-top:18px;border-top:2px solid var(--line)}
+.fb-weekly-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch;margin-top:4px}
+.fb-sec{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;min-width:0}
+.fb-sec-h{font-size:14px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:6px;color:#1e293b}
+.ch-list{display:flex;flex-direction:column;gap:9px;margin-bottom:6px}
+.ch-row{display:flex;align-items:center;gap:10px;font-size:12.5px}
+.ch-name{width:104px;flex:none;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-bar{flex:1;height:9px;background:#eef2f7;border-radius:999px;overflow:hidden;min-width:30px}
+.ch-bar i{display:block;height:100%;min-width:4px;background:linear-gradient(90deg,#8b5cf6,#2563eb);border-radius:999px}
+.ch-val{width:34px;flex:none;text-align:right;font-weight:800;color:var(--ink)}
+.ch-sent{width:58px;flex:none;text-align:right;font-size:11px;font-weight:700;color:#16a34a}
+.iss-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px dashed #eef2f7}
+.iss-row:last-child{border-bottom:none}
+.iss-rank{width:22px;height:22px;flex:none;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.iss-main{flex:1;min-width:0}
+.iss-theme{font-size:13px;line-height:1.45;color:var(--ink);word-break:break-word}
+.iss-meta{font-size:11.5px;color:var(--muted);margin-top:3px}
+.iss-status{display:inline-block;font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 7px;margin-left:2px}
+.iss-status.st-bad{background:#fee2e2;color:#b91c1c}.iss-status.st-sug{background:#fef9c3;color:#854d0e}.iss-status.st-def{background:#f1f5f9;color:#475569}
+.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
+.act-stat{border-radius:11px;padding:12px 8px;text-align:center;border:1px solid var(--line)}
+.act-stat .av{font-size:22px;font-weight:800;line-height:1}
+.act-stat .al{font-size:11px;color:var(--muted);margin-top:4px}
+.act-stat.st-bad{background:#fef2f2;border-color:#fecaca}.act-stat.st-bad .av{color:#b91c1c}
+.act-stat.st-sug{background:#fffbeb;border-color:#fde68a}.act-stat.st-sug .av{color:#b45309}
+.act-stat.st-def{background:#f8fafc;border-color:#e2e8f0}.act-stat.st-def .av{color:#334155}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;border-radius:11px;padding:11px 13px}
+.alert-danger .ad-h{font-size:12px;font-weight:800;color:#b91c1c}
+.alert-danger .ad-body{font-size:12.5px;line-height:1.5;color:#7f1d1d;margin-top:4px;word-break:break-word}
+.alert-danger .ad-meta{display:block;font-size:11px;color:#b91c1c;opacity:.85;margin-top:4px}
+.alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:11px;padding:11px 13px;color:#15803d;font-size:12.5px;font-weight:600}
+.lg{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 4px 0 10px;vertical-align:middle}
+.lg.g{background:#22c55e}.lg.s{background:#eab308}.lg.b{background:#ef4444}
+@media(max-width:1000px){.fb-weekly-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.fb-weekly-grid{grid-template-columns:1fr}.fb-banner{grid-template-columns:1fr}.ch-name{width:84px}.fb-week-tab{min-width:90px}.fb-banner-val{font-size:22px}}
 .pc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;transition:.2s;box-shadow:var(--shadow-sm)}
 .pc:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .pc .bar{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:14px 0 0 14px}
@@ -4327,6 +4384,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -7801,42 +7859,106 @@ function renderPlayerVoice(rangeDays){
   '</div>';
 }
 
+/* ===== 玩家反馈看板重构：周切换 + 全局总变化 Banner + 当周细分（2026-09-11） ===== */
+var FB_WK=null;
+function fbWeekStart(w){var m=/(\d{1,2})\.(\d{1,2})/.exec((w&&w.week)||'');if(!m)return null;var mo=parseInt(m[1],10),da=parseInt(m[2],10);if(mo<1||mo>12||da<1||da>31)return null;return new Date(2026,mo-1,da);}
+function fbISOWeek(d){if(!d)return '';var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);var y=t.getUTCFullYear();var jan=new Date(Date.UTC(y,0,1));var wk=Math.ceil((((t-jan)/86400000)+1)/7);return y+' W'+wk;}
+function fbChName(c){var m={'IG':'Instagram','DC':'Discord','YTB':'YouTube','FB':'Facebook','RD':'Reddit','X':'X','NODWIN':'NODWIN','TG':'Telegram','WA':'WhatsApp','?':'其他'};return m[c]||c;}
+function fbBucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
+function fbSeg(arr){var g=0,s=0,b=0;arr=(arr||[]);arr.forEach(function(it){var c=Number(it.count)||0;var k=fbBucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0,np:t?Math.round((g+s)/t*100):0};}
+function fbDonut(seg,size){var r=size/2-9,cx=size/2,cy=size/2,C=2*Math.PI*r;var segs=[['good',seg.g,'#22c55e'],['sug',seg.s,'#eab308'],['bad',seg.b,'#ef4444']];var acc=0,parts=[];segs.forEach(function(sg){var len=seg.t?sg[1]/seg.t*C:0;if(len>0){parts.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+sg[2]+'" stroke-width="13" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-acc).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"></circle>');acc+=len;}});var bg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#eef2f7" stroke-width="13"></circle>';return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+bg+parts.join('')+'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="21" font-weight="800" fill="#1e293b">'+seg.np+'%</text><text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="10" fill="#64748b">非负占比</text></svg>';}
+function fbStrip(s){return (s||'').replace(/\*\*/g,'').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();}
+function fbCoreInsight(w,seg){var items=(w.official||[]).concat(w.community||[]);var bad=items.filter(function(it){return (it.type||'oth')==='bad';}).slice().sort(function(a,b){return (b.count||0)-(a.count||0);});if(bad.length){var t=bad[0];var pct=Math.round((t.count||0)/Math.max(1,seg.b)*100);return '「'+fbStrip(t.theme)+'」本周负面最集中（'+(t.count||0)+' 提及，占当周负面 '+pct+'%）';}var top=items.slice().sort(function(a,b){return (b.count||0)-(a.count||0);})[0];if(top)return '「'+fbStrip(top.theme)+'」本周反馈最热（'+(top.count||0)+' 提及）';return '本周反馈平稳，无显著集中议题。';}
+function fbStatCard(label,val,deltaHtml,unit){return '<div class="fb-banner-stat"><div class="fb-banner-label">'+label+'</div><div class="fb-banner-val">'+val+(unit?'<span class="u">'+unit+'</span>':'')+'</div>'+(deltaHtml?'<div class="fb-delta">'+deltaHtml+'</div>':'')+'</div>';}
+function fbWowHtml(curTotal,wow){if(wow===null||wow===undefined)return '本周首条反馈基线';var up=wow>=0;var col=up?'#a7f3d0':'#fecaca';return '本周新增 '+chNum(curTotal)+' 条 · <span style="color:'+col+'">'+(up?'▲':'▼')+(wow>0?'+':'')+wow+'%</span>';}
+function fbPosHtml(posWow){if(posWow===null||posWow===undefined)return '<span style="color:#fde68a">新基线</span>';var up=posWow>=0;var col=up?'#a7f3d0':'#fecaca';return '<span style="color:'+col+'">'+(up?'▲':'▼')+(posWow>0?'+':'')+posWow+'%</span>';}
+function fbActStat(label,val,cls){return '<div class="act-stat '+cls+'"><div class="av">'+val+'</div><div class="al">'+label+'</div></div>';}
+function fbHeroHTML(weeks,chrono,selWeek){
+  var ci=chrono.indexOf(selWeek);if(ci<0)ci=chrono.length-1;
+  var seg=fbSeg((selWeek.official||[]).concat(selWeek.community||[]));
+  var curTotal=seg.t;
+  var cumTotal=0;for(var i=0;i<=ci;i++){cumTotal+=fbSeg(chrono[i].official.concat(chrono[i].community)).t;}
+  var prev=null;if(ci>0){prev=fbSeg(chrono[ci-1].official.concat(chrono[ci-1].community));}
+  var wow=(prev&&prev.t>0)?Math.round((curTotal-prev.t)/prev.t*1000)/10:null;
+  var posWow=(prev)?Math.round((seg.gp-prev.gp)*10)/10:null;
+  var insight=fbCoreInsight(selWeek,seg);
+  return '<div class="fb-hero">'+
+    '<div class="fb-hero-h"><span class="fb-hero-eyebrow">📊 全局变化总览 · 截止 '+fbEsc(selWeek.week)+'</span><span class="fb-hero-wk">'+fbISOWeek(fbWeekStart(selWeek))+'</span></div>'+
+    '<div class="fb-banner">'+fbStatCard('累计总反馈量',chNum(cumTotal),fbWowHtml(curTotal,wow))+fbStatCard('全盘正面情绪占比',seg.gp+'%',fbPosHtml(posWow))+fbStatCard('本周净情绪指数',(seg.gp-seg.bp>=0?'+':'')+(seg.gp-seg.bp)+'%',null)+'</div>'+
+    '<div class="fb-insight">🔎 '+fbRich(insight)+'</div>'+
+  '</div>';
+}
+function fbWeekHTML(w){
+  var all=(w.official||[]).concat(w.community||[]);
+  var seg=fbSeg(all);
+  var chMap={};
+  all.forEach(function(it){var c=Number(it.count)||0;var k=fbBucket(it.type||'oth');var chs=(it.channel||'').split(',').map(function(x){return x.trim();}).filter(Boolean);if(!chs.length)chs=['?'];chs.forEach(function(ch){if(!chMap[ch])chMap[ch]={g:0,s:0,b:0,t:0,name:fbChName(ch)};chMap[ch][k]+=c;chMap[ch].t+=c;});});
+  var chsArr=Object.keys(chMap).map(function(k){return chMap[k];}).sort(function(a,b){return b.t-a.t;});
+  var chMax=chsArr.length?Math.max(1,chsArr[0].t):1;
+  var chBars=chsArr.length?chsArr.map(function(c){var wd=Math.round(c.t/chMax*100);var sent=c.t?Math.round(c.g/c.t*100):0;return '<div class="ch-row"><span class="ch-name">'+fbEsc(c.name)+'</span><span class="ch-bar"><i style="width:'+wd+'%"></i></span><span class="ch-val">'+c.t+'</span><span class="ch-sent">'+sent+'%🟢</span></div>';}).join(''):'<div class="fb-empty">本周暂无渠道数据</div>';
+  var issues=all.filter(function(it){var t=it.type||'oth';return t==='bad'||t==='sug';}).slice().sort(function(a,b){return (b.count||0)-(a.count||0);}).slice(0,5);
+  var top5=issues.length?issues.map(function(it,i){var cnt=it.count||0;var share=Math.round(cnt/Math.max(1,seg.t)*100);var st=it.status||(it.type==='bad'?'待处理':it.type==='sug'?'待评审':'待排期');var stCls=it.type==='bad'?'st-bad':it.type==='sug'?'st-sug':'st-def';return '<div class="iss-row"><span class="iss-rank">'+(i+1)+'</span><div class="iss-main"><div class="iss-theme" title="'+fbEsc(it.theme||'')+'">'+fbEsc(it.theme||'')+'</div><div class="iss-meta">'+cnt+' 提及 · 占当周 '+share+'% · <span class="iss-status '+stCls+'">'+st+'</span></div></div></div>';}).join(''):'<div class="fb-empty">本周暂无核心议题</div>';
+  var badCnt=all.filter(function(it){return (it.type||'oth')==='bad';}).length;
+  var sugCnt=all.filter(function(it){return (it.type||'oth')==='sug';}).length;
+  var badItems=all.filter(function(it){return (it.type||'oth')==='bad';}).slice().sort(function(a,b){return (b.count||0)-(a.count||0);});
+  var alert=badItems.length?badItems[0]:null;
+  var alertHtml=alert?'<div class="alert-danger"><div class="ad-h">⚠️ 高危预警</div><div class="ad-body">「'+fbEsc(fbStrip(alert.theme))+'」<span class="ad-meta">'+(alert.count||0)+' 提及 · '+(alert.channel||'—')+' · 占当周负面 '+Math.round((alert.count||0)/Math.max(1,seg.b)*100)+'%</span></div></div>':'<div class="alert-ok">✅ 本周无高危负面集中</div>';
+  var actions=fbActStat('待处理',badCnt,'st-bad')+fbActStat('待评审/建议',sugCnt,'st-sug')+fbActStat('行动项合计',badCnt+sugCnt,'st-def')+alertHtml;
+  return '<div class="fb-weekly">'+
+    '<div class="fb-wk-head"><span class="fb-wk-title">📅 '+fbEsc(w.week)+'</span><span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span><button class="wk-del" data-wk="'+fbEsc(w.week)+'">✕ 删除本周</button></div>'+
+    (w.summary?'<div class="wk-summary insight"><div class="ins-h">🔑 核心洞察</div>'+fbRich(w.summary)+'</div>':'')+
+    '<div class="fb-weekly-grid">'+
+      '<div class="fb-sec"><div class="fb-sec-h">📊 当周分布 · 渠道与情绪</div><div class="ch-list">'+chBars+'</div><div class="donut-box" style="margin-top:6px"><div class="donut-cap">当周情感构成（正/中/负）</div>'+fbDonut(seg,132)+'<div class="donut-leg"><span class="lg g"></span>正面 '+seg.g+'<span class="lg s"></span>中性 '+seg.s+'<span class="lg b"></span>负面 '+seg.b+'</div></div></div>'+
+      '<div class="fb-sec"><div class="fb-sec-h">🔥 当周核心议题 TOP 5</div>'+top5+'</div>'+
+      '<div class="fb-sec"><div class="fb-sec-h">🎯 当周行动与预警</div>'+actions+'</div>'+
+    '</div>'+
+    (w.trend?'<div class="wk-trend"><b>📌 本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
+    (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
+  '</div>';
+}
+function bindPv(root){
+  if(root.dataset.pvBound)return;
+  root.dataset.pvBound='1';
+  root.addEventListener('click',function(e){
+    var btn=e.target.closest && e.target.closest('.pv-rng'); if(!btn) return;
+    var f=btn.dataset.f;
+    root.querySelectorAll('.pv-rng').forEach(function(b){
+      var on=(b.dataset.f===f);
+      b.classList.toggle('on',on);
+      b.style.background=on?'var(--brand)':'#fff';
+      b.style.color=on?'#fff':'var(--ink)';
+      b.style.borderColor=on?'var(--brand)':'var(--line)';
+    });
+    var wrap=root.querySelector('#pvWrap');
+    if(wrap) wrap.innerHTML=renderPlayerVoice(f);
+  });
+}
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
   var html='<div id="pvWrap">'+renderPlayerVoice('all')+'</div>\n'+
     '<h2>💬 玩家反馈 · 印度市场态度</h2>'+
     '<div class="sub">每周由助手整理两份周报（官号后台 / 玩家社区），提炼主题、过滤无效反馈，供团队与老板快速掌握印度玩家对 GST 的态度、玩法认知与市场风评</div>';
-  if(weeks.length){
-    html+='<div class="att-track"><span class="att-track-label">📈 态度走向（长期）：</span>'+
-      weeks.slice().reverse().map(function(w){return '<span class="att-badge '+attClass(w.attitude)+'">'+fbEsc(w.week)+' · '+(w.attitude||'—')+'</span>';}).join('')+'</div>';
-  }
-  html+='<div class="wk-actions"><button class="add-week-btn">＋ 新增一周</button></div>';
   if(!weeks.length){
     html+='<div class="fb-empty big">暂无周报 · 你每周给两个表（玩家社区 / 官号后台），助手整理评论与走向后录入这里</div>';
-  }else{
-    html+=weeks.map(function(w,wi){return wkBlock(w,wi);}).join('');
+    var r0=document.getElementById('feedbackView');r0.innerHTML=html;
+    if(r0.querySelector('.add-week-btn'))r0.querySelector('.add-week-btn').onclick=openWeekModal;
+    bindPv(r0);
+    return;
   }
+  var chrono=weeks.slice().sort(function(a,b){var da=fbWeekStart(a),db=fbWeekStart(b);return (da?da.getTime():0)-(db?db.getTime():0);});
+  if(!FB_WK||!weeks.some(function(w){return w.week===FB_WK;}))FB_WK=chrono.length?chrono[chrono.length-1].week:null;
+  var selWeek=weeks.filter(function(w){return w.week===FB_WK;})[0]||chrono[chrono.length-1];
+  var tabs=chrono.slice().reverse().map(function(w){var on=w.week===FB_WK;var ds=fbWeekStart(w);return '<button class="fb-week-tab'+(on?' on':'')+'" data-wk="'+fbEsc(w.week)+'"><span class="wt-iso">'+fbISOWeek(ds)+'</span><span class="wt-range">'+fbEsc(w.week)+'</span></button>';}).join('');
+  html+='<div class="fb-week-tabs">'+tabs+'</div>';
+  html+='<div id="fbHero">'+fbHeroHTML(weeks,chrono,selWeek)+'</div>';
+  html+='<div id="fbWeekly">'+fbWeekHTML(selWeek)+'</div>';
+  html+='<div class="wk-actions"><button class="add-week-btn">＋ 新增一周</button></div>';
   var root=document.getElementById('feedbackView');
   root.innerHTML=html;
   root.querySelector('.add-week-btn').onclick=openWeekModal;
-  root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();dd.weeks.splice(Number(b.dataset.i),1);setFeedback(dd);renderFeedback();};});
-  // Player Voice 时间范围切换（委托到稳定父节点，重渲染后按钮仍有效）
-  if(!root.dataset.pvBound){
-    root.dataset.pvBound='1';
-    root.addEventListener('click',function(e){
-      var btn=e.target.closest && e.target.closest('.pv-rng'); if(!btn) return;
-      var f=btn.dataset.f;
-      root.querySelectorAll('.pv-rng').forEach(function(b){
-        var on=(b.dataset.f===f);
-        b.classList.toggle('on',on);
-        b.style.background=on?'var(--brand)':'#fff';
-        b.style.color=on?'#fff':'var(--ink)';
-        b.style.borderColor=on?'var(--brand)':'var(--line)';
-      });
-      var wrap=root.querySelector('#pvWrap');
-      if(wrap) wrap.innerHTML=renderPlayerVoice(f);
-    });
-  }
+  root.querySelectorAll('.fb-week-tab').forEach(function(b){b.onclick=function(){FB_WK=b.getAttribute('data-wk');renderFeedback();};});
+  root.querySelectorAll('.wk-del').forEach(function(b){b.onclick=function(){var dd=getFeedback();var idx=-1;dd.weeks.forEach(function(w,i){if(w.week===b.dataset.wk)idx=i;});if(idx>=0){dd.weeks.splice(idx,1);if(FB_WK===b.dataset.wk)FB_WK=null;setFeedback(dd);renderFeedback();}};});
+  bindPv(root);
 }
 function wkBlock(w,wi){
   function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
