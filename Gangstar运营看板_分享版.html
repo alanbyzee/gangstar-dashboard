@@ -1190,6 +1190,56 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .kpi-grid{grid-template-columns:repeat(2,1fr)}
   .fan .health-dims{grid-template-columns:repeat(2,1fr)}
 }
+/* ===== 04 本周洞察：左右双卡片（等高） ===== */
+.fan .ins-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:16px;align-items:stretch}
+.fan .ins-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;height:100%;box-sizing:border-box;min-width:0}
+.fan .ins-sec-title{font-size:14px;font-weight:900;color:var(--ink);margin:2px 0 14px;display:flex;align-items:center;gap:7px;letter-spacing:.2px}
+/* 数据总结 · Accent Header */
+.fan .ins-accent{background:linear-gradient(90deg,var(--brand-soft),#fbfaff);border:1px solid #e3d9f7;border-radius:13px;padding:16px 18px;margin-bottom:18px}
+.fan .ins-accent-label{display:block;font-size:11.5px;font-weight:900;color:var(--brand);letter-spacing:.6px;margin-bottom:8px;text-transform:uppercase}
+.fan .ins-conclusion{font-size:17px;font-weight:900;color:var(--ink);line-height:1.35;margin-bottom:8px;letter-spacing:-.2px}
+.fan .ins-conclusion b{color:var(--brand)}
+.fan .ins-conclusion .hl-num{color:var(--brand);font-variant-numeric:tabular-nums}
+.fan .ins-accent-txt{font-size:13px;line-height:1.7;color:#475569;font-weight:600}
+.fan .ins-accent-txt b{color:var(--brand);font-weight:900}
+/* 核心话题焦点卡 */
+.fan .ins-focus{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #e3d5ff;border-radius:13px;padding:15px 17px;margin-bottom:16px;display:flex;flex-direction:column;gap:11px}
+.fan .ins-focus-tag{align-self:flex-start;font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,.13);padding:4px 11px;border-radius:20px;letter-spacing:.3px}
+.fan .ins-focus-main{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.fan .ins-focus-name{font-size:16px;font-weight:900;color:var(--ink)}
+.fan .ins-focus-num{font-size:28px;font-weight:900;color:#7c3aed;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fan .ins-focus-num i{font-size:13px;font-style:normal;font-weight:800;color:#a78bfa;margin-left:2px}
+.fan .ins-focus-pct{align-self:flex-start;font-size:12px;font-weight:800;color:#7c3aed;background:rgba(124,58,237,.12);padding:3px 11px;border-radius:20px}
+/* 指标小卡 grid */
+.fan .ins-metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fan .ins-metric{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:13px 10px;text-align:center}
+.fan .ins-metric .im-val{font-size:23px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1}
+.fan .ins-metric.im-pos .im-val{color:var(--ok)}
+.fan .ins-metric .im-lab{font-size:11px;color:var(--muted);font-weight:700;margin-top:5px}
+/* 行动中心 */
+.fan .ins-actions{display:flex;flex-direction:column;gap:9px}
+.fan .ins-action{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--card2);border:1px solid var(--line);border-radius:11px}
+.fan .ins-action .ia-txt{flex:1;min-width:0;font-size:13px;color:var(--ink);font-weight:700;line-height:1.4}
+.fan .ins-action .ia-num{font-size:25px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;min-width:36px;text-align:right;flex:none}
+/* 预警区 */
+.fan .ins-alert-zone{margin-top:auto;padding-top:18px}
+.fan .ins-alert-title{margin-top:0}
+.fan .ins-alerts{display:flex;flex-direction:column;gap:9px;background:linear-gradient(180deg,#fff7ed,#fef2f2);border:1px solid #fed7aa;border-radius:13px;padding:14px 15px}
+.fan .ins-alert{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.5;color:#7c2d12}
+.fan .ins-alert .al-ico{flex:none;font-size:15px;margin-top:1px}
+.fan .ins-alert .ia-txt{font-weight:600}
+.fan .ins-alert .ia-txt b{color:#b91c1c}
+.fan .ins-alert-danger{background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:11px 13px;color:#b91c1c}
+.fan .ins-alert-danger .ia-txt{font-weight:800;color:#b91c1c;font-size:12.5px}
+.fan .ins-alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:10px;padding:11px 13px;font-weight:700}
+@media(max-width:860px){
+  .fan .ins-grid{grid-template-columns:1fr}
+  .fan .ins-card{height:auto}
+}
+@media(max-width:560px){
+  .fan .ins-card{padding:16px 15px}
+  .fan .ins-conclusion{font-size:15px}
+}
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
@@ -2278,16 +2328,46 @@ function renderCommandCenter(data){
       +'</div>';
   }
 
-  // 6. 本周洞察
+  // 6. 本周洞察（左右双卡片 · 等高对齐）
   const iEl=document.getElementById('insights');
   if(iEl){
-    iEl.innerHTML='<div class="ins-grid"><div class="ins-col"><div class="ins-summary-box"><span class="ins-summary-ico">📈</span><div>'+summaryHtml+'</div></div><h4 class="ins-h">💡 玩家反馈洞察</h4>'
-      +insights.map(i=>'<div class="insight-item"><span class="ii-emoji">'+i.e+'</span><div>'+i.t+'</div></div>').join('')
-      +'</div><div class="ins-col"><h4 class="ins-h">🎯 行动中心</h4>'
-      +actions.map(a=>'<div class="action-row"><span class="sdot '+a.dot+'"></span><span style="flex:1">'+a.t+'</span><span class="ar-count">'+a.c+'</span></div>').join('')
-      +'<h4 class="ins-h">🚨 预警</h4>'
-      +(alerts.length?alerts.map(a=>'<div class="alert-item"><span class="al-ico">'+a.ico+'</span><div>'+a.t+'</div></div>').join(''):'<div class="alert-item"><span class="al-ico">✅</span><div>暂无明显风险项</div></div>')
+    const topPct=topTopic?Math.round(topTopic.mentions/dvAll.total*100):0;
+    const conclusionLine=best?('<b>'+esc(best.name)+'</b> 领跑 · 全平台净增 <span class="hl-num">+'+fmt(weeklyTotal)+'</span>'):'本周粉丝变化平稳，暂无显著增长';
+    const dangerAlerts=alerts.filter(a=>(a.t+'').indexOf('预警线')>=0);
+    const normalAlerts=alerts.filter(a=>(a.t+'').indexOf('预警线')<0);
+    const stripNum=t=>(t+'').replace(/^\d+\s*个\s*/,'');
+
+    // 左侧卡片：数据总结 + 玩家反馈洞察
+    const leftHtml='<div class="ins-card ins-left">'
+      +'<div class="ins-accent"><span class="ins-accent-label">📈 数据总结</span>'
+      +'<div class="ins-conclusion">'+conclusionLine+'</div>'
+      +'<div class="ins-accent-txt">'+summaryHtml+'</div></div>'
+      +'<h4 class="ins-sec-title">💡 玩家反馈洞察</h4>'
+      +(topTopic?('<div class="ins-focus"><span class="ins-focus-tag">🔥 核心话题</span>'
+        +'<div class="ins-focus-main"><span class="ins-focus-name">'+esc(topTopic.topic)+'</span>'
+        +'<span class="ins-focus-num">'+topTopic.mentions+' <i>条</i></span></div>'
+        +'<span class="ins-focus-pct">占总量 '+topPct+'%</span></div>'):'')
+      +'<div class="ins-metric-grid">'
+        +'<div class="ins-metric"><div class="im-val">'+dvAll.total+'</div><div class="im-lab">总反馈（条）</div></div>'
+        +'<div class="ins-metric"><div class="im-val">'+dvAll.act+'</div><div class="im-lab">可行动诉求（条）</div></div>'
+        +'<div class="ins-metric im-pos"><div class="im-val">'+sent.pos+'%</div><div class="im-lab">正面反馈</div></div>'
       +'</div></div>';
+
+    // 右侧卡片：行动中心 + 预警区
+    const rightHtml='<div class="ins-card ins-right">'
+      +'<h4 class="ins-sec-title">🎯 行动中心</h4>'
+      +'<div class="ins-actions">'
+      +actions.map(a=>'<div class="ins-action"><span class="sdot '+a.dot+'"></span><span class="ia-txt">'+stripNum(a.t)+'</span><span class="ia-num">'+a.c+'</span></div>').join('')
+      +'</div>'
+      +'<div class="ins-alert-zone"><h4 class="ins-sec-title ins-alert-title">🚨 预警区</h4>'
+      +(alerts.length?'<div class="ins-alerts">'
+        +(dangerAlerts.length?dangerAlerts.map(a=>'<div class="ins-alert ins-alert-danger"><span class="al-ico">'+a.ico+'</span><div class="ia-txt">'+a.t+'</div></div>').join(''):'')
+        +(normalAlerts.length?normalAlerts.map(a=>'<div class="ins-alert"><span class="al-ico">'+a.ico+'</span><div class="ia-txt">'+a.t+'</div></div>').join(''):'')
+        +'</div>'
+        :'<div class="ins-alert ins-alert-ok"><span class="al-ico">✅</span><div class="ia-txt">暂无明显风险项</div></div>')
+      +'</div></div>';
+
+    iEl.innerHTML='<div class="ins-grid">'+leftHtml+rightHtml+'</div>';
   }
 }
 
@@ -3690,6 +3770,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
