@@ -1089,10 +1089,10 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .pc-share-bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden}
 .fan .pc-share-bar i{display:block;height:100%;border-radius:6px;opacity:.9}
 .fan .pc-share-pct{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:5px;display:block}
-.fan .pc-chart{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);flex:1;display:flex;flex-direction:column;justify-content:center;min-height:52px}
-.fan .pc-chart .chart-area{margin-top:0;background:transparent;border:none;padding:0}
-.fan .pc-chart .chart-area.spark{display:flex;align-items:center;justify-content:center}
+.fan .pc-chart{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);flex:1;display:flex;flex-direction:column;justify-content:center;min-height:96px}
+.fan .pc-chart .chart-area{margin-top:0;background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:8px 8px 4px}
 .fan .pc-chart .chart-area svg{width:100%;height:auto;display:block}
+.fan .pc.featured .pc-chart .chart-area{padding:10px 10px 5px}
 .fan .pc-src{font-size:10px;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:5px;cursor:help}
 .fan .pc-src-i{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--card2);border:1px solid var(--line);font-size:9px;font-weight:800;color:var(--muted)}
 
@@ -1934,7 +1934,7 @@ function dedupeHistory(hist){
 const FAN_DISPLAY_DAYS=30;
 
 // ===== 折线图绘制（内联 SVG） =====
-function drawChart(hist,color,events){
+function drawChart(hist,color,events,vw,vh){
   // 按天归一化 + 仅显示最近 FAN_DISPLAY_DAYS 天（完整历史仍存于 fan_data.json，不丢失）
   hist=dedupeHistory(hist).slice(-FAN_DISPLAY_DAYS);
   if(!hist||hist.length<2){
@@ -1942,7 +1942,7 @@ function drawChart(hist,color,events){
       数据点不足（需至少 2 次记录），继续更新后将自动画出增长曲线
     </div>`;
   }
-  const W=250,H=76,padL=36,padR=14,padT=16,padB=16;
+  const W=vw||250,H=vh||76,padL=36,padR=14,padT=16,padB=16;
   const vals=hist.map(p=>p.value);
   const lo=Math.min(...vals), hi=Math.max(...vals);
   const minV = lo<=0 ? 0 : lo*0.84;
@@ -1977,7 +1977,7 @@ function drawChart(hist,color,events){
   })();
   // X轴标签（每隔几个显示一个）
   const xLabels=[];
-  const step=Math.ceil(n/6);
+  const step=Math.ceil(n/(W>=400?10:6));
   hist.forEach((p,i)=>{if(i%step===0||i===n-1)xLabels.push(`<text x="${pts[i].x.toFixed(1)}" y="${H-3}" text-anchor="middle" font-size="9" fill="#9ca3af">${p.date.slice(5)}</text>`);});
   // Y轴标签
   const yTicks=[minV,minV+(maxV-minV)*0.5,maxV];
@@ -2658,6 +2658,13 @@ function renderPlatformCards(data){
   const topP=pos[0];
   const topShare=posSum>0?Math.round(topP.wg.diff/posSum*100):0;
   const initial=k=>(p[k]&&p[k].name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+  // 主卡折线图坐标空间按实际卡宽自适应：保证各屏宽下轴标签视觉字号与标准卡一致
+  let _platW=el.getBoundingClientRect().width||0;
+  if(_platW<200) _platW=Math.min(1366,Math.max(320,window.innerWidth-96));
+  const _colW=(_platW-16*11)/12;
+  const _featW=Math.max(240,_colW*6+16*5);
+  const _fvw=Math.max(250,Math.round(_featW-60));
+  const _fvh=Math.round(_fvw*150/520);
   const card=(k,featured)=>{
     const pl=p[k]; if(!pl) return '';
     const v=pl.value||0;
@@ -2669,7 +2676,7 @@ function renderPlatformCards(data){
       +'<div class="pc-head"><div class="pc-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial(k))+'</div><div class="pc-titles"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-handle">'+esc(pl.handle||'')+'</div></div>'+chip+'<a class="pc-link" href="'+esc(pl.url)+'" target="_blank" rel="noopener" title="打开 '+esc(pl.name)+'">↗</a></div>'
       +'<div class="pc-val">'+fmt(v)+'</div>'
       +'<div class="pc-share"><div class="pc-share-bar"><i style="width:'+share+'%;background:'+pl.color+'"></i></div><span class="pc-share-pct">占总粉丝 '+share+'%</span></div>'
-      +'<div class="pc-chart"><div class="chart-area spark">'+drawSpark(pl.history,pl.color,k)+'</div></div>'
+      +'<div class="pc-chart">'+drawChart(pl.history,pl.color,[],featured?_fvw:250,featured?_fvh:76)+'</div>'
       +note
       +'</div>';
   };
@@ -3921,6 +3928,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
