@@ -2303,9 +2303,9 @@ function renderCommandCenter(data){
   else if(negTopic) rec='优先将「'+String(negTopic.topic).slice(0,18)+'」负面聚集话题排入 backlog';
   else rec='维持当前节奏，放大头部平台势能';
   // KPI 含义解读（每个指标意味着什么）
-  const target=Number(localStorage.getItem('gangstar_fan_target')||10000);
+  const target=Number(localStorage.getItem('gangstar_fan_target')||500000);
   const overX=h.total>=target?Math.round(h.total/target):0;
-  kpis[0].note=overX?('已超首日 '+fmt(target)+' 目标 '+overX+'×'):'距首日目标 '+fmt(target);
+  kpis[0].note=overX?('已超首月 '+fmt(target)+' 目标 '+overX+'×'):'距首月目标 '+fmt(target);
   kpis[1].note=best?('主要由 '+best.name+' 拉动（占周增 '+bestShare+'%）'):'暂无显著增长';
   kpis[2].note=fbWeeks.length?(fbWeeks.length+' 周累计回收 · 近 30 天 '+fbItems+' 条'):'累计 '+fbItems+' 条';
   kpis[3].note=nonNegPct>=80?'情绪面健康':nonNegPct>=65?'情绪面一般':'情绪承压';
@@ -2559,7 +2559,7 @@ function renderGoalProgress(data){
   const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   const total=order.reduce((s,k)=>s+(p[k]?.value||0),0);
   const totalWg=order.reduce((s,k)=>s+(weeklyGrowth(p[k])?.diff||0),0);
-  const target=Number(lsGet('gangstar_fan_target')||10000);
+  const target=Number(lsGet('gangstar_fan_target')||500000);
   const prog=Math.min(100,total/target*100);
   const remain=Math.max(0,target-total);
   const dl=daysTo(GOAL_MONTH_DATE);
@@ -2569,12 +2569,12 @@ function renderGoalProgress(data){
     +'<div class="hero-row">'
       +'<div class="hero-cur"><div class="hero-k">当前社区总粉丝</div><div class="hero-v">'+fmt(total)+'</div><div class="hero-delta '+(totalWg>=0?'up':'down')+'">'+(totalWg>=0?'▲':'▼')+' '+fmt(Math.abs(totalWg))+' 本周</div></div>'
       +'<div class="hero-prog"><div class="hero-prog-v">'+prog.toFixed(1)+'<span>%</span></div><div class="hero-prog-k">目标进度</div></div>'
-      +'<div class="hero-tgt"><div class="hero-tgt-v">'+fmt(target)+'</div><div class="hero-tgt-k">首日目标</div></div>'
+      +'<div class="hero-tgt"><div class="hero-tgt-v">'+fmt(target)+'</div><div class="hero-tgt-k">首月目标</div></div>'
     +'</div>'
     +'<div class="hero-bar"><i style="width:'+prog+'%"></i></div>'
     +'<div class="hero-meta">'
-      +(remain>0?'<span>距目标 <b>'+fmt(remain)+'</b></span><span>日均需增 <b class="up">+'+needDaily.toFixed(0)+'</b> / '+dl+' 天</span>':'<span class="t-up">✅ 已达成首日目标</span>')
-      +(over?'<span class="t-up">🎉 超越首日目标 '+over+'×</span>':'')
+      +(remain>0?'<span>距目标 <b>'+fmt(remain)+'</b></span><span>日均需增 <b class="up">+'+needDaily.toFixed(0)+'</b> / '+dl+' 天</span>':'<span class="t-up">✅ 已达成首月目标</span>')
+      +(over?'<span class="t-up">🎉 超越首月目标 '+over+'×</span>':'')
       +'<span>目标日 <b>'+GOAL_MONTH_DATE+'</b></span>'
       +'<span class="hero-edit">目标值 <input id="targetInput" type="number" value="'+target+'" min="1"> <button id="targetSave">设为目标</button></span>'
     +'</div>'
@@ -3842,6 +3842,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
