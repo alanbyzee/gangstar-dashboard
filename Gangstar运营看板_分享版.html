@@ -7,6 +7,7 @@
 <meta name="build" content="2026-08-07T0017" data-page-node-id="GJPJ3YfLCLIDTUnEQNbC5A">
 <style>
 :root{
+  --page-max:1480px;
   --bg:#eef1f7;
   --card:#ffffff;
   --ink:#1e2433;
@@ -42,11 +43,17 @@ body{
 
 /* ===== 顶部导航 ===== */
 .topbar{
-  display:flex;flex-wrap:wrap;align-items:center;gap:18px 18px;padding:13px 24px;
+  position:relative;
+  display:flex;flex-wrap:wrap;align-items:center;gap:18px 18px;padding:13px 32px;
+  max-width:var(--page-max);width:100%;margin:0 auto;align-self:center;
+  z-index:5;flex:none;
+}
+.topbar::before{
+  content:"";position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+  width:100vw;z-index:-1;
   background:linear-gradient(180deg,#ffffff,#fbfbff);
   border-bottom:1px solid var(--line);
   box-shadow:0 2px 14px rgba(16,24,40,.05);
-  z-index:5;flex:none;
 }
 .brand{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px;letter-spacing:.2px;flex-shrink:0}
 .brand .dot{width:13px;height:13px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 0 0 4px rgba(109,40,217,.13)}
@@ -259,7 +266,7 @@ body{
 .pc-note{font-size:11px;color:var(--warn);background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:5px 9px;line-height:1.45;margin-top:8px}
 
 /* 玩家反馈收集看板（按周 · 印度市场态度追踪） */
-.feedback{padding:28px 24px 44px;max-width:1180px;margin:0 auto}
+ .feedback{padding:24px 32px 44px;max-width:var(--page-max);margin:0 auto}
 .feedback h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .feedback .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
 .att-track{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 15px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
@@ -469,7 +476,7 @@ body{
 .m-up{color:var(--ok)}.m-down{color:var(--err)}.m-flat{color:#9ca3af}
 
 /* ===== 区域素材周历 ===== */
-.regional{padding:22px 24px 44px;max-width:1280px;margin:0 auto;position:relative}
+.regional{padding:24px 32px 44px;max-width:var(--page-max);margin:0 auto;position:relative}
 .regional h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .regional .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
 /* 周历表头 */
@@ -588,7 +595,8 @@ body{
 }
 
 /* ===== 南亚社群排期（HQ + 区域 合并）===== */
-.southasia{padding:22px 24px 44px;max-width:1320px;margin:0 auto}
+.southasia{padding:24px 32px 44px;max-width:var(--page-max);margin:0 auto}
+.issues{max-width:var(--page-max);margin:0 auto;padding:24px 32px 44px}
 .southasia h2{font-size:22px;font-weight:800;margin-bottom:5px;letter-spacing:.2px}
 .southasia .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
 /* 筛选开关 */
@@ -1002,7 +1010,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   --line:#e6eaf1; --line2:#eef2f7; --brand:#8b5cf6; --brand2:#3b82f6; --brand-soft:#f3eefe;
   --ok:#16a34a; --err:#dc2626; --warn:#d97706; --radius:16px;
   --shadow-sm:0 1px 3px rgba(15,23,42,.06); --shadow-md:0 12px 34px rgba(15,23,42,.08);
-  display:block; max-width:1480px; margin:0 auto; padding:30px 36px 64px;
+  display:block; max-width:var(--page-max); margin:0 auto; padding:24px 32px 44px;
   color:var(--ink);
   background:transparent;
 }
@@ -3928,6 +3936,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
