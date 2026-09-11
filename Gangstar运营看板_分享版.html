@@ -1240,6 +1240,30 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .ins-card{padding:16px 15px}
   .fan .ins-conclusion{font-size:15px}
 }
+/* ===== 行动中心 · 可折叠明细 ===== */
+.fan .ins-hint{font-size:10.5px;font-weight:700;color:var(--muted);margin-left:auto;letter-spacing:0}
+.fan .ins-action-wrap{display:flex;flex-direction:column}
+.fan .ins-action{cursor:pointer;user-select:none;transition:.15s}
+.fan .ins-action:hover{background:#eef2ff;border-color:#c7d2fe}
+.fan .ins-action.open{background:#eef2ff;border-color:#c7d2fe;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.fan .ins-action .ia-chev{flex:none;font-size:11px;color:var(--muted);margin-left:4px;transition:transform .2s}
+.fan .ins-action.open .ia-chev{transform:rotate(180deg);color:var(--brand)}
+.fan .ins-action-items{display:none;flex-direction:column;gap:8px;padding:10px 12px;background:var(--card2);border:1px solid var(--line);border-top:none;border-radius:0 0 11px 11px}
+.fan .ins-action-items.open{display:flex}
+.fan .ins-ai{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.fan .ins-ai-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fan .ins-ai-id{font-size:10px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums;background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.fan .ins-ai-title{font-size:12.5px;font-weight:800;color:var(--ink);flex:1;min-width:0}
+.fan .ins-ai-vol{font-size:10.5px;font-weight:800;color:var(--brand);background:var(--brand-soft);border-radius:20px;padding:2px 9px;white-space:nowrap}
+.fan .ins-ai-cat{font-size:10.5px;font-weight:800;border-radius:20px;padding:2px 9px;border:1px solid}
+.fan .ins-ai-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.fan .ins-ai-pill{font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:20px;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
+.fan .ins-ai-pill.pri-p1{background:rgba(220,38,38,.1);color:#b91c1c;border-color:#fecaca}
+.fan .ins-ai-pill.pri-p2{background:rgba(217,119,6,.12);color:#b45309;border-color:#fed7aa}
+.fan .ins-ai-pill.pri-p3{background:rgba(100,116,139,.12);color:#475569;border-color:#e2e8f0}
+.fan .ins-ai-date{font-size:10.5px;color:var(--muted);font-weight:700;margin-left:auto;white-space:nowrap}
+.fan .ins-ai-note{font-size:11px;color:#0369a1;background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;padding:6px 9px;margin-top:8px;line-height:1.45;font-weight:600}
+.fan .ins-ai-hint{font-size:11px;color:var(--muted);text-align:center;padding:10px}
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
@@ -2235,15 +2259,16 @@ function renderCommandCenter(data){
     {e:'💬',t:'本周社群主话题：<b>'+(topTheme?esc(topTheme.theme.slice(0,40)+'…'):'—')+'</b>，整体正面反馈约 '+sent.pos+'%。'}
   ];
 
-  // 行动中心
-  const issPending=CC_DATA.issues.filter(i=>!/(Fixed|Communicated)/.test(i.status)).length;
-  const issUrgent=CC_DATA.issues.filter(i=>i.priority==='P1'&&!/(Fixed|Communicated)/.test(i.status)).length;
-  const fbPending=CC_DATA.topics.filter(t=>t.status==='Pending').length;
+  // 行动中心（每行可展开查看具体明细）
+  const issNotDone=CC_DATA.issues.filter(i=>!/(Fixed|Communicated)/.test(i.status));
+  const issUrgentList=CC_DATA.issues.filter(i=>i.priority==='P1'&&!/(Fixed|Communicated)/.test(i.status));
+  const topicsPending=CC_DATA.topics.filter(t=>t.status==='Pending');
+  const issCommunicated=CC_DATA.issues.filter(i=>i.status==='Communicated');
   const actions=[
-    {c:issUrgent,dot:'red',t:issUrgent+' 个高优先级问题待处理'},
-    {c:fbPending,dot:'amber',t:fbPending+' 个玩家需求待分类评审'},
-    {c:issPending,dot:'amber',t:issPending+' 个问题等待开发更新'},
-    {c:CC_DATA.issues.filter(i=>i.status==='Communicated').length,dot:'green',t:CC_DATA.issues.filter(i=>i.status==='Communicated').length+' 个问题已同步玩家'}
+    {c:issUrgentList.length,dot:'red',t:issUrgentList.length+' 个高优先级问题待处理',type:'issue',items:issUrgentList},
+    {c:topicsPending.length,dot:'amber',t:topicsPending.length+' 个玩家需求待分类评审',type:'topic',items:topicsPending},
+    {c:issNotDone.length,dot:'amber',t:issNotDone.length+' 个问题等待开发更新',type:'issue',items:issNotDone},
+    {c:issCommunicated.length,dot:'green',t:issCommunicated.length+' 个问题已同步玩家',type:'issue',items:issCommunicated}
   ];
 
   // 预警
@@ -2353,11 +2378,45 @@ function renderCommandCenter(data){
         +'<div class="ins-metric im-pos"><div class="im-val">'+sent.pos+'%</div><div class="im-lab">正面反馈</div></div>'
       +'</div></div>';
 
-    // 右侧卡片：行动中心 + 预警区
+    // 行动明细渲染（点击展开查看具体条目）
+    const issueItemHtml=i=>{
+      const priCls=i.priority==='P1'?'pri-p1':i.priority==='P2'?'pri-p2':'pri-p3';
+      return '<div class="ins-ai">'
+        +'<div class="ins-ai-top"><span class="ins-ai-id">'+i.id+'</span><span class="ins-ai-title">'+esc(i.topic)+'</span>'
+        +'<span class="ins-ai-vol">'+fmt(i.volume)+' 提及</span></div>'
+        +'<div class="ins-ai-meta"><span class="ins-ai-pill '+priCls+'">'+i.priority+'</span>'
+        +'<span class="ins-ai-pill">'+stateLabel(i.status)+'</span>'
+        +'<span class="ins-ai-pill">'+esc(i.source)+'</span>'
+        +'<span class="ins-ai-date">更新 '+String(i.updated).slice(5)+'</span></div>'
+        +(i.devResp?'<div class="ins-ai-note">🛠 '+esc(i.devResp)+'</div>':'')
+        +(i.playerComm?'<div class="ins-ai-note">📣 '+esc(i.playerComm)+'</div>':'')
+      +'</div>';
+    };
+    const topicItemHtml=t=>{
+      const col=catColor(t.cat);
+      return '<div class="ins-ai">'
+        +'<div class="ins-ai-top"><span class="ins-ai-title">'+esc(t.topic)+'</span>'
+        +'<span class="ins-ai-cat" style="background:'+col+'1f;color:'+col+';border-color:'+col+'55">'+catLabel(t.cat)+'</span>'
+        +'<span class="ins-ai-vol">'+fmt(t.mentions)+' 提及</span></div>'
+        +'<div class="ins-ai-meta"><span class="ins-ai-pill pri-'+t.priority.toLowerCase()+'">'+t.priority+'</span>'
+        +'<span class="ins-ai-pill">情绪 '+t.sentiment+'%</span>'
+        +'<span class="ins-ai-date">周增 '+(t.wow>0?'+':'')+t.wow+'%</span></div>'
+      +'</div>';
+    };
+
+    // 右侧卡片：行动中心（可折叠展开）+ 预警区
     const rightHtml='<div class="ins-card ins-right">'
-      +'<h4 class="ins-sec-title">🎯 行动中心</h4>'
+      +'<h4 class="ins-sec-title">🎯 行动中心<span class="ins-hint">点击展开明细</span></h4>'
       +'<div class="ins-actions">'
-      +actions.map(a=>'<div class="ins-action"><span class="sdot '+a.dot+'"></span><span class="ia-txt">'+stripNum(a.t)+'</span><span class="ia-num">'+a.c+'</span></div>').join('')
+      +actions.map((a,idx)=>{
+        const itemsHtml=(a.items&&a.items.length)?a.items.map(it=>a.type==='topic'?topicItemHtml(it):issueItemHtml(it)).join(''):'<div class="ins-ai-hint">暂无明细</div>';
+        return '<div class="ins-action-wrap">'
+          +'<div class="ins-action" data-acc="'+idx+'" role="button" tabindex="0" aria-expanded="false">'
+            +'<span class="sdot '+a.dot+'"></span><span class="ia-txt">'+stripNum(a.t)+'</span>'
+            +'<span class="ia-num">'+a.c+'</span><span class="ia-chev">▾</span></div>'
+          +'<div class="ins-action-items">'+itemsHtml+'</div>'
+        +'</div>';
+      }).join('')
       +'</div>'
       +'<div class="ins-alert-zone"><h4 class="ins-sec-title ins-alert-title">🚨 预警区</h4>'
       +(alerts.length?'<div class="ins-alerts">'
@@ -2368,6 +2427,19 @@ function renderCommandCenter(data){
       +'</div></div>';
 
     iEl.innerHTML='<div class="ins-grid">'+leftHtml+rightHtml+'</div>';
+
+    // 折叠交互：点击 / 回车 / 空格 展开对应明细
+    iEl.querySelectorAll('.ins-action[data-acc]').forEach(function(el){
+      var toggle=function(){
+        var wrap=el.closest('.ins-action-wrap');
+        var items=wrap?wrap.querySelector('.ins-action-items'):null;
+        var open=el.classList.toggle('open');
+        if(items) items.classList.toggle('open',open);
+        el.setAttribute('aria-expanded',open?'true':'false');
+      };
+      el.addEventListener('click',toggle);
+      el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
+    });
   }
 }
 
@@ -3770,6 +3842,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
