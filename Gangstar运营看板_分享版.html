@@ -1049,28 +1049,52 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .hero-edit button{border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:5px 13px;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px}
 
 /* ===== 02 PLATFORM FAN BASE (metric grid) ===== */
-.fan .plat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:0;align-items:stretch}
-.fan .pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;transition:border-color .15s,transform .15s;display:flex;flex-direction:column;height:100%;box-sizing:border-box}
-.fan .pc:hover{border-color:var(--brand);transform:translateY(-2px)}
+.fan .plat-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-bottom:0;align-items:stretch}
+.fan .plat-hero{grid-column:1/-1;display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:linear-gradient(120deg,#ffffff 0%,#f6f8ff 100%);border:1px solid var(--line);border-radius:16px;padding:20px 24px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.fan .plat-hero::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--brand),#7c3aed)}
+.fan .ph-left{min-width:160px}
+.fan .ph-title{font-size:16px;font-weight:800;color:var(--ink)}
+.fan .ph-sub{font-size:11.5px;color:var(--muted);margin-top:3px}
+.fan .ph-stats{display:flex;gap:28px;flex:1;flex-wrap:wrap}
+.fan .ph-stat{display:flex;flex-direction:column;gap:3px}
+.fan .ph-k{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.3px}
+.fan .ph-v{font-size:26px;font-weight:900;letter-spacing:-.5px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.fan .ph-v.up{color:var(--ok)}
+.fan .ph-engine{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm)}
+.fan .ph-engine-tag{font-size:11px;font-weight:800;color:#7c3aed;background:rgba(124,58,237,.1);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.fan .ph-engine-name{font-size:13px;font-weight:800}
+.fan .ph-engine-pct{font-size:11.5px;color:var(--muted);font-weight:700;white-space:nowrap}
+.fan .pc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);position:relative;transition:border-color .15s,transform .15s,box-shadow .15s;display:flex;flex-direction:column;height:100%;box-sizing:border-box}
+.fan .pc:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 6px 18px rgba(16,24,40,.1)}
+.fan .pc.featured{grid-column:span 6;padding:20px 22px}
+.fan .plat-std{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:stretch}
+.fan .plat-std .pc{grid-column:auto}
 .fan .pc-bar{display:none}
-.fan .pc-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.fan .pc-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex:none}
+.fan .pc-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.fan .pc-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;flex:none}
+.fan .pc.featured .pc-ic{width:34px;height:34px;border-radius:10px}
 .fan .pc-titles{min-width:0;flex:1}
-.fan .pc-name{font-size:13px;font-weight:800;color:var(--ink)}
-.fan .pc-handle{display:none}
+.fan .pc-name{font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fan .pc.featured .pc-name{font-size:15px}
+.fan .pc-handle{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fan .pc-chip{margin-left:auto;font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fan .pc-chip.up{color:#0a7f4f;background:rgba(16,185,129,.12)}
+.fan .pc-chip.down{color:#b42318;background:rgba(244,63,94,.12)}
 .fan .pc-link{font-size:14px;color:var(--muted);text-decoration:none;flex:none;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:7px}
 .fan .pc-link:hover{background:var(--brand-soft);color:var(--brand)}
-.fan .pc-valrow{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
 .fan .pc-val{font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.fan .pc.featured .pc-val{font-size:38px}
 .fan .pc-val small{display:none}
-.fan .pc-share{margin:10px 0 0}
-.fan .pc-share-bar{height:5px;background:#eef2f7;border-radius:5px;overflow:hidden}
-.fan .pc-share-bar i{display:block;height:100%;border-radius:5px;opacity:.9}
+.fan .pc-share{margin:11px 0 0}
+.fan .pc-share-bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden}
+.fan .pc-share-bar i{display:block;height:100%;border-radius:6px;opacity:.9}
 .fan .pc-share-pct{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:5px;display:block}
-.fan .pc-chart{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);flex:1;display:flex;flex-direction:column;justify-content:center}
-.fan .pc-chart .chart-area{margin-top:0;background:var(--card2);border:1px solid var(--line2);border-radius:10px;padding:7px 5px 3px}
+.fan .pc-chart{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);flex:1;display:flex;flex-direction:column;justify-content:center;min-height:52px}
+.fan .pc-chart .chart-area{margin-top:0;background:transparent;border:none;padding:0}
+.fan .pc-chart .chart-area.spark{display:flex;align-items:center;justify-content:center}
 .fan .pc-chart .chart-area svg{width:100%;height:auto;display:block}
-.fan .pc-note{font-size:10px;color:var(--warn);background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.28);border-radius:7px;padding:5px 8px;line-height:1.4;margin-top:auto;position:relative}
+.fan .pc-src{font-size:10px;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:5px;cursor:help}
+.fan .pc-src-i{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--card2);border:1px solid var(--line);font-size:9px;font-weight:800;color:var(--muted)}
 
 /* ===== 03 FOLLOWER GROWTH (single large chart) ===== */
 .fan .charts-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow-sm);margin-bottom:0}
@@ -1161,7 +1185,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 }
 @media(max-width:1100px){
   .fan{max-width:100%;padding:24px 20px 48px}
-  .fan .plat-grid{grid-template-columns:repeat(3,1fr)}
+  .fan .plat-std{grid-template-columns:repeat(3,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(3,1fr)}
   .fan .hk-layout{grid-template-columns:1fr}
   .fan .health-dims{grid-template-columns:repeat(5,1fr)}
@@ -1174,14 +1198,19 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fan .hero-cur .hero-v{font-size:46px}
   .fan .hero-tgt{margin-left:0;text-align:left}
   .fan .ins-grid{grid-template-columns:1fr}
-  .fan .plat-grid{grid-template-columns:repeat(2,1fr)}
+  .fan .pc.featured{grid-column:span 12}
+  .fan .plat-std{grid-template-columns:repeat(2,1fr)}
   .fan .charts-grid{grid-template-columns:repeat(2,1fr)}
   .fan .kpi-grid{grid-template-columns:repeat(3,1fr)}
   .fan .health-dims{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:560px){
   .fan{padding:18px 14px 40px}
-  .fan .plat-grid{grid-template-columns:1fr}
+  .fan .pc.featured{grid-column:span 12}
+  .fan .plat-std{grid-template-columns:1fr}
+  .fan .plat-hero{flex-direction:column;align-items:flex-start;gap:14px}
+  .fan .ph-stats{gap:18px}
+  .fan .ph-v{font-size:22px}
   .fan .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
   .fan .hero-prog,.fan .hero-tgt{text-align:left}
   .fan .hero-meta{gap:14px}
@@ -1977,6 +2006,33 @@ function drawChart(hist,color,events){
   </div>`;
 }
 
+function drawSpark(hist,color,uid){
+  hist=dedupeHistory(hist).slice(-FAN_DISPLAY_DAYS);
+  if(!hist||hist.length<2){
+    return '<div style="text-align:center;padding:14px;color:var(--muted);font-size:11px">数据点不足，继续更新后自动绘制</div>';
+  }
+  const W=260,H=60,padT=8,padB=8;
+  const vals=hist.map(p=>p.value);
+  const lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
+  const minV=lo<=0?0:lo*0.9,maxV=hi<=0?1:hi*1.08;
+  const span=(maxV-minV)||1,n=vals.length;
+  const px=(i,v)=>({x:10+(W-20)*(n<=1?0.5:i/(n-1)),y:padT+(H-padT-padB)*(1-(v-minV)/span)});
+  const pts=vals.map(px);
+  let line='';pts.forEach((p,i)=>line+=(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)+' ');
+  const area=line+'L'+pts[n-1].x.toFixed(1)+','+(H-padB)+' L'+pts[0].x.toFixed(1)+','+(H-padB)+' Z';
+  const gid='sg'+String(uid).replace(/[^a-zA-Z0-9]/g,'');
+  const last=pts[n-1];
+  return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'
+    +'<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'
+      +'<stop offset="0%" stop-color="'+color+'" stop-opacity="0.16"/>'
+      +'<stop offset="100%" stop-color="'+color+'" stop-opacity="0.02"/>'
+    +'</linearGradient></defs>'
+    +'<path d="'+area+'" fill="url(#'+gid+')"/>'
+    +'<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'<circle cx="'+last.x.toFixed(1)+'" cy="'+last.y.toFixed(1)+'" r="3.2" fill="#fff" stroke="'+color+'" stroke-width="2.2"/>'
+    +'</svg>';
+}
+
 // ===== 周增长计算（基于历史，找 ~7 天前锚点）=====
 function weeklyGrowth(pl){
   const hist=dedupeHistory(pl.history||[]);
@@ -2586,28 +2642,51 @@ function renderGoalProgress(data){
   };
 }
 
-// ===== 2. 各平台粉丝基数与趋势（合并卡片：数值 + 折线图 + 备注） =====
+// ===== 2. 各平台粉丝监控（Hero 总览 + 主卡片 + 标准卡） =====
 function renderPlatformCards(data){
   const el=document.getElementById('platforms'); if(!el) return;
   const p=data.platforms;
   const order=['instagram','facebook','youtube','x','discord','moj','sharechat'].sort((a,b)=>(p[b]?.value||0)-(p[a]?.value||0));
   const total=order.reduce((s,k)=>s+(p[k]?.value||0),0);
-  el.innerHTML=order.map(k=>{
+  // 周增长与增长引擎
+  const wgs=order.map(k=>({k,pl:p[k],wg:weeklyGrowth(p[k])})).filter(o=>o.wg);
+  const totalWg=wgs.reduce((s,o)=>s+o.wg.diff,0);
+  const prevTotal=total-totalWg;
+  const rate=prevTotal>0?(totalWg/prevTotal*100):0;
+  const pos=wgs.filter(o=>o.wg.diff>0).sort((a,b)=>b.wg.diff-a.wg.diff);
+  const posSum=pos.reduce((s,o)=>s+o.wg.diff,0);
+  const topP=pos[0];
+  const topShare=posSum>0?Math.round(topP.wg.diff/posSum*100):0;
+  const initial=k=>(p[k]&&p[k].name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
+  const card=(k,featured)=>{
     const pl=p[k]; if(!pl) return '';
     const v=pl.value||0;
     const share= total>0?Math.round(v/total*100):0;
     const wg=weeklyGrowth(pl);
-    const initial=(pl.name||'').replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase()||'??';
-    const chart=(pl.history&&pl.history.length>=2)?('<div class="pc-chart">'+drawChart(pl.history,pl.color,[])+'</div>'):'';
-    return '<div class="pc">'
-      +'<div class="pc-bar" style="background:'+pl.color+'"></div>'
-      +'<div class="pc-head"><div class="pc-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial)+'</div><div class="pc-titles"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-handle">'+esc(pl.handle||'')+'</div></div><a class="pc-link" href="'+esc(pl.url)+'" target="_blank" rel="noopener" title="打开 '+esc(pl.name)+'">↗</a></div>'
-      +'<div class="pc-valrow"><div class="pc-val">'+fmt(v)+'<small>粉丝</small></div>'+wkTag(wg,'本周')+'</div>'
+    const chip=wg?(wg.diff>=0?'<span class="pc-chip up">▲ +'+fmt(wg.diff)+'</span>':'<span class="pc-chip down">▼ '+fmt(wg.diff)+'</span>'):'';
+    const note=pl.note?'<div class="pc-src" title="'+esc(pl.note).replace(/"/g,'&quot;')+'">📌 数据来源 <span class="pc-src-i">ⓘ</span></div>':'';
+    return '<div class="pc'+(featured?' featured':'')+'">'
+      +'<div class="pc-head"><div class="pc-ic" style="background:'+pl.color+'">'+(PLATFORM_ICONS[k]||initial(k))+'</div><div class="pc-titles"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-handle">'+esc(pl.handle||'')+'</div></div>'+chip+'<a class="pc-link" href="'+esc(pl.url)+'" target="_blank" rel="noopener" title="打开 '+esc(pl.name)+'">↗</a></div>'
+      +'<div class="pc-val">'+fmt(v)+'</div>'
       +'<div class="pc-share"><div class="pc-share-bar"><i style="width:'+share+'%;background:'+pl.color+'"></i></div><span class="pc-share-pct">占总粉丝 '+share+'%</span></div>'
-      +chart
-      +(pl.note?('<div class="pc-note">📌 '+esc(pl.note)+'</div>'):'')
+      +'<div class="pc-chart"><div class="chart-area spark">'+drawSpark(pl.history,pl.color,k)+'</div></div>'
+      +note
       +'</div>';
-  }).join('');
+  };
+  const featuredKeys=['instagram','youtube'];
+  const stdKeys=order.filter(k=>!featuredKeys.includes(k));
+  const hero='<div class="plat-hero">'
+    +'<div class="ph-left"><div class="ph-title">🛰️ 全平台总览</div><div class="ph-sub">截至 '+esc(data.updated_at)+' · 7 平台合计</div></div>'
+    +'<div class="ph-stats">'
+      +'<div class="ph-stat"><div class="ph-k">总粉丝数</div><div class="ph-v">'+fmt(total)+'</div></div>'
+      +'<div class="ph-stat"><div class="ph-k">本周净增</div><div class="ph-v up">▲ +'+fmt(totalWg)+'</div></div>'
+      +'<div class="ph-stat"><div class="ph-k">整体周增长率</div><div class="ph-v up">+'+rate.toFixed(1)+'%</div></div>'
+    +'</div>'
+    +'<div class="ph-engine"><span class="ph-engine-tag">🚀 增长引擎</span><span class="ph-engine-name" style="color:'+(topP?topP.pl.color:'#333')+'">'+esc(topP?topP.pl.name:'—')+'</span><span class="ph-engine-pct">贡献 '+topShare+'%</span></div>'
+    +'</div>';
+  el.innerHTML=hero
+    +featuredKeys.map(k=>card(k,true)).join('')
+    +'<div class="plat-std">'+stdKeys.map(k=>card(k,false)).join('')+'</div>';
 }
 
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
@@ -3842,6 +3921,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
