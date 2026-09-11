@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-09-10",
+  "updated_at": "2026-09-11",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 200473,
+      "value": 202713,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -194,13 +194,17 @@
         {
           "date": "2026-09-10",
           "value": 200473
+        },
+        {
+          "date": "2026-09-11",
+          "value": 202713
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 3456,
+      "value": 3507,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -392,6 +396,10 @@
         {
           "date": "2026-09-10",
           "value": 3456
+        },
+        {
+          "date": "2026-09-11",
+          "value": 3507
         }
       ],
       "name": "Facebook"
@@ -400,7 +408,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 88334,
+      "value": 88948,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -664,6 +672,10 @@
         {
           "date": "2026-09-10",
           "value": 88334
+        },
+        {
+          "date": "2026-09-11",
+          "value": 88948
         }
       ]
     },
@@ -671,7 +683,7 @@
       "name": "X (Twitter)",
       "handle": "@GangstarMCIndia",
       "url": "https://x.com/GangstarMCIndia",
-      "value": 72,
+      "value": 86,
       "label": "粉丝",
       "color": "#1DA1F2",
       "note": "55 帖子 · 7/30 刷新时从页面读取到粉丝数（之前被登录墙遮挡）",
@@ -779,6 +791,10 @@
         {
           "date": "2026-09-03",
           "value": 72
+        },
+        {
+          "date": "2026-09-11",
+          "value": 86
         }
       ]
     },
@@ -786,7 +802,7 @@
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 4114,
+      "value": 4189,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -914,6 +930,10 @@
         {
           "date": "2026-09-10",
           "value": 4114
+        },
+        {
+          "date": "2026-09-11",
+          "value": 4189
         }
       ]
     },
@@ -921,7 +941,7 @@
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 28852,
+      "value": 38623,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -1069,6 +1089,10 @@
         {
           "date": "2026-09-08",
           "value": 28852
+        },
+        {
+          "date": "2026-09-11",
+          "value": 38623
         }
       ]
     },
@@ -1076,7 +1100,7 @@
       "name": "ShareChat",
       "handle": "@gangstarmiragecityindia",
       "url": "https://sharechat.com/profile/gangstarmiragecityindia",
-      "value": 2123,
+      "value": 5243,
       "label": "粉丝",
       "color": "#FF7A00",
       "note": "数据来源：用户提供当前值（2026-08-15）：328；8/1 建号起逐日上升估算（带自然起伏）",
@@ -1180,6 +1204,10 @@
         {
           "date": "2026-09-07",
           "value": 2123
+        },
+        {
+          "date": "2026-09-11",
+          "value": 5243
         }
       ]
     }
