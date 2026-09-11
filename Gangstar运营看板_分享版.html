@@ -4325,6 +4325,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -7981,7 +7982,7 @@ function openWeekModal(){
   var BACKUP_PATH="gangstar/backups";
   var DEL="__GST_DEL__";
   /* ===== 本地服务器同步（Firebase 国内不可达时的可达后端） ===== */
-  var LOCAL_BASE="http://127.0.0.1:8787";
+  var LOCAL_BASE=(location.protocol==='http:'&&/:(8787)$/.test(location.host))?location.origin:'http://127.0.0.1:8787';
   var localMode=false;
   function lsGet(){return fetch(LOCAL_BASE+"/api/sync",{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){return j.keys||{};}).catch(function(){return null;});}
   function lsSet(k,v){var d={};d[k]=(v===DEL?DEL:v);return fetch(LOCAL_BASE+"/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:d})}).then(function(r){return r.json();}).catch(function(){return {ok:false};});}
