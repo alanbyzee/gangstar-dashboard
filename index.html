@@ -4262,6 +4262,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -8174,12 +8175,23 @@ function fbSparkSVG(arr){
 }
 
 /* ===== 玩家反馈看板 v5：Hero 健康度 + 比例条 + 参考带 + 议题真实原声（2026-09-13） ===== */
-function fbIsDrop(it){var s=(it&&(it.orig||it.theme))||'';return !!(window.FEEDBACK_DROP&&window.FEEDBACK_DROP[s]);}
+function fbHasWord(s){return (s||'').replace(/\s+/g,'').replace(/[^\p{L}\p{N}]/gu,'').length;}
+function fbIsDrop(it){
+  var s=(it&&(it.orig||it.theme))||'';
+  if(window.FEEDBACK_DROP&&window.FEEDBACK_DROP[s])return true; /* 人工命中：系统提示 / 刷屏好评 */
+  var w=fbHasWord(s);
+  if(w===0)return true;  /* 纯表情 / 纯符号 / 空白 → 无效 */
+  if(w<=1)return true;   /* 单字符噪声（如 "1"、"好"、"a"）→ 无效 */
+  return false;
+}
 function fbItems(w){return ((w.official||[]).concat(w.community||[])).filter(function(it){return !fbIsDrop(it);});}
 function fbQuotesOf(it){
   var Q=window.FEEDBACK_QUOTES||{};
   var list=Q[it.orig]||Q[it.theme]||null;
-  if(list&&list.length)return list.slice(0,5);
+  if(list&&list.length){
+    var fl=list.filter(function(q){return fbHasWord(q.zh||q.en)>1;}); /* 自动剔除纯表情 / 单字符无效评论 */
+    return fl.slice(0,5);
+  }
   var out=[],zh=it.theme||'',en=it.orig||'';
   var pts=zh.split(/\n+/).map(function(s){return s.replace(/^\s*\d+[\.、]\s*/,'').trim();}).filter(function(s){return s&&!/^[\s]*$/.test(s);});
   if(pts.length>1){pts.slice(0,5).forEach(function(p){out.push({zh:p,en:'',src:it.channel||'玩家社区'});});}
@@ -8315,7 +8327,7 @@ function fbWeeksHTML(chrono){
       +'<div class="fb4-wk-body">'+groups+'</div>'
     +'</div>';
   }).join('');
-  var filteredNote = rawCount>keepCount ? '<div class="fb-filtered">已筛选 '+(rawCount-keepCount)+' 条无效 / 重复评论（系统提示、刷屏好评、重复报错），仅保留真实玩家反馈</div>' : '';
+  var filteredNote = rawCount>keepCount ? '<div class="fb-filtered">已筛选 '+(rawCount-keepCount)+' 条无效 / 重复评论（系统提示、刷屏好评、纯表情、单字符噪声、重复报错），仅保留真实玩家反馈</div>' : '';
   return '<div class="fb4-weeks"><div class="fb4-weeks-h">历史周报 · 每周一块（点击周标题展开/收起，点击议题查看真实玩家原声）</div>'+filteredNote+blocks+'</div>';
 }
 var fbTip=(function(){var t=document.getElementById('fbTip');if(!t){t=document.createElement('div');t.id='fbTip';t.className='fb-tip';document.body.appendChild(t);}return t;})();
