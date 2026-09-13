@@ -465,6 +465,46 @@ body{
 @media(max-width:880px){.fb3-hero{grid-template-columns:1fr}.fb3-weeks{grid-template-columns:1fr}}
 @media(max-width:600px){.fb3-root{padding:18px 14px}.fb3-row{flex-wrap:wrap;gap:12px}.fb3-heat{width:100%}.fb3-wk,.fb3-health{padding:20px}.fb3-wk-total{font-size:38px}}
 
+/* ===== v4 交互层：按周分块 + 核心议题点击展开真实玩家反馈 ===== */
+.fb4-weeks{margin-top:28px}
+.fb4-weeks-h{font-size:13px;font-weight:700;color:#64748b;margin:0 2px 14px;letter-spacing:.01em}
+.fb4-wk{background:#fff;border:1px solid #EEF0F4;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.03),0 4px 14px rgba(16,24,40,.04)}
+.fb4-wk+.fb4-wk{margin-top:16px}
+.fb4-wk-head{display:flex;align-items:center;gap:14px;padding:18px 24px;cursor:pointer;user-select:none;transition:background .15s}
+.fb4-wk-head:hover{background:#fafbfc}
+.fb4-wk-week{font-size:15px;font-weight:800;color:#0f172a}
+.fb4-wk-sub{font-size:12.5px;color:#64748b;margin-top:3px;max-width:560px;line-height:1.5}
+.fb4-wk-att{font-size:12px;font-weight:800;padding:3px 12px;border-radius:999px;background:#f1f5f9;color:#64748b;white-space:nowrap}
+.fb4-wk-att.pos{background:#ecfdf5;color:#059669}.fb4-wk-att.neg{background:#fef2f2;color:#dc2626}.fb4-wk-att.wave{background:#fffbeb;color:#b45309}
+.fb4-wk-mini{display:flex;gap:12px;font-size:12px;font-weight:800;margin-left:auto;white-space:nowrap}
+.fb4-wk-mini .pos{color:#16a34a}.fb4-wk-mini .neg{color:#dc2626}
+.fb4-wk-chev{color:#94a3b8;font-size:13px;transition:transform .2s;margin-left:4px}
+.fb4-wk.open .fb4-wk-chev{transform:rotate(90deg)}
+.fb4-wk-body{display:none;border-top:1px solid #f1f5f9;padding:6px 24px 22px}
+.fb4-wk.open .fb4-wk-body{display:block}
+.fb4-issues{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.fb4-iss{background:#fff;border:1px solid #EEF0F4;border-radius:12px;overflow:hidden}
+.fb4-iss-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none}
+.fb4-iss-head:hover{background:#fafbfc}
+.fb4-iss-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.fb4-iss-dot.good{background:#16a34a}.fb4-iss-dot.sug{background:#f59e0b}.fb4-iss-dot.bad{background:#dc2626}
+.fb4-iss-title{font-size:14.5px;font-weight:800;color:#0f172a;line-height:1.4;flex:1;min-width:0}
+.fb4-iss-cnt{font-size:12px;color:#64748b;font-weight:700;white-space:nowrap}
+.fb4-iss-chev{color:#94a3b8;font-size:12px;transition:transform .2s}
+.fb4-iss.open .fb4-iss-chev{transform:rotate(90deg)}
+.fb4-iss-body{display:none;border-top:1px solid #f1f5f9;padding:0 18px 18px}
+.fb4-iss.open .fb4-iss-body{display:block}
+.fb4-fb{background:#F8F9FB;border-radius:12px;padding:16px;margin-top:12px}
+.fb4-fb-zh{font-size:14px;line-height:1.75;color:#0f172a;white-space:pre-wrap;word-break:break-word}
+.fb4-fb-en{font-size:12.5px;line-height:1.6;color:#64748b;margin-top:10px;white-space:pre-wrap;word-break:break-word;border-left:3px solid #e2e8f0;padding-left:12px}
+.fb4-fb-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.fb4-tag{font-size:11.5px;font-weight:800;border-radius:999px;padding:4px 12px;white-space:nowrap}
+.fb4-tag.st-good{background:#ecfdf5;color:#059669}.fb4-tag.st-sug{background:#fffbeb;color:#b45309}.fb4-tag.st-bad{background:#fef2f2;color:#dc2626}.fb4-tag.st-def{background:#f1f5f9;color:#64748b}
+.fb4-tag.ch{background:#eef2ff;color:#4338ca}
+.fb4-evi{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#2563eb;text-decoration:none;background:#eff6ff;border-radius:999px;padding:4px 12px}
+.fb4-empty{padding:40px;text-align:center;color:#94a3b8;font-size:13px}
+@media(max-width:600px){.fb4-wk-head{flex-wrap:wrap;gap:10px}.fb4-wk-mini{margin-left:0;width:100%}.fb4-wk-sub{max-width:none}}
+
 .lg{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 4px 0 10px;vertical-align:middle}
 .lg.g{background:#22c55e}.lg.s{background:#eab308}.lg.b{background:#ef4444}
 @media(max-width:1000px){.fb-weekly-grid{grid-template-columns:1fr 1fr}}
@@ -839,7 +879,6 @@ body{
 .sa-popover .pop-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
 .sa-popover .pop-body{white-space:pre-wrap;word-break:break-word}
 
-
 /* 区域素材：按类别列表 */
 .cat-block{border:1px solid var(--line);border-radius:0 0 14px 14px;overflow:hidden;margin-bottom:14px;background:#fff;box-shadow:var(--shadow-sm)}
 .cat-head{display:flex;align-items:center;gap:8px;padding:10px 17px;font-size:13px;font-weight:800;background:#fafbfc;border-bottom:1px solid var(--line)}
@@ -1053,7 +1092,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 /* 关注点闪烁：新内容提示 */
 .sdot{transition:transform .2s ease}
 .icard:hover .ic-topic{color:var(--brand)}
-
 
 /* ============================================================
    FANS TAB — EXECUTIVE REDESIGN (dark / premium / clear hierarchy)
@@ -1915,7 +1953,6 @@ window.HQ_DATA = {
   ]
 }
 
-
 ;
 
 </script>
@@ -2649,8 +2686,6 @@ function saveIssue(id){
 }
 function closeModal(){const m=document.querySelector('.sa-modal-bg');if(m)m.remove();}
 
-
-
 // ===== 粉丝监控工具函数 =====
 function wkTag(wg,label){
   if(!wg) return '';
@@ -2763,7 +2798,6 @@ function renderPlatformCards(data){
 }
 
 // ===== 洞察区渲染：作战进度 + 平台占比 + 本周最佳 =====
-
 
 // ===== Toast 通知 =====
 let toastTimer=null;
@@ -4016,401 +4050,6 @@ const FALLBACK_DATA = {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4550,7 +4189,6 @@ function saMatch(tags){
   if(!tags||!tags.length) return true;
   return tags.some(t=>saActive.has(t));
 }
-
 
 // ===== 南亚社群排期：拖拽改日期（手柄按住 · Pointer Events）=====
 // 移动记录存 localStorage gangstar_sa_moves（pid -> 目标日期），源数据不动
@@ -4740,8 +4378,6 @@ function renderSouthAsia(){
     <span class="chip all ${saActive.size===SA_ALL.length?'on':''}" data-f="all">全部</span>
     ${SA_FILTERS.map(f=>`<span class="chip ${saActive.has(f.key)?'on':''}" data-f="${f.key}">${f.label}</span>`).join('')}
   </div>`;
-
-
 
   const today=todayStr();
   const hq=HQ_DATA;
@@ -5197,7 +4833,6 @@ function openDetailModal(pid, anchorEl){
     });
   },10);
 }
-
 
 // ===== 区域素材周历 =====
 // 区域素材类型定义（与筛选开关一一对应）
@@ -6502,7 +6137,6 @@ function renderRegional(){
   document.addEventListener('pointercancel',()=>{cleanup();});
   window.addEventListener('blur',()=>{cleanup();});
 })();
-
 
 // 页面加载后如果当前是 regional 视图则渲染
 if(views.regional.classList.contains('active')) renderRegional();
@@ -7977,129 +7611,74 @@ function fbHeroHTML(chrono){
   +'</div>';
 }
 
-/* 下半部：本周 TOP5 核心议题行卡 */
-function fbListHTML(chrono){
-  var cur=chrono[chrono.length-1];
-  var all=(cur.official||[]).concat(cur.community||[]);
-  var seg=fbSeg(all);
-  var items=all.filter(function(it){var t=it.type||'oth';return t==='bad'||t==='sug'||t==='good';})
-    .slice().sort(function(a,b){return (b.count||0)-(a.count||0);}).slice(0,5);
-  if(!items.length)return '<div class="fb3-list"><div class="fb3-list-h">核心议题 · TOP 5 <span class="wk-tag">'+fbEsc(cur.week)+'</span></div><div class="fb-empty">本周暂无核心议题</div></div>';
-  var rows=items.map(function(it,i){
-    var c=Number(it.count)||0;
-    var share=Math.round(c/Math.max(1,seg.t)*100);
-    var rk=i<3?(' r'+(i+1)):'';
-    return '<div class="fb3-row">'
-      +'<div class="fb3-rank'+rk+'">'+(i+1)+'</div>'
-      +'<div class="fb3-issue"><div class="fb3-issue-title">'+fbEsc(fbTitle(it))+'</div>'
-        +'<div class="fb3-issue-desc">'+fbEsc(fbSub(it))+'</div></div>'
-      +'<div class="fb3-heat"><div class="fb3-heat-bar"><i style="width:'+share+'%"></i></div>'
-        +'<div class="fb3-heat-meta"><b>'+chNum(c)+'</b> 条 · 占当周 '+share+'%</div></div>'
-      +'<div class="fb3-status '+fbStatusCls(it)+'">'+fbStatusOf(it)+'</div>'
+/* 下半部：按周分块（从 Aug 20 发布周起，每周一块），核心议题可点击展开真实玩家反馈 */
+function fbIssueHTML(it,wi,ii){
+  var t=fbBucket(it.type||'oth');
+  var title=fbTitle(it);
+  var cnt=Number(it.count)||0;
+  var zh=fbEsc(it.theme||'');
+  var en=fbEsc(it.orig||'');
+  var ch=(it.channel||'').split(',').map(function(c){return fbChName(c.trim());}).filter(Boolean).join(' / ');
+  var stCls=fbStatusCls(it);
+  var meta='<span class="fb4-tag '+stCls+'">'+fbEsc(fbStatusOf(it))+'</span>'
+    +(ch?'<span class="fb4-tag ch">'+fbEsc(ch)+'</span>':'');
+  var note=(it.note&&/^https?:\/\//.test(it.note))?'<a class="fb4-evi" href="'+fbEsc(it.note)+'" target="_blank" rel="noopener">\u{1F4CE} 查看截图证据</a>':'';
+  return '<div class="fb4-iss" data-uii="'+wi+'-'+ii+'">'
+    +'<div class="fb4-iss-head">'
+      +'<span class="fb4-iss-dot '+t+'"></span>'
+      +'<div class="fb4-iss-title">'+fbEsc(title)+'</div>'
+      +'<span class="fb4-iss-cnt">'+chNum(cnt)+' 提及</span>'
+      +'<span class="fb4-iss-chev">\u25B8</span>'
+    +'</div>'
+    +'<div class="fb4-iss-body">'
+      +'<div class="fb4-fb"><div class="fb4-fb-zh">'+zh+'</div>'+(en?'<div class="fb4-fb-en">'+en+'</div>':'')+'</div>'
+      +'<div class="fb4-fb-meta">'+meta+note+'</div>'
+    +'</div>'
+  +'</div>';
+}
+function fbWeeksHTML(chrono){
+  if(!chrono.length)return '<div class="fb4-empty">暂无周数据</div>';
+  var blocks=chrono.slice().reverse().map(function(w,idx){
+    var all=(w.official||[]).concat(w.community||[]);
+    var seg=fbSeg(all);
+    var items=all.filter(function(it){var t=it.type||'oth';return t==='bad'||t==='sug'||t==='good';})
+      .slice().sort(function(a,b){return (b.count||0)-(a.count||0);});
+    var open=idx===0?' open':'';
+    var issues=items.map(function(it,i){return fbIssueHTML(it,idx,i);}).join('');
+    var att=w.attitude?'<span class="fb4-wk-att '+attClass(w.attitude)+'">'+fbEsc(w.attitude)+'</span>':'';
+    var summary=w.summary?fbStrip(w.summary).slice(0,60):'';
+    return '<div class="fb4-wk'+open+'">'
+      +'<div class="fb4-wk-head">'
+        +'<div><div class="fb4-wk-week">'+fbEsc(w.week)+'</div>'
+        +'<div class="fb4-wk-sub">'+(summary?fbEsc(summary):'')+'</div></div>'
+        +att
+        +'<span class="fb4-wk-mini"><span class="pos">正面 '+seg.gp+'%</span><span class="neg">负面 '+seg.bp+'%</span></span>'
+        +'<span class="fb4-wk-chev">\u25B8</span>'
+      +'</div>'
+      +'<div class="fb4-wk-body"><div class="fb4-issues">'+issues+'</div></div>'
     +'</div>';
   }).join('');
-  return '<div class="fb3-list"><div class="fb3-list-h">核心议题 · TOP 5 <span class="wk-tag">'+fbEsc(cur.week)+'</span></div><div class="fb3-rows">'+rows+'</div></div>';
+  return '<div class="fb4-weeks"><div class="fb4-weeks-h">历史周报 · 每周一块（点击周标题展开/收起，点击议题查看真实玩家反馈）</div>'+blocks+'</div>';
 }
 
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
   var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
-    '<div class="sub">以「周一~周日」为自然周切片，顶部为全局健康度评分与本周 / 上周双周对比，底部为本周玩家最关心的 TOP 5 核心议题。</div>';
+    '<div class="sub">以「周一~周日」为自然周切片，顶部为当前周全局健康度与本周 / 上周对比；下方按周分块（从 8.20 发布周起）展示真实玩家反馈，核心议题点击即可展开玩家原声。</div>';
   if(!weeks.length){
     html+='<div class="fb-empty big">暂无周报 · 你每周给两个表（玩家社区 / 官号后台），助手整理评论与走向后录入这里</div>';
     document.getElementById('feedbackView').innerHTML='<div class="fb3-root">'+html+'</div>';return;
   }
   var chrono=weeks.slice().sort(function(a,b){var da=fbWeekStart(a),db=fbWeekStart(b);return (da?da.getTime():0)-(db?db.getTime():0);});
   html+=fbHeroHTML(chrono);
-  html+=fbListHTML(chrono);
+  html+=fbWeeksHTML(chrono);
   html+='<div class="fb3-actions"><button class="fb3-add">＋ 新增一周</button></div>';
   var root=document.getElementById('feedbackView');
   root.innerHTML='<div class="fb3-root">'+html+'</div>';
   root.querySelector('.fb3-add').onclick=openWeekModal;
-}function wkBlock(w,wi){
-  function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
-  function segOf(arr){var g=0,s=0,b=0;arr.forEach(function(it){var c=Number(it.count)||0;var k=bucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0,np:t?Math.round((g+s)/t*100):0};}
-  var offSeg=segOf(w.official||[]);
-  var comSeg=segOf(w.community||[]);
-  var allC=(w.official||[]).concat(w.community||[]);
-  var cgO=segOf(allC);
-    function srcCol(key,sumKey,platKey,label,cls,dot){
-      var isArr=Array.isArray(key);
-      var cmts=isArr?key:(w[key]||[]);
-      var summary=isArr?'':(w[sumKey]||'');
-      var plats=isArr?[]:(w[platKey]||[]);
-    function bucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
-    var groups={good:[],sug:[],bad:[]};
-    cmts.forEach(function(it){groups[bucket(it.type||'oth')].push(it);});
-    var tot=cmts.reduce(function(s,it){return s+(Number(it.count)||0);},0);
-    function seg(t){var a=groups[t];var sc=a.reduce(function(s,it){return s+(Number(it.count)||0);},0);var p=tot>0?Math.round(sc/tot*100):0;return {pct:p,items:a,count:sc};}
-    var g=seg('good'),sg=seg('sug'),bd=seg('bad');
-    function cmtRow(it){
-      var cnt=Number(it.count)||0;
-      var cntHtml=cnt>0?'<span class="cmt-c">'+cnt+' 提及</span>':'<span class="cmt-c hot">高频</span>';
-      return '<div class="cmt" data-tip="'+fbEsc(it.orig||it.theme||'')+'" data-tag="'+(it.type||'oth')+'" data-cnt="'+cnt+'"><span class="cmt-text">'+fbEsc(it.theme||'')+'</span>'+cntHtml+'</div>';
-    }
-    function groupHtml(t,emoji,title,segObj){
-      if(!segObj.items.length)return '';
-      return '<div class="sent-group '+t+'"><div class="sg-head">'+emoji+' '+title+' · '+segObj.count+' 提及 ('+segObj.pct+'%)</div><div class="sg-body">'+segObj.items.map(cmtRow).join('')+'</div></div>';
-    }
-    var bar='';
-    if(tot>0){
-      bar='<div class="sent-bar">'+
-        (g.pct>0?'<div class="sent-seg good" style="width:'+g.pct+'%">正面 '+g.count+' · '+g.pct+'%</div>':'')+
-        (sg.pct>0?'<div class="sent-seg sug" style="width:'+sg.pct+'%">中性 '+sg.count+' · '+sg.pct+'%</div>':'')+
-        (bd.pct>0?'<div class="sent-seg bad" style="width:'+bd.pct+'%">负面 '+bd.count+' · '+bd.pct+'%</div>':'')+
-        '</div><div class="sent-total">共 '+tot+' 提及 · 占比按提及数</div>';
-    }
-    var platHtml=plats.length?'<div class="plat-sum"><div class="plat-sum-h">各平台总结</div>'+plats.map(function(p){return '<div class="plat-row"><span class="plat-name">'+fbEsc(p.name)+'</span><span class="plat-note">'+fbEsc(p.note||'')+'</span></div>';}).join('')+'</div>':'';
-    var summaryHtml=summary?'<div class="src-sum">'+fbEsc(summary)+'</div>':'';
-    var commentsHtml=tot>0?(groupHtml('good','👍','正面',g)+groupHtml('sug','🟦','中性',sg)+groupHtml('bad','😤','负面',bd)):'<div class="fb-empty">本周暂无'+label+'反馈（待补）</div>';
-    return '<div class="src-col '+cls+'">'+
-      '<div class="src-head"><span class="src-dot" style="background:'+dot+'"></span>'+label+'</div>'+
-      summaryHtml+platHtml+(tot>0?'<div class="sent-wrap">'+bar+'</div>':'')+commentsHtml+
-    '</div>';
-  }
-  function donut(seg,size){
-    var r=size/2-9, cx=size/2, cy=size/2, C=2*Math.PI*r;
-    var segs=[['good',seg.g,'#22c55e'],['sug',seg.s,'#eab308'],['bad',seg.b,'#ef4444']];
-    var acc=0, parts=[];
-    segs.forEach(function(sg){var len=seg.t?sg[1]/seg.t*C:0; if(len>0){parts.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+sg[2]+'" stroke-width="13" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-acc).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"></circle>'); acc+=len;}});
-    var bg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#eef2f7" stroke-width="13"></circle>';
-    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+bg+parts.join('')+'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="21" font-weight="800" fill="#1e293b">'+seg.np+'%</text><text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="10" fill="#64748b">非负占比</text></svg>';
-  }
-  function topRows(arr,n){
-    var sorted=(arr||[]).slice().sort(function(a,b){return (Number(b.count)||0)-(Number(a.count)||0);}).slice(0,n);
-    if(!sorted.length)return '<div class="fb-empty">暂无数据</div>';
-    var max=Math.max(1,sorted[0].count);
-    return sorted.map(function(it){var c=Number(it.count)||0;var wd=Math.max(8,Math.round(c/max*100));return '<div class="top-row"><span class="top-name" title="'+fbEsc(it.theme||'')+'">'+fbEsc(it.theme||'')+'</span><span class="top-bar"><i style="width:'+wd+'%"></i></span><span class="top-val">'+c+'</span></div>';}).join('');
-  }
-  var kpi='<div class="kpi-row">'+
-    '<div class="kpi-card"><div class="kpi-label">总反馈量 · Total VoC</div><div class="kpi-val">'+cgO.t+'</div><div class="kpi-sub">官号 + 社群 合并口径</div></div>'+
-    '<div class="kpi-card kp"><div class="kpi-label">非负占比 · Non-negative</div><div class="kpi-val">'+cgO.np+'%</div><div class="kpi-sub">'+(cgO.g+cgO.s)+' 非负提及</div></div>'+
-    '<div class="kpi-card ks"><div class="kpi-label">中性占比 · Neutral</div><div class="kpi-val">'+cgO.sp+'%</div><div class="kpi-sub">'+cgO.s+' 提及</div></div>'+
-    '<div class="kpi-card kb"><div class="kpi-label">负面情绪率 · Negative</div><div class="kpi-val">'+cgO.bp+'%</div><div class="kpi-sub">'+cgO.b+' 提及</div></div>'+
-    '<div class="kpi-card kn"><div class="kpi-label">净情绪指数</div><div class="kpi-val">'+(cgO.gp-cgO.bp>=0?'+':'')+(cgO.gp-cgO.bp)+'%</div><div class="kpi-sub">正面 − 负面</div></div>'+
-    '</div>';
-  var donuts='<div class="donut-row"><div class="donut-box" style="margin:0 auto"><div class="donut-cap">合并反馈 · 情感构成</div>'+donut(cgO,148)+'<div class="donut-leg"><span class="lg g"></span>正面 '+cgO.g+'<span class="lg s"></span>中性 '+cgO.s+'<span class="lg b"></span>负面 '+cgO.b+'</div></div></div>';
-  var tops='<div class="top-block"><div class="top-h">🔥 高频主题 Top（按提及量）</div>'+topRows(allC,8)+'</div>';
-  var ct=cgO.t;
-  var cbar=ct>0?'<div class="sent-wrap comb"><div class="sent-bar">'+
-    (cgO.gp>0?'<div class="sent-seg good" style="width:'+cgO.gp+'%">正面 '+cgO.g+' · '+cgO.gp+'%</div>':'')+
-    (cgO.sp>0?'<div class="sent-seg sug" style="width:'+cgO.sp+'%">中性 '+cgO.s+' · '+cgO.sp+'%</div>':'')+
-    (cgO.bp>0?'<div class="sent-seg bad" style="width:'+cgO.bp+'%">负面 '+cgO.b+' · '+cgO.bp+'%</div>':'')+
-    '</div><div class="sent-total">本周合计 '+ct+' 提及 · 整体态度：'+(w.attitude||'—')+'</div></div>':'';
-  return '<div class="wk-block">'+
-    '<div class="wk-head"><span class="wk-title">📅 '+fbEsc(w.week||'未命名周')+'</span>'+
-    '<span class="wk-att '+attClass(w.attitude)+'">'+(w.attitude||'态度未评')+'</span>'+
-    '<button class="wk-del" data-i="'+wi+'">✕ 删除本周</button></div>'+
-    (w.summary?'<div class="wk-summary insight"><div class="ins-h">🔑 核心洞察</div>'+fbRich(w.summary)+'</div>':'')+
-    kpi+donuts+tops+cbar+
-    '<div class="two-col one">'+
-      srcCol(allC,'','','玩家反馈 · 合并','col-merged','#6d28d9')+
-    '</div>'+
-    (w.trend?'<div class="wk-trend"><b>📌 本周走向：</b>'+fbEsc(w.trend)+'</div>':'')+
-    (w.invalid?'<div class="wk-invalid">🧹 '+fbEsc(w.invalid)+'</div>':'')+
-  '</div>';
+  // 交互：点击周标题展开/收起该周；点击议题展开玩家真实反馈
+  root.querySelectorAll('.fb4-wk-head').forEach(function(h){h.onclick=function(){h.parentNode.classList.toggle('open');};});
+  root.querySelectorAll('.fb4-iss-head').forEach(function(h){h.onclick=function(e){if(e.target.closest('a'))return;h.parentNode.classList.toggle('open');};});
 }
 
 function openWeekModal(){
