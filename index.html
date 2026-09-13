@@ -4264,6 +4264,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -8128,12 +8129,18 @@ function fbSeg(arr){var g=0,s=0,b=0;arr=(arr||[]);arr.forEach(function(it){var c
 function fbStrip(s){return (s||'').replace(/\*\*/g,'').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();}
 
 /* 议题标题：取首句、去 Markdown / 换行、截断，避免长文堆砌 */
+function fbTitleSrc(it){
+  var raw=((it&&it.theme)||'').replace(/\r/g,'');
+  var lines=raw.split('\n').map(function(s){return fbStrip(s);}).filter(function(s){return s;});
+  var t=lines.length?lines[0]:fbStrip(raw);
+  t=t.replace(/^\s*\d+\s*[\.、\)．:：]\s*/,'').trim();
+  if(!t)t=fbStrip(raw).replace(/^\s*\d+\s*[\.、\)．:：]\s*/,'').trim();
+  return t;
+}
 function fbTitle(it){
-  var t=fbStrip(it.theme||'');
-  var seg=t.split(/[。.\n]/)[0].trim();
-  if(!seg)seg=t.trim();
-  if(seg.length>30)seg=seg.slice(0,30)+'…';
-  return seg||'未命名议题';
+  var t=fbTitleSrc(it);
+  if(t.length>30)t=t.slice(0,30)+'…';
+  return t||'未命名议题';
 }
 /* 议题副说明：按类型给出语义 + 渠道，浅灰一行说明 */
 function fbSub(it){
@@ -8180,7 +8187,7 @@ function fbHasWord(s){return (s||'').replace(/\s+/g,'').replace(/[^\p{L}\p{N}]/g
 function fbIsDrop(it){
   var s=(it&&(it.orig||it.theme))||'';
   if(window.FEEDBACK_DROP&&window.FEEDBACK_DROP[s])return true; /* 人工命中：系统提示 / 刷屏好评 */
-  var w=fbHasWord(s);
+  var w=fbHasWord(String(s).replace(/^\s*\d+\s*[\.、\)．:：]\s*/,''));
   if(w===0)return true;  /* 纯表情 / 纯符号 / 空白 → 无效 */
   if(w<=1)return true;   /* 单字符噪声（如 "1"、"好"、"a"）→ 无效 */
   return false;
