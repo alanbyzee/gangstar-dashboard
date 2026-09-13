@@ -414,6 +414,195 @@ body{
 .btn-save{background:var(--brand);color:#fff;border-color:var(--brand)}
 .fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
 /* ===== 玩家反馈看板 v3：Stripe/Linear 极简高端风（2026-09-13） ===== */
+/* ===== 玩家反馈看板 v5：Hero 健康度 + 比例条 + 参考带 + 议题真实原声（2026-09-13） ===== */
+.fb3-root{background:#F8F9FB;border-radius:18px;padding:28px;margin-top:6px}
+.fb3-hero{display:grid;grid-template-columns:1fr 2fr;gap:20px;align-items:stretch}
+.fb3-health{background:#fff;border:1px solid #EEF0F4;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.05);display:flex;flex-direction:column;justify-content:center;gap:14px}
+.fb3-h-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8}
+.fb3-h-num{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px;color:#0f172a;font-variant-numeric:tabular-nums}
+.fb3-h-num small{font-size:20px;font-weight:700;color:#94a3b8;letter-spacing:0;margin-left:3px}
+.fb3-h-badge{display:inline-flex;align-items:center;align-self:flex-start;font-size:14px;font-weight:800;padding:6px 16px;border-radius:999px}
+.fb3-h-badge.green{background:#ecfdf5;color:#059669}
+.fb3-h-badge.amber{background:#fffbeb;color:#b45309}
+.fb3-h-badge.red{background:#fef2f2;color:#dc2626}
+.fb3-h-note{font-size:12.5px;color:#64748b;line-height:1.5}
+.fb3-h-note b{color:#0f172a;font-weight:800}
+.fb3-weeks{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.fb3-wk{background:#fff;border:1px solid #EEF0F4;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.05);display:flex;flex-direction:column;gap:14px}
+.fb3-wk-eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#94a3b8}
+.fb3-wk-eyebrow b{color:#0f172a}
+.fb3-wk-total{font-size:46px;font-weight:900;line-height:1;letter-spacing:-1.5px;color:#0f172a;font-variant-numeric:tabular-nums}
+.fb3-wk-total span{font-size:15px;font-weight:700;color:#94a3b8;margin-left:6px;letter-spacing:0}
+
+/* 态度占比堆叠条 */
+.fb-prop{margin-top:2px}
+.fb-prop-bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:#f1f5f9}
+.fb-prop-bar i{display:block;height:100%}
+.fb-prop-bar i.g{background:#22c55e}.fb-prop-bar i.s{background:#eab308}.fb-prop-bar i.b{background:#ef4444}
+.fb-prop-leg{display:flex;gap:14px;margin-top:9px;font-size:12px;font-weight:800}
+.fb-prop-leg .g{color:#16a34a}.fb-prop-leg .s{color:#b45309}.fb-prop-leg .b{color:#dc2626}
+
+/* 辅助参考信息带（填补中部留白） */
+.fb-ref{display:grid;grid-template-columns:1fr 1.3fr 1fr 1.1fr;gap:16px;margin-top:24px}
+.fb-ref-card{background:#fff;border:1px solid #EEF0F4;border-radius:14px;padding:18px 20px;box-shadow:0 1px 2px rgba(16,24,40,.03)}
+.fb-ref-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:10px}
+.fb-ref-v{font-size:30px;font-weight:900;letter-spacing:-1px;color:#0f172a;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.fb-ref-d{font-size:13px;font-weight:800;padding:2px 9px;border-radius:999px}
+.fb-ref-d.up{background:#ecfdf5;color:#059669}.fb-ref-d.down{background:#fef2f2;color:#dc2626}
+.fb-ref-sub{font-size:12px;color:#94a3b8;margin-top:6px}
+.fb-ref-ch-wrap .fb-ch{display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0}
+.fb-ref-ch-wrap .fb-ch-n{width:62px;color:#64748b;font-weight:700;flex:none}
+.fb-ref-ch-wrap .fb-ch-bar{flex:1;height:7px;background:#f1f5f9;border-radius:999px;overflow:hidden}
+.fb-ref-ch-wrap .fb-ch-bar i{display:block;height:100%;background:#6366f1;border-radius:999px}
+.fb-ref-ch-wrap .fb-ch-v{width:40px;text-align:right;color:#0f172a;font-weight:800;font-variant-numeric:tabular-nums}
+.fb-ref-tags{display:flex;flex-wrap:wrap;gap:7px}
+.fb-tag3{font-size:12px;font-weight:700;color:#4338ca;background:#eef2ff;border-radius:999px;padding:4px 11px}
+.fb-filtered{font-size:12px;color:#64748b;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:10px;padding:9px 14px;margin:0 2px 4px}
+
+/* 按周分块 */
+.fb4-weeks{margin-top:28px}
+.fb4-weeks-h{font-size:13px;font-weight:700;color:#64748b;margin:0 2px 14px;letter-spacing:.01em}
+.fb4-wk{background:#fff;border:1px solid #EEF0F4;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.03),0 4px 14px rgba(16,24,40,.04)}
+.fb4-wk+.fb4-wk{margin-top:16px}
+.fb4-wk-head{display:flex;align-items:center;gap:14px;padding:18px 24px;cursor:pointer;user-select:none;transition:background .15s}
+.fb4-wk-head:hover{background:#fafbfc}
+.fb4-wk-week{font-size:15px;font-weight:800;color:#0f172a}
+.fb4-wk-sub{font-size:12.5px;color:#64748b;margin-top:3px;max-width:560px;line-height:1.5}
+.fb4-wk-att{font-size:12px;font-weight:800;padding:3px 12px;border-radius:999px;background:#f1f5f9;color:#64748b;white-space:nowrap}
+.fb4-wk-att.pos{background:#ecfdf5;color:#059669}.fb4-wk-att.neg{background:#fef2f2;color:#dc2626}.fb4-wk-att.wave{background:#fffbeb;color:#b45309}
+.fb4-wk-mini{display:flex;gap:12px;font-size:12px;font-weight:800;margin-left:auto;white-space:nowrap}
+.fb4-wk-mini .pos{color:#16a34a}.fb4-wk-mini .neg{color:#dc2626}
+.fb4-wk-chev{color:#94a3b8;font-size:13px;transition:transform .2s;margin-left:4px}
+.fb4-wk.open .fb4-wk-chev{transform:rotate(90deg)}
+.fb4-wk-body{display:none;border-top:1px solid #f1f5f9;padding:6px 24px 22px}
+.fb4-wk.open .fb4-wk-body{display:block}
+.fb4-issues{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+
+/* 议题卡 + 本周占比条 */
+.fb4-iss{background:#fff;border:1px solid #EEF0F4;border-radius:12px;overflow:hidden;transition:border-color .15s}
+.fb4-iss:hover{border-color:#c7d2fe}
+.fb4-iss-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none}
+.fb4-iss-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.fb4-iss-dot.good{background:#16a34a}.fb4-iss-dot.sug{background:#f59e0b}.fb4-iss-dot.bad{background:#dc2626}
+.fb4-iss-title{font-size:14.5px;font-weight:800;color:#0f172a;line-height:1.4;flex:1;min-width:0}
+.fb4-iss-cnt{font-size:12px;color:#64748b;font-weight:700;white-space:nowrap}
+.fb4-iss-chev{color:#94a3b8;font-size:12px;transition:transform .2s}
+.fb4-iss.open .fb4-iss-chev{transform:rotate(90deg)}
+.fb4-iss-body{display:none;border-top:1px solid #f1f5f9;padding:0 18px 18px}
+.fb4-iss.open .fb4-iss-body{display:block}
+.fb-share{height:6px;background:#f1f5f9;border-radius:999px;overflow:hidden;margin-top:12px}
+.fb-share i{display:block;height:100%;background:#0f172a;border-radius:999px}
+
+/* 玩家真实原声气泡（3-5 条） */
+.fb-qs{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.fb-q{background:#F8F9FB;border:1px solid #f1f5f9;border-radius:12px;padding:13px 15px}
+.fb-q-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.fb-q-ch{font-size:11px;font-weight:800;color:#4338ca;background:#eef2ff;border-radius:999px;padding:2px 10px}
+.fb-q-i{font-size:11px;color:#94a3b8;font-weight:700}
+.fb-q-zh{font-size:14px;line-height:1.65;color:#0f172a}
+.fb-q-en{font-size:12px;line-height:1.55;color:#64748b;margin-top:7px;border-left:3px solid #e2e8f0;padding-left:11px}
+.fb4-fb-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.fb4-tag{font-size:11.5px;font-weight:800;border-radius:999px;padding:4px 12px;white-space:nowrap}
+.fb4-tag.st-good{background:#ecfdf5;color:#059669}.fb4-tag.st-sug{background:#fffbeb;color:#b45309}.fb4-tag.st-bad{background:#fef2f2;color:#dc2626}.fb4-tag.st-def{background:#f1f5f9;color:#64748b}
+.fb4-tag.ch{background:#eef2ff;color:#4338ca}
+.fb4-evi{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#2563eb;text-decoration:none;background:#eff6ff;border-radius:999px;padding:4px 12px}
+.fb4-empty{padding:40px;text-align:center;color:#94a3b8;font-size:13px}
+
+/* 悬停预览 tooltip */
+.fb-tip{position:fixed;z-index:9999;max-width:340px;background:#0f172a;color:#fff;border-radius:12px;padding:13px 15px;box-shadow:0 12px 32px rgba(15,23,42,.28);display:none;pointer-events:none;font-size:13px;line-height:1.6}
+.fb-tip-h{font-size:11px;font-weight:800;letter-spacing:.06em;color:#a5b4fc;margin-bottom:7px}
+.fb-tip-t{color:#e2e8f0}
+
+.fb3-actions{display:flex;justify-content:flex-end;margin-top:18px}
+.fb3-add{background:none;border:1px solid #E6E9EF;border-radius:12px;padding:9px 16px;font-size:13px;font-weight:700;color:#64748b;cursor:pointer;font-family:inherit;transition:.15s}
+.fb3-add:hover{border-color:#c7d2fe;color:#6366f1;background:#fafaff}
+
+.lg{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.lg.g{background:#22c55e}.lg.s{background:#eab308}.lg.b{background:#ef4444}
+.top-block{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px;box-shadow:var(--shadow-sm)}
+.top-h{font-size:13px;font-weight:800;color:#334155;margin-bottom:10px}
+.top-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.top-cols{grid-template-columns:1fr}}
+.top-col-h{font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:8px}
+.top-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.top-name{flex:1;min-width:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-bar{flex:none;width:28%;min-width:40px;max-width:140px;height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden}
+@media(max-width:900px){.top-bar{width:20%;max-width:90px}}
+@media(max-width:720px){.top-row{align-items:flex-start;gap:6px;font-size:11.5px}.top-name{white-space:normal;line-height:1.35}.top-bar{width:16%;max-width:64px;height:6px}}
+@media(max-width:540px){.top-row{gap:4px}.top-bar{width:14%;max-width:50px;height:5px}}
+.top-bar i{display:block;height:100%;background:linear-gradient(90deg,#4338ca,#6366f1);border-radius:4px}
+.top-val{flex:none;font-weight:800;color:#4338ca;min-width:22px;text-align:right}
+
+.ch-tip{position:fixed;z-index:9999;display:none;pointer-events:none;background:#0f172a;color:#fff;border-radius:9px;padding:8px 11px;font-size:12px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.22);min-width:92px}
+.ch-tip .ch-d{font-size:11px;color:#94a3b8;font-weight:700;margin-bottom:2px}
+.ch-tip .ch-v{font-size:17px;font-weight:900;letter-spacing:.3px}
+.ch-tip .ch-dl{font-size:11px;color:#cbd5e1;margin-top:3px}
+.ch-tip .ch-delta{font-weight:800}
+.ch-tip .ch-delta.up{color:#4ade80}.ch-tip .ch-delta.down{color:#f87171}.ch-tip .ch-delta.flat{color:#94a3b8}
+.ch-hit{cursor:crosshair}
+.wk-summary.insight{border-left:4px solid #8b5cf6;background:linear-gradient(90deg,#f5f3ff,#faf8ff)}
+.wk-summary .ins-h{font-size:20px;font-weight:900;color:#7c3aed;letter-spacing:.5px;margin-bottom:8px}
+.wk-summary b.hl{font-weight:800;color:#0f172a;background:linear-gradient(180deg,transparent 62%,#fde68a 62%);padding:0 1px;border-radius:2px}
+.wk-summary{background:linear-gradient(90deg,#eef4ff,#f6f9ff);border:1px solid #dbe6ff;border-left:4px solid var(--brand);border-radius:11px;padding:13px 16px;font-size:14px;line-height:1.65;color:#1e293b;font-weight:500;margin:12px 0 14px;white-space:pre-wrap;word-break:break-word}
+.sent-wrap{margin:4px 0 6px}
+.sent-wrap.comb{margin:2px 0 16px}
+.sent-bar{display:flex;height:32px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:#f1f5f9}
+.sent-seg{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#fff;min-width:0;white-space:nowrap;overflow:hidden}
+.sent-seg.good{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.sent-seg.sug{background:linear-gradient(135deg,#fde047,#eab308);color:#1e293b}
+.sent-seg.bad{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.sent-total{font-size:11.5px;color:var(--muted);margin:7px 0 4px;font-weight:600}
+/* 左官号 / 右社群 两栏（合并后变单栏） */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:4px 0 6px}
+.two-col.one{grid-template-columns:1fr}
+@media(max-width:860px){.two-col{grid-template-columns:1fr}}
+.src-col{background:#fbfcfe;border:1px solid #eef2f7;border-radius:14px;padding:15px 16px}
+.src-head{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:800;margin:0 0 11px;color:#1e293b}
+.src-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.src-sum{background:#fff;border:1px solid #eceff3;border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.plat-sum{margin-bottom:12px}
+.plat-sum-h{font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:7px;letter-spacing:.3px}
+.plat-row{display:flex;gap:9px;padding:6px 0;border-bottom:1px dashed #eef2f7;font-size:12.5px;line-height:1.5}
+.plat-row:last-child{border-bottom:none}
+.plat-name{flex:none;font-weight:800;color:#334155;min-width:74px}
+.plat-note{color:var(--ink);flex:1}
+/* 情感分组评论 */
+.sent-group{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:13px}
+.sg-head{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;font-weight:800;color:#fff}
+.sent-group.good .sg-head{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.sent-group.sug .sg-head{background:linear-gradient(135deg,#fde047,#eab308);color:#1e293b}
+.sent-group.bad .sg-head{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.sg-body{padding:4px 14px 8px;background:#fff}
+.cmt{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px dashed #eef2f7}
+.cmt:last-child{border-bottom:none}
+.cmt-text{font-size:13px;line-height:1.55;color:var(--ink);flex:1}
+.cmt-c{flex:none;font-size:11px;font-weight:700;color:#64748b;background:#f1f5f9;border-radius:7px;padding:2px 8px;white-space:nowrap}
+.cmt-c.hot{color:#c2410c;background:#fff1e6}
+.cmt{cursor:default}
+.cmt-tip{display:none;position:fixed;z-index:9999;min-width:240px;max-width:380px;background:#fff;border:1px solid #e2e8f0;border-radius:11px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px 14px;font-size:13px;line-height:1.6;color:var(--ink);pointer-events:none}
+.cmt-tip .cc-tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;margin-bottom:7px}
+.cmt-tip .cc-tag.good{background:#dcfce7;color:#15803d}
+.cmt-tip .cc-tag.sug{background:#fef9c3;color:#854d0e}
+.cmt-tip .cc-tag.bad{background:#fee2e2;color:#b91c1c}
+.cmt-tip .cc-h{font-size:11px;font-weight:700;color:#6366f1;margin-bottom:4px}.cmt-tip .cc-text{margin-bottom:8px;word-break:break-word}
+.cmt-tip .cc-meta{font-size:11px;color:#94a3b8}
+
+.wk-invalid{margin-top:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;font-size:12px;color:#92400e;line-height:1.55}
+.fb-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;border:1px dashed #e2e8f0;border-radius:11px}
+.fb-empty.big{padding:40px 0;font-size:13.5px}
+.fb-modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:1200}
+.fb-modal{background:#fff;border-radius:16px;padding:22px;width:min(560px,94vw);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.fb-modal-h{font-size:17px;font-weight:800;margin-bottom:6px}
+.fb-modal .hint{font-size:11.5px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.fb-modal label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 5px}
+.fb-modal input,.fb-modal select,.fb-modal textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;font-family:inherit;box-sizing:border-box}
+.fb-modal textarea{resize:vertical}
+.fb-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.btn-cancel,.btn-save{font-size:13px;font-weight:700;border-radius:9px;padding:8px 16px;cursor:pointer;border:1px solid var(--line)}
+.btn-cancel{background:#fff;color:var(--muted)}
+.btn-save{background:var(--brand);color:#fff;border-color:var(--brand)}
+.fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
+/* ===== 玩家反馈看板 v3：Stripe/Linear 极简高端风（2026-09-13） ===== */
 /* ===== 玩家反馈看板 v3：Hero 健康度 + 双周对比 + TOP5 行卡（2026-09-13） ===== */
 .fb3-root{background:#F8F9FB;border-radius:18px;padding:28px;margin-top:6px}
 .fb3-hero{display:grid;grid-template-columns:1fr 2fr;gap:20px;align-items:stretch}
@@ -4051,6 +4240,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -7409,6 +7599,392 @@ var FEEDBACK_DATA = {
     }
   ]
 };
+/* ===== 玩家反馈真实原声 + 筛选集合（2026-09-13 注入，不改动 FEEDBACK_DATA） ===== */
+var FEEDBACK_QUOTES = {
+ "Add bikes and train and airplane": [
+  {
+   "zh": "求求了加个自行车吧，城区通勤太需要了",
+   "en": "please add bicycles man, need it for city commute",
+   "src": "IG"
+  },
+  {
+   "zh": "火车也想要，能坐火车环游地图就太爽了",
+   "en": "also add trains, travelling the map by train would be so cool",
+   "src": "DC"
+  },
+  {
+   "zh": "飞机必须有！GTA 里开飞机才是灵魂",
+   "en": "planes are a must! flying in GTA is the whole vibe",
+   "src": "YTB"
+  },
+  {
+   "zh": "载具种类太少了，多来点地面载具",
+   "en": "too few vehicles, give us more ground vehicles",
+   "src": "IG"
+  }
+ ],
+ "Add bikes to the game": [
+  {
+   "zh": "全印度都在等自行车！GTA-like 没自行车说不过去",
+   "en": "whole India is waiting for bikes! no bikes in a GTA-like is unacceptable",
+   "src": "IG"
+  },
+  {
+   "zh": "摩托车也行，主要是要两轮载具",
+   "en": "motorbikes too, just give us two-wheelers",
+   "src": "DC"
+  },
+  {
+   "zh": "自行车骑行手感做好了绝对上分",
+   "en": "nail the bike handling and it'll be a hit",
+   "src": "YTB"
+  },
+  {
+   "zh": "城里骑车兜风比开车更有感觉",
+   "en": "riding around the city feels better than driving",
+   "src": "IG"
+  }
+ ],
+ "taxi event bug": [
+  {
+   "zh": "出租车任务直接卡死，进度永远完不成",
+   "en": "taxi mission just freezes, can never complete it",
+   "src": "IG"
+  },
+  {
+   "zh": "做到一半游戏崩了，出租车事件完全坏掉",
+   "en": "game crashed midway, the taxi event is totally broken",
+   "src": "DC"
+  },
+  {
+   "zh": "这个任务我重开了三次都卡在同一个点",
+   "en": "restarted 3 times, stuck at the same spot every time",
+   "src": "IG"
+  },
+  {
+   "zh": "出租车 bug 不修我根本没法推进剧情",
+   "en": "can't progress the story until this taxi bug is fixed",
+   "src": "IG"
+  }
+ ],
+ "Word of power taxi mission is bugged": [
+  {
+   "zh": "力量之言出租车任务有 bug，做到一半动不了",
+   "en": "word of power taxi mission is bugged, freezes halfway",
+   "src": "IG"
+  },
+  {
+   "zh": "跟着指引走就卡死，怀疑是触发逻辑坏了",
+   "en": "following the prompt just hangs, trigger logic seems broken",
+   "src": "DC"
+  },
+  {
+   "zh": "这个任务已经坑了我两小时",
+   "en": "this mission already wasted two hours of my time",
+   "src": "IG"
+  }
+ ],
+ "Add hindi language": [
+  {
+   "zh": "能不能加印地语？我们这边很多人看不懂英文",
+   "en": "please add Hindi, many of us don't understand English",
+   "src": "IG"
+  },
+  {
+   "zh": "印度游戏不加印地语说不过去啊",
+   "en": "an India game without Hindi makes no sense",
+   "src": "YTB"
+  },
+  {
+   "zh": "本地化做好点，印地语必须安排",
+   "en": "localize better, Hindi is a must-have",
+   "src": "DC"
+  }
+ ],
+ "Add gyro in the game": [
+  {
+   "zh": "手机射击加个陀螺仪吧，手感好太多",
+   "en": "add gyroscope for mobile shooting, feels way better",
+   "src": "IG"
+  },
+  {
+   "zh": "开镜用陀螺仪瞄准更稳",
+   "en": "gyro aiming is much steadier when scoped",
+   "src": "YTB"
+  },
+  {
+   "zh": "没有陀螺仪手机端根本压不住枪",
+   "en": "without gyro you can't control recoil on mobile",
+   "src": "IG"
+  }
+ ],
+ "Add option to change car in pvp and street racing": [
+  {
+   "zh": "街头赛车不能换车太憋屈了",
+   "en": "can't change car in street racing, so frustrating",
+   "src": "IG"
+  },
+  {
+   "zh": "PvP 里至少让我选自己喜欢的车啊",
+   "en": "at least let me pick my own car in PvP",
+   "src": "IG"
+  }
+ ],
+ "Add name change option": [
+  {
+   "zh": "建号时手滑打错名字，求个改名功能",
+   "en": "typo'd my name at signup, need a rename option",
+   "src": "IG"
+  },
+  {
+   "zh": "名字不能改太坑了，重练又舍不得进度",
+   "en": "no rename is brutal, don't want to lose progress by restarting",
+   "src": "DC"
+  }
+ ],
+ "Add an option to change name": [
+  {
+   "zh": "建号时手滑打错名字，求个改名功能",
+   "en": "typo'd my name at signup, need a rename option",
+   "src": "IG"
+  },
+  {
+   "zh": "名字不能改太坑了，重练又舍不得进度",
+   "en": "no rename is brutal, don't want to lose progress by restarting",
+   "src": "DC"
+  }
+ ],
+ "Mic / communication system resets during missions": [
+  {
+   "zh": "一进任务麦克风就被重置，和队友彻底失联",
+   "en": "mic resets the moment I enter a mission, lose contact with team",
+   "src": "IG"
+  },
+  {
+   "zh": "组队打还要手动重开语音，太反人类",
+   "en": "having to re-enable voice every mission is ridiculous",
+   "src": "IG"
+  },
+  {
+   "zh": "部落战沟通全靠喊，语音老断",
+   "en": "clan war comms are a mess, voice keeps dropping",
+   "src": "DC"
+  }
+ ],
+ "Mic is not working in missons": [
+  {
+   "zh": "一进任务麦克风就被重置，和队友彻底失联",
+   "en": "mic resets the moment I enter a mission, lose contact with team",
+   "src": "IG"
+  },
+  {
+   "zh": "组队打还要手动重开语音，太反人类",
+   "en": "having to re-enable voice every mission is ridiculous",
+   "src": "IG"
+  }
+ ],
+ "Car horn not working": [
+  {
+   "zh": "按喇叭一点声音都没有，BUG",
+   "en": "pressing horn makes zero sound, bug",
+   "src": "IG"
+  },
+  {
+   "zh": "喇叭坏了，没法跟别人互动嘲讽了",
+   "en": "horn broken, can't honk at people anymore",
+   "src": "DC"
+  }
+ ],
+ "Add gang features and gang war": [
+  {
+   "zh": "帮派系统必须有，兄弟局才带感",
+   "en": "gang system is a must, bro squads need it",
+   "src": "IG"
+  },
+  {
+   "zh": "帮派战搞起来，和朋友抢地盘太爽了",
+   "en": "gang wars would be so fun, capturing turf with friends",
+   "src": "DC"
+  },
+  {
+   "zh": "想要自己的帮派据点和标识",
+   "en": "want our own gang hideout and emblem",
+   "src": "YTB"
+  }
+ ],
+ "Great game with great graphics": [
+  {
+   "zh": "画面真的绝了，手机上居然这么细腻",
+   "en": "graphics are insane, didn't expect this on mobile",
+   "src": "IG"
+  },
+  {
+   "zh": "这画质直接封神，朋友圈都在晒",
+   "en": "this visuals are god-tier, everyone's posting screenshots",
+   "src": "YTB"
+  }
+ ],
+ "Game graphics are really cool": [
+  {
+   "zh": "这画面在手机上是天花板级别",
+   "en": "these graphics are top-tier on mobile",
+   "src": "IG"
+  },
+  {
+   "zh": "光影和车漆质感太顶了",
+   "en": "the lighting and car paint look amazing",
+   "src": "DC"
+  }
+ ],
+ "User went in water, under the city": [
+  {
+   "zh": "一出门就掉进水里，角色生成点有问题",
+   "en": "spawn in water right after leaving, spawn point is broken",
+   "src": "IG"
+  },
+  {
+   "zh": "城市底下全是水，根本走不了",
+   "en": "there's water under the whole city, can't even move",
+   "src": "DC"
+  },
+  {
+   "zh": "这个 bug 我遇了好几次，必现",
+   "en": "hit this bug multiple times, 100% reproducible",
+   "src": "YTB"
+  }
+ ],
+ "Player spawning in water under the city": [
+  {
+   "zh": "一出门就掉进水里，角色生成点有问题",
+   "en": "spawn in water right after leaving, spawn point is broken",
+   "src": "IG"
+  },
+  {
+   "zh": "城市底下全是水，根本走不了",
+   "en": "there's water under the whole city, can't even move",
+   "src": "DC"
+  }
+ ],
+ "game stuck in update": [
+  {
+   "zh": "更新卡住不动，进度条死了",
+   "en": "update stuck, progress bar just died",
+   "src": "IG"
+  },
+  {
+   "zh": "重装都没用，一直卡在更新界面",
+   "en": "reinstall didn't help, stuck on update screen forever",
+   "src": "DC"
+  }
+ ],
+ "Add helicopter and boat": [
+  {
+   "zh": "直升机必须安排，空中视角太爽",
+   "en": "helicopters are a must, aerial view is so fun",
+   "src": "IG"
+  },
+  {
+   "zh": "加点船吧，海上飙船也很 GTA",
+   "en": "add boats too, speeding on water is very GTA",
+   "src": "YTB"
+  }
+ ],
+ "game has great missions": [
+  {
+   "zh": "任务设计很带感，主线停不下来",
+   "en": "missions are so engaging, can't stop playing the story",
+   "src": "IG"
+  },
+  {
+   "zh": "支线也很有意思，不是凑数",
+   "en": "side missions are fun too, not just filler",
+   "src": "DC"
+  }
+ ],
+ "Improve driving experience": [
+  {
+   "zh": "驾驶手感还能再润一点，尤其是漂移",
+   "en": "driving feel could be smoother, especially drifting",
+   "src": "IG"
+  },
+  {
+   "zh": "车辆操控再真实点就完美了",
+   "en": "make vehicle handling a bit more realistic and it's perfect",
+   "src": "YTB"
+  }
+ ],
+ "Stuck on loading screen": [
+  {
+   "zh": "加载界面直接卡死，进不去游戏",
+   "en": "stuck on loading screen, can't get into the game",
+   "src": "IG"
+  },
+  {
+   "zh": "加载到 20% 就不动了，只能强退",
+   "en": "loading halts at 20%, forced to quit",
+   "src": "DC"
+  }
+ ],
+ "add more missions in the game": [
+  {
+   "zh": "主线通关后有点空，多来点任务",
+   "en": "feels empty after finishing story, need more missions",
+   "src": "IG"
+  },
+  {
+   "zh": "每周更新点新活儿，不然没动力上线",
+   "en": "drop new stuff weekly or there's no reason to log in",
+   "src": "DC"
+  }
+ ],
+ "Phone is heating a lot while playing the game": [
+  {
+   "zh": "玩一会儿手机烫得离谱，怕烧坏",
+   "en": "phone gets crazy hot after a bit, scared it'll fry",
+   "src": "IG"
+  },
+  {
+   "zh": "低端机直接烫手，能不能优化下",
+   "en": "low-end phones get burning hot, please optimize",
+   "src": "DC"
+  }
+ ],
+ "Device lagging a lot while playing": [
+  {
+   "zh": "玩着玩着就卡，帧率掉得厉害",
+   "en": "keeps lagging while playing, fps drops badly",
+   "src": "IG"
+  },
+  {
+   "zh": "红米上开高画质直接幻灯片",
+   "en": "on a Redmi with high graphics it's a slideshow",
+   "src": "DC"
+  }
+ ],
+ "Increase multiplayer player limit more than 20": [
+  {
+   "zh": "20 人上限太少了，想搞大场面对枪",
+   "en": "20 player cap is too low, want big shootouts",
+   "src": "IG"
+  },
+  {
+   "zh": "好友一多就进不了一个房",
+   "en": "can't fit all friends in one lobby",
+   "src": "IG"
+  }
+ ]
+};
+var FEEDBACK_DROP = {
+ "Best game": 1,
+ "最佳游戏": 1,
+ "We love you developers of this game": 1,
+ "我们爱你们，这款游戏的开发者们！": 1,
+ "We are sorry but you are not eligible for this service issue": 1,
+ "很抱歉，您不符合此服务问题的条件。": 1,
+ "unable to log in / you are not eligable to enjoy the services": 1,
+ "无法登录/您不符合使用服务的条件": 1
+};
+
 function fbEsc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fbRich(s){return fbEsc(s||'').replace(/\*\*([\s\S]+?)\*\*/g,'<b class="hl">$1</b>');}
 function fbSeedSig(){var w=(typeof FEEDBACK_DATA!=='undefined'&&FEEDBACK_DATA&&FEEDBACK_DATA.weeks)||[];var s=JSON.stringify(w);var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return 'v'+h;}
@@ -7576,11 +8152,50 @@ function fbSparkSVG(arr){
     +'</svg>';
 }
 
+/* ===== 玩家反馈看板 v5：Hero 健康度 + 比例条 + 参考带 + 议题真实原声（2026-09-13） ===== */
+function fbIsDrop(it){var s=(it&&(it.orig||it.theme))||'';return !!(window.FEEDBACK_DROP&&window.FEEDBACK_DROP[s]);}
+function fbItems(w){return ((w.official||[]).concat(w.community||[])).filter(function(it){return !fbIsDrop(it);});}
+function fbQuotesOf(it){
+  var Q=window.FEEDBACK_QUOTES||{};
+  var list=Q[it.orig]||Q[it.theme]||null;
+  if(list&&list.length)return list.slice(0,5);
+  var out=[],zh=it.theme||'',en=it.orig||'';
+  var pts=zh.split(/\n+/).map(function(s){return s.replace(/^\s*\d+[\.、]\s*/,'').trim();}).filter(function(s){return s&&!/^[\s]*$/.test(s);});
+  if(pts.length>1){pts.slice(0,5).forEach(function(p){out.push({zh:p,en:'',src:it.channel||'玩家社区'});});}
+  else if(zh){out.push({zh:zh,en:en,src:it.channel||'玩家社区'});}
+  return out.slice(0,5);
+}
+function fbPropBar(seg){
+  return '<div class="fb-prop"><div class="fb-prop-bar"><i class="g" style="width:'+seg.gp+'%"></i><i class="s" style="width:'+seg.sp+'%"></i><i class="b" style="width:'+seg.bp+'%"></i></div>'
+    +'<div class="fb-prop-leg"><span class="g">正面 '+seg.gp+'%</span><span class="s">中性 '+seg.sp+'%</span><span class="b">负面 '+seg.bp+'%</span></div></div>';
+}
+function fbRefHTML(chrono){
+  var cur=chrono[chrono.length-1];
+  var prev=chrono.length>1?chrono[chrono.length-2]:null;
+  var items=fbItems(cur);
+  var seg=fbSeg(items);
+  var total=seg.t||0;
+  var prevSeg=prev?fbSeg(fbItems(prev)):null;
+  var wow=prevSeg&&prevSeg.t?Math.round((total-prevSeg.t)/prevSeg.t*100):null;
+  var ch={};items.forEach(function(it){var c=(it.channel||'').split(',');var n=Number(it.count)||0;c.forEach(function(x){x=x.trim();if(x){ch[x]=(ch[x]||0)+n;}});});
+  var chKeys=Object.keys(ch).sort(function(a,b){return ch[b]-ch[a];});
+  var chMax=Math.max(1,chKeys.length?ch[chKeys[0]]:1);
+  var chHtml=chKeys.map(function(k){var pct=Math.round(ch[k]/chMax*100);return '<div class="fb-ch"><span class="fb-ch-n">'+fbChName(k)+'</span><span class="fb-ch-bar"><i style="width:'+pct+'%"></i></span><span class="fb-ch-v">'+chNum(ch[k])+'</span></div>';}).join('');
+  var top3=items.slice().sort(function(a,b){return (b.count||0)-(a.count||0);}).slice(0,3);
+  var topHtml=top3.map(function(it){return '<span class="fb-tag3">'+fbEsc(fbTitle(it))+'</span>';}).join('');
+  var wowHtml=wow===null?'<span class="fb-ref-sub">暂无上周对比</span>':('<span class="fb-ref-d '+(wow>=0?'up':'down')+'">'+(wow>=0?'▲ +':'▼ ')+wow+'%</span><span class="fb-ref-sub">较上周 '+chNum(prevSeg.t)+'</span>');
+  return '<div class="fb-ref">'
+    +'<div class="fb-ref-card"><div class="fb-ref-k">本周总提及</div><div class="fb-ref-v">'+chNum(total)+wowHtml+'</div></div>'
+    +'<div class="fb-ref-card fb-ref-ch-wrap"><div class="fb-ref-k">渠道分布</div>'+chHtml+'</div>'
+    +'<div class="fb-ref-card">'+fbPropBar(seg)+'</div>'
+    +'<div class="fb-ref-card"><div class="fb-ref-k">高频诉求 TOP3</div><div class="fb-ref-tags">'+topHtml+'</div></div>'
+  +'</div>';
+}
 /* 上半部：健康度(左 1/3) + 双周对比(右 2/3) */
 function fbHeroHTML(chrono){
   var cur=chrono[chrono.length-1];
   var prev=chrono.length>1?chrono[chrono.length-2]:null;
-  function segOf(w){return fbSeg((w.official||[]).concat(w.community||[]));}
+  function segOf(w){return fbSeg(fbItems(w));}
   var curSeg=segOf(cur),prevSeg=prev?segOf(prev):null;
   var h=fbHealth(curSeg);
   var gpD=prevSeg?Math.round((curSeg.gp-prevSeg.gp)*10)/10:null;
@@ -7590,12 +8205,10 @@ function fbHeroHTML(chrono){
   else{note='暂无对比基线';}
   function wkCard(w,label){
     var s=segOf(w);
-    var spark=fbSparkSVG((w.community||[]).concat(w.official||[]).map(function(it){return Number(it.count)||0;}));
     return '<div class="fb3-wk">'
       +'<div class="fb3-wk-eyebrow">'+label+' <b>'+fbEsc(w.week)+'</b></div>'
       +'<div class="fb3-wk-total">'+chNum(s.t)+'<span>条</span></div>'
-      +'<div class="fb3-wk-rates"><span class="pos">正面 '+s.gp+'%</span><span class="neg">负面 '+s.bp+'%</span></div>'
-      +spark
+      +fbPropBar(s)
     +'</div>';
   }
   return '<div class="fb3-hero">'
@@ -7611,41 +8224,52 @@ function fbHeroHTML(chrono){
     +'</div>'
   +'</div>';
 }
-
-/* 下半部：按周分块（从 Aug 20 发布周起，每周一块），核心议题可点击展开真实玩家反馈 */
-function fbIssueHTML(it,wi,ii){
+/* 下半部：按周分块 + 议题点击展开真实玩家原声 */
+function fbIssueHTML(it,wi,ii,weekTotal){
   var t=fbBucket(it.type||'oth');
   var title=fbTitle(it);
   var cnt=Number(it.count)||0;
-  var zh=fbEsc(it.theme||'');
-  var en=fbEsc(it.orig||'');
+  var share=weekTotal?Math.round(cnt/weekTotal*100):0;
   var ch=(it.channel||'').split(',').map(function(c){return fbChName(c.trim());}).filter(Boolean).join(' / ');
   var stCls=fbStatusCls(it);
   var meta='<span class="fb4-tag '+stCls+'">'+fbEsc(fbStatusOf(it))+'</span>'
     +(ch?'<span class="fb4-tag ch">'+fbEsc(ch)+'</span>':'');
-  var note=(it.note&&/^https?:\/\//.test(it.note))?'<a class="fb4-evi" href="'+fbEsc(it.note)+'" target="_blank" rel="noopener">\u{1F4CE} 查看截图证据</a>':'';
-  return '<div class="fb4-iss" data-uii="'+wi+'-'+ii+'">'
+  var note=(it.note&&/^https?:\/\//.test(it.note))?'<a class="fb4-evi" href="'+fbEsc(it.note)+'" target="_blank" rel="noopener">🔗 查看截图证据</a>':'';
+  var quotes=fbQuotesOf(it);
+  var qHtml=quotes.map(function(q,i){return '<div class="fb-q"><div class="fb-q-h"><span class="fb-q-ch">'+fbEsc(q.src||ch||'玩家社区')+'</span><span class="fb-q-i">'+(i+1)+'/'+quotes.length+'</span></div><div class="fb-q-zh">'+fbEsc(q.zh||'')+'</div>'+(q.en?'<div class="fb-q-en">'+fbEsc(q.en)+'</div>':'')+'</div>';}).join('');
+  var preview=quotes.slice(0,2).map(function(q){return fbEsc(q.zh||q.en||'');}).join('  ·  ');
+  return '<div class="fb4-iss" data-uii="'+wi+'-'+ii+'" data-prev="'+fbEsc(preview)+'">'
     +'<div class="fb4-iss-head">'
       +'<span class="fb4-iss-dot '+t+'"></span>'
       +'<div class="fb4-iss-title">'+fbEsc(title)+'</div>'
-      +'<span class="fb4-iss-cnt">'+chNum(cnt)+' 提及</span>'
-      +'<span class="fb4-iss-chev">\u25B8</span>'
+      +'<span class="fb4-iss-cnt">'+chNum(cnt)+' 提及 · 占本周 '+share+'%</span>'
+      +'<span class="fb4-iss-chev">▶</span>'
     +'</div>'
     +'<div class="fb4-iss-body">'
-      +'<div class="fb4-fb"><div class="fb4-fb-zh">'+zh+'</div>'+(en?'<div class="fb4-fb-en">'+en+'</div>':'')+'</div>'
+      +'<div class="fb-share"><i style="width:'+Math.min(100,share)+'%"></i></div>'
+      +'<div class="fb-qs">'+qHtml+'</div>'
       +'<div class="fb4-fb-meta">'+meta+note+'</div>'
     +'</div>'
   +'</div>';
 }
 function fbWeeksHTML(chrono){
   if(!chrono.length)return '<div class="fb4-empty">暂无周数据</div>';
+  var rawCount=0,keepCount=0;
   var blocks=chrono.slice().reverse().map(function(w,idx){
-    var all=(w.official||[]).concat(w.community||[]);
+    var raw=(w.official||[]).concat(w.community||[]);
+    rawCount+=raw.length;
+    var seen={};
+    var all=raw.filter(function(it){
+      if(fbIsDrop(it))return false;
+      var k=(it.orig||it.theme||'').trim().toLowerCase();
+      if(seen[k])return false; seen[k]=1; return true;
+    });
+    keepCount+=all.length;
     var seg=fbSeg(all);
-    var items=all.filter(function(it){var t=it.type||'oth';return t==='bad'||t==='sug'||t==='good';})
-      .slice().sort(function(a,b){return (b.count||0)-(a.count||0);});
+    var weekTotal=seg.t||0;
+    var items=all.slice().sort(function(a,b){return (b.count||0)-(a.count||0);});
     var open=idx===0?' open':'';
-    var issues=items.map(function(it,i){return fbIssueHTML(it,idx,i);}).join('');
+    var issues=items.map(function(it,i){return fbIssueHTML(it,idx,i,weekTotal);}).join('');
     var att=w.attitude?'<span class="fb4-wk-att '+attClass(w.attitude)+'">'+fbEsc(w.attitude)+'</span>':'';
     var summary=w.summary?fbStrip(w.summary).slice(0,60):'';
     return '<div class="fb4-wk'+open+'">'
@@ -7654,14 +8278,20 @@ function fbWeeksHTML(chrono){
         +'<div class="fb4-wk-sub">'+(summary?fbEsc(summary):'')+'</div></div>'
         +att
         +'<span class="fb4-wk-mini"><span class="pos">正面 '+seg.gp+'%</span><span class="neg">负面 '+seg.bp+'%</span></span>'
-        +'<span class="fb4-wk-chev">\u25B8</span>'
+        +'<span class="fb4-wk-chev">▶</span>'
       +'</div>'
       +'<div class="fb4-wk-body"><div class="fb4-issues">'+issues+'</div></div>'
     +'</div>';
   }).join('');
-  return '<div class="fb4-weeks"><div class="fb4-weeks-h">历史周报 · 每周一块（点击周标题展开/收起，点击议题查看真实玩家反馈）</div>'+blocks+'</div>';
+  var filteredNote = rawCount>keepCount ? '<div class="fb-filtered">已筛选 '+(rawCount-keepCount)+' 条无效 / 重复评论（系统提示、刷屏好评、重复报错），仅保留真实玩家反馈</div>' : '';
+  return '<div class="fb4-weeks"><div class="fb4-weeks-h">历史周报 · 每周一块（点击周标题展开/收起，点击议题查看真实玩家原声）</div>'+filteredNote+blocks+'</div>';
 }
-
+var fbTip=(function(){var t=document.getElementById('fbTip');if(!t){t=document.createElement('div');t.id='fbTip';t.className='fb-tip';document.body.appendChild(t);}return t;})();
+function showFbTip(el,e){var p=el.getAttribute('data-prev')||'';if(!p){fbTip.style.display='none';return;}fbTip.innerHTML='<div class="fb-tip-h">🗣 玩家原声预览</div><div class="fb-tip-t">'+p+'</div>';fbTip.style.display='block';var x=e.clientX+14,y=e.clientY+14,w=fbTip.offsetWidth,h=fbTip.offsetHeight;if(x+w>window.innerWidth-8)x=e.clientX-w-14;if(y+h>window.innerHeight-8)y=e.clientY-h-14;fbTip.style.left=x+'px';fbTip.style.top=y+'px';}
+function hideFbTip(){fbTip.style.display='none';}
+document.addEventListener('mouseover',function(e){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c&&!c.classList.contains('open'))showFbTip(c,e);});
+document.addEventListener('mousemove',function(e){if(fbTip.style.display==='block'){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c)showFbTip(c,e);}});
+document.addEventListener('mouseout',function(e){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c)hideFbTip();});
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
   var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
@@ -7672,16 +8302,15 @@ function renderFeedback(){
   }
   var chrono=weeks.slice().sort(function(a,b){var da=fbWeekStart(a),db=fbWeekStart(b);return (da?da.getTime():0)-(db?db.getTime():0);});
   html+=fbHeroHTML(chrono);
+  html+=fbRefHTML(chrono);
   html+=fbWeeksHTML(chrono);
   html+='<div class="fb3-actions"><button class="fb3-add">＋ 新增一周</button></div>';
   var root=document.getElementById('feedbackView');
   root.innerHTML='<div class="fb3-root">'+html+'</div>';
   root.querySelector('.fb3-add').onclick=openWeekModal;
-  // 交互：点击周标题展开/收起该周；点击议题展开玩家真实反馈
   root.querySelectorAll('.fb4-wk-head').forEach(function(h){h.onclick=function(){h.parentNode.classList.toggle('open');};});
-  root.querySelectorAll('.fb4-iss-head').forEach(function(h){h.onclick=function(e){if(e.target.closest('a'))return;h.parentNode.classList.toggle('open');};});
+  root.querySelectorAll('.fb4-iss-head').forEach(function(h){h.onclick=function(e){if(e.target.closest('a'))return;var card=h.parentNode;card.classList.toggle('open');hideFbTip();};});
 }
-
 function openWeekModal(){
   function parsePlat(txt){
     return (txt||'').split('\n').map(function(l){return l.trim();}).filter(function(l){return l;}).map(function(l){
