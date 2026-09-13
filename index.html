@@ -4266,6 +4266,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -6362,6 +6363,1168 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA = {
   "weeks": [
+    {
+      "week": "9.7 - 9.13",
+      "attitude": "波动",
+      "summary": "本周回收 **124 条** 玩家反馈（Instagram(116)、YouTube(33)、Discord(27)）。 正面 5 条，集中在内容好评与对开发者的喜爱； **中性诉求 67 条**，以载具、任务、画质、本地化等玩法与内容建议为主； **负面/Bug 52 条**，集中在性能卡顿、崩溃、麦克风/通讯与若干任务/碰撞 Bug。 整体态度：**波动**。",
+      "dims": {
+        "attitude": {
+          "label": "波动",
+          "detail": "本周回收 124 条代表性反馈；正面 5 / 中性(建议) 67 / 负面·Bug 52 条。"
+        },
+        "comprehension": {
+          "label": "关注玩法内容",
+          "detail": "玩家集中提出：添加自行车/摩托车/超级摩托、更多新任务与剧情、军事基地、多人合作抢劫、印地语本地化、陀螺仪与导航、角色扮演职业等玩法与内容建议。"
+        },
+        "reputation": {
+          "label": "风评承压",
+          "detail": "负面/Bug 占比约 42%（52/124），集中在性能卡顿、崩溃、麦克风自动关闭与任务/碰撞类 Bug。"
+        },
+        "engagement": {
+          "label": "活跃",
+          "detail": "玩家在 Instagram、YouTube、Discord 持续发声，反馈意愿强，载具与本地化建议高度集中。"
+        }
+      },
+      "official": [],
+      "officialSummary": "",
+      "officialPlatforms": [],
+      "community": [
+        {
+          "theme": "在游戏中添加自行车/摩托车/超级摩托车",
+          "count": 150,
+          "type": "sug",
+          "orig": "Add bikes/motorcycles/superbikes to the game",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1Af7yX3LD60T_Y6qW1mXsJg2laGGgDjCG/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "添加更多新任务、新故事情节内容或角色故事情节",
+          "count": 60,
+          "type": "sug",
+          "orig": "Add more new missions, new storyline content, or character storylines",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10fwH9hAHYUeEVC9AmaP4WNJGu-gZQ07S/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "性能问题、卡顿和游戏延迟",
+          "count": 30,
+          "type": "bad",
+          "orig": "Performance issues, freezing, and game lag",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1CKS5MNn18KCXEslN1EfwmAdtPkwiIa7B/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "最后一个敌人消失，任务检查点被截断在地下。",
+          "count": 35,
+          "type": "bad",
+          "orig": "Last enemy vanishes and mission checkpoint clips under the ground",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1lL7b2GEXKsdILjj0-kGKEFvzgt_isGWz/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "游戏内麦克风在抢劫或任务期间会自动关闭。",
+          "count": 60,
+          "type": "bad",
+          "orig": "In-game microphone automatically turns off during heists or missions",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/17LzaMaGRUVTrzxBKJ5VG8lm9qIFXI-F9/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "在地图上添加军事基地",
+          "count": 23,
+          "type": "sug",
+          "orig": "Add military base to the map",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1GoDOySI5Uba2nYmur_TDrk1ozZxFUxnk/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "增加更多多人合作抢劫任务",
+          "count": 20,
+          "type": "sug",
+          "orig": "Add more multi-player co-op heist missions",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1PZyr8kNlI_K6h7N9skCq3n9-RZswTDDQ/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "改进游戏内导航系统，使其显示车辆的最短路径。",
+          "count": 20,
+          "type": "sug",
+          "orig": "Improve in-game navigation system to show shortest paths for vehicles",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1haAek8SfLX66OuP8nLvTqN9kygyitb0T/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "添加角色扮演职业（警察局、酒店、汽车经销店、送货员、医生）",
+          "count": 30,
+          "type": "sug",
+          "orig": "Add roleplay jobs (police station, hotel, car dealership, delivery, doctor)",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1FIycPdHISCEeljaLqk2t8qm0U3i9QVfu/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "iPhone 13 上汽车和人物的渲染效果模糊，画面朦胧。",
+          "count": 1,
+          "type": "bad",
+          "orig": "Blurred rendering and hazy visuals for cars and characters on iPhone 13",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/14lLvXUM25r77LCrZYXjDznM39drvx-kh/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "为游戏添加印地语故事情节、翻译或完整语音配音",
+          "count": 60,
+          "type": "sug",
+          "orig": "Add Hindi story-line, translation, or full voice dubbing into the game",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10bD-q7BGcH6u3fAn8Wclkim67QKJt-RC/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "增加扩展开放地图、可自定义车辆、服装、房屋和动态天气",
+          "count": 60,
+          "type": "sug",
+          "orig": "Add expanded open map, customizable cars, outfits, houses, and dynamic weather",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1v2LCuWSpkUEU0hzgcvqQtaJDuJe35JjD/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "添加陀螺仪控制和TPP灵敏度配置",
+          "count": 30,
+          "type": "sug",
+          "orig": "Add gyroscope controls and TPP sensitivity configurations",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1isTUYzkA5uvNdKe0d2UX037z5-DZQGZJ/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "重新安装并下载应用程序后，登录界面出现卡顿现象。",
+          "count": 10,
+          "type": "bad",
+          "orig": "Login interface lag occurs after reinstalling and downloading the application",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1V3_AQgBMG04kdazb8A2Y-I3YFuTuwBst/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "添加银行选项，以便存款、取款或转账。",
+          "count": 30,
+          "type": "sug",
+          "orig": "Add banking options to deposit, withdraw, or transfer money",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1H9DqDW8NUt8EVxGRhs9AhvC_rgdqHT4o/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "游戏内配置会自动覆盖画面设置，在提高画质时降低帧率。",
+          "count": 1,
+          "type": "bad",
+          "orig": "In-game configuration overrides automatically minimize frame-rate when graphics are increased",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1HVZsbxE8jNKpCNxAgAE1Ybp-DerLO89_/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "改进玩家对战的战斗流程和核心战斗动画",
+          "count": 1,
+          "type": "sug",
+          "orig": "Improve player-versus-player combat flow and core fighting animations",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1HVZsbxE8jNKpCNxAgAE1Ybp-DerLO89_/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "加入逼真的车辆换挡机制",
+          "count": 1,
+          "type": "sug",
+          "orig": "Incorporate realistic vehicle gear shifting mechanics",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1HBmR2KJtduD-Z2-ARKL2hvHa5SSHZ1_y/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "增加无障碍建筑内部空间和功能性产权",
+          "count": 6,
+          "type": "sug",
+          "orig": "Add accessible building interiors and functional property ownership",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1FYQWyj3cUJLDiIqnvlkCIjRLT9LtpaMe/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "在开放世界机制中加入宠物系统和女友互动功能",
+          "count": 9,
+          "type": "sug",
+          "orig": "Add pet system and girlfriend interactions to the open-world mechanics",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1HBmR2KJtduD-Z2-ARKL2hvHa5SSHZ1_y/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "提高车辆音效的真实性，消除高频刺耳感",
+          "count": 5,
+          "type": "sug",
+          "orig": "Improve realism of vehicle sound profiles to remove high-pitch irritation",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1HBmR2KJtduD-Z2-ARKL2hvHa5SSHZ1_y/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "完成调查后，解锁的现金奖励未能转入钱包总余额。",
+          "count": 20,
+          "type": "bad",
+          "orig": "Unlocked cash reward failed to transfer to total wallet balance upon completing a survey",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1SNWcbdTJ4OB9u8hlkaJjCSdXuridEhOT/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "多人游戏排队人数过多会导致数分钟的加载阻塞。",
+          "count": 60,
+          "type": "bad",
+          "orig": "Heavy multiplayer queue constraints create multi-minute loading blockages",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1SNWcbdTJ4OB9u8hlkaJjCSdXuridEhOT/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "游戏内车库菜单在验证进度​​达到 20% 时永久锁定。",
+          "count": 60,
+          "type": "bad",
+          "orig": "In-game garage menu locks up permanently at 20% validation status",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10bD-q7BGcH6u3fAn8Wclkim67QKJt-RC/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "全明星PvP竞技场小丑对战彻底破坏了射击按钮、武器切换和手雷的使用。",
+          "count": 5,
+          "type": "bad",
+          "orig": "All-Star PvP Arena Joker match completely breaks fire buttons, gun swaps, and grenades",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10bD-q7BGcH6u3fAn8Wclkim67QKJt-RC/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "无关的车辆和多用途车辆会随机出现在高速超级跑车的前方。",
+          "count": 5,
+          "type": "bad",
+          "orig": "Unrelated cars and utility vehicles randomly spawn directly ahead of fast supercars",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1ZF42o7Yul4Xe_ZfSqz5J6xD6y0bSG_CT/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "杰基走私贩任务的进度不会超过 25 个追踪单位。",
+          "count": 6,
+          "type": "bad",
+          "orig": "Jackie Smuggler's Run mission progression does not increase past 25 tracking units",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1kNsHqlursEKe3DS-3dM6faowBTum8bKA/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "由于车辆碰撞模型存在缺陷，泽西德比任务在“夺取娜塔莉的车”阶段出现故障。",
+          "count": 2,
+          "type": "bad",
+          "orig": "The Jersey Derby mission bugs out during \"Get Natalie's Car\" stage due to faulty vehicle collision models",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1G_fqv9o00OytRtPc0pCZT7lWYSoj0KOi/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "合作抢劫模式配置不会保存检查点，强制从头开始完整重玩。",
+          "count": 2,
+          "type": "bad",
+          "orig": "Co-op Heist configuration does not save checkpoints, forcing full segment replays from the start",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1xWus7cw8W0I4iyHZVA8A0a9fcIXHqcsR/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "车辆追踪限制仅在黑市销售登记付款奖励完全计时结束后才会生效。",
+          "count": 2,
+          "type": "bad",
+          "orig": "Vehicle tracking limits for black-market sales register payment rewards only after complete timers elapse",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/14MwXUQTIvNQx4O6uI2OdecX-JP5DG2xK/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "扩大可玩服务器覆盖范围，以全面支持孟加拉国境内的区域选项。",
+          "count": 1,
+          "type": "sug",
+          "orig": "Expand playable server coverage to fully support regional options within Bangladesh",
+          "channel": "YTB",
+          "note": "https://drive.google.com/file/d/1MF7sXqHDgUQGR77C7OmwM4Fq4ei2suOU/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "在标准TPP视角之外，实现FPP视角模式选项。",
+          "count": 1,
+          "type": "sug",
+          "orig": "Implement FPP view mode options alongside standard TPP perspectives",
+          "channel": "YTB",
+          "note": "https://drive.google.com/file/d/14MwXUQTIvNQx4O6uI2OdecX-JP5DG2xK/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "精准任务在50级时不会出现在追踪列表中。",
+          "count": 9,
+          "type": "bad",
+          "orig": "Pinpoint missions do not populate or become available within tracking lists at Level 50",
+          "channel": "DC",
+          "note": "https://drive.google.com/file/d/1Mxqqlw5oJGs_kZYR1rm1GDD5WutElvie/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "职业生涯概览追踪器会自动向外籍球员表现档案中添加虚假条目",
+          "count": 1,
+          "type": "bad",
+          "orig": "Career overview trackers automatically add false entries to foreign player execution profiles",
+          "channel": "DC",
+          "note": "https://drive.google.com/file/d/1SC7DZ6oLMf_1Q1ktjggN39tk9OQL3kaD/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "服务器连接严重中断会导致网络验证状态降至 1000 毫秒延迟限制。",
+          "count": 40,
+          "type": "bad",
+          "orig": "Severe server connectivity drops drop network validation states to 1000ms latency limits",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1C2xkzZuMLYOoPv9s-wcwA6SevkOsHVEE/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "“在 OSB 抢劫（困难）中至少完成 1 项精英挑战”参数追踪存在漏洞",
+          "count": 5,
+          "type": "bad",
+          "orig": "\"Complete at least 1 Elite challenge in OSB Heist (Hard)\" parameter tracking is bugged",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1Qc8vyRt6meENxh8-sf9BZcqkf-b6ySa0/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "普遍的反馈都称赞这款开放世界游戏是高水准的杰作或佳作。",
+          "count": 200,
+          "type": "good",
+          "orig": "General feedback praising the open-world game as a high-tier masterpiece or banger",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/11MkEiY58rV1TcGugXgoXJYvzH2K_L6Yb/view?usp=drive_web",
+          "date": "2026-09-07"
+        },
+        {
+          "theme": "在游戏中添加自行车/摩托车",
+          "count": 150,
+          "type": "sug",
+          "orig": "Add bikes/motorcycles to the game",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/15sayOyqYMHkYSnFRGHpjtRAhu-pzpQ9F/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "增加直升机、飞机、喷气式飞机和功能齐全的机场",
+          "count": 100,
+          "type": "sug",
+          "orig": "Add helicopters, airplanes, jets, and functional airports",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1VbJSwLyfgTzPInAD95eKil7Ad2pYS9XB/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "增加更多种类的车辆，包括超级跑车、豪华轿车和定制选项",
+          "count": 50,
+          "type": "sug",
+          "orig": "Add more diverse vehicles, supercars, luxury cars, and customization options",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1rJuKt2nWL1T_hRHZXSCNCT-QPl7-T6W3/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "请求添加新任务、无尽任务、空/水任务和新鲜内容",
+          "count": 60,
+          "type": "sug",
+          "orig": "Request for new missions, endless missions, air/water missions, and fresh content",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1LGlBu_qceJGhF_8eSFPj85x93TJyNsi0/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "在汽车改装店内或附近重新启动游戏后，游戏卡死或角色生成在地下。",
+          "count": 80,
+          "type": "bad",
+          "orig": "Game freezes or character spawns underground after restarting inside or near the car mod shop",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1CLUmxqt7_jQ4V1C5obqoUZQTX8oUu70q/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "添加银行/转账系统，以便与朋友共享货币",
+          "count": 60,
+          "type": "sug",
+          "orig": "Add a banking/money transfer system to share currency with friends",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1g9Dxt49vxW7Uco-L4RYsgweT7-hhwQw7/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "增加更多角色服装、捆绑包和定制系统（例如，兔女郎服装、沙龙）",
+          "count": 50,
+          "type": "sug",
+          "orig": "Add more character outfits, bundle packs, and customization systems (e.g., bunny outfit, salons)",
+          "channel": "IG",
+          "note": "Add more character outfits, bundle packs, and customization systems (e.g., bunny outfit, salons)",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "在角色机制中加入恋爱/女友系统",
+          "count": 5,
+          "type": "sug",
+          "orig": "Add a romance/girlfriend system into the character mechanics",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1P_32b-nhyIApvVVtzQsYB5Dth75Y_Dd7/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "为精确的第三人称视角 (TPP) 瞄准控制添加陀螺仪支持",
+          "count": 35,
+          "type": "sug",
+          "orig": "Add gyroscope support for precise third-person perspective (TPP) aiming controls",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1N4WJVC6cfsOqGtho7KzgjIzIL2aq674G/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "加载过程中出现bug，进入车库后加载进度卡在20%。",
+          "count": 60,
+          "type": "bad",
+          "orig": "Loading bug where entering a garage freeze-locks at 20% loading progress",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1CLUmxqt7_jQ4V1C5obqoUZQTX8oUu70q/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "高等级体验感觉重复性太高；进度系统依赖于重复完成现有任务，只是难度有所提升。",
+          "count": 40,
+          "type": "bad",
+          "orig": "High-level experience feels repetitive; progression system relies on repeating existing missions with scaled numbers",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1g9Dxt49vxW7Uco-L4RYsgweT7-hhwQw7/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "提高每日货币兑换限额或降低战斗通行证/商店价格等级",
+          "count": 40,
+          "type": "bad",
+          "orig": "Increase the daily money conversion limits or lower battle pass/store pricing tiers",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1up5jLq2jRMsWfDPNcKntsX3AeI7iohzd/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "扩展自然地图边界、地块、海滩区域，或添加以印度为主题的地图环境",
+          "count": 6,
+          "type": "sug",
+          "orig": "Expand the physical map boundaries, properties, beach areas, or include an Indian-themed map environment",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1g9Dxt49vxW7Uco-L4RYsgweT7-hhwQw7/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "提升车辆操控性能、漂移性能以及发动机声浪的听觉体验",
+          "count": 10,
+          "type": "bad",
+          "orig": "Improve car handling mechanics, drifting, and the auditory quality of engine sounds",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/106-kaNz0AMdmq__j8XWcIGVMTvtX-czF/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "对经济规模的不满；任务和黑钱奖励的货币结构太低",
+          "count": 40,
+          "type": "bad",
+          "orig": "Discontent regarding economy scaling; currency reward structures from missions and Dirty Money payouts are too low",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1yrJXkgEjxlMImAXpPp30z4elsI3FWuop/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "玩家报告称，即使获得了超过 2000 点街头声望值，等级进度条仍然完全卡住。",
+          "count": 40,
+          "type": "bad",
+          "orig": "Player reports that the level progression meter is completely stuck even after claiming 2,000+ street cred points",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1kWlInEp8sZCYBqycCq6Wst9bU_F366GF/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "增加一套完善的组织、联盟、家族宅邸和公共盔甲/车库存储基础设施系统",
+          "count": 15,
+          "type": "sug",
+          "orig": "Add a comprehensive organization, alliance, family house, and communal armor/garage storage infrastructure system",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/15WPgkh-Q8iGOMn8K97HzLOrsn_1ZIlVz/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "出现不明严重显示故障，导致设备屏幕完全锁定和冻结。",
+          "count": 20,
+          "type": "bad",
+          "orig": "Unspecified severe display glitch causing the device screen to lock up and freeze entirely",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1Hyx6qbiVzZaLnMIr0K-GNHBmfBgfYyA7/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "实现功能齐全的仪表盘视角和专用的第一人称视角模式，方便车辆驾驶。",
+          "count": 10,
+          "type": "sug",
+          "orig": "Implement functional interior dashboard viewpoints and a dedicated first-person camera mode for vehicle driving",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/15WPgkh-Q8iGOMn8K97HzLOrsn_1ZIlVz/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "动画方面的抱怨指出，近战格斗动画反应迟钝，缺乏冲击力。",
+          "count": 25,
+          "type": "bad",
+          "orig": "Animation complaints detailing that melee hand-to-hand combat animations feel unresponsive and lack impact",
+          "channel": "IG",
+          "note": "Animation complaints detailing that melee hand-to-hand combat animations feel unresponsive and lack impact",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "更新“改装版”特殊载具变体，使其能够直接输入角色信息并整合直接武器系统。",
+          "count": 15,
+          "type": "bad",
+          "orig": "Update the 'Tricked Out' special vehicle variant to allow direct character entry and incorporate direct weapon systems",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1VbJSwLyfgTzPInAD95eKil7Ad2pYS9XB/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "添加与各个角色语音相匹配的逼真唇形同步配置",
+          "count": 60,
+          "type": "bad",
+          "orig": "Add realistic lip-sync configurations matched to individual character voice lines",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/14Gib8q2y9Z-j2ENn_pBW3FbFge-E-G1g/view?usp=drive_web",
+          "date": "2026-09-08"
+        },
+        {
+          "theme": "在游戏中添加自行车/摩托车",
+          "count": 55,
+          "type": "sug",
+          "orig": "Add bikes / motorcycles to the game",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1dO787H3mkwt7F4ljf9lAMC-kYttviE0g/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "添加更多任务/将故事情节内容扩展到55级之后",
+          "count": 30,
+          "type": "sug",
+          "orig": "Add more missions / extend storyline content past level 55",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1Dormuzbh0y2rFyDWetKuHmU-niS1UPEL/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "任务重复、线性，设计缺乏多样性。",
+          "count": 20,
+          "type": "bad",
+          "orig": "Missions are repetitive, linear, and lack diversity in design",
+          "channel": "IG",
+          "note": "Missions are repetitive, linear, and lack diversity in design",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "对游戏整体质量和核心玩法循环的赞扬",
+          "count": 90,
+          "type": "good",
+          "orig": "Praise for overall game quality and core gameplay loop",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1K7lvZBJR-el9rmpIEFJq-F_6itYz8Vr4/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "增加更多车辆（汽车、拖拉机、摩托车）并升级车辆音频引擎",
+          "count": 60,
+          "type": "sug",
+          "orig": "Add more vehicles (cars, tractors, cycles) and upgrade vehicle audio engine",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1FdK21b6J5ZlE6TJYG7YOhNaY8_9NF5Or/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "升到55级后，游戏内容匮乏，没有新的内容可以推进了。",
+          "count": 40,
+          "type": "bad",
+          "orig": "Content drought after hitting level 55 with nothing left to progress",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/146HGJRamYPbgvpSCM9DmhIWW-Z7jM_BF/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "《脑金劫案侦查》（困难模式）中的箱子物理漏洞需要使用爆炸物来解决。",
+          "count": 5,
+          "type": "bad",
+          "orig": "Box physics glitch in Brain Gold Heist Recon (Hard Mode) requires explosive workaround",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1sDNjsy3kPdOdAgUD0pCGtlc0T1frpuf2/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "在恶名系统中加入自卫逻辑层，以防止惩罚目标的报复行为。",
+          "count": 4,
+          "type": "sug",
+          "orig": "Add a self-defense logic layer to the Notoriety System to prevent penalizing target retaliation",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1fQ1qQc-F2eOzYK5-OTGH0oRDffau3mQL/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "添加好友移除/管理开关，以清除意外发送或过期的邀请。",
+          "count": 6,
+          "type": "sug",
+          "orig": "Implement a friend removal / management toggle to clear accidental or stale invites",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1FdK21b6J5ZlE6TJYG7YOhNaY8_9NF5Or/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "提高城市区域的环境图形细节和环境NPC密度",
+          "count": 3,
+          "type": "sug",
+          "orig": "Improve environmental graphical detail and ambient NPC density across urban areas",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1MyQau48o5x00GfRHME42nHvR43PSSLiP/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "在城市边界外散布隐藏的超级跑车，并在秘密区域生成超级摩托车。",
+          "count": 2,
+          "type": "sug",
+          "orig": "Scatter hidden supercars outside city bounds and spawn superbikes in secret zones",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1MyQau48o5x00GfRHME42nHvR43PSSLiP/view?usp=drive_web",
+          "date": "2026-09-09"
+        },
+        {
+          "theme": "在游戏中添加自行车、跑车、越野摩托车或自行车",
+          "count": 70,
+          "type": "sug",
+          "orig": "Add bikes, sport bikes, dirt bikes, or cycles to the game",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1WJykMNP3Zvyj4RdT0uVODP1GHw8BEvYp/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增加更多任务、故事内容或更长的战役",
+          "count": 40,
+          "type": "bad",
+          "orig": "Add more missions, story content, or a longer campaign",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1WJykMNP3Zvyj4RdT0uVODP1GHw8BEvYp/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "为任务添加印地语选项和印地语语音。",
+          "count": 30,
+          "type": "sug",
+          "orig": "Add Hindi language option and Hindi voice lines for missions",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1exMRuxruDUkK8IHgrzD7CS8JVe_sze3a/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "添加直升机和你可以飞行的飞机",
+          "count": 25,
+          "type": "sug",
+          "orig": "Add helicopters and planes you can fly",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1WJykMNP3Zvyj4RdT0uVODP1GHw8BEvYp/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "添加更多汽车、豪华车或特定车型，例如路虎卫士、宝马、迈凯伦和帕加尼。",
+          "count": 20,
+          "type": "sug",
+          "orig": "Add more cars, luxury vehicles, or specific models like Defender, BMW, McLaren, and Pagani",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1LHZq6KpGuKQABbAitZ9Eztzp995rZSoa/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "提高画面质量并修复卡通化的山脉纹理",
+          "count": 10,
+          "type": "sug",
+          "orig": "Improve graphics quality and fix cartoonish mountain textures",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/118KvMDqKk9TYnXIMjyqw1HzMIGt9G56m/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增加帮派选项或玩家拥有的俱乐部，每个俱乐部可容纳 40-50 名成员。",
+          "count": 26,
+          "type": "sug",
+          "orig": "Add a gang option or player-owned clubs supporting 40-50 members",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10HbCIk-J3rmyATZlkr_bxyGsn6Pf2sUc/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增建私人车库或带大型车库的平房，用于存放汽车收藏品。",
+          "count": 10,
+          "type": "sug",
+          "orig": "Add a personal garage or a bungalow with a large garage for car collections",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/14GcL0mUvqRMcOjh9ZEgiCxDlClT65pE3/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增加作业船、水上摩托艇或水上交通工具",
+          "count": 2,
+          "type": "sug",
+          "orig": "Add working boats, jet skis, or aquatic vehicles",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1WJykMNP3Zvyj4RdT0uVODP1GHw8BEvYp/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增加更多角色服装选择、独特服饰款式或更优惠的钻石商店优惠",
+          "count": 12,
+          "type": "sug",
+          "orig": "Add more character clothing options, unique dress styles, or cheaper diamond store offers",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1U6ZC0Cwf56SPSossuiUC1O8iK8SF2drv/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "请求官方推出“请勿打扰”模式，以阻止过多的游戏内请求。",
+          "count": 6,
+          "type": "sug",
+          "orig": "Request for an official 'Do Not Disturb' mode to block excessive in-game requests",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1phz4BgvY9ywIgfmvU8WL7rpA4HhUtYZc/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "在游戏中添加一个功能齐全的互动餐厅",
+          "count": 5,
+          "type": "sug",
+          "orig": "Add a functional interactive restaurant to the game",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1WJykMNP3Zvyj4RdT0uVODP1GHw8BEvYp/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增加降落伞和翼装，以便从高处跳下。",
+          "count": 5,
+          "type": "sug",
+          "orig": "Add parachutes and wingsuits for leaping from tall structures",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1WJykMNP3Zvyj4RdT0uVODP1GHw8BEvYp/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "增加任务报酬，以平衡武器和载具资产的高昂成本。",
+          "count": 50,
+          "type": "sug",
+          "orig": "Increase mission money payouts to balance the high costs of weapon and vehicle assets",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1hi7_wXVaFP_aJvvfGP79OHLZMXhwEMJr/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "由于无法完成的任务障碍，游戏进度被锁定或重复。",
+          "count": 50,
+          "type": "bad",
+          "orig": "Progression is locked or repetitive due to an unbeatable mission block",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1hi7_wXVaFP_aJvvfGP79OHLZMXhwEMJr/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "相对于资产成本而言，在积累基础财富时，赚钱途径的进度感觉太慢了。",
+          "count": 20,
+          "type": "bad",
+          "orig": "Money earning progression options feel too slow when grinding basic amounts relative to asset costs",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10HbCIk-J3rmyATZlkr_bxyGsn6Pf2sUc/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "报告称，目标用户群体遭遇了一起严重的言语辱骂和骚扰事件。",
+          "count": 1,
+          "type": "bad",
+          "orig": "Serious case of verbal abuse and harassment reported from target user group",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1ZgOucO5RlCc8-1gZmv3sQDrNKtG3o8Wu/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "需要对游戏进行优化，以减少像 Poco C75 这样的低端硬件上的性能卡顿和延迟。",
+          "count": 3,
+          "type": "bad",
+          "orig": "Game optimization needed to reduce performance stutter and lag on low-end hardware like Poco C75",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10HbCIk-J3rmyATZlkr_bxyGsn6Pf2sUc/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "开始新任务时，防弹背心会完全消失。",
+          "count": 1,
+          "type": "bad",
+          "orig": "Armor vest completely disappears when starting a new mission",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/12A1s4wQunLphDxvrDdvL2ePTRwRlf4CC/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "汽车改装商店在进入时加载进度卡在 20%，导致应用程序无法加载，必须重启。",
+          "count": 150,
+          "type": "bad",
+          "orig": "Car Mod Shop soft-locks loading progress at 20% on entrance, forcing an application restart",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/10HbCIk-J3rmyATZlkr_bxyGsn6Pf2sUc/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "警察可以直接穿透建筑物结构和坚固的房屋墙壁射击玩家。",
+          "count": 2,
+          "type": "bad",
+          "orig": "Police can shoot directly through building structures and solid house walls to hit players",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/14KE7R3MV4hBiElda2ErcbJSL8PU-UXN9/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "主干智能炮塔资产完全无法与目标交战或开火。",
+          "count": 2,
+          "type": "bad",
+          "orig": "Backbone smart turret asset completely fails to engage or fire targets",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1SGkRjs9jpVIbaLjXZZTm6wij41JYUK-o/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "企业仪表盘数据清理限制失效，从 22 万条记录的上限降至 18 万条记录。",
+          "count": 30,
+          "type": "bad",
+          "orig": "Corporate dashboard scrubbing limit broke down and dropped to a baseline of 180k from a 220k cap",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1kYfApGUKvZYAhiZsJJuVpt6vLcy038Oh/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "用户热情反馈，称赞了整体世界观构建和游戏玩法质量。",
+          "count": 200,
+          "type": "good",
+          "orig": "Enthusiastic user feedback praising general world building and gameplay quality",
+          "channel": "IG",
+          "note": "https://drive.google.com/file/d/1MNlV7HiNxDpWpW3Cfv258hG5lF2ulMuP/view?usp=drive_web",
+          "date": "2026-09-10"
+        },
+        {
+          "theme": "添加自行车、摩托车、公共汽车和飞机等交通工具",
+          "count": 50,
+          "type": "sug",
+          "orig": "Add vehicles like bikes, motorcycles, buses, and airplanes",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1TU4hLMhchB5YROlRq1eO9JGTtJApNkVM/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "添加开放世界基础设施和功能，例如机场、可进入的带内部结构的建筑物、医院、警察局、学校和交通系统。",
+          "count": 20,
+          "type": "sug",
+          "orig": "Add open-world infrastructure and features such as airports, enterable buildings with interiors, hospitals, police stations, schools, and transit systems",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1YRpQhulaztDBurCrSESYavbXFvs0X7Yb/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "扩展地图，添加海滩、沙漠、森林和山脉等多样化的环境。",
+          "count": 10,
+          "type": "sug",
+          "orig": "Expand the map with diverse environments like beaches, deserts, forests, and mountains",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1YRpQhulaztDBurCrSESYavbXFvs0X7Yb/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "增加更多劫案任务，并提高任务多样性",
+          "count": 60,
+          "type": "sug",
+          "orig": "Add more heist missions and increase mission variety",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1iMBSEbGnPOV1uB-cqkrfleLjat_OQ5sk/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "实现玩家之间的财务功能，例如提供工具或系统，方便好友之间转账或赠送资金。",
+          "count": 40,
+          "type": "sug",
+          "orig": "Implement player-to-player financial features such as a tool or system to transfer or gift money among friends",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1HOBw2psJIBb04spuF3jHqvbdHdO4Ern3/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "请求进行经济改革，包括提高任务奖励、加快资金回收速度或降低资产价格。",
+          "count": 20,
+          "type": "sug",
+          "orig": "Request for an economic overhaul including higher mission rewards, increased money scrubbing rates, or lower pricing for assets",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1nY0qHkXtHhjMa0mKa4Bl8vaSunF7raLE/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "引入PvP赏金系统，敌对玩家可以通过猎杀奖励获得赏金。",
+          "count": 20,
+          "type": "sug",
+          "orig": "Introduce a PvP Bounty System where hostile players gain bounties for hunting rewards",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1K_yckTe-z0kCCCp3nccYTWfsfuFko7pX/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "引入类似 GTA 角色扮演服务器的氏族或家族系统",
+          "count": 15,
+          "type": "sug",
+          "orig": "Introduce a clan or family system styled after GTA Roleplay servers",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1sGSjxi1gTsjtsavj7k_YmcJzVh8J1nFg/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "增加个人载具车库、更多自定义选项和武器皮肤",
+          "count": 20,
+          "type": "sug",
+          "orig": "Add personal vehicle garages, expanded customization options, and weapon skins",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1YRpQhulaztDBurCrSESYavbXFvs0X7Yb/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "添加动态晴天、雨天和冬季天气系统",
+          "count": 62,
+          "type": "sug",
+          "orig": "Add dynamic sunny, rainy, and winter weather systems",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1YRpQhulaztDBurCrSESYavbXFvs0X7Yb/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "由于玩家数量稀少，请在PvP竞技场模式中实施跨服务器匹配。",
+          "count": 30,
+          "type": "sug",
+          "orig": "Implement cross-server matchmaking for PvP Arena modes due to sparse player pools",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1UQ4gCfTvKSNk65J_L5xLH9qZU9o2rUXx/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "添加陀螺仪控制设置",
+          "count": 65,
+          "type": "sug",
+          "orig": "Add Gyroscope control settings",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1TU4hLMhchB5YROlRq1eO9JGTtJApNkVM/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "玩家抱怨资金不足，无法推进游戏进程或购买创业资产。",
+          "count": 5,
+          "type": "bad",
+          "orig": "Players complain about lacking funds to progress or buy entrepreneurship assets",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1O7RP_F3MXfzMTJy4B_ffGUJJnADgykJN/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "PvP街头赛车赛道匹配队列延迟和重复",
+          "count": 6,
+          "type": "bad",
+          "orig": "Matchmaking queue delays and repetition on PvP Street Racing tracks",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1YRpQhulaztDBurCrSESYavbXFvs0X7Yb/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "高端多人游戏区域感觉空旷、荒凉，或者包含无人居住的死区。",
+          "count": 2,
+          "type": "bad",
+          "orig": "High-end multiplayer areas feel empty, abandoned, or contain unpopulated dead zones",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1NqUHD7q-6fwMO9eyBOtD4FgleRL0pvWN/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "紧急救援故事任务：地图边界故障导致玩家进入未开发的任务区域时会在其他地方重生",
+          "count": 5,
+          "type": "bad",
+          "orig": "Emergency Rescue Story Mission: Map boundary glitch causes player to respawn elsewhere when entering undeveloped mission zones",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1NqUHD7q-6fwMO9eyBOtD4FgleRL0pvWN/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "界面位置问题：消息按钮距离方向盘控制按钮太近，导致驾驶时误触。",
+          "count": 3,
+          "type": "bad",
+          "orig": "Interface placement issue: Message button is too close to steering controls, causing accidental clicks while driving",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1O7RP_F3MXfzMTJy4B_ffGUJJnADgykJN/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "设备性能：游戏无法运行或针对低端设备缺乏优化",
+          "count": 6,
+          "type": "bad",
+          "orig": "Device performance: Game does not run or optimization is missing for lower-end devices",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/14SH5orFhVa09omqPNhliw0_rkTlFMfVf/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "网络连接：游戏过程中延迟/ping值持续飙升至999毫秒，非常高",
+          "count": 9,
+          "type": "bad",
+          "orig": "Network Connectivity: High latency/ping spikes pinning constantly at 999ms during gameplay",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1inSxxmQfi72dWmd5q7XKNg4welNRrwcu/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "主干智能炮塔防御资产未能锁定或射击敌人",
+          "count": 3,
+          "type": "bad",
+          "orig": "Backbone Smart Turret defensive asset fails to target or shoot enemies",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1SGkRjs9jpVIbaLjXZZTm6wij41JYUK-o/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "因其卓越的移动开放世界游戏和引人入胜的核心故事情节而受到表彰",
+          "count": 130,
+          "type": "good",
+          "orig": "Commendation for an exceptional mobile open-world title and enjoyable core storylines",
+          "channel": "IG, YTB, DC",
+          "note": "https://drive.google.com/file/d/1DDVl5JKVPOCMlvguEVFJddRLS306rUYv/view?usp=drive_web",
+          "date": "2026-09-11"
+        },
+        {
+          "theme": "在游戏中添加陀螺仪",
+          "count": 23,
+          "type": "sug",
+          "orig": "Add gyro in the game",
+          "channel": "IG, YTB, DC",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "添加印地语",
+          "count": 40,
+          "type": "sug",
+          "orig": "Add hindi language",
+          "channel": "IG, YTB",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "带上第一人称视角",
+          "count": 5,
+          "type": "sug",
+          "orig": "Bring first person camera",
+          "channel": "IG",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "粉红色的天空虫",
+          "count": 6,
+          "type": "bad",
+          "orig": "pink sky bug",
+          "channel": "IG",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "改进游戏用户界面",
+          "count": 2,
+          "type": "sug",
+          "orig": "improve game ui",
+          "channel": "YTB",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "缩小游戏规模",
+          "count": 3,
+          "type": "sug",
+          "orig": "Decrease game size",
+          "channel": "YTB",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "针对低端手机优化游戏",
+          "count": 5,
+          "type": "sug",
+          "orig": "Optimize the game for low end phones",
+          "channel": "YTB",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "添加单人游戏模式",
+          "count": 6,
+          "type": "sug",
+          "orig": "Add singleplayer mode",
+          "channel": "YTB",
+          "note": "",
+          "date": "2026-09-12"
+        },
+        {
+          "theme": "我们爱你们，这款游戏的开发者们！",
+          "count": 70,
+          "type": "good",
+          "orig": "We love you developers of this game",
+          "channel": "IG, YTB",
+          "note": "",
+          "date": "2026-09-12"
+        }
+      ],
+      "communitySummary": "本周社群反馈共 124 条，主要来自 Instagram(116)、YouTube(33)、Discord(27)。 中性诉求以载具/任务/本地化等玩法与内容建议为主； 负面与 Bug 占比约 42%，集中在性能卡顿、崩溃与语音通讯类问题。",
+      "communityPlatforms": [
+        {
+          "name": "Instagram",
+          "note": "116 条"
+        },
+        {
+          "name": "YouTube",
+          "note": "33 条"
+        },
+        {
+          "name": "Discord",
+          "note": "27 条"
+        }
+      ],
+      "trend": "走向：玩家关注点持续从「能不能玩」转向「上线后流不流畅、沉浸不沉浸」； 载具（自行车/摩托/超级摩托）与本地化（印地语）为最高频诉求，需重点跟进性能卡顿、崩溃与语音通讯类 Bug，避免口碑受损。",
+      "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
+    },
+
     {
       "week": "8.31 - 9.6",
       "attitude": "波动",
