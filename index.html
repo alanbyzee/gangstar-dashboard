@@ -460,11 +460,21 @@ body{
 .fb-ref-ch .fb-ch-bar{flex:1;min-width:0;height:7px;background:#f1f5f9;border-radius:999px;overflow:hidden}
 .fb-ref-ch .fb-ch-bar i{display:block;height:100%;background:#6366f1;border-radius:999px}
 .fb-ref-ch .fb-ch-v{width:42px;text-align:right;color:#0f172a;font-weight:800;font-variant-numeric:tabular-nums}
-.fb-ref-tops{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:auto}
-.fb-ref-top{display:flex;flex-direction:column;gap:6px;padding:11px 12px;background:#f8fafc;border:1px solid #EEF0F4;border-radius:10px;min-width:0}
-.fb-ref-top-rank{font-size:10px;font-weight:800;letter-spacing:.08em;color:#6366f1;text-transform:uppercase}
-.fb-ref-top-name{font-size:13px;font-weight:700;color:#0f172a;line-height:1.35;min-height:34px;word-break:break-word}
-.fb-ref-top-cnt{font-size:11.5px;color:#94a3b8;font-weight:700}
+.fb-ref-cats{display:flex;flex-direction:column;gap:9px;margin-top:auto}
+.fb-ref-cat{background:#F8F9FB;border:1px solid #EEF0F4;border-radius:12px;padding:11px 13px;cursor:pointer;transition:background .15s}
+.fb-ref-cat:hover{background:#F1F3F7}
+.fb-ref-cat-head{display:flex;align-items:center;gap:9px}
+.fb-ref-cat-rank{font-size:13px;font-weight:900;color:#6366f1;flex:none}
+.fb-ref-cat-name{font-size:15px;font-weight:900;color:#0f172a}
+.fb-ref-cat-total{font-size:12px;font-weight:800;color:#4338ca;background:#EEF2FF;border-radius:999px;padding:2px 10px;flex:none}
+.fb-ref-cat-chev{margin-left:auto;color:#94a3b8;font-size:11px;transition:transform .2s}
+.fb-ref-cat.open .fb-ref-cat-chev{transform:rotate(180deg)}
+.fb-ref-cat-core{font-size:12.5px;color:#475569;margin-top:7px;line-height:1.5;padding-left:2px}
+.fb-ref-cat-subs{display:none;margin-top:9px;flex-direction:column;gap:5px}
+.fb-ref-cat.open .fb-ref-cat-subs{display:flex}
+.fb-ref-cat-sub{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:#64748b;padding:5px 9px;background:#fff;border:1px solid #EEF0F4;border-radius:8px}
+.fb-ref-cat-sub-name{word-break:break-word;line-height:1.4}
+.fb-ref-cat-sub-cnt{font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums;flex:none}
 .fb-filtered{font-size:12px;color:#64748b;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:10px;padding:9px 14px;margin:0 2px 4px}
 
 /* 按周分块 */
@@ -4279,6 +4289,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -9403,6 +9414,53 @@ function fbPropBar(seg){
   return '<div class="fb-prop"><div class="fb-prop-bar"><i class="g" style="width:'+seg.np+'%"></i><i class="b" style="width:'+seg.bp+'%"></i></div>'
     +'<div class="fb-prop-leg"><span class="g">非负 '+seg.np+'%</span><span class="b">负面 '+seg.bp+'%</span></div></div>';
 }
+function fbCat(t){
+  t=t||'';
+  var cats=[
+    ['载具',/自行|摩托|跑车|越野|超级摩托|直升|飞机|喷气|载具|拖拉|豪华轿|车库|路虎|宝马|迈凯伦|帕加尼|船舶|水上摩托|降落伞|翼装|换挡|交通工具|车型|音效/],
+    ['本地化',/印地语|语言|翻译|语音|配音|孟加拉/],
+    ['功能/系统',/陀螺仪|导航|银行|转账|财务|经济|帮派|家族|氏族|联盟|俱乐部|赏金|恶名|竞技场|好友|单人|打扰|UI|界面|战斗|视角|灵敏度|瞄准|仪表盘/],
+    ['任务/内容',/任务|剧情|故事|抢劫|副本/],
+    ['角色/服装',/角色|服装|捆绑|兔女郎|沙龙|职业/],
+    ['性能/优化',/优化|画质|卡顿|低端|规模/],
+    ['地图/世界',/地图|军事基地|建筑|医院|警察局|学校|海滩|沙漠|森林|山脉|边界|产权|宠物|女友|餐厅|城市|环境/],
+    ['天气',/天气|晴天|雨天|冬季/]
+  ];
+  for(var i=0;i<cats.length;i++){ if(cats[i][1].test(t)) return cats[i][0]; }
+  return '其他';
+}
+function fbCatCats(items){
+  var map={};
+  items.forEach(function(it){ var c=fbCat(it.theme); (map[c]=map[c]||[]).push(it); });
+  var arr=Object.keys(map).map(function(name){
+    var list=map[name].slice().sort(function(a,b){return (b.count||0)-(a.count||0);});
+    var total=list.reduce(function(s,x){return s+(Number(x.count)||0);},0);
+    return {name:name, total:total, top:list[0], list:list};
+  });
+  arr.sort(function(a,b){return b.total-a.total;});
+  return arr;
+}
+function fbCatCards(items){
+  var cats=fbCatCats(items);
+  var top=cats.slice(0,3);
+  var ranks=['①','②','③'];
+  return top.map(function(cat,idx){
+    var sub=cat.list.map(function(it){
+      return '<div class="fb-ref-cat-sub"><span class="fb-ref-cat-sub-name">'+fbEsc(fbTitle(it))+'</span><span class="fb-ref-cat-sub-cnt">'+chNum(Number(it.count)||0)+'</span></div>';
+    }).join('');
+    return '<div class="fb-ref-cat" data-cat="'+idx+'" onclick="fbToggleCat(this)">'
+      +'<div class="fb-ref-cat-head">'
+        +'<span class="fb-ref-cat-rank">'+ranks[idx]+'</span>'
+        +'<span class="fb-ref-cat-name">'+cat.name+'</span>'
+        +'<span class="fb-ref-cat-total">'+chNum(cat.total)+' 提及</span>'
+        +'<span class="fb-ref-cat-chev">▾</span>'
+      +'</div>'
+      +'<div class="fb-ref-cat-core">核心：'+fbEsc(fbTitle(cat.top))+'</div>'
+      +'<div class="fb-ref-cat-subs">'+sub+'</div>'
+    +'</div>';
+  }).join('');
+}
+function fbToggleCat(el){ el.classList.toggle('open'); }
 function fbRefHTML(chrono){
   var cur=chrono[chrono.length-1];
   var prev=chrono.length>1?chrono[chrono.length-2]:null;
@@ -9416,12 +9474,7 @@ function fbRefHTML(chrono){
   var chMax=Math.max(1,chKeys.length?ch[chKeys[0]]:1);
   var chHtml=chKeys.map(function(k){var pct=Math.round(ch[k]/chMax*100);return '<div class="fb-ch"><span class="fb-ch-n">'+fbChName(k)+'</span><span class="fb-ch-bar"><i style="width:'+pct+'%"></i></span><span class="fb-ch-v">'+chNum(ch[k])+'</span></div>';}).join('');
   var sugItems=items.filter(function(it){return fbBucket(it.type||'oth')==='sug';});
-  var top3=sugItems.slice().sort(function(a,b){return (b.count||0)-(a.count||0);}).slice(0,3);
-  var topHtml=top3.length?top3.map(function(it,idx){return '<div class="fb-ref-top">'
-      +'<span class="fb-ref-top-rank">TOP '+(idx+1)+'</span>'
-      +'<span class="fb-ref-top-name">'+fbEsc(fbTitle(it))+'</span>'
-      +'<span class="fb-ref-top-cnt">'+chNum(Number(it.count)||0)+' 提及</span>'
-    +'</div>';}).join(''):'<div class="fb-filtered">本周暂无建议类诉求</div>';
+  var catHtml=sugItems.length?fbCatCards(sugItems):'<div class="fb-filtered">本周暂无建议类诉求</div>';
   var wowHtml=wow===null?'<span class="fb-ref-sub">暂无上周对比</span>':('<span class="fb-ref-d '+(wow>=0?'up':'down')+'">'+(wow>=0?'▲ +':'▼ ')+wow+'%</span><span class="fb-ref-sub">较上周 '+chNum(prevSeg.t)+'</span>');
   return '<div class="fb-ref">'
     +'<div class="fb-ref-card fb-ref-left">'
@@ -9433,8 +9486,8 @@ function fbRefHTML(chrono){
       +'<div class="fb-ref-ch">'+chHtml+'</div>'
     +'</div>'
     +'<div class="fb-ref-card fb-ref-right">'
-      +'<div class="fb-ref-k">高频诉求 TOP3</div>'
-      +'<div class="fb-ref-tops">'+topHtml+'</div>'
+      +'<div class="fb-ref-k">高频建议 TOP3（按类型）</div>'
+      +'<div class="fb-ref-cats">'+catHtml+'</div>'
     +'</div>'
   +'</div>';
 }
