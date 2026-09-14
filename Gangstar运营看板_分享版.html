@@ -4295,6 +4295,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -9414,12 +9415,13 @@ function fbRefHTML(chrono){
   var chKeys=Object.keys(ch).sort(function(a,b){return ch[b]-ch[a];});
   var chMax=Math.max(1,chKeys.length?ch[chKeys[0]]:1);
   var chHtml=chKeys.map(function(k){var pct=Math.round(ch[k]/chMax*100);return '<div class="fb-ch"><span class="fb-ch-n">'+fbChName(k)+'</span><span class="fb-ch-bar"><i style="width:'+pct+'%"></i></span><span class="fb-ch-v">'+chNum(ch[k])+'</span></div>';}).join('');
-  var top3=items.slice().sort(function(a,b){return (b.count||0)-(a.count||0);}).slice(0,3);
-  var topHtml=top3.map(function(it,idx){return '<div class="fb-ref-top">'
+  var sugItems=items.filter(function(it){return fbBucket(it.type||'oth')==='sug';});
+  var top3=sugItems.slice().sort(function(a,b){return (b.count||0)-(a.count||0);}).slice(0,3);
+  var topHtml=top3.length?top3.map(function(it,idx){return '<div class="fb-ref-top">'
       +'<span class="fb-ref-top-rank">TOP '+(idx+1)+'</span>'
       +'<span class="fb-ref-top-name">'+fbEsc(fbTitle(it))+'</span>'
       +'<span class="fb-ref-top-cnt">'+chNum(Number(it.count)||0)+' 提及</span>'
-    +'</div>';}).join('');
+    +'</div>';}).join(''):'<div class="fb-filtered">本周暂无建议类诉求</div>';
   var wowHtml=wow===null?'<span class="fb-ref-sub">暂无上周对比</span>':('<span class="fb-ref-d '+(wow>=0?'up':'down')+'">'+(wow>=0?'▲ +':'▼ ')+wow+'%</span><span class="fb-ref-sub">较上周 '+chNum(prevSeg.t)+'</span>');
   return '<div class="fb-ref">'
     +'<div class="fb-ref-card fb-ref-left">'
