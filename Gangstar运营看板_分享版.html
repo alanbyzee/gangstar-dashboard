@@ -442,40 +442,51 @@ body{
 .fb-prop-leg{display:flex;gap:14px;margin-top:9px;font-size:12px;font-weight:800}
 .fb-prop-leg .g{color:#16a34a}.fb-prop-leg .s{color:#b45309}.fb-prop-leg .b{color:#dc2626}
 
-/* 第二行：本周数据 + 渠道分布（左 40%） / 高频诉求 TOP3（右 60%）—— 自适应高度，取消强制等高，留出紧凑内边距 */
-.fb-ref{display:grid;grid-template-columns:2fr 3fr;gap:16px;margin-top:18px;align-items:stretch}
-.fb-ref-card{background:#fff;border:1px solid #EEF0F4;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(16,24,40,.03);display:flex;flex-direction:column;min-width:0}
-.fb-ref-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+/* 第二行：本周数据 + 渠道占比（左 40%） / 高频建议 TOP3（右 60%）—— 左右绝对等高，中段环形图填充留白，整体纵向压缩 */
+.fb-ref{display:grid;grid-template-columns:2fr 3fr;gap:16px;margin-top:16px;align-items:stretch}
+.fb-ref-card{background:#fff;border:1px solid #EEF0F4;border-radius:14px;padding:12px 15px;box-shadow:0 1px 2px rgba(16,24,40,.03);display:flex;flex-direction:column;min-width:0}
+.fb-ref-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;display:flex;align-items:center;gap:7px}
 .fb-ref-k::before{content:"";width:3px;height:12px;border-radius:2px;background:#6366f1;display:inline-block;flex:none}
-.fb-ref-left .fb-ref-total-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
-.fb-ref-total{font-size:34px;font-weight:900;letter-spacing:-1px;color:#0f172a;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:5px}
-.fb-ref-total span{font-size:14px;font-weight:700;color:#94a3b8;letter-spacing:0}
-.fb-ref-wow{display:flex;flex-direction:column;gap:3px}
-.fb-ref-d{font-size:13px;font-weight:800;padding:2px 9px;border-radius:999px;align-self:flex-start}
+.fb-ref-left .fb-ref-total-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.fb-ref-total{font-size:30px;font-weight:900;letter-spacing:-1px;color:#0f172a;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:5px}
+.fb-ref-total span{font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:0}
+.fb-ref-wow{display:flex;flex-direction:column;gap:2px}
+.fb-ref-d{font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:999px;align-self:flex-start}
 .fb-ref-d.up{background:#ecfdf5;color:#059669}.fb-ref-d.down{background:#fef2f2;color:#dc2626}
-.fb-ref-sub{font-size:11.5px;color:#94a3b8;line-height:1.35}
-.fb-ref-ch{display:flex;flex-direction:column;gap:8px;margin-top:auto}
-.fb-ref-ch .fb-ch{display:flex;align-items:center;gap:8px;font-size:12px}
-.fb-ref-ch .fb-ch-n{width:64px;color:#64748b;font-weight:700;flex:none}
-.fb-ref-ch .fb-ch-bar{flex:1;min-width:0;height:7px;background:#f1f5f9;border-radius:999px;overflow:hidden}
-.fb-ref-ch .fb-ch-bar i{display:block;height:100%;background:#6366f1;border-radius:999px}
+.fb-ref-sub{font-size:11px;color:#94a3b8;line-height:1.3}
+/* 中段：渠道占比环形图 + 图例（flex:1 吸收多余空间，彻底消除中段留白） */
+.fb-ref-mid{display:flex;align-items:center;gap:16px;flex:1;min-height:0;padding:1px 0}
+.fb-ref-mid .fb-donut{flex:none;width:68px;height:68px;display:block;max-width:none}
+.fb-donut-n{font-size:13px;font-weight:900;fill:#0f172a}
+.fb-donut-l{font-size:8px;font-weight:700;fill:#94a3b8;letter-spacing:.04em}
+.fb-donut-leg{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.fb-dl{display:flex;align-items:center;gap:7px;font-size:11.5px}
+.fb-dl i{width:8px;height:8px;border-radius:2px;flex:none}
+.fb-dl-n{color:#475569;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-dl-v{color:#0f172a;font-weight:900;font-variant-numeric:tabular-nums;flex:none}
+.fb-ref-ch{display:flex;flex-direction:column;gap:5px;border-top:1px solid #F1F5F9;padding-top:8px}
+.fb-ref-ch .fb-ch{display:flex;align-items:center;gap:8px;font-size:11.5px}
+.fb-ref-ch .fb-ch-n{width:62px;color:#64748b;font-weight:700;flex:none}
+.fb-ref-ch .fb-ch-bar{flex:1;min-width:0;height:6px;background:#f1f5f9;border-radius:999px;overflow:hidden}
+.fb-ref-ch .fb-ch-bar i{display:block;height:100%;border-radius:999px}
 .fb-ref-ch .fb-ch-v{width:42px;text-align:right;color:#0f172a;font-weight:800;font-variant-numeric:tabular-nums}
-.fb-ref-cats{display:flex;flex-direction:column;gap:9px;margin-top:auto}
-.fb-ref-cat{background:#F8F9FB;border:1px solid #EEF0F4;border-radius:12px;padding:11px 13px;cursor:pointer;transition:background .15s}
+.fb-ref-cats{display:flex;flex-direction:column;gap:6px}
+.fb-ref-cat{background:#F8F9FB;border:1px solid #EEF0F4;border-radius:12px;padding:7px 11px;cursor:pointer;transition:background .15s}
 .fb-ref-cat:hover{background:#F1F3F7}
-.fb-ref-cat-head{display:flex;align-items:center;gap:9px}
-.fb-ref-cat-rank{font-size:13px;font-weight:900;color:#6366f1;flex:none}
-.fb-ref-cat-name{font-size:15px;font-weight:900;color:#0f172a}
-.fb-ref-cat-total{font-size:12px;font-weight:800;color:#4338ca;background:#EEF2FF;border-radius:999px;padding:2px 10px;flex:none}
-.fb-ref-cat-chev{margin-left:auto;color:#94a3b8;font-size:11px;transition:transform .2s}
+.fb-ref-cat-head{display:flex;align-items:center;gap:8px}
+.fb-ref-cat-rank{font-size:12.5px;font-weight:900;color:#6366f1;flex:none}
+.fb-ref-cat-name{font-size:13.5px;font-weight:900;color:#0f172a}
+.fb-ref-cat-total{font-size:11.5px;font-weight:800;color:#4338ca;background:#EEF2FF;border-radius:999px;padding:2px 9px;flex:none}
+.fb-ref-cat-chev{margin-left:auto;color:#94a3b8;font-size:10px;transition:transform .2s}
 .fb-ref-cat.open .fb-ref-cat-chev{transform:rotate(180deg)}
-.fb-ref-cat-core{font-size:12.5px;color:#475569;margin-top:7px;line-height:1.5;padding-left:2px}
-.fb-ref-cat-subs{display:none;margin-top:9px;flex-direction:column;gap:5px}
+.fb-ref-cat-core{font-size:12px;color:#475569;margin-top:3px;line-height:1.4;padding-left:2px}
+.fb-ref-cat-subs{display:none;margin-top:7px;flex-direction:column;gap:5px}
 .fb-ref-cat.open .fb-ref-cat-subs{display:flex}
 .fb-ref-cat-sub{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:#64748b;padding:5px 9px;background:#fff;border:1px solid #EEF0F4;border-radius:8px}
 .fb-ref-cat-sub-name{word-break:break-word;line-height:1.4}
 .fb-ref-cat-sub-cnt{font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums;flex:none}
 .fb-filtered{font-size:12px;color:#64748b;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:10px;padding:9px 14px;margin:0 2px 4px}
+@media(max-width:860px){.fb-ref{grid-template-columns:1fr}}
 
 /* 按周分块 */
 .fb4-weeks{margin-top:28px}
@@ -4337,6 +4348,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -9517,6 +9529,27 @@ function fbCatCards(items){
   }).join('');
 }
 function fbToggleCat(el){ el.classList.toggle('open'); }
+/* 渠道配色：靛蓝梯度，环形图 / 图例 / 进度条三者共用，保持现有浅色主题 */
+function fbPal(i){var p=['#6366f1','#818cf8','#a5b4fc','#c7d2fe','#ddd6fe'];return p[i%p.length];}
+/* 渠道占比环形图（纯内联 SVG 字符串，字符串内严禁裸换行） */
+function fbDonut(ch,chKeys,center){
+  var sum=0;chKeys.forEach(function(k){sum+=ch[k];});
+  if(!sum)sum=1;
+  var cx=34,cy=34,r=26,sw=9,circ=2*Math.PI*r,off=0;
+  var segs=chKeys.map(function(k,i){
+    var len=ch[k]/sum*circ;
+    var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+fbPal(i)+'" stroke-width="'+sw+'" stroke-dasharray="'+len.toFixed(2)+' '+(circ-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'"></circle>';
+    off+=len;return s;
+  }).join('');
+  return '<svg class="fb-donut" viewBox="0 0 68 68" width="68" height="68" aria-hidden="true">'
+    +'<g transform="rotate(-90 34 34)">'
+      +'<circle cx="34" cy="34" r="26" fill="none" stroke="#f1f5f9" stroke-width="9"></circle>'
+      +segs
+    +'</g>'
+    +'<text class="fb-donut-n" x="34" y="32" text-anchor="middle">'+chNum(center)+'</text>'
+    +'<text class="fb-donut-l" x="34" y="44" text-anchor="middle">总提及</text>'
+  +'</svg>';
+}
 function fbRefHTML(chrono){
   var cur=chrono[chrono.length-1];
   var prev=chrono.length>1?chrono[chrono.length-2]:null;
@@ -9528,7 +9561,10 @@ function fbRefHTML(chrono){
   var ch={};items.forEach(function(it){var c=(it.channel||'').split(',');var n=Number(it.count)||0;c.forEach(function(x){x=x.trim();if(x){ch[x]=(ch[x]||0)+n;}});});
   var chKeys=Object.keys(ch).sort(function(a,b){return ch[b]-ch[a];});
   var chMax=Math.max(1,chKeys.length?ch[chKeys[0]]:1);
-  var chHtml=chKeys.map(function(k){var pct=Math.round(ch[k]/chMax*100);return '<div class="fb-ch"><span class="fb-ch-n">'+fbChName(k)+'</span><span class="fb-ch-bar"><i style="width:'+pct+'%"></i></span><span class="fb-ch-v">'+chNum(ch[k])+'</span></div>';}).join('');
+  var chSum=0;chKeys.forEach(function(k){chSum+=ch[k];});
+  var chHtml=chKeys.map(function(k,i){var pct=Math.round(ch[k]/chMax*100);return '<div class="fb-ch"><span class="fb-ch-n">'+fbChName(k)+'</span><span class="fb-ch-bar"><i style="width:'+pct+'%;background:'+fbPal(i)+'"></i></span><span class="fb-ch-v">'+chNum(ch[k])+'</span></div>';}).join('');
+  var legHtml=chKeys.map(function(k,i){return '<div class="fb-dl"><i style="background:'+fbPal(i)+'"></i><span class="fb-dl-n">'+fbChName(k)+'</span><span class="fb-dl-v">'+Math.round(ch[k]/(chSum||1)*100)+'%</span></div>';}).join('');
+  var midHtml=chKeys.length?('<div class="fb-ref-mid">'+fbDonut(ch,chKeys,total)+'<div class="fb-donut-leg">'+legHtml+'</div></div>'):'';
   var sugItems=items.filter(function(it){return fbBucket(it.type||'oth')==='sug';});
   var catHtml=sugItems.length?fbCatCards(sugItems):'<div class="fb-filtered">本周暂无建议类诉求</div>';
   var wowHtml=wow===null?'<span class="fb-ref-sub">暂无上周对比</span>':('<span class="fb-ref-d '+(wow>=0?'up':'down')+'">'+(wow>=0?'▲ +':'▼ ')+wow+'%</span><span class="fb-ref-sub">较上周 '+chNum(prevSeg.t)+'</span>');
@@ -9539,6 +9575,7 @@ function fbRefHTML(chrono){
         +'<div class="fb-ref-total">'+chNum(total)+'<span>条</span></div>'
         +'<div class="fb-ref-wow">'+wowHtml+'</div>'
       +'</div>'
+      +midHtml
       +'<div class="fb-ref-ch">'+chHtml+'</div>'
     +'</div>'
     +'<div class="fb-ref-card fb-ref-right">'
