@@ -455,21 +455,16 @@ body{
 .fb-ref-d.up{background:#ecfdf5;color:#059669}.fb-ref-d.down{background:#fef2f2;color:#dc2626}
 .fb-ref-sub{font-size:11px;color:#94a3b8;line-height:1.3}
 /* 中段：渠道占比环形图 + 图例（flex:1 吸收多余空间，彻底消除中段留白） */
-.fb-ref-mid{display:flex;align-items:center;gap:16px;flex:1;min-height:0;padding:1px 0}
-.fb-ref-mid .fb-donut{flex:none;width:68px;height:68px;display:block;max-width:none}
+.fb-ref-mid{display:flex;align-items:center;justify-content:center;gap:18px;flex:1;min-height:0;padding:4px 0}
+.fb-ref-mid .fb-donut{flex:none;width:84px;height:84px;display:block;max-width:none}
 .fb-donut-n{font-size:13px;font-weight:900;fill:#0f172a}
 .fb-donut-l{font-size:8px;font-weight:700;fill:#94a3b8;letter-spacing:.04em}
 .fb-donut-leg{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-.fb-dl{display:flex;align-items:center;gap:7px;font-size:11.5px}
-.fb-dl i{width:8px;height:8px;border-radius:2px;flex:none}
-.fb-dl-n{color:#475569;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fb-dl-v{color:#0f172a;font-weight:900;font-variant-numeric:tabular-nums;flex:none}
-.fb-ref-ch{display:flex;flex-direction:column;gap:5px;border-top:1px solid #F1F5F9;padding-top:8px}
-.fb-ref-ch .fb-ch{display:flex;align-items:center;gap:8px;font-size:11.5px}
-.fb-ref-ch .fb-ch-n{width:62px;color:#64748b;font-weight:700;flex:none}
-.fb-ref-ch .fb-ch-bar{flex:1;min-width:0;height:6px;background:#f1f5f9;border-radius:999px;overflow:hidden}
-.fb-ref-ch .fb-ch-bar i{display:block;height:100%;border-radius:999px}
-.fb-ref-ch .fb-ch-v{width:42px;text-align:right;color:#0f172a;font-weight:800;font-variant-numeric:tabular-nums}
+.fb-dl{display:flex;align-items:center;gap:7px;font-size:12.5px}
+.fb-dl i{width:9px;height:9px;border-radius:3px;flex:none}
+.fb-dl-n{color:#334155;font-weight:800;min-width:74px;flex:none}
+.fb-dl-v{color:#0f172a;font-weight:900;font-variant-numeric:tabular-nums;flex:none;min-width:40px;text-align:right}
+.fb-dl-c{color:#94a3b8;font-weight:700;font-variant-numeric:tabular-nums;flex:none;margin-left:auto}
 .fb-ref-cats{display:flex;flex-direction:column;gap:6px}
 .fb-ref-cat{background:#F8F9FB;border:1px solid #EEF0F4;border-radius:12px;padding:7px 11px;cursor:pointer;transition:background .15s}
 .fb-ref-cat:hover{background:#F1F3F7}
@@ -4348,6 +4343,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -9546,8 +9542,7 @@ function fbDonut(ch,chKeys,center){
       +'<circle cx="34" cy="34" r="26" fill="none" stroke="#f1f5f9" stroke-width="9"></circle>'
       +segs
     +'</g>'
-    +'<text class="fb-donut-n" x="34" y="32" text-anchor="middle">'+chNum(center)+'</text>'
-    +'<text class="fb-donut-l" x="34" y="44" text-anchor="middle">总提及</text>'
+    +(center!==undefined&&center!==null&&center!==''?('<text class="fb-donut-n" x="34" y="32" text-anchor="middle">'+chNum(center)+'</text><text class="fb-donut-l" x="34" y="44" text-anchor="middle">总提及</text>'):'')
   +'</svg>';
 }
 function fbRefHTML(chrono){
@@ -9560,11 +9555,9 @@ function fbRefHTML(chrono){
   var wow=prevSeg&&prevSeg.t?Math.round((total-prevSeg.t)/prevSeg.t*100):null;
   var ch={};items.forEach(function(it){var c=(it.channel||'').split(',');var n=Number(it.count)||0;c.forEach(function(x){x=x.trim();if(x){ch[x]=(ch[x]||0)+n;}});});
   var chKeys=Object.keys(ch).sort(function(a,b){return ch[b]-ch[a];});
-  var chMax=Math.max(1,chKeys.length?ch[chKeys[0]]:1);
   var chSum=0;chKeys.forEach(function(k){chSum+=ch[k];});
-  var chHtml=chKeys.map(function(k,i){var pct=Math.round(ch[k]/chMax*100);return '<div class="fb-ch"><span class="fb-ch-n">'+fbChName(k)+'</span><span class="fb-ch-bar"><i style="width:'+pct+'%;background:'+fbPal(i)+'"></i></span><span class="fb-ch-v">'+chNum(ch[k])+'</span></div>';}).join('');
-  var legHtml=chKeys.map(function(k,i){return '<div class="fb-dl"><i style="background:'+fbPal(i)+'"></i><span class="fb-dl-n">'+fbChName(k)+'</span><span class="fb-dl-v">'+Math.round(ch[k]/(chSum||1)*100)+'%</span></div>';}).join('');
-  var midHtml=chKeys.length?('<div class="fb-ref-mid">'+fbDonut(ch,chKeys,total)+'<div class="fb-donut-leg">'+legHtml+'</div></div>'):'';
+  var legHtml=chKeys.map(function(k,i){return '<div class="fb-dl"><i style="background:'+fbPal(i)+'"></i><span class="fb-dl-n">'+fbChName(k)+'</span><span class="fb-dl-v">'+Math.round(ch[k]/(chSum||1)*100)+'%</span><span class="fb-dl-c">'+chNum(ch[k])+'条</span></div>';}).join('');
+  var midHtml=chKeys.length?('<div class="fb-ref-mid">'+fbDonut(ch,chKeys)+'<div class="fb-donut-leg">'+legHtml+'</div></div>'):'';
   var sugItems=items.filter(function(it){return fbBucket(it.type||'oth')==='sug';});
   var catHtml=sugItems.length?fbCatCards(sugItems):'<div class="fb-filtered">本周暂无建议类诉求</div>';
   var wowHtml=wow===null?'<span class="fb-ref-sub">暂无上周对比</span>':('<span class="fb-ref-d '+(wow>=0?'up':'down')+'">'+(wow>=0?'▲ +':'▼ ')+wow+'%</span><span class="fb-ref-sub">较上周 '+chNum(prevSeg.t)+'</span>');
@@ -9576,7 +9569,6 @@ function fbRefHTML(chrono){
         +'<div class="fb-ref-wow">'+wowHtml+'</div>'
       +'</div>'
       +midHtml
-      +'<div class="fb-ref-ch">'+chHtml+'</div>'
     +'</div>'
     +'<div class="fb-ref-card fb-ref-right">'
       +'<div class="fb-ref-k">高频建议 TOP3（按类型）</div>'
