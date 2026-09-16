@@ -415,7 +415,7 @@ body{
 .fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
 /* ===== 玩家反馈看板 v3：Stripe/Linear 极简高端风（2026-09-13） ===== */
 /* ===== 玩家反馈看板 v5：Hero 健康度 + 比例条 + 参考带 + 议题真实原声（2026-09-13） ===== */
-.fb3-root{background:#F8F9FB;border-radius:18px;padding:28px;margin-top:6px}
+.fb3-root{background:#f7f8fa;border-radius:18px;padding:28px;margin-top:6px}
 .fb3-hero{display:grid;grid-template-columns:1fr 2fr;gap:20px;align-items:stretch}
 .fb3-health{background:#fff;border:1px solid #EEF0F4;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.05);display:flex;flex-direction:column;justify-content:center;gap:14px}
 .fb3-h-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8}
@@ -477,7 +477,7 @@ body{
 .fb-ref-cat-name{font-size:13.5px;font-weight:900;color:#0f172a}
 .fb-ref-cat-total{font-size:11.5px;font-weight:800;color:#4338ca;background:#EEF2FF;border-radius:999px;padding:2px 9px;flex:none}
 .fb-ref-cat-chev{margin-left:auto;color:#94a3b8;font-size:10px;transition:transform .2s}
-.fb-ref-cat.open .fb-ref-cat-chev{transform:rotate(180deg)}
+.fb-ref-cat.open .fb-ref-cat-chev{transform:rotate(90deg)}
 .fb-ref-cat-core{font-size:12px;color:#475569;margin-top:3px;line-height:1.4;padding-left:2px}
 .fb-ref-cat-subs{display:none;margin-top:7px;flex-direction:column;gap:5px}
 .fb-ref-cat.open .fb-ref-cat-subs{display:flex}
@@ -641,7 +641,7 @@ body{
 .fb-modal .btn-save{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none}
 /* ===== 玩家反馈看板 v3：Stripe/Linear 极简高端风（2026-09-13） ===== */
 /* ===== 玩家反馈看板 v3：Hero 健康度 + 双周对比 + TOP5 行卡（2026-09-13） ===== */
-.fb3-root{background:#F8F9FB;border-radius:18px;padding:28px;margin-top:6px}
+.fb3-root{background:#f7f8fa;border-radius:18px;padding:28px;margin-top:6px}
 .fb3-hero{display:grid;grid-template-columns:1fr 2fr;gap:20px;align-items:stretch}
 .fb3-health{background:#fff;border:1px solid #EEF0F4;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.05);display:flex;flex-direction:column;justify-content:center;gap:14px}
 .fb3-h-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8}
@@ -1636,6 +1636,50 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fan .ins-ai-date{font-size:10.5px;color:var(--muted);font-weight:700;margin-left:auto;white-space:nowrap}
 .fan .ins-ai-note{font-size:11px;color:#0369a1;background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;padding:6px 9px;margin-top:8px;line-height:1.45;font-weight:600}
 .fan .ins-ai-hint{font-size:11px;color:var(--muted);text-align:center;padding:10px}
+
+/* ===== 玩家反馈看板 · 微交互 & 状态感知升级 (2026-09-16) ===== */
+/* 1. 全局卡片悬浮浮起：translateY(-4px) + 柔和深阴影 + 玻璃内高光 */
+.fb3-health,.fb3-wk,.fb-ref-card,.fb4-wk,.fb4-iss,.fb3-row,.fb-q,.fb-card,.fb-col,.fb4-grp{
+  transition:transform .24s cubic-bezier(.2,.7,.2,1),box-shadow .24s,background .24s,border-color .24s;
+}
+.fb3-health:hover,.fb3-wk:hover,.fb-ref-card:hover,.fb4-wk:hover,.fb4-iss:hover,.fb3-row:hover,.fb-q:hover,.fb-card:hover,.fb-col:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 30px rgba(16,24,40,.10),0 3px 8px rgba(16,24,40,.06);
+  border-color:#dfe3ec;
+}
+.fb-ref-card,.fb3-wk,.fb3-health,.fb4-wk,.fb4-iss{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.05);
+}
+/* 卡片纯白微渐变（增强玻璃态层次） */
+.fb3-health,.fb3-wk,.fb-ref-card,.fb4-wk,.fb3-row{background:linear-gradient(180deg,#ffffff 0%,#fcfcfe 100%)}
+
+/* 2. 可点击反馈：TOP3 列表项悬浮高亮 + 箭头变色 */
+.fb-ref-cat{transition:background .16s,box-shadow .16s,transform .16s}
+.fb-ref-cat:hover{background:#F4F5F8;box-shadow:inset 0 0 0 1px rgba(99,102,241,.16);transform:translateY(-1px)}
+.fb-ref-cat-chev{transition:transform .2s,color .16s;font-size:13px;color:#94a3b8}
+.fb-ref-cat:hover .fb-ref-cat-chev{color:#6366f1}
+.fb-ref-cat-subs .fb-ref-cat-sub{transition:background .15s}
+.fb-ref-cat-subs .fb-ref-cat-sub:hover{background:#F4F5F8}
+
+/* 3. 图表 Hover 数据节点 + Tooltip 预留 */
+.fb-donut circle[data-prev]{cursor:pointer;transition:stroke-width .15s}
+.fb-donut circle[data-prev]:hover{stroke-width:11px}
+.fb-dl{cursor:pointer;border-radius:8px;padding:3px 6px;margin:0 -6px;transition:background .15s}
+.fb-dl:hover{background:#F4F5F8}
+.fb-prop-bar i{cursor:pointer;transition:filter .15s,opacity .15s}
+.fb-prop-bar i:hover{filter:brightness(1.08);opacity:.92}
+
+/* 4. 状态标签 Glassmorphism 胶囊（半透明底 + 模糊 + 描边） */
+.fb3-h-badge{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid transparent;box-shadow:0 2px 10px rgba(16,24,40,.06)}
+.fb3-h-badge.green{background:rgba(16,185,129,.16);color:#059669;border-color:rgba(16,185,129,.30)}
+.fb3-h-badge.amber{background:rgba(245,158,11,.16);color:#b45309;border-color:rgba(245,158,11,.30)}
+.fb3-h-badge.red{background:rgba(239,68,68,.16);color:#dc2626;border-color:rgba(239,68,68,.30)}
+.fb-ref-d{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid transparent;box-shadow:0 2px 10px rgba(16,24,40,.05)}
+.fb-ref-d.up{background:rgba(16,185,129,.16);color:#059669;border-color:rgba(16,185,129,.30)}
+.fb-ref-d.down{background:rgba(239,68,68,.16);color:#dc2626;border-color:rgba(239,68,68,.30)}
+
+/* 5. 圆角统一 16px（覆盖旧 14/12） */
+.fb-ref-card,.fb4-iss,.fb4-wk{border-radius:16px}
 </style>
 <!-- Firebase SDK 改为运行时异步加载(非阻塞)，避免国内网络拉取 gstatic 超时导致整页白屏 -->
 </head>
@@ -4351,6 +4395,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -9485,7 +9530,7 @@ function fbQuotesOf(it){
   return out.slice(0,5);
 }
 function fbPropBar(seg){
-  return '<div class="fb-prop"><div class="fb-prop-bar"><i class="g" style="width:'+seg.np+'%"></i><i class="b" style="width:'+seg.bp+'%"></i></div>'
+  return '<div class="fb-prop"><div class="fb-prop-bar"><i class="g" style="width:'+seg.np+'%" data-prev="非负 '+seg.np+'%" onmouseenter="showFbTip(this,event)" onmousemove="showFbTip(this,event)" onmouseleave="hideFbTip()"></i><i class="b" style="width:'+seg.bp+'%" data-prev="负面 '+seg.bp+'%" onmouseenter="showFbTip(this,event)" onmousemove="showFbTip(this,event)" onmouseleave="hideFbTip()"></i></div>'
     +'<div class="fb-prop-leg"><span class="g">非负 '+seg.np+'%</span><span class="b">负面 '+seg.bp+'%</span></div></div>';
 }
 function fbCat(t){
@@ -9527,7 +9572,7 @@ function fbCatCards(items){
         +'<span class="fb-ref-cat-rank">'+ranks[idx]+'</span>'
         +'<span class="fb-ref-cat-name">'+cat.name+'</span>'
         +'<span class="fb-ref-cat-total">'+chNum(cat.total)+' 提及</span>'
-        +'<span class="fb-ref-cat-chev">▾</span>'
+        +'<span class="fb-ref-cat-chev">›</span>'
       +'</div>'
       +'<div class="fb-ref-cat-core">核心：'+fbEsc(fbTitle(cat.top))+'</div>'
       +'<div class="fb-ref-cat-subs">'+sub+'</div>'
@@ -9544,7 +9589,7 @@ function fbDonut(ch,chKeys,center){
   var cx=34,cy=34,r=26,sw=9,circ=2*Math.PI*r,off=0;
   var segs=chKeys.map(function(k,i){
     var len=ch[k]/sum*circ;
-    var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+fbPal(i)+'" stroke-width="'+sw+'" stroke-dasharray="'+len.toFixed(2)+' '+(circ-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'"></circle>';
+    var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+fbPal(i)+'" stroke-width="'+sw+'" stroke-dasharray="'+len.toFixed(2)+' '+(circ-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" data-prev="'+fbChName(k)+' '+Math.round(ch[k]/(sum||1)*100)+'% · '+chNum(ch[k])+'条" onmouseenter="showFbTip(this,event)" onmousemove="showFbTip(this,event)" onmouseleave="hideFbTip()" style="cursor:pointer"></circle>';
     off+=len;return s;
   }).join('');
   return '<svg class="fb-donut" viewBox="0 0 68 68" width="68" height="68" aria-hidden="true">'
@@ -9566,7 +9611,7 @@ function fbRefHTML(chrono){
   var ch={};items.forEach(function(it){var c=(it.channel||'').split(',');var n=Number(it.count)||0;c.forEach(function(x){x=x.trim();if(x){ch[x]=(ch[x]||0)+n;}});});
   var chKeys=Object.keys(ch).sort(function(a,b){return ch[b]-ch[a];});
   var chSum=0;chKeys.forEach(function(k){chSum+=ch[k];});
-  var legHtml=chKeys.map(function(k,i){return '<div class="fb-dl"><i style="background:'+fbPal(i)+'"></i><span class="fb-dl-n">'+fbChName(k)+'</span><span class="fb-dl-v">'+Math.round(ch[k]/(chSum||1)*100)+'%</span><span class="fb-dl-c">'+chNum(ch[k])+'条</span></div>';}).join('');
+  var legHtml=chKeys.map(function(k,i){var pct=Math.round(ch[k]/(chSum||1)*100);return '<div class="fb-dl" data-prev="'+fbChName(k)+' '+pct+'% · '+chNum(ch[k])+'条" onmouseenter="showFbTip(this,event)" onmousemove="showFbTip(this,event)" onmouseleave="hideFbTip()"><i style="background:'+fbPal(i)+'"></i><span class="fb-dl-n">'+fbChName(k)+'</span><span class="fb-dl-v">'+pct+'%</span><span class="fb-dl-c">'+chNum(ch[k])+'条</span></div>';}).join('');
   var midHtml=chKeys.length?('<div class="fb-ref-mid">'+fbDonut(ch,chKeys)+'<div class="fb-donut-leg">'+legHtml+'</div></div>'):'';
   var sugItems=items.filter(function(it){return fbBucket(it.type||'oth')==='sug';});
   var catHtml=sugItems.length?fbCatCards(sugItems):'<div class="fb-filtered">本周暂无建议类诉求</div>';
