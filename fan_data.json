@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-09-16",
+  "updated_at": "2026-09-18",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 210689,
+      "value": 209140,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -214,13 +214,17 @@
         {
           "date": "2026-09-16",
           "value": 210689
+        },
+        {
+          "date": "2026-09-18",
+          "value": 209140
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 3776,
+      "value": 3940,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -432,6 +436,10 @@
         {
           "date": "2026-09-16",
           "value": 3776
+        },
+        {
+          "date": "2026-09-18",
+          "value": 3940
         }
       ],
       "name": "Facebook"
@@ -440,7 +448,7 @@
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 89929,
+      "value": 90227,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -724,6 +732,10 @@
         {
           "date": "2026-09-16",
           "value": 89929
+        },
+        {
+          "date": "2026-09-18",
+          "value": 90227
         }
       ]
     },
