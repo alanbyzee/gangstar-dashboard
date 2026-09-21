@@ -2991,11 +2991,21 @@ function dimSpark(score, realArr){
   return out;
 }
 
+// 粉丝数据签名：用于判断 30s 定时刷新是否需要重绘（无变化则跳过重绘 -> 无感刷新）
+let _fanRenderedSig = null;
+function fanSigFrom(d){
+  if(!d||!d.platforms) return null;
+  let s=(d.updated_at||'')+'|';
+  for(const k of Object.keys(d.platforms).sort()){ s+=k+':'+(d.platforms[k].value||0)+';'; }
+  return s;
+}
 function renderFans(data){
   document.getElementById('upd').textContent='数据更新于 '+data.updated_at;
   renderGoalProgress(data);
   renderPlatformCards(data);
   renderCommandCenter(data);
+  // 记录本次已渲染签名，供 30s 定时刷新对比：数据未变则不再重绘，杜绝卡顿/闪烁
+  _fanRenderedSig = fanSigFrom(data);
 }
 
 // ===== 1. 粉丝目标进度 =====
@@ -4516,6 +4526,8 @@ const FALLBACK_DATA = {
 
 
 
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4614,8 +4626,15 @@ btn.onclick=async()=>{
 
 // ===== 初始加载 =====
 loadFans();
-// 粉丝视图激活时重新拉取
-setInterval(()=>{if(views.fan.classList.contains('active'))loadFans();},30000);
+// 粉丝视图无缝定时刷新：仅当数据真正变化（如部署了新一期数据）才重绘，否则跳过重绘，
+// 彻底消除每 30s 无条件全量重建 DOM / SVG 折线导致的卡顿与闪烁。
+setInterval(()=>{
+  if(!views.fan.classList.contains('active')) return;
+  const src=(typeof FALLBACK_DATA!=='undefined'&&FALLBACK_DATA)?FALLBACK_DATA:(lastData||null);
+  const sig=fanSigFrom(src);
+  if(sig!==null && sig===_fanRenderedSig) return; // 数据无变化 -> 跳过，无感
+  loadFans();
+},30000);
 
 // ===== 南亚社群排期（HQ 公线 + 区域自产 合并视图）=====
 const SA_FILTERS=[
