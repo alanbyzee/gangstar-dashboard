@@ -4667,6 +4667,8 @@ const FALLBACK_DATA = {
 
 
 
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -6770,6 +6772,1122 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA = {
   "weeks": [
+  {
+    "week": "9.25 - 10.3",
+    "attitude": "波动",
+    "summary": "本周回收 **332 条** 玩家反馈（Discord(292)、Instagram(221)，含 Forum 10 / 私信 3）。 正面 0 条； **玩家建议 162 条**（载具/改名卡/帮派管理/主线内容为主）； **负面·Bug 170 条**（Backbone 车载机枪失灵、地图穿模掉虚空、黑屏卡死 UI 消失、Bag It! 活动卡死、Gangfire 军火包降档等）。 整体态度：**波动**。 多渠道条目按来源重复计入渠道拆分。",
+    "dims": {
+      "attitude": {
+        "label": "波动",
+        "detail": "本周回收 332 条代表性反馈；玩家建议(sug) 162 条 / 负面·Bug(bad) 170 条（占比约 51%）。"
+      },
+      "comprehension": {
+        "label": "聚焦载具与内容",
+        "detail": "玩家集中提出：摩托/自行车/直升机/船只等载具、改名卡、踢出 inactive 成员与帮派管理、主线/剧情/抢劫任务、警察系统、印地语本地化、玩家间转账等玩法与内容建议。"
+      },
+      "reputation": {
+        "label": "风评承压",
+        "detail": "负面/Bug 占比约 51%（170/332），集中在 Backbone 车载机枪无法发射、地图穿模掉入虚空、PvP/任务黑屏卡死 UI 消失三大量级 Bug，外加 Bag It! 活动卡死、Gangfire 军火包降档、三星设备霓虹灯不显示。"
+      },
+      "engagement": {
+        "label": "活跃",
+        "detail": "玩家在 Discord、Instagram 持续高频发声，载具与稳定性问题高度集中，9/27 单日声量峰值。"
+      }
+    },
+    "community": [
+      {
+        "theme": "“Bag It!”每日活动任务存在多个问题，包括粉红火烈鸟饮酒目标未完成、便利店抢劫未更新以及缺少醉酒视觉效果。",
+        "count": 12,
+        "type": "bad",
+        "orig": "Multiple issues in \"Bag It!\" daily event missions, including Pink Flamingo drinking target not completing, convenience store robbery not updating, and missing drunk visual effects.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "警用直升机被摧毁 10 分钟但未达到 5 星（卡在 4 星）；请求增加警察声誉系统、警察局和警察职业角色。",
+        "count": 5,
+        "type": "sug",
+        "orig": "Police helicopters destroyed for 10 mins without reaching 5 stars (stuck at 4 stars); requests for Police Reputation System, Police Station, and Police Job role.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "严重的地图碰撞故障导致车辆/玩家在改装店中穿过水下、穿过路障，或者在进入车库时掉入虚空（帕塔尔洛克）。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Severe map collision glitches causing vehicles/players to clip underwater in mod shops, pass through barricades, or drop through ground into the void (Patal Lok) when entering garages.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家要求添加陀螺仪瞄准控制、灵敏度设置和专用切换按钮。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Players request adding gyroscope aiming controls, sensitivity settings, and a dedicated toggle button.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "将 Gangfire 属性升级到 7 级或 8 级，会获得低级的非法武器包，而不是预期的高级/走私武器包。",
+        "count": 4,
+        "type": "bad",
+        "orig": "Upgrading Gangfire property to Level 7 or 8 yields lower-tier Illicit Arms Bags instead of expected Premium/Smuggler Arms Bags.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "请求添加交互式军事基地、机场、飞机、直升机和船只。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Requests for an interactive military base, airport, airplanes, helicopters, and watercraft.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家要求在驾驶、探索和射击时切换第一人称视角（FPP）模式。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players request first-person perspective (FPP) mode toggle for driving, exploring, and shooting.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家要求拥有个人车库系统，用于展示汽车收藏并存放多辆相同的车辆。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players request a personal garage system to display car collections and store multiple identical vehicles.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "Backbone / Black Bone 武装车辆上安装的自动武器在游戏/任务中无法开火。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Mounted automatic weapons on Backbone / Black Bone armed vehicles fail to fire during gameplay/missions.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "严重的用户界面错误导致控制 HUD 和触摸按钮在任务期间/结束后消失或屏幕完全变黑。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Critical UI bug causing control HUD and touch buttons to vanish or screen turning completely black during/after missions.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "游戏过程中出现图形渲染故障，导致天空和云朵纹理变成纯粉红色或视觉显示异常。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Graphical rendering glitch causing sky and cloud textures to turn solid pink or broken visual display during active gameplay.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "请求将故事、字幕和任务说明本地化为印地语和印度地方语言，以帮助不会说英语的玩家。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Requests for Hindi and regional Indian language localization for story, subtitles, and mission instructions to help non-English speaking players.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议使家具具有互动性（可坐/可睡），允许进入室内房屋，并添加可运行的火车/电车。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Suggestions to make furniture interactive (sitting/sleeping), enter indoor houses, and add active trains/trams.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家要求在游戏内添加举报按钮，以便举报无故杀害队友或随机玩家的恶意玩家。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request an in-game report button to report toxic players killing teammates or random players without reason.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "升级 Nyxen Corp. 后，运营目标活动奖励显示为“已领取”，但实际上并未发放奖励。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Operational Goals event rewards show as \"claimed\" without actually dispensing the rewards after upgrading Nyxen Corp.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "“邀请好友”活动无法在设备上显示，绑定推荐码时出现错误的“不是新用户”错误。",
+        "count": 2,
+        "type": "bad",
+        "orig": "\"Invite Friends\" event fails to display on device, and binding referral codes gives false \"not a new user\" errors.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "请求购买可定制房屋、室内家具、房屋锁定/好友权限设置和个人出生点。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Requests for purchasing customizable houses, interior furniture, house lock/friend permission settings, and personal spawn points.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "请求添加漂移车（日产 GT-R、道奇 SRT/Viper、马自达 RX-7）和漂移改装选项。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Requests for adding drift cars (Nissan GT-R, Dodge SRT/Viper, Mazda RX-7) and drifting modification options.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议为可玩角色添加妻子、女友和家庭关系机制。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Suggestions to add wife, girlfriend, and family relationship mechanics for playable characters.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "要求增加玩家之间直接转账和物品交易功能。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Requests for direct player-to-player money transfer and item trading features.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "在恐龙堆叠第三阶段活动中，玩家只能获得 5 个阶段奖励中的 2 个，无法领取剩余的奖励。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Players receive only 2 out of 5 phase rewards in Dino Stack Phase 3 event and are unable to claim the remaining rewards.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "持续出现服务器连接和登录重连失败错误，无法进入游戏。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Persistent server connection and login reconnection failure errors preventing entry into the game.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "由于应用版本发布错误，导致更新后的 Google Play 商店客户端出现应用内购买失败的情况。",
+        "count": 2,
+        "type": "bad",
+        "orig": "In-app purchase failures occurring on updated Google Play Store clients due to app version publishing errors.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "改装车的底盘霓虹灯无法正常工作或显示。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Vehicle chassis neon underglow lights fail to function or render on customized cars.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "请求新的服装套装和定制选项（定制系列和精英系列）。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Requesting new clothing bundles and customization options (Bespoke and Elite series).",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "在“保留选择”活动中购买火力组合（S）无法更新任务计数器（仍卡在 0/2）。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Purchasing Firepower Combo (S) in Keep Selection event fails to update mission counter (remains stuck at 0/2).",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "购买的汽车皮肤不会显示在玩家的物品栏中，也不会显示在车辆上。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Purchased car skins fail to show up in player inventory or display on vehicles.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "团伙头目只获得了 12 万美元的现金奖励，而不是全部 24 万美元的奖励。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Dominating gang member received only 120k cash reward instead of the full 240k payout.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "街头赛车PvP模式的赛道选择菜单已消失一周多。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Track selection menu missing in Street Racing PvP mode for over a week.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映，由于怀疑内部信息泄露，狩猎板活动感觉被操纵了。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players report Hunt Board event feeling rigged due to suspected insider info leaks.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议将帮派/战队玩家容量扩大至 60 人。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to expand gang/clan player capacity up to 60 members.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "关于更改姓名令牌功能和个人资料图片上传选项的建议。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion for name change token functionality and profile picture upload options.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议为库存中剩余的多余活动代金券提供回收或兑换功能。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to provide a recycling or alternative exchange feature for surplus event vouchers remaining in inventory.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家抱怨完成每日刷钱任务后游戏感觉空虚，要求增加更多游戏后期活动。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Player complains that game feels empty after completing daily money scrubbing, requesting more end-game activities.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议将玩家等级上限提高到 100 级以上，以保持游戏进程的挑战性。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to increase max player level cap beyond Level 100 to maintain progression challenge.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映启动游戏时收到“本地区无法使用”的错误信息。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Player reports receiving \"not available in our region\" error message upon launching.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议在 PvP 竞速模式中增加更多赛道并扩大地图边界。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to add more race tracks in PvP race mode and expand map boundaries.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家滥用无限金钱/收入漏洞，影响游戏整体平衡。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players abusing unlimited money/income exploit, affecting overall game balance.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "手动第 8 天车辆改装任务未能完成，尽管进行了改装。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Manual Day 8 vehicle modification task fails to complete despite performing modifications.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议为游戏内语音聊天麦克风添加“始终开启”设置。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to add an \"Always On\" setting for in-game voice chat microphone.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "由于服务器错误，玩家无法加入帮派，即使已经拥有角色，系统仍提示玩家创建新角色。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Unable to join gang due to server error prompting player to create a character despite having one.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "装备手榴弹时，3D 轴轨迹曲线显示出现视觉故障。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Visual glitch displaying 3D axis trajectory curves when equipping grenades.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议将游戏与 Google Play 积分计划整合，并解决粉钻/蓝钻货币混淆的问题。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to integrate game with Google Play Points program and resolve Pink/Blue diamond currency confusion.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "武器和载具熟练度值在游戏过程中不会增加或获得点数。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Weapon and vehicle proficiency values fail to increase or gain points during gameplay.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "在“劫掠”模式中收集君主的手套并不会将 C10UD 任务目标标记为已完成。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Collecting Monarch's Gauntlet in Heist fails to mark C10UD mission objective as complete.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "在“明日之星”活动中完成所需进度后，红色机器人奖励和领取按钮消失。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Red Bot reward and claim button missing after completing required progress in Rising Business Star event.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "在午夜截止时间（凌晨 12:00）之后不久完成活动游戏会导致奖励发放脚本损坏。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Completing event gameplay slightly after midnight deadline (12:00 AM) causes broken reward payout scripts.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "游戏内活动列表中缺少“噬咬之战”活动选项。",
+        "count": 1,
+        "type": "bad",
+        "orig": "\"Fight of the Bites\" event option missing from in-game Activity list.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "功能请求：在游戏中添加智能手机短视频推送（Reels），展示虚构的城市片段和特技。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Feature request for adding an in-game smartphone short-video feed (Reels) showcasing fictional city clips and stunts.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "请求对 4 指 HUD 布局进行自定义，并添加可移动屏幕 UI 元素。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Requests for 4-finger HUD layout customization and moveable screen UI elements.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "通过邮件/通行证领取街头声望奖励不会增加玩家账户中的街头声望总点数。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Claiming Street Cred rewards from mail/passes fails to increase total Street Cred points on player account.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议增加电视/电话新闻广播，重点报道重大警匪追逐和城市事件。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to add TV/phone news broadcasts featuring major player police chases and city events.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "建议将超出储存能力的非法资金转化为公司发展资金。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Suggestion to convert dirty money exceeding storage capacity into company development funds.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "大量玩家集中建议在游戏中上线摩托车、重型机车及摩托车竞速玩法。",
+        "count": 14,
+        "type": "sug",
+        "orig": "High player demand for adding motorcycles, superbikes, and bike racing events into open-world gameplay.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-25"
+      },
+      {
+        "theme": "“Bag It!”系列任务存在多项Bug，包括 Pink Flamingo 饮酒目标无法完成、抢劫便利店无法计入进度以及缺乏饮酒后的视觉效果。",
+        "count": 12,
+        "type": "bad",
+        "orig": "Multiple issues in \"Bag It!\" daily event missions, including Pink Flamingo drinking target not completing, convenience store robbery not updating, and missing drunk visual effects.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映消逐警察直杀机后通缉等级仍卡在4星，同时建议增加警察声声系统、警察局设施与警察职业玩法。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Police helicopters destroyed for 10 mins without reaching 5 stars (stuck at 4 stars); requests for Police Reputation System, Police Station, and Police Job role.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映严重的车辆地图穿模缺陷，包括在改装店/售车车库入口处坠入地下虚空/水底，以及 Thesis 载具高速穿透护栏。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Severe map collision glitches causing vehicles/players to clip underwater in mod shops, pass through barricades, or drop through ground into the void (Patal Lok) when entering garages.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议新增陀螺仪瞄准功能、陀螺仪灵敏度设置及专用切换按钮。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Players request adding gyroscope aiming controls, sensitivity settings, and a dedicated toggle button.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映将 Gangfire 地产升级至 7/8 级后，未能正确发放或解锁高级军火包。",
+        "count": 4,
+        "type": "bad",
+        "orig": "Upgrading Gangfire property to Level 7 or 8 yields lower-tier Illicit Arms Bags instead of expected Premium/Smuggler Arms Bags.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议在游戏中加入军事基地、机场、飞机、直升机及水上交通工具。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Requests for an interactive military base, airport, airplanes, helicopters, and watercraft.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家请求在游戏中加入第一人称视角（FPP）切换功能及车内视角。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players request first-person perspective (FPP) mode toggle for driving, exploring, and shooting.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议增加个人车库系统，以便展示车辆收藏及多次购买同款车型。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players request a personal garage system to display car collections and store multiple identical vehicles.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映 Backbone / Black Bone 武装车辆上的车载自动武器无法发射子弹，导致任务无法进行。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Mounted automatic weapons on Backbone / Black Bone armed vehicles fail to fire during gameplay/missions.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-26"
+      },
+      {
+        "theme": "严重UI缺陷：结算或任务过程中按键与控制界面（HUD）会突然消失，或直接触发黑屏卡死。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Critical UI bug causing control HUD and touch buttons to vanish or screen turning completely black during/after missions.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-25"
+      },
+      {
+        "theme": "画面渲染故障导致游戏内天空与云朵变为粉红色，以及游戏中出现画面渲染错乱。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Graphical rendering glitch causing sky and cloud textures to turn solid pink or broken visual display during active gameplay.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-25"
+      },
+      {
+        "theme": "玩家建议为印度及南亚服务器新增印地语及其他本土语言本地化支持。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Requests for Hindi and regional Indian language localization for story, subtitles, and mission instructions.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议加入坐下/睡觉等家具交互、进入房屋室内、乘坐运行中的火车/有轨电车以及海滩冲浪等写实互动功能。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Suggestions to make furniture interactive (sitting/sleeping), enter indoor houses, and add active trains/trams.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议新增游戏内举报按钮，以便及时举报无故杀人或破坏体验的玩家。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request an in-game report button to report toxic players killing teammates or random players without reason.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映在升级 Nyxen Corp 提升运营目标后，奖励显示为已领取但实际未收到任何奖励。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Operational Goals event rewards show as \"claimed\" without actually dispensing the rewards after upgrading Nyxen Corp.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "“邀请好友”活动存在Bug，包括活动面板无法展示以及输入新玩家邀请码时错误提示“非新用户”。",
+        "count": 2,
+        "type": "bad",
+        "orig": "\"Invite Friends\" event fails to display on device, and binding referral codes gives false \"not a new user\" errors.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-26"
+      },
+      {
+        "theme": "玩家建议推出可购买与完全自定义的住宅系统（自由装修、门锁权限及个人复活点）。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Requests for purchasing customizable houses, interior furniture, house lock/friend permission settings, and personal spawn points.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-25"
+      },
+      {
+        "theme": "玩家建议引入 GT-R、道奇等漂移车型及漂移改装选项。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Requests for adding drift cars (Nissan GT-R, Dodge SRT/Viper, Mazda RX-7) and drifting modification options.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议为角色新增恋爱与家庭系统（如妻子、女友及家庭成员）。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Suggestions to add wife, girlfriend, and family relationship mechanics for playable characters.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议新增玩家间直接转账及物品交易功能。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Requests for direct player-to-player money transfer and item trading features.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映在 Dino Stack 第三阶段活动结算中仅收到 2 个奖励（应为 5 个），且无法补领剩余 3 个奖励。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Players receive only 2 out of 5 phase rewards in Dino Stack Phase 3 event and are unable to claim the remaining rewards.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映网络重连失败并卡在登录界面，导致连续数天无法正常进行游戏。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Persistent server connection and login reconnection failure errors preventing entry into the game.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-26"
+      },
+      {
+        "theme": "玩家反映在已被正版更新的 Google Play 客户端中进行内购充值时提示购买失败。",
+        "count": 2,
+        "type": "bad",
+        "orig": "In-app purchase failures occurring on updated Google Play Store clients due to app version publishing errors.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-25"
+      },
+      {
+        "theme": "玩家反映车辆底盘霓虹灯（Underglow）无法正常渲染与显示。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Vehicle chassis neon underglow lights fail to function or render on customized cars.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-25"
+      },
+      {
+        "theme": "玩家反馈 Backbone 载具上的机枪在任务中出现无法发射、自动瞄准失控或按键卡死的问题。",
+        "count": 6,
+        "type": "bad",
+        "orig": "Players report that the machine gun mounted on the Backbone vehicle fails to fire, lacks aim-lock functionality, or gets stuck during missions.",
+        "channel": "DC, IG, Forum",
+        "note": "",
+        "date": "2026-09-29"
+      },
+      {
+        "theme": "玩家反馈车辆底盘霓虹灯（Underglow）在游戏中无法正常显示或渲染，尤其是在三星设备上。",
+        "count": 4,
+        "type": "bad",
+        "orig": "Players report that vehicle chassis neon lights (underglow) fail to render or display on cars, particularly on Samsung devices.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "严重的地图碰撞与材质加载异常，导致车辆穿透墙体/柱子卡入地图内部，或掉入地下与水底虚空。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Severe collision and map geometry loading failures cause vehicles to phase through solid walls/pillars, trapping players inside unrendered structures or falling underwater/into the void.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "玩家反映在进行 PvP 对局或进入任务时，游戏画面突然卡死、UI 按键/图标消失且角色无法移动。",
+        "count": 6,
+        "type": "bad",
+        "orig": "Players experience sudden game screen freezes, vanishing UI buttons/icons, and player movement lockups after playing PvP matches or entering mission setups.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "帮派首领和玩家建议在游戏内帮派排行榜及界面中加入直接“踢出/移除不活跃成员”的功能，以便腾出名额。",
+        "count": 5,
+        "type": "sug",
+        "orig": "Gang leaders and members request an in-game option on the Gang Leaderboard or profile to kick/remove inactive members to free up slots for active players.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家请求在开放世界中增加可驾驶的摩托车/自行车、直升机、船只/水上摩托以及飞机等新载具。",
+        "count": 7,
+        "type": "sug",
+        "orig": "Players request adding new vehicle categories including drivable motorcycles/bikes, pilotable helicopters, boats/jet skis, and airplanes for open-world travel.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家建议推出改名卡或在设置中增加允许修改游戏内玩家昵称的功能。",
+        "count": 5,
+        "type": "sug",
+        "orig": "Players request an option or item (such as a Name Change Card) to modify their in-game player name.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家建议增加陀螺仪瞄准功能，以提升射击与战斗时的操控手感。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request gyroscope aiming support to improve precision and control during combat and shooting encounters.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "高等级玩家反映现有主线内容已耗尽，强烈请求推出全新剧情任务、联系人任务与大劫案以缓解单调体验。",
+        "count": 6,
+        "type": "sug",
+        "orig": "High-level players report running out of main story content and request new contact missions, story arcs, and heists to reduce repetition and boredom.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "玩家建议在地图中加入可交互的警察局、医院（复活点）、监狱系统以及警察/军队等职业玩法。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Players request interactive police stations, hospitals (spawning upon death), jail mechanics, and roleplay jobs (police officer, army, etc.).",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "误选服务器（如东南亚服而非南亚服）的玩家建议开放跨服转移功能，以保留账号进度并加入同区帮派。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players who accidentally registered on the wrong regional server (e.g., SEA instead of South Asia) request a server transfer feature to retain account progress and join local gangs.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-26"
+      },
+      {
+        "theme": "玩家反馈完成运营目标与活动任务后，界面错误显示“奖励已领取”或“无可用奖励”且未实际发放奖励。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Completed operational goals and event tasks erroneously display \"Reward Claimed\" or \"Oops! No reward available\" without dispensing actual rewards.",
+        "channel": "DC, Forum",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家建议为车辆驾驶新增第一人称内部视角，可直接观察车前风挡与仪表盘。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request an option to switch to a first-person perspective inside vehicles showing the windshield and dashboard.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "在 Criminal HQ 中将 Gangfire 地产升级至 7 级或 8 级后，产物仍错误产出低阶 Illicit Arms Bag。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Upgrading the Gangfire property to Level 7 or 8 in Criminal HQ incorrectly continues producing lower-tier Illicit Arms Bags instead of higher-tier items.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-03"
+      },
+      {
+        "theme": "玩家反映在组队语音中遭遇辱骂行为，建议增加麦克风一键静音、安全聊天及 IP 注册限制功能。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players report instances of abusive language in public voice chat and request group mic mute controls and safe chat filtering options.",
+        "channel": "DM",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "玩家建议举办专属活动或福利赠送，允许玩家免费获取粉红钻石用于购买商城道具。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players request special events or giveaways to earn free Pink Diamonds to purchase store items and battle passes.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-02"
+      },
+      {
+        "theme": "玩家建议引入私人车库以存放和展示车辆/摩托车，并优化车辆耐久度与操控稳定性。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request personal garages to store and display their cars and bikes, along with upgraded vehicle durability and handling options.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家反馈在 Natalie 的“The Underdog”任务中仅刷新 2 辆敌方车辆，导致无法达成 3 星通关目标。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Only 2 O-Rage enemy vehicles spawn during \"The Underdog\" mission, making the 3-star objective impossible to achieve.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家反馈“Backbone”车载机枪在“The Grand Scheme”任务及日常游玩中出现无法射击、自动瞄准失效或按键卡死的问题。",
+        "count": 8,
+        "type": "bad",
+        "orig": "Players report that the mounted machine gun on the Backbone Car in \"The Grand Scheme\" mission and open play fails to fire, lacks aim lock, or gets stuck.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-29"
+      },
+      {
+        "theme": "玩家集中反映游戏频繁卡死、黑屏崩溃、UI界面图标与商店消失以及角色无法移动，必须重启游戏才能恢复。",
+        "count": 7,
+        "type": "bad",
+        "orig": "Players report frequent game freezes, screen crashes, UI icons disappearing, and character controls locking during PvP matching or general gameplay, requiring app restarts.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "多名玩家建议增加“修改昵称”功能或上线改名卡，允许玩家修改游戏角色名称。",
+        "count": 5,
+        "type": "sug",
+        "orig": "Players request adding a Name Change feature or consumable Name Change Cards to alter their in-game profile names.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "帮派首领及玩家建议在游戏内添加管理功能，支持踢出不活跃成员并分配副帮派/官员职位。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Gang leaders and players request the ability to kick or remove inactive members from gangs and assign co-founder or officer roles in-game.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-02"
+      },
+      {
+        "theme": "玩家建议新增摩托车、直升机、船只、具体车型（如宝马M4）、私人车库/停车系统并优化车辆转向与刹车物理效果。",
+        "count": 6,
+        "type": "sug",
+        "orig": "Players request adding motorcycles/bikes, helicopters, boats, specific car models (e.g., BMW M4), personal garages/parking, and improved driving physics/brakes.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "严重地图贴图与碰撞Bug，导致车辆穿透柱子/墙体掉入地下虚空、以及碰撞后NPC车辆或墙体延迟刷新的问题。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Severe map geometry bugs causing vehicles to phase through solid pillars/walls, fall underneath the ground into the void, or trigger delayed NPC/wall spawning after collisions.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "高等级玩家反映现有任务高度重复、缺乏全新主线剧情与大型劫案，导致游戏体验单调并引发流失风险。",
+        "count": 5,
+        "type": "bad",
+        "orig": "High-level players report boredom due to repetitive gameplay and lack of new main storyline missions, requesting major story/heist updates.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "车辆底盘霓虹灯（Chassis Light/Underglow）无法正常渲染与显示，三星（Samsung）设备用户尤为严重。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Car chassis lights (neon underglow) fail to render or display on vehicles, specifically affecting Samsung Galaxy device users.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "玩家建议开放警察局、医院、警察/军队/平民职业，并提升NPC AI反应（如偷车报案、召唤救护车等）。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players suggest adding open police stations, hospitals, police/army/civilian jobs, and more reactive NPCs that report stolen cars or call emergency services.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "误选服务器（如误选东南亚服而非南亚服）的玩家建议开放跨服转移功能，以保留进度并加入本地帮派。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Players who registered on incorrect regional servers (e.g., Southeast Asia instead of South Asia) request a server transfer option to keep their progress and join local gangs.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家建议为车辆驾驶添加第一人称内部视角（FPP POV），展示挡风玻璃与仪表盘细节。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request a first-person interior driving perspective (FPP POV) showing the windshield and dashboard.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家建议增加陀螺仪瞄准控制功能，以提升战斗与PvP射击操作体验。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request gyroscope aiming controls to improve combat and PvP responsiveness.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "玩家建议增加好友间赠送礼品及直接转移资金（黑钱/白钱）的功能。",
+        "count": 2,
+        "type": "sug",
+        "orig": "Players request direct gifting and currency (clean/dirty money) transfer options between friends.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家反馈 Pinpoint 联系人任务与“Straight Shooter”街头挑战存在地图未标出与追踪异常问题。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Players report missing map markers and tracking issues for Pinpoint contact missions and street challenges like \"Straight Shooter\".",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反馈完成 Dino Stack 活动第3阶段与走私者任务后无法获取对应的通关结算奖励。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Event mission completion rewards (such as Dino Stack phase 3 and Smuggler's Run goals) fail to be granted upon completion.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反映改装及升级车辆所投入的资金未计入车辆总估值（Vehicle Valuation），而武器升级却能正常增加估值。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Players point out that vehicle upgrades and modifications are not reflected in overall Vehicle Valuation, whereas gun upgrades are properly calculated.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-03"
+      },
+      {
+        "theme": "玩家反映在 Criminal HQ 活动中将 Gangfire 帮派地产升级至7级后，产出奖励仍与6级相同（只产出低阶 Illicit Arms Bag）。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players report that upgrading Criminal HQ Gangfire property to Level 7 produces lower-tier Illicit Arms Bags instead of expected higher-tier yields.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-03"
+      },
+      {
+        "theme": "玩家反映组队语音与聊天中存在不雅言语和辱骂行为，建议新增麦克风静音、安全聊天过滤及同IP账号创建限制。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players report random players abusing in team voice chat and text chat, requesting mic mute options, safe chat filters, and IP registration limits.",
+        "channel": "DM, IG",
+        "note": "",
+        "date": "2026-09-30"
+      },
+      {
+        "theme": "玩家反映在积分商城（Points Mall）生成新兑换码时遭遇报错，提示“已使用过此类代码”而无法使用。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players report Points Mall redeem code errors showing \"You have used this type of code before\" even on newly generated CDK codes.",
+        "channel": "DM",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家反馈即便连续击落警用直升机超过10分钟，通缉等级仍被卡在4星无法升至5星。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Players report being unable to reach a 5-star wanted level despite continuously destroying police helicopters for over 10 minutes.",
+        "channel": "DC, Forum",
+        "note": "",
+        "date": "2026-09-27"
+      },
+      {
+        "theme": "玩家反馈武器熟练度积分在完成7-8场PvP比赛后停止增长，导致无法继续升级枪械熟练度。",
+        "count": 1,
+        "type": "bad",
+        "orig": "Gun proficiency points hit an unstated hard cap after 7-8 PvP matches, preventing further gun upgrades.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-03"
+      },
+      {
+        "theme": "玩家建议在商店中增加“一键补满全武器弹药”的便捷按键。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Players suggest adding a \"Restock All Ammo\" single-click button in shops.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家建议延长并开放夜间时段的 PvP 对战功能。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Players suggest enabling PvP match access during nighttime hours for night-owl gamers.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-01"
+      },
+      {
+        "theme": "玩家建议允许在个人资料/战绩界面展示角色手持武器及专属枪械皮肤。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Players suggest allowing character profiles to display equipped weapons and custom gun skins.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-03"
+      },
+      {
+        "theme": "玩家建议设立每周帮派争夺战（Gang War）模式，供社群帮派之间进行对抗竞赛。",
+        "count": 1,
+        "type": "sug",
+        "orig": "Players request weekly Gang War events/modes for head-to-head competition between community gangs.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-02"
+      }
+    ],
+    "communitySummary": "本周社群反馈共 332 条，主要来自 Discord(292)、Instagram(221)（含 Forum/私信少量，多渠道重复计入）。 中性诉求以载具（摩托/自行车/直升机/船只）/改名卡/帮派管理/主线内容等玩法与内容建议为主； 负面与 Bug 占比约 51%，集中在 Backbone 车载机枪失灵、地图穿模掉虚空、黑屏卡死 UI 消失、Bag It! 活动卡死与 Gangfire 军火包降档。",
+    "trend": "走向：玩家对稳定性不满显著升温——Backbone 车载机枪、地图穿模掉虚空、黑屏卡死 UI 消失 三大量级 Bug 反复出现且跨多版本未修，口碑承压；同时载具（摩托/自行车/直升机）为最高频建议、主线内容耗尽导致高等级玩家流失风险上升。 需优先压稳定性三连 Bug 保住更新后载具/内容好评势头，并补齐摩托/改名/帮派管理等内容释放点。"
+  },
   {
     "week": "9.22 - 9.27",
     "attitude": "波动",
