@@ -4674,6 +4674,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4952,6 +4953,99 @@ function sortSaPosts(posts,date){const ord=getSaOrder()[date];if(!ord||!ord.leng
   window.addEventListener('blur',()=>{cleanup();});
 })();
 
+// ===== 社群内容计划（基于 HQ 留存规划 GSTM留存专项规划与目标.xlsx · 第4周起执行）=====
+const COMMUNITY_PLAN={
+  source:"GSTM留存专项规划与目标.xlsx",
+  note:"把 HQ 留存日历翻译为社群 4 板斧动作。第1–3周(9/17–10/7)已上线，作复盘锚点；以下为第4周起执行计划。擦边内容(大头菜 drug 交易 / 罪酿工坊制毒运毒)对外须去擦边化换皮；公会系统 10/29 才上线，公会内容可提前预热但不承诺功能。印度本地化：TG Content Waterfall(分级水落)+ Content Factory(教玩家玩)双线支撑。",
+  weeks:[
+    {phase:"第4周",range:"10/8 – 10/14",theme:"盲盒穿搭主题",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["纹身盲盒穿搭话题延续（10/8–14 仍处穿搭周）","为 10/15 死亡尾流·载具贪吃蛇预热：玩法科普 + 悬念物料"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["公会召集令预热：征集想建公会的玩家提名（10/29 上线前）","帮派战争社群战报讨论延续"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["纹身盲盒隐藏款竞猜 + 穿搭组合晒图征集（冲 7留话题）"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["人拉人 H5(9/24 已上线) 老带新福利提醒","回流专享福利召回沉默玩家"]}
+    ]},
+    {phase:"第5周",range:"10/15 – 10/21",theme:"集邮收集主题",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["死亡尾流·载具贪吃蛇上线大事件包装（meme 化）","集邮收集主题定调"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["公会召集令持续征集","帮派战争战报分享"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["口罩集邮晒图征集（凑齐大奖）+ 隐藏款竞猜","KOC 穿搭二创 / Content Factory 教学"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["集邮「拉好友帮你凑隐藏款」轻裂变话题"]}
+    ]},
+    {phase:"第6周",range:"10/22 – 10/28",theme:"版本预热主题",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["ACT2.1 + 万圣节倒计时预热（悬念物料 / 倒计时签到引导）"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["公会系统上线前最后预热：「你的公会名想好了吗」"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["预热期 UGC 征稿（万圣节 cos / 妆造预言）"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["倒计时签到分享 + 邀请好友解锁独家预热海报"]}
+    ]},
+    {phase:"第7周",range:"10/29 – 11/4",theme:"新版本+万圣节（集中爆发）",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["ACT2.1 大版本解读 + 万圣节主题大事件","罪酿工坊对外去擦边化 → 暗夜酿造工坊 / 神秘配方"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["公会系统上线！建公会引导 + 第2期找好友破冰","大世界主题点拍照打卡分享挑战"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["卫衣盲盒穿搭 + 纸盒头套付费盲盒晒图","万圣节 cos / 妆造 UGC + 14日登录打卡"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["潘多拉人拉人（拉新 + 拉回流）+ 回流专享福利召回","公会邀请码冲榜"]}
+    ]},
+    {phase:"第8周",range:"11/5 – 11/11",theme:"帮派集结主题",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["帮派集结主题定调：「点亮你的城市」"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["帮派集结主场：公会城市点亮进度 + 排行榜比拼 + 积分任务"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["公会战袍穿搭晒图 + 城市点亮成就分享"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["公会拉人冲榜（邀请好友入公会）"]}
+    ]},
+    {phase:"11月",range:"11/12 – 11/30",theme:"黑手党 vs 橘帮 · 代理人之战",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["黑手党 vs 橘帮阵营战主题（二选一阵营 meme / 投票）"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["阵营公会对抗 + 跨公会交友"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["阵营皮肤 / 载具晒图 + 代理人之战剧情二创"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["阵营拉人（拉好友选同阵营冲战力）"]}
+    ]},
+    {phase:"12月",range:"12/1 – 12/31",theme:"小岛抢·飞跃监狱岛 (ACT2.2)",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["ACT2.2 解读 + 小岛 / 监狱岛 pve 搜打撤主题（犯罪之夜前置）"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["公会组队搜打撤 + 水果大作战（物品交换）预告"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["搜打撤战利品晒图 + 年末主题 UGC"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["年末组队邀请 + 回流专享（年末召回）"]}
+    ]},
+    {phase:"1月",range:"1/1 – 1/28",theme:"水果大作战·大世界派对 (ACT3.1)",pillars:[
+      {icon:"🎨",title:"版本节奏内容",items:["ACT3.1 动态任务 + 集结石 + 犯罪之夜解读","水果大作战派对主题定调"]},
+      {icon:"🤝",title:"社交&公会沉淀",items:["集结石组队常态化引导 + 大世界派对"]},
+      {icon:"📸",title:"盲盒&UGC话题",items:["派对截图 / 水果大作战趣图 + 年度回顾 UGC"]},
+      {icon:"📈",title:"裂变拉新&回流",items:["新年组队 + 拉好友回归派对"]}
+    ]}
+  ]
+};
+
+function renderCommunityPlan(){
+  if(typeof COMMUNITY_PLAN==='undefined') return '';
+  const P=COMMUNITY_PLAN;
+  const acc=['#7e97a8','#b98a6f','#94a68f','#a294ab'];
+  let h='<style>.cp-wrap{max-width:1320px;margin:20px 0 0;padding:18px 16px;background:#fbf9f7;border:1px solid #e7e1da;border-radius:14px}'
+    +'.cp-sub{font-size:12px;color:#8a837c;font-weight:400;margin-left:8px}'
+    +'.cp-note{font-size:12px;color:#8a837c;background:#f1eeea;padding:8px 10px;border-radius:8px;margin:8px 0 14px;line-height:1.55}'
+    +'.cp-week{margin-bottom:16px;background:#fff;border:1px solid #ece6df;border-radius:12px;overflow:hidden}'
+    +'.cp-whead{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f1eeea;border-bottom:1px solid #e7e1da}'
+    +'.cp-phase{font-weight:700;color:#3b3735}'
+    +'.cp-range{font-size:12px;color:#8a837c}'
+    +'.cp-theme{margin-left:auto;font-size:12px;color:#b98a6f;background:#f3e9dc;padding:3px 10px;border-radius:20px}'
+    +'.cp-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:12px}'
+    +'.cp-pillar{background:#fbf9f7;border:1px solid #ece6df;border-radius:10px;padding:10px}'
+    +'.cp-ptitle{font-weight:600;color:#3b3735;margin-bottom:6px;font-size:13px}'
+    +'.cp-ico{margin-right:4px}'
+    +'.cp-ul{margin:0;padding-left:16px}'
+    +'.cp-ul li{font-size:12px;color:#5b554f;line-height:1.6;margin-bottom:4px}'
+    +'@media(max-width:900px){.cp-pillars{grid-template-columns:repeat(2,1fr)}}'
+    +'@media(max-width:560px){.cp-pillars{grid-template-columns:1fr}}</style>';
+  h+='<section class="cp-wrap">';
+  h+='<h2 style="margin:0 0 2px;color:#3b3735">🧩 社群内容计划<span class="cp-sub">基于 HQ 留存规划 · 第4周起执行</span></h2>';
+  h+='<div class="cp-note">'+P.note+'</div>';
+  P.weeks.forEach(function(w){
+    h+='<div class="cp-week"><div class="cp-whead"><span class="cp-phase">'+w.phase+'</span><span class="cp-range">'+w.range+'</span><span class="cp-theme">'+w.theme+'</span></div><div class="cp-pillars">';
+    w.pillars.forEach(function(p,i){
+      const c=acc[i%4];
+      h+='<div class="cp-pillar" style="border-top:3px solid '+c+'"><div class="cp-ptitle"><span class="cp-ico">'+p.icon+'</span>'+p.title+'</div><ul class="cp-ul">';
+      p.items.forEach(function(it){ h+='<li>'+it+'</li>'; });
+      h+='</ul></div>';
+    });
+    h+='</div></div>';
+  });
+  h+='</section>';
+  return h;
+}
+
 function renderSouthAsia(){
   const el=document.getElementById('southAsiaView');
   if(!el) return;
@@ -5169,13 +5263,15 @@ function renderSouthAsia(){
     </div>
   </div>`;
 
+  const communityPlanHtml=renderCommunityPlan();
   el.innerHTML=`<div class="cap-sup-row">${supplierHtml}
     ${capHtml}</div>
     <h2>📋 南亚社群排期</h2>
     <div class="sub">HQ 公线素材 + 区域自产素材 · 同表展示 · 筛选开关可单独查看某类</div>
     ${chipsHtml}
     
-    ${gridHtml}`;
+    ${gridHtml}
+    ${communityPlanHtml}`;
 
   // 绑定筛选开关
   el.querySelectorAll('.chip').forEach(ch=>{
