@@ -4675,6 +4675,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -4956,7 +4957,7 @@ function sortSaPosts(posts,date){const ord=getSaOrder()[date];if(!ord||!ord.leng
 // ===== 社群内容计划（基于 HQ 留存规划 GSTM留存专项规划与目标.xlsx · 第4周起执行）=====
 const COMMUNITY_PLAN={
   source:"GSTM留存专项规划与目标.xlsx",
-  note:"把 HQ 留存日历翻译为社群 4 板斧动作。第1–3周(9/17–10/7)已上线，作复盘锚点；以下为第4周起执行计划。擦边内容(大头菜 drug 交易 / 罪酿工坊制毒运毒)对外须去擦边化换皮；公会系统 10/29 才上线，公会内容可提前预热但不承诺功能。印度本地化：TG Content Waterfall(分级水落)+ Content Factory(教玩家玩)双线支撑。",
+  note:"把 HQ 留存日历翻译为社群 4 板斧动作。第1–3周(9/17–10/7)已上线，作复盘锚点；以下为第4周起执行计划。擦边内容(大头菜 drug 交易 / 罪酿工坊制毒运毒)对外须去擦边化换皮；公会系统 10/29 才上线，公会内容可提前预热但不承诺功能。印度本地化：Techno Gamerz(TG)内容瀑布(分级水落) + Content Factory(教玩家玩)双线支撑。",
   weeks:[
     {phase:"第4周",range:"10/8 – 10/14",theme:"盲盒穿搭主题",pillars:[
       {icon:"🎨",title:"版本节奏内容",items:["纹身盲盒穿搭话题延续（10/8–14 仍处穿搭周）","为 10/15 死亡尾流·载具贪吃蛇预热：玩法科普 + 悬念物料"]},
@@ -13405,7 +13406,7 @@ function renderPlayerVoice(rangeDays){
 /* ===== 玩家反馈看板 v3：Hero 健康度 + 双周对比 + TOP5 行卡（2026-09-13） ===== */
 
 function fbWeekStart(w){var m=/(\d{1,2})\.(\d{1,2})/.exec((w&&w.week)||'');if(!m)return null;var mo=parseInt(m[1],10),da=parseInt(m[2],10);if(mo<1||mo>12||da<1||da>31)return null;return new Date(2026,mo-1,da);}
-function fbChName(c){var m={'IG':'Instagram','DC':'Discord','YTB':'YouTube','FB':'Facebook','RD':'Reddit','X':'X','NODWIN':'NODWIN','TG':'Telegram','WA':'WhatsApp','?':'其他'};return m[c]||c;}
+function fbChName(c){var m={'IG':'Instagram','DC':'Discord','YTB':'YouTube','FB':'Facebook','RD':'Reddit','X':'X','NODWIN':'NODWIN','TG':'Techno Gamerz','WA':'WhatsApp','?':'其他'};return m[c]||c;}
 function fbBucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
 function fbSeg(arr){var g=0,s=0,b=0;arr=(arr||[]);arr.forEach(function(it){var c=Number(it.count)||0;var k=fbBucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0,np:t?Math.round((g+s)/t*100):0};}
 function fbStrip(s){return (s||'').replace(/\*\*/g,'').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();}
