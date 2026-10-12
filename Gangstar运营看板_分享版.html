@@ -4683,6 +4683,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -5054,6 +5055,74 @@ function renderCommunityPlan(){
   return h;
 }
 
+// ===== 维稳期内容铺排（教学系列 / 导演模式UGC挑战 / 搞钱趣味教程）=====
+const STABILIZE_PLAN={
+  note:"维稳期三线内容。①教学系列：主打解决玩家一直以来的疑惑，12 主题池（8 已就绪 / 4 待拍，待拍英文钩子为建议稿待确认）；②导演模式：教学后 call back 发起 UGC 挑战，玩家参考官方拍摄手法发视频回应，亚马逊购物卡作奖励；③搞钱线：噱头拉满的趣味搞钱教学，从教学池经济类主题（金色标题）做趣味化衍生。",
+  tutorials:[
+    {n:1,hook:"Learn how to claim your pre-registration rewards and CDKeys",cat:"CDK Redemption",done:true},
+    {n:2,hook:"No money but filthy rich with dirty money? Learn the conversion moves",cat:"Black Money Conversion",done:true,money:true},
+    {n:3,hook:"The shops not enough for your bangers? Try the Pawn Shop",cat:"Pawn Shop",done:true,money:true},
+    {n:4,hook:"Guns and Glory? Bigger Guns - Greater Glory!",cat:"Weapon Upgrade",done:true},
+    {n:5,hook:"Being chased by the cops? Build your connections above!",cat:"Most Wanted Escape",done:true},
+    {n:6,hook:"My CAR is my style statement! Car mod 101",cat:"Buy/Sell/Modify Car",done:true,money:true},
+    {n:7,hook:"Too busy counting cash to drive? Let the car drive itself!（钩子建议稿）",cat:"Autopilot Car",done:false},
+    {n:8,hook:"Got your driving license in the game? Let's set up your wheel!",cat:"Driving Settings",done:true},
+    {n:9,hook:"Who doesn't like more money? Let's go get some more with friends",cat:"Heist Types",done:true,money:true},
+    {n:10,hook:"Crime pays better with partners-in-crime! Add friends & co-op（钩子建议稿）",cat:"Add Friends and Co-Op",done:false},
+    {n:11,hook:"Fresh look, fresh reps! Mall & Salon 101（钩子建议稿）",cat:"Mall and Salon",done:false},
+    {n:12,hook:"Bid low, sell high - laugh all the way to the bank!（钩子建议稿）",cat:"Car Auction",done:false,money:true}
+  ],
+  director:{
+    steps:["发《导演模式教学》：运镜 / 转场 / 配乐 / 拍片手法拆解","发起挑战（call back）：玩家参考官方拍摄手法，用导演模式拍片发视频回应","投稿入口：Discord / IG / Moj / ShareChat 带话题标签","每周精选 → 亚马逊购物卡奖励 + 官号二次分发（TG 瀑布顶端）"],
+    cycle:"2 周一轮（投稿周 → 精选颁奖周），可绑万圣节 / ACT2.1 换主题"
+  },
+  money:{
+    items:["黑钱洗白：Dirty Money 转换攻略（噱头：『警察看不懂的记账法』）","当铺变现：库存不值钱？当铺才是搞钱圣地","兄弟局劫案：Co-Op Heist 组队分红，拉好友一起搞大钱","倒爷之路：Car Auction 低买高卖，车库就是印钞机"]
+  }
+};
+function renderStabilizePlan(){
+  if(typeof STABILIZE_PLAN==='undefined') return '';
+  const P=STABILIZE_PLAN;
+  let h='<style>.sp-wrap{max-width:1320px;margin:20px 0 0;padding:18px 16px;background:#fbf9f7;border:1px solid #e7e1da;border-radius:14px}'
+    +'.sp-sub{font-size:12px;color:#8a837c;font-weight:400;margin-left:8px}'
+    +'.sp-note{font-size:12px;color:#8a837c;background:#f1eeea;padding:8px 10px;border-radius:8px;margin:8px 0 14px;line-height:1.55}'
+    +'.sp-cols{display:grid;grid-template-columns:3fr 2fr;gap:12px;align-items:start}'
+    +'.sp-card{background:#fff;border:1px solid #ece6df;border-radius:12px;padding:12px 14px}'
+    +'.sp-card h3{margin:0 0 8px;font-size:13px;color:#3b3735}'
+    +'.sp-tut{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px dashed #ece6df;font-size:12px}'
+    +'.sp-tut:last-child{border-bottom:none}'
+    +'.sp-num{color:#b1aaa2;min-width:18px}'
+    +'.sp-hook{color:#3b3735;flex:1;line-height:1.45}'
+    +'.sp-cat{color:#8a837c;white-space:nowrap}'
+    +'.sp-badge{font-size:11px;padding:1px 8px;border-radius:12px;white-space:nowrap}'
+    +'.sp-ok{background:#e8efe6;color:#4a6b3f}'
+    +'.sp-todo{background:#f3e9dc;color:#8b5a2b}'
+    +'.sp-money{color:#b98a6f;font-weight:600}'
+    +'.sp-steps{margin:0;padding-left:16px}'
+    +'.sp-steps li{font-size:12px;color:#5b554f;line-height:1.6;margin-bottom:5px}'
+    +'.sp-cycle{font-size:12px;color:#8a837c;margin-top:8px}'
+    +'.sp-mitem{font-size:12px;color:#5b554f;line-height:1.6;margin-bottom:6px}'
+    +'@media(max-width:900px){.sp-cols{grid-template-columns:1fr}}</style>';
+  h+='<section class="sp-wrap">';
+  h+='<h2 style="margin:0 0 2px;color:#3b3735">🎬 维稳期内容铺排<span class="sp-sub">教学 · 导演模式UGC挑战 · 搞钱趣味教程</span></h2>';
+  h+='<div class="sp-note">'+P.note+'</div>';
+  h+='<div class="sp-cols">';
+  const doneN=P.tutorials.filter(function(t){return t.done;}).length;
+  h+='<div class="sp-card"><h3>📚 玩家教学系列（'+doneN+'/'+P.tutorials.length+' 就绪）· 主打解决玩家疑惑</h3>';
+  P.tutorials.forEach(function(t){
+    h+='<div class="sp-tut"><span class="sp-num">'+t.n+'</span><span class="sp-hook'+(t.money?' sp-money':'')+'">'+t.hook+'</span><span class="sp-cat">'+t.cat+'</span><span class="sp-badge '+(t.done?'sp-ok':'sp-todo')+'">'+(t.done?'✓ 已就绪':'待拍')+'</span></div>';
+  });
+  h+='<div class="sp-cycle">💰 金色标题 = 搞钱线可衍生主题</div></div>';
+  h+='<div>';
+  h+='<div class="sp-card" style="margin-bottom:12px"><h3>🎥 导演模式 Call Back · UGC 挑战（奖：亚马逊购物卡）</h3><ol class="sp-steps">';
+  P.director.steps.forEach(function(s){h+='<li>'+s+'</li>';});
+  h+='</ol><div class="sp-cycle">🔁 '+P.director.cycle+'</div></div>';
+  h+='<div class="sp-card"><h3>💰 搞钱趣味教程（噱头向）</h3>';
+  P.money.items.forEach(function(s){h+='<div class="sp-mitem">• '+s+'</div>';});
+  h+='</div></div></div></section>';
+  return h;
+}
+
 function renderSouthAsia(){
   const el=document.getElementById('southAsiaView');
   if(!el) return;
@@ -5271,7 +5340,7 @@ function renderSouthAsia(){
     </div>
   </div>`;
 
-  const communityPlanHtml=renderCommunityPlan();
+  const communityPlanHtml=renderStabilizePlan()+renderCommunityPlan();
   el.innerHTML=`<div class="cap-sup-row">${supplierHtml}
     ${capHtml}</div>
     <h2>📋 南亚社群排期</h2>
