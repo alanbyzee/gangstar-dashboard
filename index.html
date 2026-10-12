@@ -4684,6 +4684,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -13819,6 +13820,61 @@ function hideFbTip(){fbTip.style.display='none';}
 document.addEventListener('mouseover',function(e){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c&&!c.classList.contains('open'))showFbTip(c,e);});
 document.addEventListener('mousemove',function(e){if(fbTip.style.display==='block'){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c)showFbTip(c,e);}});
 document.addEventListener('mouseout',function(e){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c)hideFbTip();});
+// ===== 专项舆情卡片（深色 · 6 主题横向卡片） =====
+const SENTIMENT_CARDS=[
+  {t:'登录',neg:25.3,n:170,delta:'+4.9pp',txt:'负面率 25.3%，主要反馈：游戏全 是帮派，但都是很多会话，不像在服务器里玩 w state，大家都在里面；你说'},
+  {t:'性能',neg:72.2,n:18,delta:'+51.8pp',txt:'负面率 72.2%，主要反馈：是解决崩溃问题还是突然退出或黑屏吗 🙄🙄🙄🙄；你好，有人能告诉我吗？游戏'},
+  {t:'核心体验 · 任务',neg:21.4,n:604,delta:'+1pp',txt:'负面率 21.4%，主要反馈：我们完成了精英任务，也完成了所有任务，现在游戏变得无聊了 🥲；我去执行一个任务，'},
+  {t:'核心体验 · 社交',neg:19.6,n:102,delta:'-0.8pp',txt:'负面率 19.6%，主要反馈：没有什么新鲜的。它还是老样子，只是稍微改变了地图的世界观 😅。我最喜欢的如果他'},
+  {t:'PVP',neg:24,n:25,delta:'+3.6pp',txt:'负面率 24%，主要反馈：为了让游戏变得很棒，当我们与敌人战斗时不要让警察进来，因为有些东西会压制你。应该'},
+  {t:'支付',neg:9.8,n:92,delta:'-10.6pp',txt:'负面率 9.8%，主要反馈：好吧，付 50块及镑买玛莎；箱子只能买一次，一旦用完数量就不会更新了。如果你想对'}
+];
+function renderSentimentCards(){
+  if(typeof SENTIMENT_CARDS==='undefined') return '';
+  let h='<style>'
+   +'.sc-root{position:relative;overflow:hidden;background:linear-gradient(135deg,#0D0E15 0%,#0E1017 55%,#121020 100%);border-radius:14px;padding:20px 18px 18px;margin:18px 0 6px}'
+   +'.sc-wm{position:absolute;inset:0;pointer-events:none;opacity:.055;z-index:0}'
+   +'.sc-wm span{position:absolute;font-size:13px;color:#a9b0ff;transform:rotate(-24deg);white-space:nowrap;letter-spacing:1px}'
+   +'.sc-in{position:relative;z-index:1}'
+   +'.sc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}'
+   +'.sc-title{margin:0;font-size:30px;font-weight:800;color:#fff;letter-spacing:.5px;background:linear-gradient(92deg,#ffffff 0%,#ded9ff 60%,#b9b4ff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 22px rgba(150,140,255,.28)}'
+   +'.sc-note{font-size:11px;line-height:1.55;color:#8b93a7;text-align:right;max-width:440px;flex-shrink:0}'
+   +'.sc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}'
+   +'.sc-card{position:relative;background:#161924;border:1px solid rgba(140,150,255,.22);border-radius:12px;padding:20px;display:flex;flex-direction:column;box-shadow:0 6px 20px rgba(0,0,0,.28),inset 0 0 22px rgba(110,120,255,.05)}'
+   +'.sc-t{font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:.3px}'
+   +'.sc-txt{font-size:11px;line-height:1.6;color:#9aa3bb;min-height:84px;margin-bottom:12px}'
+   +'.sc-num{font-size:38px;font-weight:800;color:#fff;line-height:1;margin-bottom:14px;letter-spacing:-.5px}'
+   +'.sc-bar{display:flex;height:7px;border-radius:6px;overflow:hidden;background:#222634;margin-bottom:8px}'
+   +'.sc-bar i{display:block;height:100%}'
+   +'.sc-barg{background:linear-gradient(90deg,#3ddc97,#4aa8ff)}'
+   +'.sc-barr{background:linear-gradient(90deg,#ff8a5a,#ff5a4a)}'
+   +'.sc-foot{font-size:11px;color:#8b93a7;margin-top:auto}'
+   +'.sc-up{color:#ff6b5a;font-weight:700}'
+   +'.sc-dn{color:#3ddc97;font-weight:700}'
+   +'@media(max-width:1200px){.sc-grid{grid-template-columns:repeat(3,1fr)}}'
+   +'@media(max-width:760px){.sc-grid{grid-template-columns:repeat(2,1fr)}.sc-head{flex-direction:column}.sc-note{text-align:left;max-width:none}.sc-title{font-size:26px}}'
+   +'</style>';
+  h+='<section class="sc-root"><div class="sc-wm">';
+  for(var r=0;r<6;r++){for(var cs=0;cs<4;cs++){h+='<span style="left:'+(cs*27-6)+'%;top:'+(r*20+2)+'%">alanbyzhang</span>';}}
+  h+='</div><div class="sc-in">';
+  h+='<div class="sc-head"><h3 class="sc-title">专项舆情卡片</h3>'
+   +'<div class="sc-note">专项采用多标签语义匹配，同一条讨论可属于多个主题；<br>风险对比基准为上方「阿语社媒全网大盘」负面率，不含商店评论。</div></div>';
+  h+='<div class="sc-grid">';
+  SENTIMENT_CARDS.forEach(function(c){
+    var pos=100-c.neg;
+    var good=c.delta.indexOf('-')===0;
+    h+='<div class="sc-card">'
+      +'<div class="sc-t">'+c.t+'</div>'
+      +'<div class="sc-txt">'+c.txt+'</div>'
+      +'<div class="sc-num">'+c.n+'</div>'
+      +'<div class="sc-bar"><i class="sc-barg" style="width:'+pos.toFixed(1)+'%"></i><i class="sc-barr" style="width:'+c.neg.toFixed(1)+'%"></i></div>'
+      +'<div class="sc-foot">负面 '+c.neg+'% · 较大盘 <span class="'+(good?'sc-dn':'sc-up')+'">'+c.delta+'</span></div>'
+      +'</div>';
+  });
+  h+='</div></div></section>';
+  return h;
+}
+
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
   var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
@@ -13830,6 +13886,7 @@ function renderFeedback(){
   var chrono=weeks.slice().sort(function(a,b){var da=fbWeekStart(a),db=fbWeekStart(b);return (da?da.getTime():0)-(db?db.getTime():0);});
   html+=fbHeroHTML(chrono);
   html+=fbRefHTML(chrono);
+  html+=renderSentimentCards();
   html+=fbWeeksHTML(chrono);
   html+='<div class="fb3-actions"><button class="fb3-add">＋ 新增一周</button></div>';
   var root=document.getElementById('feedbackView');
