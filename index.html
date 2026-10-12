@@ -4687,6 +4687,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -13864,8 +13865,6 @@ function renderSentimentCards(){
   var data=getSentiment();
   let h='<style>'
    +'.sc-root{position:relative;overflow:hidden;background:#fbf9f7;border:1px solid #e8e2da;border-radius:14px;padding:20px 18px 18px;margin:18px 0 6px}'
-   +'.sc-wm{position:absolute;inset:0;pointer-events:none;opacity:.05;z-index:0}'
-   +'.sc-wm span{position:absolute;font-size:13px;color:#3b3735;transform:rotate(-24deg);white-space:nowrap;letter-spacing:1px}'
    +'.sc-in{position:relative;z-index:1}'
    +'.sc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}'
    +'.sc-hl{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}'
@@ -13873,7 +13872,6 @@ function renderSentimentCards(){
    +'.sc-week{font-size:12px;color:#8a837c;background:#f1eeea;border:1px solid #e5e0d8;border-radius:999px;padding:3px 10px}'
    +'.sc-edit{font-size:12px;color:#7e97a8;background:none;border:1px solid #d9d2c8;border-radius:8px;padding:3px 10px;cursor:pointer;font-family:inherit}'
    +'.sc-edit:hover{background:#f1eeea;color:#5f7c8c}'
-   +'.sc-note{font-size:11px;line-height:1.55;color:#8a837c;text-align:right;max-width:440px;flex-shrink:0}'
    +'.sc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}'
    +'.sc-card{position:relative;background:#fff;border:1px solid #eae4dc;border-radius:12px;padding:20px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(59,55,53,.05)}'
    +'.sc-t{font-size:14px;font-weight:700;color:#2f2c29;margin-bottom:10px;letter-spacing:.3px}'
@@ -13895,15 +13893,12 @@ function renderSentimentCards(){
    +'.sc-mrow button{border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit;border:1px solid #ddd5c9;background:#fff;color:#6f6a64}'
    +'.sc-msave{background:#7e97a8!important;border-color:#7e97a8!important;color:#fff!important;font-weight:600}'
    +'@media(max-width:1200px){.sc-grid{grid-template-columns:repeat(3,1fr)}}'
-   +'@media(max-width:760px){.sc-grid{grid-template-columns:repeat(2,1fr)}.sc-head{flex-direction:column}.sc-note{text-align:left;max-width:none}.sc-title{font-size:24px}}'
+   +'@media(max-width:760px){.sc-grid{grid-template-columns:repeat(2,1fr)}.sc-head{flex-direction:column}.sc-title{font-size:24px}}'
    +'</style>';
-  h+='<section class="sc-root"><div class="sc-wm">';
-  for(var r=0;r<6;r++){for(var cs=0;cs<4;cs++){h+='<span style="left:'+(cs*27-6)+'%;top:'+(r*20+2)+'%">alanbyzhang</span>';}}
-  h+='</div><div class="sc-in">';
+  h+='<section class="sc-root"><div class="sc-in">';
   h+='<div class="sc-head"><div class="sc-hl"><h3 class="sc-title">专项舆情卡片</h3>'
    +'<span class="sc-week">数据周 '+(data.week||'—')+' · 大盘负面率 '+(data.benchmark!=null?data.benchmark+'%':'—')+'</span>'
-   +'<button class="sc-edit" id="scEditBtn">✎ 更新本周数据</button></div>'
-   +'<div class="sc-note">专项采用多标签语义匹配，同一条讨论可属于多个主题；<br>风险对比基准为上方「阿语社媒全网大盘」负面率，不含商店评论。</div></div>';
+   +'<button class="sc-edit" id="scEditBtn">✎ 更新本周数据</button></div></div>';
   h+='<div class="sc-grid">';
   data.cards.forEach(function(c){
     var pos=100-c.neg;
