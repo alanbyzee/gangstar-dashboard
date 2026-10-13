@@ -4696,6 +4696,8 @@ const FALLBACK_DATA = {
 
 
 
+
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -14008,7 +14010,7 @@ function renderPlayerVoice(rangeDays){
 
 function fbWeekStart(w){var m=/(\d{1,2})\.(\d{1,2})/.exec((w&&w.week)||'');if(!m)return null;var mo=parseInt(m[1],10),da=parseInt(m[2],10);if(mo<1||mo>12||da<1||da>31)return null;return new Date(2026,mo-1,da);}
 function fbChName(c){var m={'IG':'Instagram','DC':'Discord','YTB':'YouTube','FB':'Facebook','RD':'Reddit','X':'X','NODWIN':'NODWIN','TG':'Techno Gamerz','WA':'WhatsApp','?':'其他'};return m[c]||c;}
-function fbBucket(t){if(t==='good')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
+function fbBucket(t){if(t==='good'||t==='pos')return 'good';if(t==='sug'||t==='oth')return 'sug';return 'bad';}
 function fbSeg(arr){var g=0,s=0,b=0;arr=(arr||[]);arr.forEach(function(it){var c=Number(it.count)||0;var k=fbBucket(it.type||'oth');if(k==='good')g+=c;else if(k==='sug')s+=c;else b+=c;});var t=g+s+b;return {g:g,s:s,b:b,t:t,gp:t?Math.round(g/t*100):0,sp:t?Math.round(s/t*100):0,bp:t?Math.round(b/t*100):0,np:t?Math.round((g+s)/t*100):0};}
 function fbStrip(s){return (s||'').replace(/\*\*/g,'').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();}
 
@@ -14372,16 +14374,244 @@ function fbFallbackAction(badPct,tags){
   if(t0==='闪退崩溃'||t0==='账号异常')return '建议：发公告说明修复进度并给补偿口径';
   return '建议：跟进当周 TOP 诉求，周更回应进度';
 }
-// ===== 周报列表 v2（含筛选联动：时间范围 / 话题 / 风向 / 来源） =====
+// ===== 玩家反馈筛选系统 v3（两层级 · 同维 OR / 跨维 AND · 与上方风向模块共用一套状态） =====
+var FB_CHANNELS=[
+  {k:'DC',n:'Discord'},
+  {k:'IG',n:'Instagram'},
+  {k:'YTB',n:'YouTube'},
+  {k:'FB',n:'Facebook'}
+];
+var FB_SCOPE_DEF=[
+  {k:'week',n:'本周'},
+  {k:'last',n:'上周'},
+  {k:'d30',n:'近 30 天'},
+  {k:'all',n:'全部时间'}
+];
+var FB_SENSE_DEF=[
+  {k:'pos',n:'正向认可',short:'认可'},
+  {k:'neg',n:'负向吐槽',short:'吐槽'},
+  {k:'sug',n:'改进建议',short:'建议'},
+  {k:'na',n:'未分类',short:'未分类'}
+];
+var FB_TOPICS=[
+  {key:'vehicle',name:'载具体验',en:'Vehicles',tags:['载具不足']},
+  {key:'content',name:'任务与游戏内容',en:'Missions & Content',tags:['内容耗尽','活动 Bug']},
+  {key:'bug',name:'性能与 Bug',en:'Performance & Bugs',tags:['闪退崩溃','地图穿模']},
+  {key:'feature',name:'功能与系统',en:'Features & Systems',tags:['武器与手感','警察系统','房屋系统','网络与匹配','环境治理']},
+  {key:'gang',name:'帮派与社交',en:'Gangs & Social',tags:['帮派管理','改名卡']},
+  {key:'account',name:'账号与登录',en:'Account',tags:['账号异常']},
+  {key:'pay',name:'支付与商业化',en:'Payment',tags:['支付问题']},
+  {key:'local',name:'本地化与区域',en:'Localization',tags:['本地化']},
+  {key:'praise',name:'口碑与其他',en:'Praise & Others',tags:['正面口碑']},
+  {key:'other',name:'未分类',en:'Unclassified',tags:['其他']}
+];
+var FB_T2K={};
+(function(){FB_TOPICS.forEach(function(tp){tp.tags.forEach(function(t){FB_T2K[t]=tp.key;});});})();
+var FB_K2T={};
+(function(){FB_TOPICS.forEach(function(tp){FB_K2T[tp.key]=tp;});})();
+var FB_SUB_LIST=(function(){
+  var out=[];
+  FB_TAG_RULES.forEach(function(r){if(out.indexOf(r[1])<0)out.push(r[1]);});
+  if(out.indexOf('其他')<0)out.push('其他');
+  return out;
+})();
+/* —— 唯一筛选状态：上方风向模块与下方列表共用 —— */
+function fbFilterDefault(){return {scope:'week',from:'',to:'',topics:[],senses:[],channels:[],subs:[],q:''};}
+var FB_FILTER=fbFilterDefault();
+var FB_LIST_LIM={};      /* 每周可见条数（分页） */
+var FB_ADV_OPEN=false;   /* 高级筛选展开态 */
+function fbNormFilter(){
+  var f=window.FB_FILTER||{};
+  var d=fbFilterDefault();
+  ['scope','from','to','q'].forEach(function(k){if(typeof f[k]==='string')d[k]=f[k];});
+  ['topics','senses','channels','subs'].forEach(function(k){d[k]=(f[k]&&f[k].length)?f[k].slice():[];});
+  if(['week','last','d30','all','custom'].indexOf(d.scope)<0)d.scope='week';
+  if(d.scope==='custom'&&!d.from&&!d.to)d.scope='week';
+  if(d.q)d.q=d.q.slice(0,80);
+  window.FB_FILTER=d;return d;
+}
+function fbToggleVal(arr,v){var i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else arr.push(v);return arr;}
+function fbIsDefault(F){
+  return F.scope==='week'&&!F.topics.length&&!F.senses.length&&!F.channels.length&&!F.subs.length&&!F.q.trim();
+}
+function fbActiveCount(F){
+  return F.topics.length+F.senses.length+F.channels.length+F.subs.length+(F.q.trim()?1:0)+((F.scope!=='week')?1:0);
+}
+/* —— 日期工具（数据 100% 带 date 字段；缺失时回退到周起始日） —— */
+function fbPad2(n){return (n<10?'0':'')+n;}
+function fbISO(d){return d.getFullYear()+'-'+fbPad2(d.getMonth()+1)+'-'+fbPad2(d.getDate());}
+function fbParseISO(s){var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||'');if(!m)return null;return new Date(parseInt(m[1],10),parseInt(m[2],10)-1,parseInt(m[3],10));}
+function fbShiftISO(iso,days){var d=fbParseISO(iso);if(!d)return '';d.setDate(d.getDate()+days);return fbISO(d);}
+function fbDaysBetween(a,b){var da=fbParseISO(a),db=fbParseISO(b);if(!da||!db)return 0;return Math.round((db-da)/86400000);}
+function fbItemISO(it,w){
+  var s=String((it&&it.date)||'');
+  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);
+  var d=fbWeekStart(w);return d?fbISO(d):'';
+}
+/* —— 归类（与风向模块完全一致） —— */
+function fbSenseKey(it){
+  var t=String(it.type||'').toLowerCase();
+  if(t==='good'||t==='pos')return 'pos';
+  if(t==='bad')return 'neg';
+  if(t==='sug')return 'sug';
+  return 'na';
+}
+function fbTopicKeyOf(it){return FB_T2K[fbTagOf(it)]||'other';}
+function fbWeekRawItems(w){
+  var raw=(w.official||[]).concat(w.community||[]);
+  var seen={};
+  return raw.filter(function(it){
+    if(fbIsDrop(it))return false;
+    var k=(it.orig||it.theme||'').trim().toLowerCase();
+    if(seen[k])return false;seen[k]=1;return true;
+  });
+}
+function fbChTokens(it){
+  return String(it.channel||'').split(',').map(function(c){return c.trim().toUpperCase();}).filter(Boolean);
+}
+/* —— 取数：先按时间范围取行，再逐维度过滤 —— */
+function fbRowsInRange(chrono,from,to){
+  var out=[];
+  chrono.slice().reverse().forEach(function(w,ri){
+    fbWeekRawItems(w).forEach(function(it){
+      var iso=fbItemISO(it,w);
+      if(!iso){if(!from&&!to)out.push({w:w,ri:ri,it:it,iso:'',tk:fbTopicKeyOf(it),sk:fbSenseKey(it),tag:fbTagOf(it),chs:fbChTokens(it)});return;}
+      if(from&&iso<from)return;
+      if(to&&iso>to)return;
+      out.push({w:w,ri:ri,it:it,iso:iso,tk:fbTopicKeyOf(it),sk:fbSenseKey(it),tag:fbTagOf(it),chs:fbChTokens(it)});
+    });
+  });
+  return out;
+}
+function fbRows(chrono,F){
+  var rev=chrono.slice().reverse();
+  if(F.scope==='week')return rev.length?fbRowsInRange([rev[0]],'','').map(function(r){r.ri=0;return r;}):[];
+  if(F.scope==='last')return rev.length>1?fbRowsInRange([rev[1]],'','').map(function(r){r.ri=1;return r;}):[];
+  if(F.scope==='d30'){var d=new Date();d.setDate(d.getDate()-30);return fbRowsInRange(chrono,fbISO(d),fbISO(new Date()));}
+  if(F.scope==='custom')return fbRowsInRange(chrono,F.from||'',F.to||'');
+  return fbRowsInRange(chrono,'','');
+}
+function fbRowMatch(r,F,skip){
+  if(skip!=='topics'&&F.topics.length&&F.topics.indexOf(r.tk)<0)return false;
+  if(skip!=='subs'&&F.subs.length&&F.subs.indexOf(r.tag)<0)return false;
+  if(skip!=='senses'&&F.senses.length&&F.senses.indexOf(r.sk)<0)return false;
+  if(skip!=='channels'&&F.channels.length){
+    var hit=false;
+    for(var i=0;i<r.chs.length;i++){if(F.channels.indexOf(r.chs[i])>=0){hit=true;break;}}
+    if(!hit)return false;
+  }
+  var q=(F.q||'').trim().toLowerCase();
+  if(q){
+    var it=r.it;
+    var hay=(String(it.theme||'')+' '+String(it.orig||'')+' '+String(it.note||'')).toLowerCase();
+    var ks=q.split(/\s+/);
+    for(var j=0;j<ks.length;j++){if(hay.indexOf(ks[j])<0)return false;}
+  }
+  return true;
+}
+function fbFiltered(rows,F){return rows.filter(function(r){return fbRowMatch(r,F,null);});}
+/* 分面计数：统计「除该维度自身以外」的其它条件都满足后的条数 */
+function fbFacet(rows,F,dim){
+  var m={};
+  rows.forEach(function(r){
+    if(!fbRowMatch(r,F,dim))return;
+    if(dim==='topics')m[r.tk]=(m[r.tk]||0)+1;
+    else if(dim==='subs')m[r.tag]=(m[r.tag]||0)+1;
+    else if(dim==='senses')m[r.sk]=(m[r.sk]||0)+1;
+    else if(dim==='channels')r.chs.forEach(function(c){m[c]=(m[c]||0)+1;});
+  });
+  return m;
+}
+function fbSenseName(k){var n=k;FB_SENSE_DEF.forEach(function(s){if(s.k===k)n=s.n;});return n;}
+function fbChNameOf(k){var n=k;FB_CHANNELS.forEach(function(c){if(c.k===k)n=c.n;});return n;}
+function fbTopicName(k){return (FB_K2T[k]&&FB_K2T[k].name)||'未分类';}
+function fbScopeName(F){
+  if(F.scope==='custom')return '自定义 '+(F.from||'起始')+'~'+(F.to||'至今');
+  var n='本周';FB_SCOPE_DEF.forEach(function(s){if(s.k===F.scope)n=s.n;});return n;
+}
+/* —— 应用筛选（统一入口：保证两处状态一致 + 分页复位） —— */
+function fbApply(opt){
+  opt=opt||{};
+  var before=null,anchor=document.getElementById('fbListAnchor');
+  if(anchor)before=anchor.getBoundingClientRect().top+window.scrollY;
+  if(opt.resetPaging!==false)FB_LIST_LIM={};
+  fbNormFilter();
+  renderFeedback();
+  var a2=document.getElementById('fbListAnchor');
+  if(a2){
+    var now=a2.getBoundingClientRect().top+window.scrollY;
+    if(opt.scroll==='anchor')window.scrollTo(0,Math.max(0,now-12));
+    else if(before!=null)window.scrollTo(0,Math.max(0,now+(window.scrollY-before)));
+  }
+  if(opt.refocus){
+    var inp=document.getElementById('fbQ');
+    if(inp){inp.focus();try{var v=inp.value.length;inp.setSelectionRange(v,v);}catch(e){}}
+  }
+  return false;
+}
+/* —— 结果摘要 —— */
+function fbSummaryHTML(hits,F){
+  var c=hits.length,n=0,sc={pos:0,neg:0,sug:0,na:0},tm={};
+  hits.forEach(function(r){
+    var cc=Number(r.it.count)||0;n+=cc;sc[r.sk]++;
+    tm[r.tk]=(tm[r.tk]||0)+cc;
+  });
+  var topK='',topV=-1,otherC=0,otherV=tm['other']||0;
+  hits.forEach(function(r){if(r.tk==='other')otherC++;});
+  for(var k in tm){if(k==='other')continue;if(tm[k]>topV){topV=tm[k];topK=k;}}
+  if(topV<=0){topK='other';topV=otherV;}
+  var pill=function(k){var v=sc[k]||0;var p=c?Math.round(v/c*100):0;
+    return '<span class="fbs-pill s-'+k+(v?'':' z')+'">'+fbSenseName(k)+' '+v+' 条 · '+p+'%</span>';};
+  var topHtml='';
+  if(topK&&topV>0){
+    var tcnt=0;hits.forEach(function(r){if(r.tk===topK)tcnt++;});
+    topHtml='<span class="fbs-top">讨论量最高话题：<b>'+fbEsc(fbTopicName(topK))+'</b>（'+tcnt+' 条议题 / '+topV+' 次提及）'
+      +(otherC?'<em class="fbs-oth">另有 '+otherC+' 条未归类</em>':'')+'</span>';
+  }
+  var bar='';
+  if(c){
+    bar='<div class="fbs-bar">';
+    FB_SENSE_DEF.forEach(function(s){var v=sc[s.k]||0;if(!v)return;bar+='<i class="b-'+s.k+'" style="width:'+(v/c*100)+'%" title="'+fbSenseName(s.k)+' '+v+' 条"></i>';});
+    bar+='</div>';
+  }
+  return '<div class="fbs-wrap">'
+    +'<div class="fbs-l"><span class="fbs-num">'+c+'</span><span class="fbs-unit">条匹配评论</span>'
+      +'<span class="fbs-sep">·</span><span class="fbs-men">'+n+' 次提及</span></div>'
+    +'<div class="fbs-r">'+FB_SENSE_DEF.map(function(s){return pill(s.k);}).join('')+topHtml+'</div>'
+    +bar
+    +'<div class="fbs-note">占比按「评论条数」计算（分子分母均为筛选后的评论条数）；「提及次数」是同一议题的重复出现量，不与条数混算。口径与上方风向模块一致。</div>'
+  +'</div>';
+}
+function fbEmptyHTML(F,hits){
+  var chips=[];
+  if(F.senses.length)F.senses.forEach(function(v){chips.push({d:'senses',v:v,t:'风向：'+fbSenseName(v)});});
+  if(F.topics.length)F.topics.forEach(function(v){chips.push({d:'topics',v:v,t:'话题：'+fbTopicName(v)});});
+  if(F.subs.length)F.subs.forEach(function(v){chips.push({d:'subs',v:v,t:'细分：'+v});});
+  if(F.channels.length)F.channels.forEach(function(v){chips.push({d:'channels',v:v,t:'来源：'+fbChNameOf(v)});});
+  if(F.q.trim())chips.push({d:'q',v:'',t:'关键词：'+F.q.trim()});
+  if(F.scope!=='week')chips.push({d:'scope',v:'',t:'时间：'+fbScopeName(F)});
+  var chHtml=chips.map(function(c){
+    return '<button class="fbe-rm" data-frm="'+c.d+':'+fbEsc(c.v)+'">'+fbEsc(c.t)+' ✕</button>';
+  }).join('');
+  return '<div class="fbe-wrap">'
+    +'<div class="fbe-t">当前条件下没有匹配的玩家评论（共 '+hits+' 条）</div>'
+    +'<div class="fbe-s">原始数据中确实不存在同时满足这些条件的反馈，未做任何补全或估算。可移除其中一项后重试：</div>'
+    +'<div class="fbe-chips">'+(chHtml||'<span class="fbe-none">当前仅「本周」，无附加条件</span>')+'</div>'
+    +'<div class="fbe-btns"><button class="fbe-btn" data-fclear="1">重置全部筛选</button>'
+      +'<button class="fbe-btn g" data-fscope="week">回到本周</button></div>'
+  +'</div>';
+}
+/* —— 周报列表 v3（含两层级筛选器） ===== */
 function fbWeeksHTML(chrono){
   if(!chrono.length)return '<div class="fb4-empty">暂无周数据</div>';
-  var F=FB_FILTER||{scope:'week',topic:'',sense:'',channel:''};
+  var F=fbNormFilter();
+  var rows=fbRows(chrono,F);
+  var hits=fbFiltered(rows,F);
+  var fTopic=fbFacet(rows,F,'topics');
+  var fSense=fbFacet(rows,F,'senses');
+  var fCh=fbFacet(rows,F,'channels');
+  var fSub=fbFacet(rows,F,'subs');
   var rawCount=0,keepCount=0;
-  var grpDef=[
-    {t:'good',cls:'good',ic:'👍',name:'积极反馈'},
-    {t:'sug',cls:'sug',ic:'💡',name:'玩家建议'},
-    {t:'bad',cls:'bad',ic:'⚠️',name:'体验 / 稳定性问题'}
-  ];
   chrono.forEach(function(w){
     var raw=(w.official||[]).concat(w.community||[]);
     rawCount+=raw.length;
@@ -14392,33 +14622,25 @@ function fbWeeksHTML(chrono){
       if(seen[k])return;seen[k]=1;keepCount++;
     });
   });
-  var allCh=[];
-  chrono.forEach(function(w){
-    fbWeekRawItems(w).forEach(function(it){
-      String(it.channel||'').split(',').forEach(function(c){c=c.trim();if(c&&allCh.indexOf(c)<0)allCh.push(c);});
-    });
-  });
-  allCh.sort();
-  function fbMatch(it){
-    if(F.topic&&fbTopicKeyOf(it)!==F.topic)return false;
-    if(F.sense&&fbSenseKey(it)!==F.sense)return false;
-    if(F.channel&&String(it.channel||'').indexOf(F.channel)<0)return false;
-    return true;
-  }
+  var grpDef=[
+    {t:'good',cls:'good',ic:'👍',name:'积极反馈'},
+    {t:'sug',cls:'sug',ic:'💡',name:'玩家建议'},
+    {t:'bad',cls:'bad',ic:'⚠️',name:'体验 / 稳定性问题'}
+  ];
   var rev=chrono.slice().reverse();
+  var pickMap={};
+  hits.forEach(function(r){pickMap[r.ri]=1;});
+  var scopeIsWeek=(F.scope==='week'||F.scope==='last');
   var pick=[];
-  if(F.scope==='week')pick=[0];
-  else if(F.scope==='last')pick=rev.length>1?[1]:[];
-  else pick=rev.map(function(_,i){return i;});
-  var hasFilter=!!(F.topic||F.sense||F.channel)||F.scope!=='all';
-  var matchedTotal=0;
+  if(scopeIsWeek)pick=(F.scope==='week'?(rev.length?[0]:[]):(rev.length>1?[1]:[]));
+  else for(var ri in pickMap)pick.push(parseInt(ri,10));
+  pick.sort(function(a,b){return a-b;});
+  var hasFilter=!fbIsDefault(F);
   var blocks=pick.map(function(ri){
-    var w=rev[ri];
+    var w=rev[ri];if(!w)return '';
     var all=fbWeekRawItems(w);
-    var shown=all.filter(fbMatch);
-    matchedTotal+=shown.length;
+    var shown=rows.filter(function(r){return r.ri===ri&&fbRowMatch(r,F,null);});
     var segAll=fbSeg(all);
-    var seg=fbSeg(shown);
     var weekTotal=segAll.t||0;
     var open=(hasFilter||ri===0)?' open':'';
     var badPct=segAll.bp||0,posPct=segAll.np||0;
@@ -14429,7 +14651,7 @@ function fbWeeksHTML(chrono){
     var tagHtml=tags.slice(0,2).map(function(o){
       return '<span class="fb5-tag t-'+o.main+'">'+fbEsc(o.tag)+' '+o.pct+'%</span>';
     }).join('')||'<span class="fb5-tag t-oth">暂无聚合议题</span>';
-    var rows=tags.map(function(o){
+    var rowsHtml=tags.map(function(o){
       var adv=FB_ADVICE[o.tag]||FB_ADVICE['其他'];
       var q=o.top?fbEsc(String(o.top.theme||o.top.orig||'').slice(0,46)):'';
       var advHtml=(adv||[]).filter(Boolean).map(function(a){
@@ -14444,19 +14666,24 @@ function fbWeeksHTML(chrono){
         +'<div class="fb5-r">'+advHtml+'</div>'
       +'</div>';
     }).join('');
+    var lim=FB_LIST_LIM[w.week]||25;
+    var remain=lim;
     var groups=grpDef.map(function(g){
-      var its=shown.filter(function(it){return fbBucket(it.type||'oth')===g.t;}).sort(function(a,b){return (b.count||0)-(a.count||0);});
-      if(!its.length)return '';
-      var cards=its.map(function(it,i){
-        var html=fbIssueHTML(it,ri,i,weekTotal);
-        return html.replace('class="fb4-iss"','class="fb4-iss" data-topic="'+fbTopicKeyOf(it)+'" data-sense="'+fbSenseKey(it)+'"');
+      var its=shown.filter(function(r){return fbBucket(r.it.type||'oth')===g.t;}).sort(function(a,b){return (Number(b.it.count)||0)-(Number(a.it.count)||0);});
+      if(!its.length||remain<=0)return '';
+      var take=its.slice(0,remain);remain-=take.length;
+      var cards=take.map(function(r,i){
+        var html=fbIssueHTML(r.it,ri,all.indexOf(r.it),weekTotal);
+        return html.replace('class="fb4-iss"','class="fb4-iss" data-topic="'+r.tk+'" data-sense="'+r.sk+'"');
       }).join('');
       return '<div class="fb4-grp fb4-grp-'+g.cls+'">'
         +'<div class="fb4-grp-h"><span class="fb4-grp-ic">'+g.ic+'</span><span class="fb4-grp-n">'+g.name+'</span><span class="fb4-grp-c">'+its.length+'</span></div>'
         +'<div class="fb4-issues">'+cards+'</div></div>';
     }).join('');
-    var emptyHtml=shown.length?'':'<div class="fbf-empty">该周没有符合当前筛选条件的反馈。可切换时间范围或清除筛选后重试。</div>';
-    var scopeNote=(F.topic||F.sense||F.channel)?'<div class="fbf-hit">筛选命中 '+shown.length+' 条议题（该周共 '+all.length+' 条）</div>':'';
+    var hidden=Math.max(0,shown.length-lim);
+    var moreHtml=hidden?'<div class="fbf-more"><button data-flimit="'+fbEsc(w.week)+'">展开其余 '+hidden+' 条（当前显示 '+Math.min(lim,shown.length)+' / '+shown.length+'）</button></div>':'';
+    var emptyHtml=shown.length?'':'<div class="fbf-empty">该周没有符合当前筛选条件的反馈。</div>';
+    var scopeNote=(hasFilter)?'<div class="fbf-hit">该周命中 '+shown.length+' 条议题（该周共 '+all.length+' 条）</div>':'';
     return '<div class="fb4-wk fb5-wk'+open+'">'
       +'<div class="fb4-wk-head fb5-head">'
         +'<div class="fb5-c fb5-c1"><div class="fb5-week">'+fbEsc(w.week)+'</div>'
@@ -14467,87 +14694,235 @@ function fbWeeksHTML(chrono){
           +'<span class="fb4-wk-chev fb5-chev">▶</span></div>'
       +'</div>'
       +'<div class="fb4-wk-body fb5-body">'
-        +scopeNote+emptyHtml
+        +scopeNote+emptyHtml+moreHtml
         +'<div class="fb5-panel">'
           +'<div class="fb5-phead"><span>议题细分（按提及量聚合）</span><span>决策建议手册</span></div>'
-          +rows
+          +rowsHtml
         +'</div>'
         +'<div class="fb5-allh">全部议题 · 点击展开查看玩家原声</div>'
         +groups
       +'</div>'
     +'</div>';
   }).join('');
-  if(!pick.length){
-    blocks='<div class="fbf-empty">当前时间范围没有可展示的周数据（数据仅有 '+chrono.length+' 周）。</div>';
-  }
+  if(!pick.length)blocks='<div class="fbe-wrap" style="margin:10px 0"><div class="fbe-t">当前时间范围内没有可展示的周数据</div><div class="fbe-s">数据共 '+chrono.length+' 周，请切换时间范围后重试。</div><div class="fbe-btns"><button class="fbe-btn g" data-fscope="week">回到本周</button></div></div>';
   var filteredNote=rawCount>keepCount?'<div class="fb-filtered">已筛选 '+(rawCount-keepCount)+' 条无效 / 重复评论（系统提示、刷屏好评、纯表情、单字符噪声、重复报错），仅保留真实玩家反馈</div>':'';
-  var tmap={};
-  pick.forEach(function(ri){
-    var w=rev[ri];if(!w)return;
-    fbWeekRawItems(w).forEach(function(it){
-      var k=fbTopicKeyOf(it);tmap[k]=(tmap[k]||0)+(Number(it.count)||0);
-    });
-  });
-  var topicOpts=FB_TOPICS.filter(function(tp){return tmap[tp.key];}).map(function(tp){return {k:tp.key,n:tp.name};});
-  topicOpts.sort(function(a,b){return (tmap[b.k]||0)-(tmap[a.k]||0);});
-  function btn(attr,val,label,cur){
-    return '<button class="fbf-btn'+(cur===val?' on':'')+'" data-'+attr+'="'+val+'">'+label+'</button>';
+  /* —— 第一层：常用快捷筛选 —— */
+  function seg(k,n){
+    return '<button class="fbf-segb'+(F.scope===k?' on':'')+'" data-fscope="'+k+'">'+n+'</button>';
   }
-  var scopeLabel={week:'本周',last:'上周',all:'全部周'}[F.scope]||'本周';
-  var senseLabel='';
-  FB_SENSE_DEF.forEach(function(s){if(s.k===F.sense)senseLabel=s.n;});
-  var topicName=F.topic&&FB_K2T[F.topic]?FB_K2T[F.topic].name:'';
-  var bar='<style>'
-   +'.fbf-bar{background:#fff;border:1px solid #EEF0F4;border-radius:12px;padding:14px 16px;margin:8px 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.03)}'
-   +'.fbf-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}'
-   +'.fbf-row:last-child{margin-bottom:0}'
-   +'.fbf-lab{font-size:11.5px;font-weight:800;color:#64748b;min-width:52px;flex:none}'
-   +'.fbf-btn{font-size:11.5px;font-weight:600;color:#5b6472;background:#f6f7f9;border:1px solid #e6e8ee;border-radius:999px;padding:4px 11px;cursor:pointer;font-family:inherit;transition:.15s}'
-   +'.fbf-btn:hover{border-color:#c3c9f7;color:#4338ca}'
-   +'.fbf-btn.on{background:#eef2ff;border-color:#b9c2f5;color:#3730a3;font-weight:700}'
-   +'.fbf-cur{border-top:1px dashed #e6e8ee;padding-top:10px;align-items:center}'
-   +'.fbf-chip{font-size:11px;font-weight:700;background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;border-radius:8px;padding:3px 9px}'
-   +'.fbf-chip.none{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}'
-   +'.fbf-clear{margin-left:auto;font-size:11.5px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:4px 11px;cursor:pointer;font-family:inherit}'
-   +'.fbf-clear:hover{background:#fee2e2}'
-   +'.fbf-empty{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;padding:14px 16px;font-size:12.5px;color:#64748b;line-height:1.7;margin:10px 0}'
-   +'.fbf-hit{font-size:11.5px;font-weight:700;color:#3730a3;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:6px 10px;display:inline-block;margin:10px 0}'
-   +'@media(max-width:700px){.fbf-lab{min-width:44px}}'
+  var scopeSegs=FB_SCOPE_DEF.map(function(s){return seg(s.k,s.n);}).join('')
+    +(F.scope==='custom'?'<button class="fbf-segb on" data-fscope="custom">自定义</button>':'');
+  function chip(attr,val,label,cnt,extra){
+    var on=(attr==='ftopic'&&F.topics.indexOf(val)>=0)||(attr==='fsense'&&F.senses.indexOf(val)>=0)
+         ||(attr==='fch'&&F.channels.indexOf(val)>=0)||(attr==='fsub'&&F.subs.indexOf(val)>=0);
+    var z=(cnt===0&&!on)?' z':'';
+    return '<button class="fbf-chip'+z+(on?' on':'')+(extra||'')+'" data-'+attr+'="'+fbEsc(val)+'"'+(z?' title="当前条件下该选项为 0 条"':'')+'>'+fbEsc(label)+(cnt!==null?'<b>'+cnt+'</b>':'')+'</button>';
+  }
+  var allBtn=function(attr,vals){
+    var on=(vals&&vals.length===0);
+    return '<button class="fbf-chip all'+(on?' on':'')+'" data-'+attr+'="">全部</button>';
+  };
+  var senseLine='<div class="fbf-line"><span class="fbf-lab">反馈风向</span>'
+    +allBtn('fsense',F.senses)
+    +FB_SENSE_DEF.map(function(s){return chip('fsense',s.k,s.n,fSense[s.k]||0,' s-'+s.k);}).join('')
+    +'</div>';
+  var topicOrder=FB_TOPICS.map(function(t){return t.key;}).filter(function(k){return fTopic[k];})
+    .sort(function(a,b){return (fTopic[b]||0)-(fTopic[a]||0);});
+  var topicLine='<div class="fbf-line"><span class="fbf-lab">主要话题</span>'
+    +allBtn('ftopic',F.topics)
+    +topicOrder.map(function(k){return chip('ftopic',k,fbTopicName(k),fTopic[k]||0);}).join('')
+    +'</div>';
+  var searchLine='<div class="fbf-line"><span class="fbf-lab">搜索</span>'
+    +'<div class="fbf-sbox"><span class="fbf-sic">🔍</span>'
+    +'<input id="fbQ" type="text" autocomplete="off" placeholder="搜索玩家评论原文关键词（空格分隔多个词 = 同时包含）" value="'+fbEsc(F.q)+'">'
+    +(F.q?'<button class="fbf-sx" data-fqclear="1" title="清空关键词">✕</button>':'')
+    +'</div>'
+    +'<button class="fbf-advt" data-fadv="1"><span class="fbf-caret">'+(FB_ADV_OPEN?'▾':'▸')+'</span> 高级筛选'
+      +(FB_ADV_OPEN?'':'<em class="fbf-adot" data-fadvn="'+(F.channels.length+F.subs.length)+'"></em>')+'</button>'
+    +'</div>';
+  /* —— 第二层：高级筛选 —— */
+  var chLine='<div class="fbf-line"><span class="fbf-lab">平台来源</span>'
+    +allBtn('fch',F.channels)
+    +FB_CHANNELS.map(function(c){return chip('fch',c.k,c.n,fCh[c.k]||0);}).join('')
+    +'</div>';
+  var subOrder=FB_SUB_LIST.filter(function(s){return fSub[s];}).sort(function(a,b){return (fSub[b]||0)-(fSub[a]||0);});
+  var subLine=subOrder.length?('<div class="fbf-line"><span class="fbf-lab">细分话题</span>'
+    +allBtn('fsub',F.subs)
+    +subOrder.map(function(s){return chip('fsub',s,s,fSub[s]||0);}).join('')
+    +'</div>'):'<div class="fbf-line"><span class="fbf-lab">细分话题</span><span class="fbf-dim">当前范围内无可用细分话题</span></div>';
+  var dateLine='<div class="fbf-line"><span class="fbf-lab">自定义时间</span>'
+    +'<input class="fbf-date" type="date" data-fdate="from" value="'+fbEsc(F.from)+'">'
+    +'<span class="fbf-to">至</span>'
+    +'<input class="fbf-date" type="date" data-fdate="to" value="'+fbEsc(F.to)+'">'
+    +'<button class="fbf-mini" data-fdatereset="1">清除自定义</button>'
+    +'<span class="fbf-dim">留空一端表示不限；原始评论日期覆盖 2026-08-23 ~ 2026-10-08</span></div>';
+  var advHtml='<div class="fbf-advbox"'+(FB_ADV_OPEN?'':' style="display:none"')+'>'
+    +chLine
+    +'<div class="fbf-dim2">原始数据中另有 DM / Forum / Chat 等少量来源（共 18 条），未列入平台筛选；未选平台时仍会展示全部来源。</div>'
+    +subLine+dateLine+'</div>';
+  /* —— 当前筛选状态 —— */
+  var stChips=[];
+  stChips.push('<span class="fbs-chip fixed">时间：'+fbEsc(fbScopeName(F))+'</span>');
+  F.senses.forEach(function(v){stChips.push('<span class="fbs-chip s-'+v+'">风向：'+fbSenseName(v)+'<button data-frm="senses:'+v+'" title="移除该条件">✕</button></span>');});
+  F.topics.forEach(function(v){stChips.push('<span class="fbs-chip">话题：'+fbTopicName(v)+'<button data-frm="topics:'+v+'" title="移除该条件">✕</button></span>');});
+  F.subs.forEach(function(v){stChips.push('<span class="fbs-chip">细分：'+fbEsc(v)+'<button data-frm="subs:'+fbEsc(v)+'" title="移除该条件">✕</button></span>');});
+  F.channels.forEach(function(v){stChips.push('<span class="fbs-chip">来源：'+fbChNameOf(v)+'<button data-frm="channels:'+v+'" title="移除该条件">✕</button></span>');});
+  if(F.q.trim())stChips.push('<span class="fbs-chip">关键词：“'+fbEsc(F.q.trim())+'”<button data-frm="q:" title="移除该条件">✕</button></span>');
+  var isDef=fbIsDefault(F);
+  var clearBtn=isDef?'<span class="fbs-none">当前为默认状态（仅本周，无附加条件）</span>'
+    :'<button class="fbs-clear" data-fclear="1">清除全部筛选（'+fbActiveCount(F)+' 项）</button>';
+  var stateLine='<div class="fbf-line fbf-state"><span class="fbf-lab">当前筛选</span>'
+    +stChips.join('<span class="fbs-x">×</span>')
+    +clearBtn+'</div>';
+  var css='<style>'
+   +'.fbf-bar{background:#fff;border:1px solid #EEF0F4;border-radius:12px;padding:12px 14px;margin:8px 0 10px;box-shadow:0 1px 2px rgba(16,24,40,.03)}'
+   +'.fbf-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}'
+   +'.fbf-line:last-child{margin-bottom:0}'
+   +'.fbf-lab{font-size:11.5px;font-weight:800;color:#64748b;min-width:56px;flex:none;letter-spacing:.02em}'
+   +'.fbf-seg{display:inline-flex;background:#f1f5f9;border:1px solid #e6e8ee;border-radius:9px;padding:2px;gap:2px;flex-wrap:wrap}'
+   +'.fbf-segb{font-size:11.5px;font-weight:600;color:#5b6472;background:transparent;border:0;border-radius:7px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}'
+   +'.fbf-segb:hover{color:#3730a3}'
+   +'.fbf-segb.on{background:#fff;color:#3730a3;font-weight:800;box-shadow:0 1px 3px rgba(16,24,40,.10)}'
+   +'.fbf-chip{font-size:11.5px;font-weight:600;color:#5b6472;background:#f6f7f9;border:1px solid #e6e8ee;border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}'
+   +'.fbf-chip b{font-size:10.5px;font-weight:800;color:#94a3b8;background:#fff;border-radius:6px;padding:0 4px}'
+   +'.fbf-chip:hover{border-color:#c3c9f7;color:#4338ca}'
+   +'.fbf-chip.on{background:#eef2ff;border-color:#b9c2f5;color:#3730a3;font-weight:800}'
+   +'.fbf-chip.on b{color:#6366f1;background:#fff}'
+   +'.fbf-chip.on.s-pos,.fbf-chip.on.s-neg,.fbf-chip.on.s-sug,.fbf-chip.on.s-na{background:#eef2ff}'
+   +'.fbf-chip.z{opacity:.45}'
+   +'.fbf-chip.z:hover{border-color:#c3c9f7;color:#4338ca}'
+   +'.fbf-chip.all{background:#fff;border-style:dashed}'
+   +'.fbf-sbox{display:flex;align-items:center;gap:6px;flex:1 1 240px;min-width:200px;background:#f8fafc;border:1px solid #e6e8ee;border-radius:9px;padding:5px 9px}'
+   +'.fbf-sbox:focus-within{border-color:#b9c2f5;background:#fff}'
+   +'.fbf-sic{font-size:12px;opacity:.6;flex:none}'
+   +'.fbf-sbox input{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:12.5px;color:#334155;outline:none;padding:3px 0}'
+   +'.fbf-sx{border:0;background:transparent;color:#94a3b8;cursor:pointer;font-size:12px;padding:0 2px}'
+   +'.fbf-advt{font-size:11.5px;font-weight:700;color:#5b6472;background:#fff;border:1px solid #e0e3ea;border-radius:9px;padding:5px 11px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}'
+   +'.fbf-advt:hover{color:#4338ca;border-color:#b9c2f5}'
+   +'.fbf-caret{font-size:9px;opacity:.7}'
+   +'.fbf-adot:empty{display:none}'
+   +'.fbf-adot{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:#6366f1;border-radius:999px;padding:1px 6px;min-width:14px;text-align:center}'
+   +'.fbf-adot:before{content:attr(data-fadvn)}'
+   +'.fbf-advbox{border-top:1px dashed #e6e8ee;margin-top:2px;padding-top:9px}'
+   +'.fbf-date{font-family:inherit;font-size:11.5px;color:#334155;border:1px solid #e6e8ee;border-radius:8px;padding:4px 8px;background:#fff}'
+   +'.fbf-to{font-size:11.5px;color:#94a3b8}'
+   +'.fbf-mini{font-size:11px;font-weight:700;color:#64748b;background:#fff;border:1px solid #e0e3ea;border-radius:8px;padding:4px 9px;cursor:pointer;font-family:inherit}'
+   +'.fbf-mini:hover{color:#b91c1c;border-color:#fecaca;background:#fef2f2}'
+   +'.fbf-dim{font-size:11px;color:#94a3b8}'
+   +'.fbf-dim2{font-size:10.5px;color:#a0a8b5;line-height:1.6;padding:2px 0 4px 62px}'
+   +'.fbf-state{border-top:1px dashed #e6e8ee;padding-top:9px;margin-top:9px}'
+   +'.fbs-chip{font-size:11px;font-weight:700;background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;border-radius:8px;padding:3px 4px 3px 9px;display:inline-flex;align-items:center;gap:4px}'
+   +'.fbs-chip.fixed{background:#f1f5f9;color:#475569;border-color:#e2e8f0;padding-right:9px}'
+   +'.fbs-chip button{border:0;background:transparent;color:#8b93a0;cursor:pointer;font-size:11px;padding:0 4px;line-height:1;font-family:inherit;border-radius:4px}'
+   +'.fbs-chip button:hover{color:#b91c1c;background:#fee2e2}'
+   +'.fbs-chip.s-neg{background:#fef2f2;color:#b91c1c;border-color:#fecaca}'
+   +'.fbs-chip.s-sug{background:#fff7ed;color:#c2410c;border-color:#fed7aa}'
+   +'.fbs-chip.s-pos{background:#ecfdf5;color:#047857;border-color:#a7f3d0}'
+   +'.fbs-x{font-size:11px;color:#cbd5e1;font-weight:800}'
+   +'.fbs-none{font-size:11px;color:#94a3b8}'
+   +'.fbs-clear{margin-left:auto;font-size:11.5px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:4px 11px;cursor:pointer;font-family:inherit;white-space:nowrap}'
+   +'.fbs-clear:hover{background:#fee2e2}'
+   +'.fbs-wrap{background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:11px 14px;margin:0 0 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:relative}'
+   +'.fbs-l{display:flex;align-items:baseline;gap:6px;flex:none}'
+   +'.fbs-num{font-size:24px;font-weight:800;color:#0f172a;line-height:1}'
+   +'.fbs-unit{font-size:12px;font-weight:700;color:#64748b}'
+   +'.fbs-sep{color:#cbd5e1;font-size:12px}'
+   +'.fbs-men{font-size:12px;font-weight:700;color:#94a3b8}'
+   +'.fbs-r{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;min-width:0}'
+   +'.fbs-pill{font-size:11px;font-weight:700;border-radius:7px;padding:3px 8px;border:1px solid transparent;white-space:nowrap}'
+   +'.fbs-pill.s-pos{background:#ecfdf5;color:#047857;border-color:#a7f3d0}'
+   +'.fbs-pill.s-neg{background:#fef2f2;color:#b91c1c;border-color:#fecaca}'
+   +'.fbs-pill.s-sug{background:#fff7ed;color:#c2410c;border-color:#fed7aa}'
+   +'.fbs-pill.s-na{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}'
+   +'.fbs-pill.z{opacity:.5}'
+   +'.fbs-top{font-size:11.5px;font-weight:700;color:#3730a3;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:3px 9px;display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}'
+   +'.fbs-oth{font-style:normal;font-weight:600;color:#94a3b8;font-size:10.5px}'
+   +'.fbs-bar{position:absolute;left:14px;right:14px;bottom:0;display:flex;height:3px;border-radius:0 0 12px 12px;overflow:hidden;background:#eef0f4}'
+   +'.fbs-bar i{display:block;height:100%}'
+   +'.fbs-bar .b-pos{background:#16a34a}.fbs-bar .b-neg{background:#dc2626}.fbs-bar .b-sug{background:#f97316}.fbs-bar .b-na{background:#cbd5e1}'
+   +'.fbs-note{flex:1 0 100%;font-size:10.5px;color:#a0a8b5;line-height:1.55;padding-top:4px}'
+   +'.fbe-wrap{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:18px 16px;margin:0 0 14px;text-align:center}'
+   +'.fbe-t{font-size:14px;font-weight:800;color:#334155;margin-bottom:6px}'
+   +'.fbe-s{font-size:12px;color:#64748b;line-height:1.7;margin-bottom:12px}'
+   +'.fbe-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}'
+   +'.fbe-rm{font-size:11.5px;font-weight:700;color:#475569;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:4px 11px;cursor:pointer;font-family:inherit}'
+   +'.fbe-rm:hover{color:#b91c1c;border-color:#fecaca;background:#fef2f2}'
+   +'.fbe-none{font-size:11.5px;color:#94a3b8}'
+   +'.fbe-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}'
+   +'.fbe-btn{font-size:12px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:9px;padding:6px 14px;cursor:pointer;font-family:inherit}'
+   +'.fbe-btn.g{color:#3730a3;background:#eef2ff;border-color:#e0e7ff}'
+   +'.fbf-more{margin:10px 0;text-align:center}'
+   +'.fbf-more button{font-size:11.5px;font-weight:700;color:#4338ca;background:#eef2ff;border:1px solid #e0e7ff;border-radius:9px;padding:6px 14px;cursor:pointer;font-family:inherit}'
+   +'.fbf-empty{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#64748b;line-height:1.7;margin:10px 0}'
+   +'.fbf-hit{font-size:11.5px;font-weight:700;color:#3730a3;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:5px 10px;display:inline-block;margin:10px 0 0}'
+   +'@media(max-width:820px){.fbf-lab{min-width:48px}.fbf-dim2{padding-left:0}.fbs-num{font-size:20px}.fbs-clear{margin-left:0}}'
+   +'@media(max-width:520px){.fbf-sbox{flex:1 1 100%}.fbf-seg{width:100%}.fbf-segb{flex:1}}'
    +'</style>';
-  bar+='<div class="fbf-bar" id="fbListAnchor">';
-  bar+='<div class="fbf-row"><span class="fbf-lab">时间范围</span>'
-    +btn('fscope','week','本周',F.scope)+btn('fscope','last','上周',F.scope)+btn('fscope','all','全部周',F.scope)+'</div>';
-  bar+='<div class="fbf-row"><span class="fbf-lab">话题</span>'+btn('ftopic','','全部话题',F.topic)
-    +topicOpts.map(function(o){return btn('ftopic',o.k,o.n,F.topic);}).join('')+'</div>';
-  bar+='<div class="fbf-row"><span class="fbf-lab">风向</span>'+btn('fsense','','全部风向',F.sense)
-    +FB_SENSE_DEF.map(function(s){return btn('fsense',s.k,s.n,F.sense);}).join('')+'</div>';
-  if(allCh.length){
-    bar+='<div class="fbf-row"><span class="fbf-lab">来源</span>'+btn('fch','','全部来源',F.channel)
-      +allCh.map(function(c){return btn('fch',c,fbEsc(fbChName(c)),F.channel);}).join('')+'</div>';
-  }
-  bar+='<div class="fbf-row fbf-cur"><span class="fbf-lab">当前筛选</span>'
-    +'<span class="fbf-chip">'+scopeLabel+'</span>'
-    +'<span class="fbf-chip'+(topicName?'':' none')+'">'+(topicName||'全部话题')+'</span>'
-    +'<span class="fbf-chip'+(senseLabel?'':' none')+'">'+(senseLabel||'全部风向')+'</span>'
-    +'<span class="fbf-chip'+(F.channel?'':' none')+'">'+(F.channel?fbEsc(fbChName(F.channel)):'全部来源')+'</span>'
-    +'<button class="fbf-clear" data-fclear="1">清除筛选</button></div>';
-  bar+='</div>';
+  var bar='<div class="fbf-bar" id="fbListAnchor">'
+    +'<div class="fbf-line"><span class="fbf-lab">时间范围</span><div class="fbf-seg">'+scopeSegs+'</div>'
+      +'<button class="fbs-clear" data-fclear="1"'+(isDef?' disabled':'')+'>清除筛选</button></div>'
+    +senseLine+topicLine+searchLine+advHtml+stateLine
+    +'</div>';
+  var sum=fbSummaryHTML(hits,F);
+  var empty=(hits.length===0)?fbEmptyHTML(F,hits.length):'';
   setTimeout(function(){
     var el=document.getElementById('fbListAnchor');if(!el)return;
-    function rerender(keepPos){
-      var top=null;
-      if(keepPos&&el){top=el.getBoundingClientRect().top+window.scrollY;}
-      renderFeedback();
-      if(top!=null){window.scrollTo(0,Math.max(0,top-70));}
+    function bind(sel,fn){el.querySelectorAll(sel).forEach(function(b){b.onclick=function(e){fn(b,e);};});}
+    function bindAll(sel,fn){document.querySelectorAll(sel).forEach(function(b){b.onclick=function(e){fn(b,e);};});}
+    bindAll('[data-fscope]',function(b){
+      if(b.disabled)return;
+      FB_FILTER.scope=b.getAttribute('data-fscope');
+      if(FB_FILTER.scope==='custom')FB_ADV_OPEN=true;
+      fbApply({resetPaging:true});
+    });
+    bind('[data-ftopic]',function(b){fbToggleVal(FB_FILTER.topics,b.getAttribute('data-ftopic'));fbApply({resetPaging:true});});
+    bind('[data-fsense]',function(b){fbToggleVal(FB_FILTER.senses,b.getAttribute('data-fsense'));fbApply({resetPaging:true});});
+    bind('[data-fch]',function(b){fbToggleVal(FB_FILTER.channels,b.getAttribute('data-fch'));fbApply({resetPaging:true});});
+    bind('[data-fsub]',function(b){fbToggleVal(FB_FILTER.subs,b.getAttribute('data-fsub'));fbApply({resetPaging:true});});
+    bindAll('[data-frm]',function(b){
+      var v=b.getAttribute('data-frm')||'';var i=v.indexOf(':');
+      var dim=v.slice(0,i),val=v.slice(i+1);
+      if(dim==='scope'){FB_FILTER.scope='week';FB_FILTER.from='';FB_FILTER.to='';}
+      else if(dim==='q'){FB_FILTER.q='';}
+      else{var a=FB_FILTER[dim]||[];var k=a.indexOf(val);if(k>=0)a.splice(k,1);}
+      fbApply({resetPaging:true});
+    });
+    bindAll('[data-fclear]',function(b){if(b.disabled)return;FB_FILTER=fbFilterDefault();FB_ADV_OPEN=false;fbApply({resetPaging:true});});
+    bind('[data-fqclear]',function(){FB_FILTER.q='';fbApply({resetPaging:true,refocus:true});});
+    bind('[data-fadv]',function(){FB_ADV_OPEN=!FB_ADV_OPEN;fbApply({resetPaging:true});});
+    bind('[data-fdatereset]',function(){FB_FILTER.scope='week';FB_FILTER.from='';FB_FILTER.to='';fbApply({resetPaging:true});});
+    bindAll('[data-flimit]',function(b){
+      var k=b.getAttribute('data-flimit');
+      FB_LIST_LIM[k]=(FB_LIST_LIM[k]||25)+25;
+      fbApply({resetPaging:false});
+    });
+    el.querySelectorAll('[data-fdate]').forEach(function(inp){
+      inp.onchange=function(){
+        var which=inp.getAttribute('data-fdate');
+        FB_FILTER[which]=inp.value||'';
+        if(FB_FILTER.from||FB_FILTER.to)FB_FILTER.scope='custom';else FB_FILTER.scope='week';
+        fbApply({resetPaging:true});
+      };
+    });
+    var q=document.getElementById('fbQ');
+    if(q){
+      var timer=null;
+      q.oninput=function(){
+        if(timer)clearTimeout(timer);
+        timer=setTimeout(function(){
+          FB_FILTER.q=q.value||'';
+          fbApply({resetPaging:true,refocus:true});
+        },320);
+      };
+      q.onkeydown=function(e){
+        if(e.key==='Enter'){
+          if(timer)clearTimeout(timer);
+          FB_FILTER.q=q.value||'';fbApply({resetPaging:true,refocus:true});
+        }
+      };
     }
-    el.querySelectorAll('[data-fscope]').forEach(function(b){b.onclick=function(){FB_FILTER.scope=b.getAttribute('data-fscope');rerender(true);};});
-    el.querySelectorAll('[data-ftopic]').forEach(function(b){b.onclick=function(){FB_FILTER.topic=b.getAttribute('data-ftopic');rerender(true);};});
-    el.querySelectorAll('[data-fsense]').forEach(function(b){b.onclick=function(){FB_FILTER.sense=b.getAttribute('data-fsense');rerender(true);};});
-    el.querySelectorAll('[data-fch]').forEach(function(b){b.onclick=function(){FB_FILTER.channel=b.getAttribute('data-fch');rerender(true);};});
-    var cl=el.querySelector('[data-fclear]');
-    if(cl)cl.onclick=function(){FB_FILTER={scope:'week',topic:'',sense:'',channel:''};rerender(true);};
   },0);
-  var css='<style>'
+  var css2='<style>'
    +'.fb5-wk{border-radius:12px}'
    +'.fb5-head{display:flex;align-items:stretch;gap:0;padding:0}'
    +'.fb5-head:hover{background:#fafbfc}'
@@ -14592,9 +14967,9 @@ function fbWeeksHTML(chrono){
    +'.fb5-allh{font-size:12px;font-weight:800;color:#64748b;margin:20px 0 2px;letter-spacing:.02em}'
    +'@media(max-width:980px){.fb5-head{flex-wrap:wrap}.fb5-c1,.fb5-c2,.fb5-c3,.fb5-c4{flex:0 0 100%;border:0!important;border-top:1px solid #f1f5f9!important}.fb5-c1{border-top:0!important}.fb5-c4{justify-content:flex-start}.fb5-mini{flex-direction:row;text-align:left;gap:12px}.fb5-row{grid-template-columns:1fr}.fb5-r{border-left:0;border-top:1px solid #eef2f7}}'
    +'</style>';
-  return css+'<div class="fb4-weeks"><div class="fb4-weeks-h">原始玩家反馈 · 支持按时间范围 / 话题 / 风向 / 来源筛选（点击议题查看玩家原声）</div>'+filteredNote+bar+blocks+'</div>';
+  return css+css2+'<div class="fb4-weeks"><div class="fb4-weeks-h">原始玩家反馈 · 支持 时间 / 风向 / 话题 / 关键词 / 平台 组合筛选（点击议题查看玩家原声）</div>'
+    +filteredNote+bar+(hits.length?sum:empty)+blocks+'</div>';
 }
-
 var fbTip=(function(){var t=document.getElementById('fbTip');if(!t){t=document.createElement('div');t.id='fbTip';t.className='fb-tip';document.body.appendChild(t);}return t;})();
 function showFbTip(el,e){var p=el.getAttribute('data-prev')||'';if(!p){fbTip.style.display='none';return;}fbTip.innerHTML='<div class="fb-tip-h">🗣 玩家原声预览</div><div class="fb-tip-t">'+p+'</div>';fbTip.style.display='block';var x=e.clientX+14,y=e.clientY+14,w=fbTip.offsetWidth,h=fbTip.offsetHeight;if(x+w>window.innerWidth-8)x=e.clientX-w-14;if(y+h>window.innerHeight-8)y=e.clientY-h-14;fbTip.style.left=x+'px';fbTip.style.top=y+'px';}
 function hideFbTip(){fbTip.style.display='none';}
@@ -14705,74 +15080,44 @@ function renderSentimentCards(){
   return h;
 }
 
-// ===== 本周玩家反馈风向（话题 × 风向 · 与下方原始反馈联动） =====
-var FB_FILTER={scope:'week',topic:'',sense:'',channel:''};
-var FB_SENSE_DEF=[
-  {k:'pos',n:'正向认可',short:'认可'},
-  {k:'neg',n:'负向吐槽',short:'吐槽'},
-  {k:'sug',n:'改进建议',short:'建议'},
-  {k:'na',n:'未分类',short:'未分类'}
-];
-var FB_TOPICS=[
-  {key:'vehicle',name:'载具体验',en:'Vehicles',tags:['载具不足']},
-  {key:'content',name:'任务与游戏内容',en:'Missions & Content',tags:['内容耗尽','活动 Bug']},
-  {key:'bug',name:'性能与 Bug',en:'Performance & Bugs',tags:['闪退崩溃','地图穿模']},
-  {key:'feature',name:'功能与系统',en:'Features & Systems',tags:['武器与手感','警察系统','房屋系统','网络与匹配','环境治理']},
-  {key:'gang',name:'帮派与社交',en:'Gangs & Social',tags:['帮派管理','改名卡']},
-  {key:'account',name:'账号与登录',en:'Account',tags:['账号异常']},
-  {key:'pay',name:'支付与商业化',en:'Payment',tags:['支付问题']},
-  {key:'local',name:'本地化与区域',en:'Localization',tags:['本地化']},
-  {key:'praise',name:'口碑与其他',en:'Praise & Others',tags:['正面口碑']},
-  {key:'other',name:'未分类',en:'Unclassified',tags:['其他']}
-];
-var FB_T2K={};
-(function(){FB_TOPICS.forEach(function(tp){tp.tags.forEach(function(t){FB_T2K[t]=tp.key;});});})();
-var FB_K2T={};
-(function(){FB_TOPICS.forEach(function(tp){FB_K2T[tp.key]=tp;});})();
-function fbSenseKey(it){
-  var t=String(it.type||'').toLowerCase();
-  if(t==='good')return 'pos';
-  if(t==='bad')return 'neg';
-  if(t==='sug')return 'sug';
-  return 'na';
-}
-function fbTopicKeyOf(it){return FB_T2K[fbTagOf(it)]||'other';}
-function fbWeekRawItems(w){
-  var raw=(w.official||[]).concat(w.community||[]);
-  var seen={};
-  return raw.filter(function(it){
-    if(fbIsDrop(it))return false;
-    var k=(it.orig||it.theme||'').trim().toLowerCase();
-    if(seen[k])return false;seen[k]=1;return true;
-  });
-}
-function fbChannelSet(items){
-  var m={};
-  items.forEach(function(it){
-    String(it.channel||'').split(',').forEach(function(c){
-      c=c.trim();if(c)m[c]=1;
-    });
-  });
-  return Object.keys(m).sort();
-}
+// ===== 玩家反馈风向（话题 × 风向 · 与下方列表共用同一套筛选状态与归类规则） =====
 function fbWindStats(chrono){
-  var cur=chrono[chrono.length-1]||null;
-  var prev=chrono.length>1?chrono[chrono.length-2]:null;
-  var curItems=cur?fbWeekRawItems(cur):[];
-  var prevItems=prev?fbWeekRawItems(prev):[];
+  var F=fbNormFilter();
+  var rev=chrono.slice().reverse();
+  var curRows=[],prevRows=[],periodLabel='',prevLabel='',hasPrev=false;
+  if(F.scope==='week'||F.scope==='last'){
+    var idx=(F.scope==='week')?0:1;
+    var cw=rev[idx],pw=rev[idx+1]||null;
+    curRows=cw?fbRowsInRange([cw],'',''):[];
+    prevRows=pw?fbRowsInRange([pw],'',''):[];
+    periodLabel=cw?cw.week:'—';
+    prevLabel=pw?pw.week:'';
+    hasPrev=!!pw;
+  }else{
+    curRows=fbRows(chrono,F);
+    periodLabel=(F.scope==='all')?'全部时间':(F.scope==='d30'?'近 30 天':((F.from||'起始')+' ~ '+(F.to||'至今')));
+    if(F.scope==='d30'){
+      var d=new Date();d.setDate(d.getDate()-30);var f1=fbISO(d);
+      prevRows=fbRowsInRange(chrono,fbShiftISO(f1,-30),fbShiftISO(f1,-1));
+      prevLabel='前 30 天';hasPrev=true;
+    }else if(F.scope==='custom'&&F.from&&F.to){
+      var len=Math.max(1,fbDaysBetween(F.from,F.to)+1);
+      prevRows=fbRowsInRange(chrono,fbShiftISO(F.from,-len),fbShiftISO(F.from,-1));
+      prevLabel='前一个等长周期';hasPrev=true;
+    }
+  }
+  var curItems=curRows.map(function(r){return r.it;});
   var agg={};
   FB_TOPICS.forEach(function(tp){agg[tp.key]={key:tp.key,name:tp.name,en:tp.en,n:0,c:0,pos:0,neg:0,sug:0,na:0,tops:[]};});
-  curItems.forEach(function(it){
-    var k=fbTopicKeyOf(it);if(!agg[k])k='other';
-    var a=agg[k];var c=Number(it.count)||0;
-    a.n+=c;a.c++;a[fbSenseKey(it)]+=c;a.tops.push(it);
+  var totalN=0,totalC=curRows.length;
+  curRows.forEach(function(r){
+    var k=agg[r.tk]?r.tk:'other';
+    var a=agg[k];var c=Number(r.it.count)||0;
+    a.n+=c;a.c++;a[r.sk]+=c;a.tops.push(r.it);
+    totalN+=c;
   });
-  var totalN=0,totalC=curItems.length;
-  curItems.forEach(function(it){totalN+=Number(it.count)||0;});
   var prevN={};
-  prevItems.forEach(function(it){
-    var k=fbTopicKeyOf(it);if(!prevN[k])prevN[k]=0;prevN[k]+=Number(it.count)||0;
-  });
+  prevRows.forEach(function(r){var k=agg[r.tk]?r.tk:'other';prevN[k]=(prevN[k]||0)+(Number(r.it.count)||0);});
   var topics=[];
   for(var k in agg){
     var a=agg[k];
@@ -14782,44 +15127,46 @@ function fbWindStats(chrono){
     var pv=prevN[k];
     a.prev=(pv==null?null:pv);
     a.delta=(pv==null?null:a.n-pv);
+    /* 与下方列表同一引擎：模拟「点击该卡片」后列表会命中的评论条数 */
+    a.hit=curRows.filter(function(r){return r.tk===k&&fbRowMatch(r,F,'topics');}).length;
     topics.push(a);
   }
   topics.sort(function(a,b){return b.n-a.n;});
   var sense={pos:0,neg:0,sug:0,na:0};
-  curItems.forEach(function(it){sense[fbSenseKey(it)]+=Number(it.count)||0;});
-  return {cur:cur,prev:prev,curItems:curItems,prevItems:prevItems,totalN:totalN,totalC:totalC,topics:topics,sense:sense,channels:fbChannelSet(curItems),hasPrev:!!prev};
+  curRows.forEach(function(r){sense[r.sk]+=Number(r.it.count)||0;});
+  return {cur:rev[F.scope==='last'?1:0]||null,rows:curRows,items:curItems,totalN:totalN,totalC:totalC,
+    topics:topics,sense:sense,hasPrev:hasPrev,periodLabel:periodLabel,prevLabel:prevLabel,scope:F.scope,F:F};
 }
 function fbTopicView(a){
-  if(!a.tops.length)return '本周暂无该话题的集中反馈。';
-  var lead=a.neg>=a.sug&&a.neg>=a.pos?'neg':(a.sug>=a.pos?'sug':'pos');
+  if(!a.tops.length)return '该周期内暂无该话题的集中反馈。';
+  var lead=(a.neg>=a.sug&&a.neg>=a.pos)?'neg':(a.sug>=a.pos?'sug':'pos');
   var top1=a.tops[0];
   var zh=String(top1.theme||'').replace(/^玩家(反馈|建议|请求|反映|要求|报告|称)/,'').replace(/[，,。；;].*$/,'');
   if(zh.length>28)zh=zh.slice(0,28)+'…';
   var map={neg:'玩家主要在吐槽：',sug:'玩家的核心诉求是：',pos:'玩家的认可点在于：'};
-  if(!zh)return '本周该话题反馈较分散，未形成集中观点。';
+  if(!zh)return '该周期内该话题反馈较分散，未形成集中观点。';
   return (map[lead]||'')+zh+'。';
 }
-function fbTrendText(a){
-  if(!a||a.prev==null)return '<span class="fbw-trend none">较上周 —（无上周数据）</span>';
-  if(a.prev===0)return '<span class="fbw-trend new">较上周 新增话题</span>';
+function fbTrendText(a,prevLabel){
+  if(!a||a.prev==null)return '<span class="fbw-trend none">较上期 —（无可对比周期）</span>';
+  if(a.prev===0)return '<span class="fbw-trend new">较'+(prevLabel||'上期')+' 新增话题</span>';
   var d=a.delta;
-  if(d===0)return '<span class="fbw-trend flat">较上周 持平</span>';
+  if(d===0)return '<span class="fbw-trend flat">较'+(prevLabel||'上期')+' 持平</span>';
   var pct=Math.round(Math.abs(d)/a.prev*100);
-  return '<span class="fbw-trend '+(d>0?'up':'down')+'">较上周 '+(d>0?'↑ +':'↓ -')+Math.abs(d)+' 提及（'+(d>0?'+':'-')+pct+'%）</span>';
+  return '<span class="fbw-trend '+(d>0?'up':'down')+'">较'+(prevLabel||'上期')+' '+(d>0?'↑ +':'↓ -')+Math.abs(d)+' 提及（'+(d>0?'+':'-')+pct+'%）</span>';
 }
 function fbWindSummary(st){
   var out=[];
-  var cur=st.cur;
   var small=st.totalC<30;
   var t0=st.topics[0];
-  var s1='本周（'+fbEsc(cur?cur.week:'—')+'）共 '+st.totalC+' 条反馈、'+st.totalN+' 次提及，覆盖 '+st.topics.length+' 个话题；讨论量最高的是「'+(t0?t0.name:'—')+'」'+(t0?'（'+t0.n+' 次提及，占 '+t0.pct+'%）':'')+'。';
+  var per=st.periodLabel||'—';
+  var s1=(st.scope==='week'?'本周':(st.scope==='last'?'上周':'统计周期 '+per))+'（'+fbEsc(st.cur?st.cur.week:per)+'）共 '+st.totalC+' 条评论、'+st.totalN+' 次提及，覆盖 '+st.topics.length+' 个话题；讨论量最高的是「'+(t0?t0.name:'—')+'」'+(t0?'（'+t0.n+' 次提及，占 '+t0.pct+'%）':'')+'。';
   if(small)s1='<b class="fbw-warn">样本有限</b> · '+s1;
   out.push(s1);
   var s=st.sense,tot=st.totalN||1;
   var pp=Math.round(s.pos/tot*100),np=Math.round(s.neg/tot*100),sp=Math.round(s.sug/tot*100);
-  var negTop=st.topics.slice().sort(function(a,b){return b.neg-a.neg;})[0];
-  var sugTop=st.topics.slice().sort(function(a,b){return b.sug-a.sug;})[0];
-  var posTop=st.topics.slice().sort(function(a,b){return b.pos-a.pos;})[0];
+  var byK=function(k){return st.topics.slice().sort(function(a,b){return b[k]-a[k];})[0];};
+  var negTop=byK('neg'),sugTop=byK('sug'),posTop=byK('pos');
   var s2='风向上，正向认可 '+pp+'%、负向吐槽 '+np+'%、改进建议 '+sp+'%（按提及次数统计）';
   var seg=[];
   if(np>0&&negTop&&negTop.neg>0)seg.push('负向集中在「'+negTop.name+'」');
@@ -14828,7 +15175,7 @@ function fbWindSummary(st){
   if(seg.length)s2+='：'+seg.join('；');
   out.push(s2+'。');
   var s3;
-  if(!st.hasPrev){s3='上周数据缺失，无法进行周环比判断。';}
+  if(!st.hasPrev){s3='无可对比的上期数据，不做环比判断。';}
   else{
     var up=st.topics.filter(function(a){return a.prev!=null&&a.delta>0;}).sort(function(a,b){return b.delta-a.delta;});
     var down=st.topics.filter(function(a){return a.prev!=null&&a.delta<0;}).sort(function(a,b){return a.delta-b.delta;});
@@ -14836,35 +15183,46 @@ function fbWindSummary(st){
       s3='值得优先关注：讨论量上升的话题是 '+up.slice(0,2).map(function(a){return '「'+a.name+'」+'+a.delta;}).join('、')+'。';
       if(down.length)s3+='下降最明显的是「'+down[0].name+'」'+down[0].delta+'。';
     }else if(down.length){
-      s3='本周没有上升的话题；下降最明显的是「'+down[0].name+'」'+down[0].delta+'。';
-    }else{s3='与上周相比各话题讨论量基本持平。';}
+      s3='本期没有上升的话题；下降最明显的是「'+down[0].name+'」'+down[0].delta+'。';
+    }else{s3='与上期相比各话题讨论量基本持平。';}
   }
   out.push(s3);
   return out;
 }
 function fbDrill(topic,sense){
-  FB_FILTER={scope:'week',topic:topic||'',sense:sense||'',channel:''};
-  var y=window.scrollY||0;
+  var F=fbNormFilter();
+  F.scope='week';F.from='';F.to='';
+  F.topics=topic?[topic]:[];
+  F.senses=sense?[sense]:[];
+  F.subs=[];
+  FB_LIST_LIM={};
   renderFeedback();
   var el=document.getElementById('fbListAnchor');
-  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
-  else{window.scrollTo(0,y);}
+  if(el){var y=el.getBoundingClientRect().top+window.scrollY;window.scrollTo(0,Math.max(0,y-12));}
 }
 function renderWindModule(chrono){
   if(!chrono||!chrono.length)return '';
   var st=fbWindStats(chrono);
+  var F=st.F;
+  var title=(F.scope==='week')?'本周玩家反馈风向':(F.scope==='last'?'上周玩家反馈风向':'玩家反馈风向');
   var h='<style>'
    +'.fbw-root{background:#F8F9FB;border:1px solid #eceef3;border-radius:16px;padding:20px 18px 18px;margin:18px 0 6px}'
    +'.fbw-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}'
    +'.fbw-title{margin:0;font-size:22px;font-weight:800;color:#22252b;letter-spacing:.3px}'
-   +'.fbw-week{font-size:11px;color:#6b7280;background:#fff;border:1px solid #e6e8ee;border-radius:999px;padding:3px 10px}'
+   +'.fbw-week{font-size:11px;color:#6b7280;background:#fff;border:1px solid #e6e8ee;border-radius:999px;padding:3px 10px;white-space:nowrap}'
+   +'.fbw-link{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#eef2ff;border:1px solid #e0e7ff;border-radius:10px;padding:7px 11px;margin-bottom:14px;font-size:11.5px;color:#3730a3;font-weight:700}'
+   +'.fbw-link .lk-t{color:#6366f1}'
+   +'.fbw-link button{font-size:11px;font-weight:700;color:#3730a3;background:#fff;border:1px solid #c7d2fe;border-radius:999px;padding:2px 9px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px}'
+   +'.fbw-link button:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca}'
    +'.fbw-sum{background:#fff;border:1px solid #e6e8ee;border-left:3px solid #7e97a8;border-radius:10px;padding:12px 14px;margin-bottom:16px}'
    +'.fbw-sum p{margin:0 0 5px;font-size:12.5px;line-height:1.75;color:#3f4652}'
    +'.fbw-sum p:last-child{margin-bottom:0}'
    +'.fbw-warn{color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:1px 6px;font-size:11px}'
    +'.fbw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}'
-   +'.fbw-card{background:#fff;border:1px solid #eceef3;border-radius:12px;padding:16px;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;cursor:pointer}'
+   +'.fbw-card{background:#fff;border:1px solid #eceef3;border-radius:12px;padding:16px;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;cursor:pointer;position:relative}'
    +'.fbw-card:hover{transform:translateY(-2px);border-color:#c3c9f7;box-shadow:0 8px 20px rgba(34,37,43,.07)}'
+   +'.fbw-card.on{border-color:#6366f1;box-shadow:0 0 0 2px rgba(99,102,241,.28)}'
+   +'.fbw-on{position:absolute;top:10px;right:10px;font-size:10px;font-weight:800;color:#fff;background:#6366f1;border-radius:6px;padding:2px 7px}'
    +'.fbw-ct{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}'
    +'.fbw-cn{font-size:15px;font-weight:800;color:#22252b}'
    +'.fbw-ce{font-size:10.5px;color:#9aa1ad;margin-left:6px;font-weight:600}'
@@ -14879,7 +15237,8 @@ function renderWindModule(chrono){
    +'.fbw-lg.neg{background:#fef2f2;color:#b91c1c;border-color:#fecaca}'
    +'.fbw-lg.sug{background:#fff7ed;color:#c2410c;border-color:#fed7aa}'
    +'.fbw-lg.na{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}'
-   +'.fbw-lg.zero{opacity:.45}'
+   +'.fbw-lg.zero{opacity:.45;cursor:not-allowed}'
+   +'.fbw-lg.sel{box-shadow:0 0 0 2px rgba(99,102,241,.30)}'
    +'.fbw-view{font-size:12.5px;line-height:1.65;color:#4b5563;margin-bottom:10px}'
    +'.fbw-trend{font-size:11px;font-weight:700;display:inline-block;margin-bottom:10px}'
    +'.fbw-trend.up{color:#b91c1c}.fbw-trend.down{color:#15803d}.fbw-trend.flat{color:#94a3b8}.fbw-trend.new{color:#4338ca}.fbw-trend.none{color:#94a3b8}'
@@ -14893,14 +15252,27 @@ function renderWindModule(chrono){
    +'@media(max-width:700px){.fbw-grid{grid-template-columns:1fr}.fbw-title{font-size:19px}}'
    +'</style>';
   h+='<section class="fbw-root">';
-  h+='<div class="fbw-head"><h3 class="fbw-title">本周玩家反馈风向</h3>'
-   +'<span class="fbw-week">统计周期 '+(st.cur?fbEsc(st.cur.week):'—')+' · 共 '+st.totalN+' 次提及</span></div>';
+  h+='<div class="fbw-head"><h3 class="fbw-title">'+title+'</h3>'
+   +'<span class="fbw-week">统计周期 '+(st.scope==='week'||st.scope==='last'?fbEsc(st.cur?st.cur.week:'—'):fbEsc(st.periodLabel))+' · 共 '+st.totalN+' 次提及 / '+st.totalC+' 条评论</span></div>';
   var sum=fbWindSummary(st);
   h+='<div class="fbw-sum">'+sum.map(function(p){return '<p>'+p+'</p>';}).join('')+'</div>';
+  var actChips=[];
+  if(F.topics.length)F.topics.forEach(function(v){actChips.push({d:'topics',v:v,t:'话题：'+fbTopicName(v)});});
+  if(F.senses.length)F.senses.forEach(function(v){actChips.push({d:'senses',v:v,t:'风向：'+fbSenseName(v)});});
+  if(F.channels.length)F.channels.forEach(function(v){actChips.push({d:'channels',v:v,t:'来源：'+fbChNameOf(v)});});
+  if(F.subs.length)F.subs.forEach(function(v){actChips.push({d:'subs',v:v,t:'细分：'+v});});
+  if(F.q.trim())actChips.push({d:'q',v:'',t:'关键词：'+F.q.trim()});
+  if(actChips.length){
+    h+='<div class="fbw-link"><span class="lk-t">已与下方列表联动：</span>'
+      +actChips.map(function(c){return '<button data-wrm="'+c.d+':'+fbEsc(c.v)+'">'+fbEsc(c.t)+' ✕</button>';}).join('')
+      +'<button data-wrm="all:">全部清除 ✕</button></div>';
+  }
   h+='<div class="fbw-grid">';
   st.topics.forEach(function(a){
     var tot=a.n||1;
-    h+='<div class="fbw-card" data-topic="'+a.key+'">';
+    var on=F.topics.indexOf(a.key)>=0;
+    h+='<div class="fbw-card'+(on?' on':'')+'" data-topic="'+a.key+'">';
+    if(on)h+='<span class="fbw-on">已筛选</span>';
     h+='<div class="fbw-ct"><span><span class="fbw-cn">'+a.name+'</span><span class="fbw-ce">'+a.en+'</span></span>'
       +'<span class="fbw-cnum">'+a.n+' 提及 · '+a.c+' 条议题</span></div>';
     h+='<div class="fbw-bar">'
@@ -14911,11 +15283,12 @@ function renderWindModule(chrono){
     h+='<div class="fbw-legend">';
     FB_SENSE_DEF.forEach(function(sd){
       var v=a[sd.k];
-      h+='<span class="fbw-lg '+sd.k+(v?'':' zero')+'" data-topic="'+a.key+'" data-sense="'+sd.k+'" data-v="'+v+'" title="'+(v?'点击下钻查看该话题的'+sd.n:'本周该话题无'+sd.n+'反馈')+'">'+sd.n+' '+v+'</span>';
+      var sel=(on&&F.senses.indexOf(sd.k)>=0);
+      h+='<span class="fbw-lg '+sd.k+(v?'':' zero')+(sel?' sel':'')+'" data-topic="'+a.key+'" data-sense="'+sd.k+'" data-v="'+v+'" title="'+(v?'点击下钻：该话题的'+sd.n+'（列表将命中 '+a.hit+' 条）':'该周期内该话题无'+sd.n+'反馈')+'">'+sd.n+' '+v+'</span>';
     });
     h+='</div>';
     h+='<div class="fbw-view">'+fbEsc(fbTopicView(a))+'</div>';
-    h+=fbTrendText(a);
+    h+=fbTrendText(a,st.prevLabel);
     var qs=a.tops.slice(0,2);
     if(qs.length){
       h+='<div class="fbw-quotes">';
@@ -14927,11 +15300,11 @@ function renderWindModule(chrono){
       });
       h+='</div>';
     }
-    h+='<span class="fbw-more" data-topic="'+a.key+'" data-sense="">查看详情 →</span>';
+    h+='<span class="fbw-more" data-topic="'+a.key+'" data-sense="">查看详情 → 列表命中 '+a.hit+' 条</span>';
     h+='</div>';
   });
   h+='</div>';
-  h+='<div class="fbw-tip">口径说明：同一条反馈可能同时表达认可与建议，按表达主情绪归类；各话题提及数之和可能大于反馈总量，属正常的多标签统计。点击卡片或风向标签可下钻到下方原始评论。</div>';
+  h+='<div class="fbw-tip">口径说明：本模块与下方列表使用同一份原始数据、同一套话题 / 风向归类规则与同一个筛选状态；同一条反馈可能同时表达认可与建议，按主情绪归类，各话题提及数之和可能大于评论总量（多标签统计）。点击卡片或风向标签可下钻到下方列表。</div>';
   h+='</section>';
   setTimeout(function(){
     var root=document.querySelector('.fbw-root');if(!root)return;
@@ -14945,6 +15318,19 @@ function renderWindModule(chrono){
         var v=Number(b.getAttribute('data-v')||'0');
         if(sk&&v===0)return;
         fbDrill(b.getAttribute('data-topic'),sk==='na'?'':sk);
+      };
+    });
+    root.querySelectorAll('[data-wrm]').forEach(function(b){
+      b.onclick=function(e){
+        e.stopPropagation();
+        var v=b.getAttribute('data-wrm')||'';var i=v.indexOf(':');
+        var dim=v.slice(0,i),val=v.slice(i+1);
+        var F=fbNormFilter();
+        if(dim==='all'){F.topics=[];F.senses=[];F.subs=[];F.channels=[];F.q='';}
+        else if(dim==='q'){F.q='';}
+        else{var arr=F[dim]||[];var k=arr.indexOf(val);if(k>=0)arr.splice(k,1);}
+        FB_LIST_LIM={};
+        renderFeedback();
       };
     });
   },0);
