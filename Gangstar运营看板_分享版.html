@@ -4695,6 +4695,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -14294,242 +14295,6 @@ function fbIssueHTML(it,wi,ii,weekTotal){
 }
 // ===== 周报决策卡片：议题短标签聚合 + 决策建议 =====
 var FB_TAG_RULES=[
-  [/登出|账号|登录异常|进度丢失|存档|换绑/,'账号异常'],
-  [/黑屏|闪退|崩溃|卡死|冻结|突然退出|999ms|掉帧|卡顿|性能|延迟/,'闪退崩溃'],
-  [/Bag It|粉红|火烈鸟|活动任务|每日活动|便利店/,'活动 Bug'],
-  [/穿模|虚空|掉出地图|掉下去|地图错误/,'地图穿模'],
-  [/机枪|Backbone|武器失灵|射击|瞄准|陀螺仪|灵敏度|HUD/,'武器与手感'],
-  [/摩托|自行|机车|载具|车辆|直升机|船只|飞机|超跑|车库|漂移|火车/,'载具不足'],
-  [/踢出|不活跃|帮派|公会|Gang War|官职/,'帮派管理'],
-  [/改名|昵称|头像/,'改名卡'],
-  [/警察|通缉|监狱|医院|NPC/,'警察系统'],
-  [/房屋|家具|住宅|装饰|别墅|室内/,'房屋系统'],
-  [/无聊|乏味|厌倦|没东西|内容耗尽|主线|剧情|故事|劫案|新内容|等级上限/,'内容耗尽'],
-  [/支付|充值|钻石|粉钻|礼包|购买|退款|到账/,'支付问题'],
-  [/印地|本地化|语言|翻译|Diwali|印度/,'本地化'],
-  [/网络|ping|服务器|匹配|房间|联机/,'网络与匹配'],
-  [/举报|恶意|外挂|作弊|辱骂/,'环境治理'],
-  [/精美|最佳|杰作|称赞|热爱|好玩|喜欢|爱你们|潜力|水准/,'正面口碑']
-];
-function fbTagOf(it){
-  var s=(it.theme||'')+' '+(it.orig||'');
-  for(var i=0;i<FB_TAG_RULES.length;i++){if(FB_TAG_RULES[i][0].test(s))return FB_TAG_RULES[i][1];}
-  var t=(it.theme||'').replace(/^玩家(反馈|建议|请求|反映|要求|报告|称)/,'').replace(/[，,。].*$/,'');
-  return t.slice(0,8)||'其他';
-}
-function fbMainType(types){var best='oth',v=-1;for(var k in types){if(types[k]>v){v=types[k];best=k;}}return best;}
-function fbAggTags(all,tot){
-  var m={};
-  all.forEach(function(it){
-    var tg=fbTagOf(it);
-    if(!m[tg])m[tg]={tag:tg,n:0,c:0,types:{},top:null};
-    m[tg].n+=(it.count||0);m[tg].c++;
-    var b=fbBucket(it.type||'oth');
-    m[tg].types[b]=(m[tg].types[b]||0)+(it.count||0);
-    if(!m[tg].top||(it.count||0)>(m[tg].top.count||0))m[tg].top=it;
-  });
-  var arr=[];
-  for(var k in m){var o=m[k];o.pct=tot?Math.round(o.n/tot*100):0;o.main=fbMainType(o.types);arr.push(o);}
-  arr.sort(function(a,b){return b.n-a.n;});
-  return arr;
-}
-var FB_ADVICE={
-  '账号异常':[{r:'研发',t:'最高优先级修复登出 / 换绑导致的存档丢失，出账号找回能力'},{r:'运营',t:'开申诉通道并公告处理时效，止损信任'}],
-  '闪退崩溃':[{r:'研发',t:'定位更新后崩溃 / 黑屏 / 高延迟，出热修并回归验证'},{r:'运营',t:'在 Discord 置顶公告修复进度，扭转「更新 = 新 Bug」预期'}],
-  '活动 Bug':[{r:'研发',t:'修复活动目标计数与互动触发（Bag It! / Pink Flamingo）'},{r:'运营',t:'活动期暂停强推，转做补偿与说明'}],
-  '地图穿模':[{r:'研发',t:'修复碰撞与坠落判定，覆盖改装店等高频点位'}],
-  '武器与手感':[{r:'研发',t:'修复 Backbone 车载机枪射击与自动瞄准；补陀螺仪 / 灵敏度自定义'}],
-  '载具不足':[{r:'研发',t:'将载具排入 Backlog，摩托 / 自行车优先级最高，给明确时间点'},{r:'运营',t:'在 Discord / IG 发起载具投票 + 摩托竞速 UGC，把诉求变成内容'}],
-  '帮派管理':[{r:'研发',t:'提供踢出不活跃成员、官职与扩容能力'},{r:'运营',t:'单独收集帮派首领诉求，他们是核心留存节点'}],
-  '改名卡':[{r:'研发',t:'低成本高呼声，本月排期'},{r:'运营',t:'排期后公开承诺，重建「提了有用」正循环'}],
-  '警察系统':[{r:'研发',t:'优化通缉判定与警方介入 PVP 的压制逻辑'}],
-  '房屋系统':[{r:'研发',t:'纳入长线规划（第二人生向：住宅 / 家具 / 室内）'}],
-  '内容耗尽':[{r:'研发',t:'明确主线剧情 / 大劫案 / 联系人任务的上线时间点'},{r:'运营',t:'内容真空期用教学系列 + 导演模式 UGC 填补活跃'}],
-  '支付问题':[{r:'研发',t:'核查礼包限购与资源到账（Razer Gold 粉钻未到账）'},{r:'运营',t:'客服一对一补偿，避免付费信任扩散'}],
-  '本地化':[{r:'区域',t:'提交 HQ：印地语、印度车辆 / 车载音乐 / Diwali 节庆内容'}],
-  '网络与匹配':[{r:'研发',t:'优化服务器与房间匹配机制'},{r:'运营',t:'收集玩家区域与机型分布，辅助定位'}],
-  '环境治理':[{r:'运营',t:'建立举报处理 SOP 并公示处理结果'}],
-  '正面口碑':[{r:'运营',t:'放大为素材：好评截图 + 高光时刻投 IG / Moj 做口碑扩散'}],
-  '其他':[{r:'运营',t:'持续跟进，周更回应'}]
-};
-var FB_WEEK_ACTION={
-  '10.5 - 10.11':'最优先修账号资产与更新后性能崩溃；载具（摩托）前置对冲流失',
-  '9.25 - 10.3':'四大量级 Bug 修复闭环 + 公开排期；载具进 ACT2.1 或给时间点',
-  '9.22 - 9.27':'修复 Pink Flamingo 互动；主线内容路线图需正面回应',
-  '9.14 - 9.20':'载具与剧情双线回应；把正面口碑做成素材放大扩散',
-  '9.7 - 9.13':'趁正面声量高，加速载具与内容释放节奏',
-  '8.31 - 9.6':'修复出租车事件；延续上线口碑做 KOL 二次扩散',
-  '8.24 - 8.30':'上线首周口碑健康，把载具诉求转化为留存钩子',
-  '8.17 - 8.23':'样本量过小，仅作基线观察'
-};
-function fbFallbackAction(badPct,tags){
-  if(badPct>=45)return '负面占比过高：先压高危 Bug 并公开修复排期';
-  var t0=tags&&tags[0]?tags[0].tag:'';
-  if(t0==='载具不足')return '建议：优先将载具（摩托）排入 Backlog';
-  if(t0==='内容耗尽')return '建议：明确主线内容更新时间点并对外预告';
-  if(t0==='闪退崩溃'||t0==='账号异常')return '建议：发公告说明修复进度并给补偿口径';
-  return '建议：跟进当周 TOP 诉求，周更回应进度';
-}
-// ===== 周报决策卡片：议题短标签聚合 + 决策建议 =====
-var FB_TAG_RULES=[
-  [/登出|账号|登录|进度丢失|存档|换绑|丢失进度/,'账号异常'],
-  [/黑屏|闪退|崩溃|卡死|冻结|突然退出|999ms|掉帧|卡顿|性能|延迟/,'闪退崩溃'],
-  [/Bag It|粉红|火烈鸟|活动任务|每日活动|便利店/,'活动 Bug'],
-  [/穿模|虚空|掉出地图|掉下去|地图错误/,'地图穿模'],
-  [/机枪|Backbone|武器|射击|瞄准|陀螺仪|灵敏度|HUD|枪械|手感|操作/,'武器与手感'],
-  [/摩托|自行|机车|载具|车辆|直升机|船只|飞机|超跑|车库|漂移|火车/,'载具不足'],
-  [/踢出|不活跃|公会|Gang War|官职|帮派管理|副帮派|成员管理/,'帮派管理'],
-  [/改名|昵称|头像/,'改名卡'],
-  [/警察|通缉|监狱|医院|NPC/,'警察系统'],
-  [/房屋|家具|住宅|装饰|别墅|室内/,'房屋系统'],
-  [/无聊|乏味|厌倦|没东西|内容耗尽|主线|剧情|故事|劫案|新内容|等级上限/,'内容耗尽'],
-  [/支付|充值|钻石|粉钻|礼包|购买|退款|到账/,'支付问题'],
-  [/印地|本地化|语言|翻译|Diwali|印度/,'本地化'],
-  [/网络|ping|服务器|匹配|房间|联机/,'网络与匹配'],
-  [/举报|恶意|外挂|作弊|辱骂/,'环境治理'],
-  [/精美|最佳|杰作|称赞|热爱|好玩|喜欢|爱你们|潜力|水准/,'正面口碑']
-];
-function fbTagOf(it){
-  var s=(it.theme||'')+' '+(it.orig||'');
-  for(var i=0;i<FB_TAG_RULES.length;i++){if(FB_TAG_RULES[i][0].test(s))return FB_TAG_RULES[i][1];}
-  var t=(it.theme||'').replace(/^玩家(反馈|建议|请求|反映|要求|报告|称)/,'').replace(/[，,。].*$/,'');
-  t=t.slice(0,6);
-  return t||'其他';
-}
-function fbMainType(types){var best='oth',v=-1;for(var k in types){if(types[k]>v){v=types[k];best=k;}}return best;}
-function fbAggTags(all,tot){
-  var m={};
-  all.forEach(function(it){
-    var tg=fbTagOf(it);
-    if(!m[tg])m[tg]={tag:tg,n:0,c:0,types:{},top:null};
-    m[tg].n+=(it.count||0);m[tg].c++;
-    var b=fbBucket(it.type||'oth');
-    m[tg].types[b]=(m[tg].types[b]||0)+(it.count||0);
-    if(!m[tg].top||(it.count||0)>(m[tg].top.count||0))m[tg].top=it;
-  });
-  var arr=[];
-  for(var k in m){var o=m[k];o.pct=tot?Math.round(o.n/tot*100):0;o.main=fbMainType(o.types);arr.push(o);}
-  arr.sort(function(a,b){return b.n-a.n;});
-  return arr;
-}
-var FB_ADVICE={
-  '账号异常':[{r:'研发',t:'最高优先级修复登出 / 换绑导致的存档丢失，出账号找回能力'},{r:'运营',t:'开申诉通道并公告处理时效，止损信任'}],
-  '闪退崩溃':[{r:'研发',t:'定位更新后崩溃 / 黑屏 / 高延迟，出热修并回归验证'},{r:'运营',t:'在 Discord 置顶公告修复进度，扭转「更新 = 新 Bug」预期'}],
-  '活动 Bug':[{r:'研发',t:'修复活动目标计数与互动触发（Bag It! / Pink Flamingo）'},{r:'运营',t:'活动期暂停强推，转做补偿与说明'}],
-  '地图穿模':[{r:'研发',t:'修复碰撞与坠落判定，覆盖改装店等高频点位'}],
-  '武器与手感':[{r:'研发',t:'修复 Backbone 车载机枪射击与自动瞄准；补陀螺仪 / 灵敏度自定义'}],
-  '载具不足':[{r:'研发',t:'将载具排入 Backlog，摩托 / 自行车优先级最高，给明确时间点'},{r:'运营',t:'在 Discord / IG 发起载具投票 + 摩托竞速 UGC，把诉求变成内容'}],
-  '帮派管理':[{r:'研发',t:'提供踢出不活跃成员、官职与扩容能力'},{r:'运营',t:'单独收集帮派首领诉求，他们是核心留存节点'}],
-  '改名卡':[{r:'研发',t:'低成本高呼声，本月排期'},{r:'运营',t:'排期后公开承诺，重建「提了有用」正循环'}],
-  '警察系统':[{r:'研发',t:'优化通缉判定与警方介入 PVP 的压制逻辑'}],
-  '房屋系统':[{r:'研发',t:'纳入长线规划（第二人生向：住宅 / 家具 / 室内）'}],
-  '内容耗尽':[{r:'研发',t:'明确主线剧情 / 大劫案 / 联系人任务的上线时间点'},{r:'运营',t:'内容真空期用教学系列 + 导演模式 UGC 填补活跃'}],
-  '支付问题':[{r:'研发',t:'核查礼包限购与资源到账（Razer Gold 粉钻未到账）'},{r:'运营',t:'客服一对一补偿，避免付费信任扩散'}],
-  '本地化':[{r:'区域',t:'提交 HQ：印地语、印度车辆 / 车载音乐 / Diwali 节庆内容'}],
-  '网络与匹配':[{r:'研发',t:'优化服务器与房间匹配机制'},{r:'运营',t:'收集玩家区域与机型分布，辅助定位'}],
-  '环境治理':[{r:'运营',t:'建立举报处理 SOP 并公示处理结果'}],
-  '正面口碑':[{r:'运营',t:'放大为素材：好评截图 + 高光时刻投 IG / Moj 做口碑扩散'}],
-  '其他':[{r:'运营',t:'持续跟进，周更回应'}]
-};
-var FB_WEEK_ACTION={
-  '10.5 - 10.11':'最优先修账号资产与更新后性能崩溃；载具（摩托）前置对冲流失',
-  '9.25 - 10.3':'四大量级 Bug 修复闭环 + 公开排期；载具进 ACT2.1 或给时间点',
-  '9.22 - 9.27':'修复 Pink Flamingo 互动；主线内容路线图需正面回应',
-  '9.14 - 9.20':'载具与剧情双线回应；把正面口碑做成素材放大扩散',
-  '9.7 - 9.13':'趁正面声量高，加速载具与内容释放节奏',
-  '8.31 - 9.6':'修复出租车事件；延续上线口碑做 KOL 二次扩散',
-  '8.24 - 8.30':'上线首周口碑健康，把载具诉求转化为留存钩子',
-  '8.17 - 8.23':'样本量过小，仅作基线观察'
-};
-function fbFallbackAction(badPct,tags){
-  if(badPct>=45)return '负面占比过高：先压高危 Bug 并公开修复排期';
-  var t0=tags&&tags[0]?tags[0].tag:'';
-  if(t0==='载具不足')return '建议：优先将载具（摩托）排入 Backlog';
-  if(t0==='内容耗尽')return '建议：明确主线内容更新时间点并对外预告';
-  if(t0==='闪退崩溃'||t0==='账号异常')return '建议：发公告说明修复进度并给补偿口径';
-  return '建议：跟进当周 TOP 诉求，周更回应进度';
-}
-// ===== 周报决策卡片：议题短标签聚合 + 决策建议 =====
-var FB_TAG_RULES=[
-  [/登出|账号|登录|进度丢失|存档|换绑|丢失进度/,'账号异常'],
-  [/黑屏|闪退|崩溃|卡死|冻结|突然退出|999ms|掉帧|卡顿|性能|延迟/,'闪退崩溃'],
-  [/Bag It|粉红|火烈鸟|活动任务|每日活动|便利店/,'活动 Bug'],
-  [/穿模|虚空|掉出地图|掉下去|地图错误/,'地图穿模'],
-  [/机枪|Backbone|武器|射击|瞄准|陀螺仪|灵敏度|HUD|枪械|手感|操作/,'武器与手感'],
-  [/摩托|自行|机车|载具|车辆|直升机|船只|飞机|超跑|车库|漂移|火车/,'载具不足'],
-  [/网络|ping|服务器|匹配|房间|联机|会话/,'网络与匹配'],
-  [/踢出|不活跃|公会|Gang War|官职|帮派/,'帮派管理'],
-  [/改名|昵称|头像/,'改名卡'],
-  [/警察|通缉|监狱|医院|NPC/,'警察系统'],
-  [/房屋|家具|住宅|装饰|别墅|室内/,'房屋系统'],
-  [/无聊|乏味|厌倦|没东西|内容耗尽|主线|剧情|故事|劫案|新内容|等级上限/,'内容耗尽'],
-  [/支付|充值|钻石|粉钻|礼包|购买|退款|到账/,'支付问题'],
-  [/印地|本地化|语言|翻译|Diwali|印度/,'本地化'],
-  [/举报|恶意|外挂|作弊|辱骂/,'环境治理'],
-  [/精美|最佳|杰作|称赞|热爱|好玩|喜欢|爱你们|潜力|水准/,'正面口碑']
-];
-function fbTagOf(it){
-  var s=(it.theme||'')+' '+(it.orig||'');
-  for(var i=0;i<FB_TAG_RULES.length;i++){if(FB_TAG_RULES[i][0].test(s))return FB_TAG_RULES[i][1];}
-  var t=(it.theme||'').replace(/^玩家(反馈|建议|请求|反映|要求|报告|称)/,'').replace(/[，,。].*$/,'');
-  t=t.slice(0,6);
-  return t||'其他';
-}
-function fbMainType(types){var best='oth',v=-1;for(var k in types){if(types[k]>v){v=types[k];best=k;}}return best;}
-function fbAggTags(all,tot){
-  var m={};
-  all.forEach(function(it){
-    var tg=fbTagOf(it);
-    if(!m[tg])m[tg]={tag:tg,n:0,c:0,types:{},top:null};
-    m[tg].n+=(it.count||0);m[tg].c++;
-    var b=fbBucket(it.type||'oth');
-    m[tg].types[b]=(m[tg].types[b]||0)+(it.count||0);
-    if(!m[tg].top||(it.count||0)>(m[tg].top.count||0))m[tg].top=it;
-  });
-  var arr=[];
-  for(var k in m){var o=m[k];o.pct=tot?Math.round(o.n/tot*100):0;o.main=fbMainType(o.types);arr.push(o);}
-  arr.sort(function(a,b){return b.n-a.n;});
-  return arr;
-}
-var FB_ADVICE={
-  '账号异常':[{r:'研发',t:'最高优先级修复登出 / 换绑导致的存档丢失，出账号找回能力'},{r:'运营',t:'开申诉通道并公告处理时效，止损信任'}],
-  '闪退崩溃':[{r:'研发',t:'定位更新后崩溃 / 黑屏 / 高延迟，出热修并回归验证'},{r:'运营',t:'在 Discord 置顶公告修复进度，扭转「更新 = 新 Bug」预期'}],
-  '活动 Bug':[{r:'研发',t:'修复活动目标计数与互动触发（Bag It! / Pink Flamingo）'},{r:'运营',t:'活动期暂停强推，转做补偿与说明'}],
-  '地图穿模':[{r:'研发',t:'修复碰撞与坠落判定，覆盖改装店等高频点位'}],
-  '武器与手感':[{r:'研发',t:'修复 Backbone 车载机枪射击与自动瞄准；补陀螺仪 / 灵敏度自定义'}],
-  '载具不足':[{r:'研发',t:'将载具排入 Backlog，摩托 / 自行车优先级最高，给明确时间点'},{r:'运营',t:'在 Discord / IG 发起载具投票 + 摩托竞速 UGC，把诉求变成内容'}],
-  '帮派管理':[{r:'研发',t:'提供踢出不活跃成员、官职与扩容能力'},{r:'运营',t:'单独收集帮派首领诉求，他们是核心留存节点'}],
-  '改名卡':[{r:'研发',t:'低成本高呼声，本月排期'},{r:'运营',t:'排期后公开承诺，重建「提了有用」正循环'}],
-  '警察系统':[{r:'研发',t:'优化通缉判定与警方介入 PVP 的压制逻辑'}],
-  '房屋系统':[{r:'研发',t:'纳入长线规划（第二人生向：住宅 / 家具 / 室内）'}],
-  '内容耗尽':[{r:'研发',t:'明确主线剧情 / 大劫案 / 联系人任务的上线时间点'},{r:'运营',t:'内容真空期用教学系列 + 导演模式 UGC 填补活跃'}],
-  '支付问题':[{r:'研发',t:'核查礼包限购与资源到账（Razer Gold 粉钻未到账）'},{r:'运营',t:'客服一对一补偿，避免付费信任扩散'}],
-  '本地化':[{r:'区域',t:'提交 HQ：印地语、印度车辆 / 车载音乐 / Diwali 节庆内容'}],
-  '网络与匹配':[{r:'研发',t:'优化服务器与房间匹配机制'},{r:'运营',t:'收集玩家区域与机型分布，辅助定位'}],
-  '环境治理':[{r:'运营',t:'建立举报处理 SOP 并公示处理结果'}],
-  '正面口碑':[{r:'运营',t:'放大为素材：好评截图 + 高光时刻投 IG / Moj 做口碑扩散'}],
-  '其他':[{r:'运营',t:'持续跟进，周更回应'}]
-};
-var FB_WEEK_ACTION={
-  '10.5 - 10.11':'最优先修账号资产与更新后性能崩溃；载具（摩托）前置对冲流失',
-  '9.25 - 10.3':'四大量级 Bug 修复闭环 + 公开排期；载具进 ACT2.1 或给时间点',
-  '9.22 - 9.27':'修复 Pink Flamingo 互动；主线内容路线图需正面回应',
-  '9.14 - 9.20':'载具与剧情双线回应；把正面口碑做成素材放大扩散',
-  '9.7 - 9.13':'趁正面声量高，加速载具与内容释放节奏',
-  '8.31 - 9.6':'修复出租车事件；延续上线口碑做 KOL 二次扩散',
-  '8.24 - 8.30':'上线首周口碑健康，把载具诉求转化为留存钩子',
-  '8.17 - 8.23':'样本量过小，仅作基线观察'
-};
-function fbFallbackAction(badPct,tags){
-  if(badPct>=45)return '负面占比过高：先压高危 Bug 并公开修复排期';
-  var t0=tags&&tags[0]?tags[0].tag:'';
-  if(t0==='载具不足')return '建议：优先将载具（摩托）排入 Backlog';
-  if(t0==='内容耗尽')return '建议：明确主线内容更新时间点并对外预告';
-  if(t0==='闪退崩溃'||t0==='账号异常')return '建议：发公告说明修复进度并给补偿口径';
-  return '建议：跟进当周 TOP 诉求，周更回应进度';
-}
-// ===== 周报决策卡片：议题短标签聚合 + 决策建议 =====
-var FB_TAG_RULES=[
   [/登出|账号|登录|进度丢失|存档|换绑|丢失进度/,'账号异常'],
   [/黑屏|闪退|崩溃|卡死|冻结|突然退出|999ms|掉帧|卡顿|性能|延迟/,'闪退崩溃'],
   [/Bag It|粉红|火烈鸟|活动任务|每日活动|便利店/,'活动 Bug'],
@@ -14607,28 +14372,56 @@ function fbFallbackAction(badPct,tags){
   if(t0==='闪退崩溃'||t0==='账号异常')return '建议：发公告说明修复进度并给补偿口径';
   return '建议：跟进当周 TOP 诉求，周更回应进度';
 }
+// ===== 周报列表 v2（含筛选联动：时间范围 / 话题 / 风向 / 来源） =====
 function fbWeeksHTML(chrono){
   if(!chrono.length)return '<div class="fb4-empty">暂无周数据</div>';
+  var F=FB_FILTER||{scope:'week',topic:'',sense:'',channel:''};
   var rawCount=0,keepCount=0;
   var grpDef=[
     {t:'good',cls:'good',ic:'👍',name:'积极反馈'},
     {t:'sug',cls:'sug',ic:'💡',name:'玩家建议'},
     {t:'bad',cls:'bad',ic:'⚠️',name:'体验 / 稳定性问题'}
   ];
-  var blocks=chrono.slice().reverse().map(function(w,idx){
+  chrono.forEach(function(w){
     var raw=(w.official||[]).concat(w.community||[]);
     rawCount+=raw.length;
     var seen={};
-    var all=raw.filter(function(it){
-      if(fbIsDrop(it))return false;
+    raw.forEach(function(it){
+      if(fbIsDrop(it))return;
       var k=(it.orig||it.theme||'').trim().toLowerCase();
-      if(seen[k])return false; seen[k]=1; return true;
+      if(seen[k])return;seen[k]=1;keepCount++;
     });
-    keepCount+=all.length;
-    var seg=fbSeg(all);
-    var weekTotal=seg.t||0;
-    var open=idx===0?' open':'';
-    var badPct=seg.bp||0, posPct=seg.np||0;
+  });
+  var allCh=[];
+  chrono.forEach(function(w){
+    fbWeekRawItems(w).forEach(function(it){
+      String(it.channel||'').split(',').forEach(function(c){c=c.trim();if(c&&allCh.indexOf(c)<0)allCh.push(c);});
+    });
+  });
+  allCh.sort();
+  function fbMatch(it){
+    if(F.topic&&fbTopicKeyOf(it)!==F.topic)return false;
+    if(F.sense&&fbSenseKey(it)!==F.sense)return false;
+    if(F.channel&&String(it.channel||'').indexOf(F.channel)<0)return false;
+    return true;
+  }
+  var rev=chrono.slice().reverse();
+  var pick=[];
+  if(F.scope==='week')pick=[0];
+  else if(F.scope==='last')pick=rev.length>1?[1]:[];
+  else pick=rev.map(function(_,i){return i;});
+  var hasFilter=!!(F.topic||F.sense||F.channel)||F.scope!=='all';
+  var matchedTotal=0;
+  var blocks=pick.map(function(ri){
+    var w=rev[ri];
+    var all=fbWeekRawItems(w);
+    var shown=all.filter(fbMatch);
+    matchedTotal+=shown.length;
+    var segAll=fbSeg(all);
+    var seg=fbSeg(shown);
+    var weekTotal=segAll.t||0;
+    var open=(hasFilter||ri===0)?' open':'';
+    var badPct=segAll.bp||0,posPct=segAll.np||0;
     var lvl=badPct>=45?'hi':(badPct>=28?'mid':'ok');
     var lvTxt=lvl==='hi'?'高危承压':(lvl==='mid'?'波动':'健康');
     var tags=fbAggTags(all,weekTotal).slice(0,8);
@@ -14652,13 +14445,18 @@ function fbWeeksHTML(chrono){
       +'</div>';
     }).join('');
     var groups=grpDef.map(function(g){
-      var its=all.filter(function(it){return fbBucket(it.type||'oth')===g.t;}).sort(function(a,b){return (b.count||0)-(a.count||0);});
+      var its=shown.filter(function(it){return fbBucket(it.type||'oth')===g.t;}).sort(function(a,b){return (b.count||0)-(a.count||0);});
       if(!its.length)return '';
-      var cards=its.map(function(it,i){return fbIssueHTML(it,idx,i,weekTotal);}).join('');
+      var cards=its.map(function(it,i){
+        var html=fbIssueHTML(it,ri,i,weekTotal);
+        return html.replace('class="fb4-iss"','class="fb4-iss" data-topic="'+fbTopicKeyOf(it)+'" data-sense="'+fbSenseKey(it)+'"');
+      }).join('');
       return '<div class="fb4-grp fb4-grp-'+g.cls+'">'
         +'<div class="fb4-grp-h"><span class="fb4-grp-ic">'+g.ic+'</span><span class="fb4-grp-n">'+g.name+'</span><span class="fb4-grp-c">'+its.length+'</span></div>'
         +'<div class="fb4-issues">'+cards+'</div></div>';
     }).join('');
+    var emptyHtml=shown.length?'':'<div class="fbf-empty">该周没有符合当前筛选条件的反馈。可切换时间范围或清除筛选后重试。</div>';
+    var scopeNote=(F.topic||F.sense||F.channel)?'<div class="fbf-hit">筛选命中 '+shown.length+' 条议题（该周共 '+all.length+' 条）</div>':'';
     return '<div class="fb4-wk fb5-wk'+open+'">'
       +'<div class="fb4-wk-head fb5-head">'
         +'<div class="fb5-c fb5-c1"><div class="fb5-week">'+fbEsc(w.week)+'</div>'
@@ -14669,6 +14467,7 @@ function fbWeeksHTML(chrono){
           +'<span class="fb4-wk-chev fb5-chev">▶</span></div>'
       +'</div>'
       +'<div class="fb4-wk-body fb5-body">'
+        +scopeNote+emptyHtml
         +'<div class="fb5-panel">'
           +'<div class="fb5-phead"><span>议题细分（按提及量聚合）</span><span>决策建议手册</span></div>'
           +rows
@@ -14678,7 +14477,76 @@ function fbWeeksHTML(chrono){
       +'</div>'
     +'</div>';
   }).join('');
-  var filteredNote = rawCount>keepCount ? '<div class="fb-filtered">已筛选 '+(rawCount-keepCount)+' 条无效 / 重复评论（系统提示、刷屏好评、纯表情、单字符噪声、重复报错），仅保留真实玩家反馈</div>' : '';
+  if(!pick.length){
+    blocks='<div class="fbf-empty">当前时间范围没有可展示的周数据（数据仅有 '+chrono.length+' 周）。</div>';
+  }
+  var filteredNote=rawCount>keepCount?'<div class="fb-filtered">已筛选 '+(rawCount-keepCount)+' 条无效 / 重复评论（系统提示、刷屏好评、纯表情、单字符噪声、重复报错），仅保留真实玩家反馈</div>':'';
+  var tmap={};
+  pick.forEach(function(ri){
+    var w=rev[ri];if(!w)return;
+    fbWeekRawItems(w).forEach(function(it){
+      var k=fbTopicKeyOf(it);tmap[k]=(tmap[k]||0)+(Number(it.count)||0);
+    });
+  });
+  var topicOpts=FB_TOPICS.filter(function(tp){return tmap[tp.key];}).map(function(tp){return {k:tp.key,n:tp.name};});
+  topicOpts.sort(function(a,b){return (tmap[b.k]||0)-(tmap[a.k]||0);});
+  function btn(attr,val,label,cur){
+    return '<button class="fbf-btn'+(cur===val?' on':'')+'" data-'+attr+'="'+val+'">'+label+'</button>';
+  }
+  var scopeLabel={week:'本周',last:'上周',all:'全部周'}[F.scope]||'本周';
+  var senseLabel='';
+  FB_SENSE_DEF.forEach(function(s){if(s.k===F.sense)senseLabel=s.n;});
+  var topicName=F.topic&&FB_K2T[F.topic]?FB_K2T[F.topic].name:'';
+  var bar='<style>'
+   +'.fbf-bar{background:#fff;border:1px solid #EEF0F4;border-radius:12px;padding:14px 16px;margin:8px 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.03)}'
+   +'.fbf-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}'
+   +'.fbf-row:last-child{margin-bottom:0}'
+   +'.fbf-lab{font-size:11.5px;font-weight:800;color:#64748b;min-width:52px;flex:none}'
+   +'.fbf-btn{font-size:11.5px;font-weight:600;color:#5b6472;background:#f6f7f9;border:1px solid #e6e8ee;border-radius:999px;padding:4px 11px;cursor:pointer;font-family:inherit;transition:.15s}'
+   +'.fbf-btn:hover{border-color:#c3c9f7;color:#4338ca}'
+   +'.fbf-btn.on{background:#eef2ff;border-color:#b9c2f5;color:#3730a3;font-weight:700}'
+   +'.fbf-cur{border-top:1px dashed #e6e8ee;padding-top:10px;align-items:center}'
+   +'.fbf-chip{font-size:11px;font-weight:700;background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;border-radius:8px;padding:3px 9px}'
+   +'.fbf-chip.none{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}'
+   +'.fbf-clear{margin-left:auto;font-size:11.5px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:4px 11px;cursor:pointer;font-family:inherit}'
+   +'.fbf-clear:hover{background:#fee2e2}'
+   +'.fbf-empty{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;padding:14px 16px;font-size:12.5px;color:#64748b;line-height:1.7;margin:10px 0}'
+   +'.fbf-hit{font-size:11.5px;font-weight:700;color:#3730a3;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:6px 10px;display:inline-block;margin:10px 0}'
+   +'@media(max-width:700px){.fbf-lab{min-width:44px}}'
+   +'</style>';
+  bar+='<div class="fbf-bar" id="fbListAnchor">';
+  bar+='<div class="fbf-row"><span class="fbf-lab">时间范围</span>'
+    +btn('fscope','week','本周',F.scope)+btn('fscope','last','上周',F.scope)+btn('fscope','all','全部周',F.scope)+'</div>';
+  bar+='<div class="fbf-row"><span class="fbf-lab">话题</span>'+btn('ftopic','','全部话题',F.topic)
+    +topicOpts.map(function(o){return btn('ftopic',o.k,o.n,F.topic);}).join('')+'</div>';
+  bar+='<div class="fbf-row"><span class="fbf-lab">风向</span>'+btn('fsense','','全部风向',F.sense)
+    +FB_SENSE_DEF.map(function(s){return btn('fsense',s.k,s.n,F.sense);}).join('')+'</div>';
+  if(allCh.length){
+    bar+='<div class="fbf-row"><span class="fbf-lab">来源</span>'+btn('fch','','全部来源',F.channel)
+      +allCh.map(function(c){return btn('fch',c,fbEsc(fbChName(c)),F.channel);}).join('')+'</div>';
+  }
+  bar+='<div class="fbf-row fbf-cur"><span class="fbf-lab">当前筛选</span>'
+    +'<span class="fbf-chip">'+scopeLabel+'</span>'
+    +'<span class="fbf-chip'+(topicName?'':' none')+'">'+(topicName||'全部话题')+'</span>'
+    +'<span class="fbf-chip'+(senseLabel?'':' none')+'">'+(senseLabel||'全部风向')+'</span>'
+    +'<span class="fbf-chip'+(F.channel?'':' none')+'">'+(F.channel?fbEsc(fbChName(F.channel)):'全部来源')+'</span>'
+    +'<button class="fbf-clear" data-fclear="1">清除筛选</button></div>';
+  bar+='</div>';
+  setTimeout(function(){
+    var el=document.getElementById('fbListAnchor');if(!el)return;
+    function rerender(keepPos){
+      var top=null;
+      if(keepPos&&el){top=el.getBoundingClientRect().top+window.scrollY;}
+      renderFeedback();
+      if(top!=null){window.scrollTo(0,Math.max(0,top-70));}
+    }
+    el.querySelectorAll('[data-fscope]').forEach(function(b){b.onclick=function(){FB_FILTER.scope=b.getAttribute('data-fscope');rerender(true);};});
+    el.querySelectorAll('[data-ftopic]').forEach(function(b){b.onclick=function(){FB_FILTER.topic=b.getAttribute('data-ftopic');rerender(true);};});
+    el.querySelectorAll('[data-fsense]').forEach(function(b){b.onclick=function(){FB_FILTER.sense=b.getAttribute('data-fsense');rerender(true);};});
+    el.querySelectorAll('[data-fch]').forEach(function(b){b.onclick=function(){FB_FILTER.channel=b.getAttribute('data-fch');rerender(true);};});
+    var cl=el.querySelector('[data-fclear]');
+    if(cl)cl.onclick=function(){FB_FILTER={scope:'week',topic:'',sense:'',channel:''};rerender(true);};
+  },0);
   var css='<style>'
    +'.fb5-wk{border-radius:12px}'
    +'.fb5-head{display:flex;align-items:stretch;gap:0;padding:0}'
@@ -14724,8 +14592,9 @@ function fbWeeksHTML(chrono){
    +'.fb5-allh{font-size:12px;font-weight:800;color:#64748b;margin:20px 0 2px;letter-spacing:.02em}'
    +'@media(max-width:980px){.fb5-head{flex-wrap:wrap}.fb5-c1,.fb5-c2,.fb5-c3,.fb5-c4{flex:0 0 100%;border:0!important;border-top:1px solid #f1f5f9!important}.fb5-c1{border-top:0!important}.fb5-c4{justify-content:flex-start}.fb5-mini{flex-direction:row;text-align:left;gap:12px}.fb5-row{grid-template-columns:1fr}.fb5-r{border-left:0;border-top:1px solid #eef2f7}}'
    +'</style>';
-  return css+'<div class="fb4-weeks"><div class="fb4-weeks-h">历史周报 · 每周一块（点击周标题展开/收起，点击议题查看真实玩家原声）</div>'+filteredNote+blocks+'</div>';
+  return css+'<div class="fb4-weeks"><div class="fb4-weeks-h">原始玩家反馈 · 支持按时间范围 / 话题 / 风向 / 来源筛选（点击议题查看玩家原声）</div>'+filteredNote+bar+blocks+'</div>';
 }
+
 var fbTip=(function(){var t=document.getElementById('fbTip');if(!t){t=document.createElement('div');t.id='fbTip';t.className='fb-tip';document.body.appendChild(t);}return t;})();
 function showFbTip(el,e){var p=el.getAttribute('data-prev')||'';if(!p){fbTip.style.display='none';return;}fbTip.innerHTML='<div class="fb-tip-h">🗣 玩家原声预览</div><div class="fb-tip-t">'+p+'</div>';fbTip.style.display='block';var x=e.clientX+14,y=e.clientY+14,w=fbTip.offsetWidth,h=fbTip.offsetHeight;if(x+w>window.innerWidth-8)x=e.clientX-w-14;if(y+h>window.innerHeight-8)y=e.clientY-h-14;fbTip.style.left=x+'px';fbTip.style.top=y+'px';}
 function hideFbTip(){fbTip.style.display='none';}
@@ -14836,6 +14705,252 @@ function renderSentimentCards(){
   return h;
 }
 
+// ===== 本周玩家反馈风向（话题 × 风向 · 与下方原始反馈联动） =====
+var FB_FILTER={scope:'week',topic:'',sense:'',channel:''};
+var FB_SENSE_DEF=[
+  {k:'pos',n:'正向认可',short:'认可'},
+  {k:'neg',n:'负向吐槽',short:'吐槽'},
+  {k:'sug',n:'改进建议',short:'建议'},
+  {k:'na',n:'未分类',short:'未分类'}
+];
+var FB_TOPICS=[
+  {key:'vehicle',name:'载具体验',en:'Vehicles',tags:['载具不足']},
+  {key:'content',name:'任务与游戏内容',en:'Missions & Content',tags:['内容耗尽','活动 Bug']},
+  {key:'bug',name:'性能与 Bug',en:'Performance & Bugs',tags:['闪退崩溃','地图穿模']},
+  {key:'feature',name:'功能与系统',en:'Features & Systems',tags:['武器与手感','警察系统','房屋系统','网络与匹配','环境治理']},
+  {key:'gang',name:'帮派与社交',en:'Gangs & Social',tags:['帮派管理','改名卡']},
+  {key:'account',name:'账号与登录',en:'Account',tags:['账号异常']},
+  {key:'pay',name:'支付与商业化',en:'Payment',tags:['支付问题']},
+  {key:'local',name:'本地化与区域',en:'Localization',tags:['本地化']},
+  {key:'praise',name:'口碑与其他',en:'Praise & Others',tags:['正面口碑']},
+  {key:'other',name:'未分类',en:'Unclassified',tags:['其他']}
+];
+var FB_T2K={};
+(function(){FB_TOPICS.forEach(function(tp){tp.tags.forEach(function(t){FB_T2K[t]=tp.key;});});})();
+var FB_K2T={};
+(function(){FB_TOPICS.forEach(function(tp){FB_K2T[tp.key]=tp;});})();
+function fbSenseKey(it){
+  var t=String(it.type||'').toLowerCase();
+  if(t==='good')return 'pos';
+  if(t==='bad')return 'neg';
+  if(t==='sug')return 'sug';
+  return 'na';
+}
+function fbTopicKeyOf(it){return FB_T2K[fbTagOf(it)]||'other';}
+function fbWeekRawItems(w){
+  var raw=(w.official||[]).concat(w.community||[]);
+  var seen={};
+  return raw.filter(function(it){
+    if(fbIsDrop(it))return false;
+    var k=(it.orig||it.theme||'').trim().toLowerCase();
+    if(seen[k])return false;seen[k]=1;return true;
+  });
+}
+function fbChannelSet(items){
+  var m={};
+  items.forEach(function(it){
+    String(it.channel||'').split(',').forEach(function(c){
+      c=c.trim();if(c)m[c]=1;
+    });
+  });
+  return Object.keys(m).sort();
+}
+function fbWindStats(chrono){
+  var cur=chrono[chrono.length-1]||null;
+  var prev=chrono.length>1?chrono[chrono.length-2]:null;
+  var curItems=cur?fbWeekRawItems(cur):[];
+  var prevItems=prev?fbWeekRawItems(prev):[];
+  var agg={};
+  FB_TOPICS.forEach(function(tp){agg[tp.key]={key:tp.key,name:tp.name,en:tp.en,n:0,c:0,pos:0,neg:0,sug:0,na:0,tops:[]};});
+  curItems.forEach(function(it){
+    var k=fbTopicKeyOf(it);if(!agg[k])k='other';
+    var a=agg[k];var c=Number(it.count)||0;
+    a.n+=c;a.c++;a[fbSenseKey(it)]+=c;a.tops.push(it);
+  });
+  var totalN=0,totalC=curItems.length;
+  curItems.forEach(function(it){totalN+=Number(it.count)||0;});
+  var prevN={};
+  prevItems.forEach(function(it){
+    var k=fbTopicKeyOf(it);if(!prevN[k])prevN[k]=0;prevN[k]+=Number(it.count)||0;
+  });
+  var topics=[];
+  for(var k in agg){
+    var a=agg[k];
+    if(a.n===0&&a.c===0)continue;
+    a.tops.sort(function(x,y){return (Number(y.count)||0)-(Number(x.count)||0);});
+    a.pct=totalN?Math.round(a.n/totalN*100):0;
+    var pv=prevN[k];
+    a.prev=(pv==null?null:pv);
+    a.delta=(pv==null?null:a.n-pv);
+    topics.push(a);
+  }
+  topics.sort(function(a,b){return b.n-a.n;});
+  var sense={pos:0,neg:0,sug:0,na:0};
+  curItems.forEach(function(it){sense[fbSenseKey(it)]+=Number(it.count)||0;});
+  return {cur:cur,prev:prev,curItems:curItems,prevItems:prevItems,totalN:totalN,totalC:totalC,topics:topics,sense:sense,channels:fbChannelSet(curItems),hasPrev:!!prev};
+}
+function fbTopicView(a){
+  if(!a.tops.length)return '本周暂无该话题的集中反馈。';
+  var lead=a.neg>=a.sug&&a.neg>=a.pos?'neg':(a.sug>=a.pos?'sug':'pos');
+  var top1=a.tops[0];
+  var zh=String(top1.theme||'').replace(/^玩家(反馈|建议|请求|反映|要求|报告|称)/,'').replace(/[，,。；;].*$/,'');
+  if(zh.length>28)zh=zh.slice(0,28)+'…';
+  var map={neg:'玩家主要在吐槽：',sug:'玩家的核心诉求是：',pos:'玩家的认可点在于：'};
+  if(!zh)return '本周该话题反馈较分散，未形成集中观点。';
+  return (map[lead]||'')+zh+'。';
+}
+function fbTrendText(a){
+  if(!a||a.prev==null)return '<span class="fbw-trend none">较上周 —（无上周数据）</span>';
+  if(a.prev===0)return '<span class="fbw-trend new">较上周 新增话题</span>';
+  var d=a.delta;
+  if(d===0)return '<span class="fbw-trend flat">较上周 持平</span>';
+  var pct=Math.round(Math.abs(d)/a.prev*100);
+  return '<span class="fbw-trend '+(d>0?'up':'down')+'">较上周 '+(d>0?'↑ +':'↓ -')+Math.abs(d)+' 提及（'+(d>0?'+':'-')+pct+'%）</span>';
+}
+function fbWindSummary(st){
+  var out=[];
+  var cur=st.cur;
+  var small=st.totalC<30;
+  var t0=st.topics[0];
+  var s1='本周（'+fbEsc(cur?cur.week:'—')+'）共 '+st.totalC+' 条反馈、'+st.totalN+' 次提及，覆盖 '+st.topics.length+' 个话题；讨论量最高的是「'+(t0?t0.name:'—')+'」'+(t0?'（'+t0.n+' 次提及，占 '+t0.pct+'%）':'')+'。';
+  if(small)s1='<b class="fbw-warn">样本有限</b> · '+s1;
+  out.push(s1);
+  var s=st.sense,tot=st.totalN||1;
+  var pp=Math.round(s.pos/tot*100),np=Math.round(s.neg/tot*100),sp=Math.round(s.sug/tot*100);
+  var negTop=st.topics.slice().sort(function(a,b){return b.neg-a.neg;})[0];
+  var sugTop=st.topics.slice().sort(function(a,b){return b.sug-a.sug;})[0];
+  var posTop=st.topics.slice().sort(function(a,b){return b.pos-a.pos;})[0];
+  var s2='风向上，正向认可 '+pp+'%、负向吐槽 '+np+'%、改进建议 '+sp+'%（按提及次数统计）';
+  var seg=[];
+  if(np>0&&negTop&&negTop.neg>0)seg.push('负向集中在「'+negTop.name+'」');
+  if(sp>0&&sugTop&&sugTop.sug>0)seg.push('改进诉求集中在「'+sugTop.name+'」');
+  if(pp>0&&posTop&&posTop.pos>0)seg.push('正向认可集中在「'+posTop.name+'」');
+  if(seg.length)s2+='：'+seg.join('；');
+  out.push(s2+'。');
+  var s3;
+  if(!st.hasPrev){s3='上周数据缺失，无法进行周环比判断。';}
+  else{
+    var up=st.topics.filter(function(a){return a.prev!=null&&a.delta>0;}).sort(function(a,b){return b.delta-a.delta;});
+    var down=st.topics.filter(function(a){return a.prev!=null&&a.delta<0;}).sort(function(a,b){return a.delta-b.delta;});
+    if(up.length){
+      s3='值得优先关注：讨论量上升的话题是 '+up.slice(0,2).map(function(a){return '「'+a.name+'」+'+a.delta;}).join('、')+'。';
+      if(down.length)s3+='下降最明显的是「'+down[0].name+'」'+down[0].delta+'。';
+    }else if(down.length){
+      s3='本周没有上升的话题；下降最明显的是「'+down[0].name+'」'+down[0].delta+'。';
+    }else{s3='与上周相比各话题讨论量基本持平。';}
+  }
+  out.push(s3);
+  return out;
+}
+function fbDrill(topic,sense){
+  FB_FILTER={scope:'week',topic:topic||'',sense:sense||'',channel:''};
+  var y=window.scrollY||0;
+  renderFeedback();
+  var el=document.getElementById('fbListAnchor');
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+  else{window.scrollTo(0,y);}
+}
+function renderWindModule(chrono){
+  if(!chrono||!chrono.length)return '';
+  var st=fbWindStats(chrono);
+  var h='<style>'
+   +'.fbw-root{background:#F8F9FB;border:1px solid #eceef3;border-radius:16px;padding:20px 18px 18px;margin:18px 0 6px}'
+   +'.fbw-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}'
+   +'.fbw-title{margin:0;font-size:22px;font-weight:800;color:#22252b;letter-spacing:.3px}'
+   +'.fbw-week{font-size:11px;color:#6b7280;background:#fff;border:1px solid #e6e8ee;border-radius:999px;padding:3px 10px}'
+   +'.fbw-sum{background:#fff;border:1px solid #e6e8ee;border-left:3px solid #7e97a8;border-radius:10px;padding:12px 14px;margin-bottom:16px}'
+   +'.fbw-sum p{margin:0 0 5px;font-size:12.5px;line-height:1.75;color:#3f4652}'
+   +'.fbw-sum p:last-child{margin-bottom:0}'
+   +'.fbw-warn{color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:1px 6px;font-size:11px}'
+   +'.fbw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}'
+   +'.fbw-card{background:#fff;border:1px solid #eceef3;border-radius:12px;padding:16px;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;cursor:pointer}'
+   +'.fbw-card:hover{transform:translateY(-2px);border-color:#c3c9f7;box-shadow:0 8px 20px rgba(34,37,43,.07)}'
+   +'.fbw-ct{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}'
+   +'.fbw-cn{font-size:15px;font-weight:800;color:#22252b}'
+   +'.fbw-ce{font-size:10.5px;color:#9aa1ad;margin-left:6px;font-weight:600}'
+   +'.fbw-cnum{font-size:12px;font-weight:700;color:#6b7280;white-space:nowrap}'
+   +'.fbw-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;background:#eef0f4;margin-bottom:8px}'
+   +'.fbw-bar i{display:block;height:100%}'
+   +'.fbw-bpos{background:#16a34a}.fbw-bneg{background:#dc2626}.fbw-bsug{background:#ea580c}.fbw-bna{background:#cbd5e1}'
+   +'.fbw-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}'
+   +'.fbw-lg{font-size:11px;font-weight:700;border-radius:7px;padding:3px 8px;border:1px solid transparent;cursor:pointer;transition:.15s}'
+   +'.fbw-lg:hover{filter:brightness(.95);box-shadow:0 2px 6px rgba(34,37,43,.12)}'
+   +'.fbw-lg.pos{background:#ecfdf5;color:#15803d;border-color:#a7f3d0}'
+   +'.fbw-lg.neg{background:#fef2f2;color:#b91c1c;border-color:#fecaca}'
+   +'.fbw-lg.sug{background:#fff7ed;color:#c2410c;border-color:#fed7aa}'
+   +'.fbw-lg.na{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}'
+   +'.fbw-lg.zero{opacity:.45}'
+   +'.fbw-view{font-size:12.5px;line-height:1.65;color:#4b5563;margin-bottom:10px}'
+   +'.fbw-trend{font-size:11px;font-weight:700;display:inline-block;margin-bottom:10px}'
+   +'.fbw-trend.up{color:#b91c1c}.fbw-trend.down{color:#15803d}.fbw-trend.flat{color:#94a3b8}.fbw-trend.new{color:#4338ca}.fbw-trend.none{color:#94a3b8}'
+   +'.fbw-quotes{border-top:1px dashed #e6e8ee;padding-top:9px;margin-bottom:10px}'
+   +'.fbw-q{font-size:11.5px;line-height:1.6;color:#5b6472;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}'
+   +'.fbw-q b{color:#334155;font-weight:700}'
+   +'.fbw-q.en{color:#8b93a0;font-style:italic}'
+   +'.fbw-more{align-self:flex-start;font-size:11.5px;font-weight:700;color:#4338ca;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:5px 10px;cursor:pointer}'
+   +'.fbw-more:hover{background:#e0e7ff}'
+   +'.fbw-tip{font-size:11px;color:#8b93a0;margin-top:10px;line-height:1.6}'
+   +'@media(max-width:700px){.fbw-grid{grid-template-columns:1fr}.fbw-title{font-size:19px}}'
+   +'</style>';
+  h+='<section class="fbw-root">';
+  h+='<div class="fbw-head"><h3 class="fbw-title">本周玩家反馈风向</h3>'
+   +'<span class="fbw-week">统计周期 '+(st.cur?fbEsc(st.cur.week):'—')+' · 共 '+st.totalN+' 次提及</span></div>';
+  var sum=fbWindSummary(st);
+  h+='<div class="fbw-sum">'+sum.map(function(p){return '<p>'+p+'</p>';}).join('')+'</div>';
+  h+='<div class="fbw-grid">';
+  st.topics.forEach(function(a){
+    var tot=a.n||1;
+    h+='<div class="fbw-card" data-topic="'+a.key+'">';
+    h+='<div class="fbw-ct"><span><span class="fbw-cn">'+a.name+'</span><span class="fbw-ce">'+a.en+'</span></span>'
+      +'<span class="fbw-cnum">'+a.n+' 提及 · '+a.c+' 条议题</span></div>';
+    h+='<div class="fbw-bar">'
+      +'<i class="fbw-bpos" style="width:'+(a.pos/tot*100)+'%"></i>'
+      +'<i class="fbw-bneg" style="width:'+(a.neg/tot*100)+'%"></i>'
+      +'<i class="fbw-bsug" style="width:'+(a.sug/tot*100)+'%"></i>'
+      +'<i class="fbw-bna" style="width:'+(a.na/tot*100)+'%"></i></div>';
+    h+='<div class="fbw-legend">';
+    FB_SENSE_DEF.forEach(function(sd){
+      var v=a[sd.k];
+      h+='<span class="fbw-lg '+sd.k+(v?'':' zero')+'" data-topic="'+a.key+'" data-sense="'+sd.k+'" data-v="'+v+'" title="'+(v?'点击下钻查看该话题的'+sd.n:'本周该话题无'+sd.n+'反馈')+'">'+sd.n+' '+v+'</span>';
+    });
+    h+='</div>';
+    h+='<div class="fbw-view">'+fbEsc(fbTopicView(a))+'</div>';
+    h+=fbTrendText(a);
+    var qs=a.tops.slice(0,2);
+    if(qs.length){
+      h+='<div class="fbw-quotes">';
+      qs.forEach(function(it){
+        var zh=String(it.theme||'').slice(0,60);
+        var en=String(it.orig||'').slice(0,110);
+        h+='<div class="fbw-q"><b>'+fbEsc(zh)+'</b></div>';
+        if(en)h+='<div class="fbw-q en">“'+fbEsc(en)+'”</div>';
+      });
+      h+='</div>';
+    }
+    h+='<span class="fbw-more" data-topic="'+a.key+'" data-sense="">查看详情 →</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  h+='<div class="fbw-tip">口径说明：同一条反馈可能同时表达认可与建议，按表达主情绪归类；各话题提及数之和可能大于反馈总量，属正常的多标签统计。点击卡片或风向标签可下钻到下方原始评论。</div>';
+  h+='</section>';
+  setTimeout(function(){
+    var root=document.querySelector('.fbw-root');if(!root)return;
+    root.querySelectorAll('.fbw-card').forEach(function(c){
+      c.onclick=function(){fbDrill(c.getAttribute('data-topic'),'');};
+    });
+    root.querySelectorAll('.fbw-lg,.fbw-more').forEach(function(b){
+      b.onclick=function(e){
+        e.stopPropagation();
+        var sk=b.getAttribute('data-sense');
+        var v=Number(b.getAttribute('data-v')||'0');
+        if(sk&&v===0)return;
+        fbDrill(b.getAttribute('data-topic'),sk==='na'?'':sk);
+      };
+    });
+  },0);
+  return h;
+}
+
 function renderFeedback(){
   var d=getFeedback();var weeks=d.weeks||[];
   var html='<h2>💬 玩家反馈 · 印度市场态度</h2>'+
@@ -14847,7 +14962,7 @@ function renderFeedback(){
   var chrono=weeks.slice().sort(function(a,b){var da=fbWeekStart(a),db=fbWeekStart(b);return (da?da.getTime():0)-(db?db.getTime():0);});
   html+=fbHeroHTML(chrono);
   html+=fbRefHTML(chrono);
-  html+=renderSentimentCards();
+  html+=renderWindModule(chrono);
   html+=fbWeeksHTML(chrono);
   html+='<div class="fb3-actions"><button class="fb3-add">＋ 新增一周</button></div>';
   var root=document.getElementById('feedbackView');
