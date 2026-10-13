@@ -4692,6 +4692,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -14360,7 +14361,7 @@ function openSentimentEditor(){
   var cur=getSentiment();
   var ov=document.createElement('div');ov.className='sc-modal';
   ov.innerHTML='<div class="sc-mbox"><h4>更新专项舆情数据</h4>'
-   +'<div class="sc-msub">粘贴本周 JSON（<b>week</b> 周标签 / <b>benchmark</b> 大盘负面率 / <b>cards</b> 六项数组：t 主题、neg 负面率、n 讨论量、delta 较大盘、txt 主要反馈），保存后本卡片立即按新数据重算。</div>'
+   +'<div class="sc-msub">粘贴本周 JSON（<b>week</b> 周标签 + <b>cards</b> 六项数组：t 专项名、sum 一句话总结、n 反馈量、neg 负面率），保存后本卡片立即按新数据重算。</div>'
    +'<textarea id="scTa" spellcheck="false"></textarea>'
    +'<div class="sc-mrow"><button class="sc-mreset">恢复默认</button><span class="sc-msp"></span><button class="sc-mcancel">取消</button><button class="sc-msave">保存并刷新</button></div></div>';
   document.body.appendChild(ov);
