@@ -4691,6 +4691,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -14339,16 +14340,16 @@ function hideFbTip(){fbTip.style.display='none';}
 document.addEventListener('mouseover',function(e){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c&&!c.classList.contains('open'))showFbTip(c,e);});
 document.addEventListener('mousemove',function(e){if(fbTip.style.display==='block'){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c)showFbTip(c,e);}});
 document.addEventListener('mouseout',function(e){var c=e.target&&e.target.closest?e.target.closest('.fb4-iss'):null;if(c)hideFbTip();});
-// ===== 专项舆情卡片（浅色 · 与主看板同调 · 6 主题横向卡片 · 每周可更新） =====
-// 【每周更新处】SENTIMENT_META.week / benchmark + SENTIMENT_CARDS 六项（t 主题 / neg 负面率 / n 讨论量 / delta 较大盘 / txt 主要反馈原声）
-const SENTIMENT_META={week:'9.25 - 10.3',benchmark:20.4};
+// ===== 专项舆情卡片（浅色 · 2x3 · 无大盘对比 · 精简总结） =====
+// 【每周更新处】SENTIMENT_META.week + SENTIMENT_CARDS 六项（t 专项 / sum 一句话总结 / n 反馈量 / neg 负面率）
+const SENTIMENT_META={week:'10.5 - 10.11'};
 const SENTIMENT_CARDS=[
-  {t:'登录',neg:25.3,n:170,delta:'+4.9pp',txt:'负面率 25.3%，主要反馈：游戏全 是帮派，但都是很多会话，不像在服务器里玩 w state，大家都在里面；你说'},
-  {t:'性能',neg:72.2,n:18,delta:'+51.8pp',hl:1,txt:'负面率 72.2%，主要反馈：是解决崩溃问题还是突然退出或黑屏吗 🙄🙄🙄🙄；你好，有人能告诉我吗？游戏'},
-  {t:'核心体验 · 任务',neg:21.4,n:604,delta:'+1pp',txt:'负面率 21.4%，主要反馈：我们完成了精英任务，也完成了所有任务，现在游戏变得无聊了 🥲；我去执行一个任务，'},
-  {t:'核心体验 · 社交',neg:19.6,n:102,delta:'-0.8pp',txt:'负面率 19.6%，主要反馈：没有什么新鲜的。它还是老样子，只是稍微改变了地图的世界观 😅。我最喜欢的如果他'},
-  {t:'PVP',neg:24,n:25,delta:'+3.6pp',txt:'负面率 24%，主要反馈：为了让游戏变得很棒，当我们与敌人战斗时不要让警察进来，因为有些东西会压制你。应该'},
-  {t:'支付',neg:9.8,n:92,delta:'-10.6pp',txt:'负面率 9.8%，主要反馈：好吧，付 50块及镑买玛莎；箱子只能买一次，一旦用完数量就不会更新了。如果你想对'}
+  {t:'登录',n:170,neg:25.3,sum:'帮派与服务器房间匹配机制异常，玩家缺乏独立房间体验。'},
+  {t:'性能',n:18,neg:72.2,sum:'闪退与黑屏问题较为严重，直接影响玩家正常留存。'},
+  {t:'核心体验 · 任务',n:604,neg:21.4,sum:'精英任务通关后缺乏后续目标，长线玩法乏味。'},
+  {t:'核心体验 · 社交',n:102,neg:19.6,sum:'社交功能缺乏新鲜感，地图与互动机制未达玩家预期。'},
+  {t:'PVP',n:25,neg:24.0,sum:'警方 NPC 干扰 PVP 对战过程，机制存在压制体验问题。'},
+  {t:'支付',n:92,neg:9.8,sum:'内购礼包限制购买次数，付费后资源未实时更新。'}
 ];
 const SC_KEY='gst_sentiment_v1';
 function getSentiment(){
@@ -14380,78 +14381,65 @@ function openSentimentEditor(){
 function renderSentimentCards(){
   var data=getSentiment();
   let h='<style>'
-   +'.sc-root{position:relative;overflow:hidden;background:linear-gradient(150deg,#0E1017 0%,#0E1017 48%,#151227 100%);border-radius:14px;padding:22px 20px 20px;margin:18px 0 6px}'
-   +'.sc-wm{position:absolute;inset:0;pointer-events:none;opacity:.055;z-index:0}'
-   +'.sc-wm span{position:absolute;font-size:13px;color:#a9b0ff;transform:rotate(-24deg);white-space:nowrap;letter-spacing:1px}'
-   +'.sc-in{position:relative;z-index:1}'
-   +'.sc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}'
+   +'.sc-root{position:relative;background:#F8F9FB;border:1px solid #eceef3;border-radius:16px;padding:22px 20px 20px;margin:18px 0 6px}'
+   +'.sc-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}'
    +'.sc-hl{display:flex;align-items:center;gap:10px;flex-wrap:wrap}'
-   +'.sc-title{margin:0;font-size:28px;font-weight:800;color:#fff;letter-spacing:.5px}'
-   +'.sc-week{font-size:11px;color:#9aa3bb;background:rgba(140,150,255,.10);border:1px solid rgba(140,150,255,.22);border-radius:999px;padding:3px 10px}'
-   +'.sc-edit{font-size:11px;color:#9aa3bb;background:rgba(140,150,255,.07);border:1px solid rgba(140,150,255,.22);border-radius:8px;padding:3px 10px;cursor:pointer;font-family:inherit;transition:.18s}'
-   +'.sc-edit:hover{color:#cfd3ff;border-color:rgba(150,160,255,.5);background:rgba(140,150,255,.16)}'
-   +'.sc-note{font-size:10.5px;line-height:1.6;color:#8b93a7;text-align:right;max-width:430px;flex-shrink:0}'
-   +'.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}'
-   +'.sc-card{position:relative;background:#161924;border:1px solid rgba(140,150,255,.18);border-radius:12px;padding:18px 18px 16px;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease}'
-   +'.sc-card:hover,.sc-card.is-active{transform:translateY(-4px);background:#1D2132;border-color:rgba(150,160,255,.48);box-shadow:0 12px 30px rgba(0,0,0,.45),0 0 26px rgba(120,130,255,.20)}'
-   +'.sc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:9px}'
-   +'.sc-t{font-size:14px;font-weight:700;color:#fff;letter-spacing:.3px}'
-   +'.sc-ico{font-size:10px;line-height:1;color:#7b83a0;border:1px solid rgba(140,150,255,.20);background:rgba(140,150,255,.06);border-radius:6px;padding:3px 5px;cursor:pointer;transition:.18s;flex-shrink:0}'
-   +'.sc-ico:hover{color:#cfd3ff}'
-   +'.sc-card:hover .sc-ico,.sc-card.is-active .sc-ico{color:#cfd3ff;border-color:rgba(150,160,255,.55);background:rgba(140,150,255,.16);box-shadow:0 0 10px rgba(130,140,255,.28)}'
-   +'.sc-txt{font-size:10px;line-height:1.65;color:#9aa3bb;min-height:80px;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}'
-   +'.sc-card.open .sc-txt{-webkit-line-clamp:unset;overflow:visible;min-height:auto}'
-   +'.sc-mid{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}'
-   +'.sc-num{font-size:38px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.5px}'
-   +'.sc-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;letter-spacing:.2px}'
-   +'.sc-tag.up{color:#ff9b85;background:rgba(255,110,90,.15);border:1px solid rgba(255,110,90,.34);box-shadow:0 0 12px rgba(255,110,90,.18)}'
-   +'.sc-tag.dn{color:#5ce0a8;background:rgba(60,220,160,.13);border:1px solid rgba(60,220,160,.30);box-shadow:0 0 12px rgba(60,220,160,.16)}'
-   +'.sc-bar{display:flex;height:5px;border-radius:4px;overflow:hidden;background:#222634;margin-bottom:7px}'
+   +'.sc-title{margin:0;font-size:26px;font-weight:800;color:#22252b;letter-spacing:.3px}'
+   +'.sc-week{font-size:11px;color:#6b7280;background:#fff;border:1px solid #e6e8ee;border-radius:999px;padding:3px 10px}'
+   +'.sc-edit{font-size:11px;color:#6b7280;background:#fff;border:1px solid #e0e3ea;border-radius:8px;padding:3px 10px;cursor:pointer;font-family:inherit;transition:.18s}'
+   +'.sc-edit:hover{color:#4c6ef5;border-color:#b9c2f5;box-shadow:0 2px 8px rgba(76,110,245,.10)}'
+   +'.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}'
+   +'.sc-card{background:#FFFFFF;border:1px solid #eceef3;border-radius:16px;padding:20px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(34,37,43,.05),0 6px 16px rgba(34,37,43,.04);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}'
+   +'.sc-card:hover{transform:translateY(-3px);border-color:#c3c9f7;box-shadow:0 8px 22px rgba(34,37,43,.08),0 0 0 3px rgba(140,150,255,.10)}'
+   +'.sc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}'
+   +'.sc-t{font-size:16px;font-weight:700;color:#22252b;letter-spacing:.2px}'
+   +'.sc-right{display:flex;align-items:center;gap:6px;flex-shrink:0}'
+   +'.sc-chip{font-size:11px;font-weight:600;color:#5b6371;background:#f2f4f8;border:1px solid #e6e8ee;border-radius:999px;padding:3px 9px;white-space:nowrap}'
+   +'.sc-chip.mid{color:#b26a00;background:#fff6e8;border-color:#ffe0b2}'
+   +'.sc-chip.warn{color:#d32f2f;background:#ffebee;border-color:#ffcdd2}'
+   +'.sc-hi{font-size:10px;font-weight:700;color:#fff;background:#FF5252;border-radius:6px;padding:2px 6px;letter-spacing:.2px}'
+   +'.sc-sum{font-size:13px;line-height:1.75;color:#525964;margin-bottom:16px}'
+   +'.sc-mid{display:flex;align-items:baseline;gap:4px;margin-bottom:10px}'
+   +'.sc-num{font-size:32px;font-weight:800;color:#22252b;line-height:1;letter-spacing:-.5px}'
+   +'.sc-unit{font-size:12px;color:#8b93a0;font-weight:600}'
+   +'.sc-bar{display:flex;height:6px;border-radius:4px;overflow:hidden;background:#eef0f4;margin-bottom:6px}'
    +'.sc-bar i{display:block;height:100%}'
-   +'.sc-barg{background:linear-gradient(90deg,#3ddc97,#4aa8ff)}'
-   +'.sc-barr{background:linear-gradient(90deg,#ff8a5a,#ff5a4a)}'
-   +'.sc-foot{font-size:10px;color:#8b93a7;margin-top:auto}'
-   +'.sc-up{color:#ff9b85;font-weight:700}'
-   +'.sc-dn{color:#5ce0a8;font-weight:700}'
-   +'.sc-modal{position:fixed;inset:0;background:rgba(10,11,18,.66);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}'
-   +'.sc-mbox{background:#161924;border:1px solid rgba(140,150,255,.22);border-radius:14px;padding:20px;width:min(680px,100%);box-shadow:0 18px 50px rgba(0,0,0,.5)}'
-   +'.sc-mbox h4{margin:0 0 6px;font-size:16px;color:#fff}'
-   +'.sc-msub{font-size:11px;line-height:1.6;color:#9aa3bb;margin-bottom:10px}'
-   +'.sc-mbox textarea{width:100%;height:300px;border:1px solid rgba(140,150,255,.22);border-radius:10px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;color:#dfe3f2;background:#101320;resize:vertical;box-sizing:border-box}'
+   +'.sc-barg{background:#00C853}'
+   +'.sc-barr{background:#FF5252}'
+   +'.sc-foot{font-size:10px;color:#8b93a0;display:flex;justify-content:space-between;margin-top:auto}'
+   +'.sc-foot b{color:#6b7280;font-weight:600}'
+   +'.sc-modal{position:fixed;inset:0;background:rgba(34,37,43,.32);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}'
+   +'.sc-mbox{background:#fff;border:1px solid #e6e8ee;border-radius:14px;padding:20px;width:min(680px,100%);box-shadow:0 16px 44px rgba(34,37,43,.18)}'
+   +'.sc-mbox h4{margin:0 0 6px;font-size:16px;color:#22252b}'
+   +'.sc-msub{font-size:11px;line-height:1.6;color:#6b7280;margin-bottom:10px}'
+   +'.sc-mbox textarea{width:100%;height:300px;border:1px solid #e0e3ea;border-radius:10px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;color:#3b4048;background:#fbfcfd;resize:vertical;box-sizing:border-box}'
    +'.sc-mrow{display:flex;align-items:center;gap:8px;margin-top:12px}.sc-msp{flex:1}'
-   +'.sc-mrow button{border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit;border:1px solid rgba(140,150,255,.24);background:rgba(140,150,255,.08);color:#9aa3bb}'
-   +'.sc-msave{background:rgba(90,140,255,.28)!important;border-color:rgba(120,150,255,.5)!important;color:#e8ebff!important;font-weight:600}'
+   +'.sc-mrow button{border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit;border:1px solid #e0e3ea;background:#fff;color:#6b7280}'
+   +'.sc-msave{background:#4c6ef5!important;border-color:#4c6ef5!important;color:#fff!important;font-weight:600}'
    +'@media(max-width:1100px){.sc-grid{grid-template-columns:repeat(2,1fr)}}'
-   +'@media(max-width:700px){.sc-grid{grid-template-columns:1fr}.sc-head{flex-direction:column}.sc-note{text-align:left;max-width:none}.sc-title{font-size:24px}}'
+   +'@media(max-width:700px){.sc-grid{grid-template-columns:1fr}.sc-title{font-size:22px}}'
    +'</style>';
-  h+='<section class="sc-root"><div class="sc-wm">';
-  for(var r=0;r<6;r++){for(var cs=0;cs<4;cs++){h+='<span style="left:'+(cs*27-6)+'%;top:'+(r*19+2)+'%">alanbyzhang</span>';}}
-  h+='</div><div class="sc-in">';
+  h+='<section class="sc-root"><div class="sc-in">';
   h+='<div class="sc-head"><div class="sc-hl"><h3 class="sc-title">专项舆情卡片</h3>'
-   +'<span class="sc-week">数据周 '+(data.week||'—')+' · 大盘负面率 '+(data.benchmark!=null?data.benchmark+'%':'—')+'</span>'
-   +'<button class="sc-edit" id="scEditBtn">✎ 更新本周数据</button></div>'
-   +'<div class="sc-note">专项采用多标签语义匹配，同一条讨论可属于多个主题；<br>风险对比基准为上方「阿语社媒全网大盘」负面率，不含商店评论。</div></div>';
+   +'<span class="sc-week">数据周 '+(data.week||'—')+'</span>'
+   +'<button class="sc-edit" id="scEditBtn">✎ 更新本周数据</button></div></div>';
   h+='<div class="sc-grid">';
-  data.cards.forEach(function(c,i){
+  data.cards.forEach(function(c){
     var pos=100-c.neg;
-    var good=String(c.delta).indexOf('-')===0;
-    var cls='sc-card'+(c.hl?' is-active':'');
-    h+='<div class="'+cls+'">'
-      +'<div class="sc-top"><span class="sc-t">'+c.t+'</span><span class="sc-ico" title="点击展开玩家原声" data-i="'+i+'">⌄</span></div>'
-      +'<div class="sc-txt">'+c.txt+'</div>'
-      +'<div class="sc-mid"><span class="sc-num">'+c.n+'</span>'
-      +'<span class="sc-tag '+(good?'dn':'up')+'">'+c.delta+' 较大盘</span></div>'
+    var lvl=c.neg>=70?'warn':(c.neg>=20?'mid':'');
+    h+='<div class="sc-card">'
+      +'<div class="sc-top"><span class="sc-t">'+c.t+'</span>'
+      +'<span class="sc-right"><span class="sc-chip '+lvl+'">负面率 '+Number(c.neg).toFixed(1)+'%</span>'
+      +(c.neg>=70?'<span class="sc-hi">高危预警</span>':'')+'</span></div>'
+      +'<div class="sc-sum">'+c.sum+'</div>'
+      +'<div class="sc-mid"><span class="sc-num">'+c.n+'</span><span class="sc-unit">条</span></div>'
       +'<div class="sc-bar"><i class="sc-barg" style="width:'+pos.toFixed(1)+'%"></i><i class="sc-barr" style="width:'+c.neg.toFixed(1)+'%"></i></div>'
-      +'<div class="sc-foot">负面 '+c.neg+'% 较大盘 <span class="'+(good?'sc-dn':'sc-up')+'">'+c.delta+'</span></div>'
+      +'<div class="sc-foot"><span>负面 <b>'+Number(c.neg).toFixed(1)+'%</b></span><span>正面 <b>'+pos.toFixed(1)+'%</b></span></div>'
       +'</div>';
   });
   h+='</div></div></section>';
   setTimeout(function(){
     var b=document.getElementById('scEditBtn');if(b)b.onclick=openSentimentEditor;
-    var root=document.querySelector('.sc-root');if(!root)return;
-    root.querySelectorAll('.sc-ico').forEach(function(ic){
-      ic.onclick=function(){var card=ic.closest('.sc-card');if(card)card.classList.toggle('open');};
-    });
   },0);
   return h;
 }
