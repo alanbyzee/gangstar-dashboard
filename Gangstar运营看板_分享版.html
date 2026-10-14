@@ -6073,6 +6073,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -15776,14 +15777,18 @@ function fbqModel(chrono){
     fbWeekRawItems(w).forEach(function(it){keepCount++;var iso=fbItemISO(it,w);
       if(iso){if(!allMin||iso<allMin)allMin=iso;if(!allMax||iso>allMax)allMax=iso;}});
   });
-  /* 事件映射 */
+  /* 事件映射：用「未筛选」的全量桶定位，避免来源/关键词筛选把事件周筛掉导致标记消失 */
   var events=[];
+  var missEvents=[];
   FBQ_EVENTS.forEach(function(ev){
+    var placed=false;
     for(var i=0;i<bs.length;i++){
       var b=bs[i];
       var lo=b.start||b.min,hi=b.end||b.max;
-      if(lo&&hi&&ev.d>=lo&&ev.d<=hi){events.push({i:i,ev:ev});break;}
+      if(lo&&hi&&ev.d>=lo&&ev.d<=hi){events.push({i:i,ev:ev});placed=true;break;}
     }
+    /* 当前筛选下该周期无任何记录 → 不画标记，改为文字说明，不做位置猜测 */
+    if(!placed)missEvents.push(ev);
   });
   /* 事件相邻周期变化（仅作相关性提示，不作因果断言） */
   var ei=null;
@@ -15802,7 +15807,7 @@ function fbqModel(chrono){
     }
   }
   return {rows:rows,buckets:bs,n:n,curIdx:curIdx,prevIdx:prevIdx,cur:cur,prev:prev,topics:topics,order:order,
-    events:events,eventImpact:ei,allMin:allMin,allMax:allMax,rawCount:rawCount,keepCount:keepCount,chronos:chrono,
+    events:events,missEvents:missEvents,eventImpact:ei,allMin:allMin,allMax:allMax,rawCount:rawCount,keepCount:keepCount,chronos:chrono,
     weeks:chrono.length,latestWeek:chrono.length?chrono[chrono.length-1].week:'—',
     totalItems:cur?cur.items:0,totalMent:cur?cur.total:0,
     prevItems:prev?prev.items:null,prevMent:prev?prev.total:null};
@@ -15895,6 +15900,10 @@ function fbqChartSVG(m,w,h){
   if(clipped){
     o+='<div class="fbq-note">纵轴已按 95 分位截断以保留小话题可读性，真实峰值 '+fbqNum(maxV)+(isShare?'%':' 次提及')+'（悬停查看准确数值）。</div>';
   }
+  if(m.missEvents&&m.missEvents.length){
+    o+='<div class="fbq-note">已记录事件「'+m.missEvents.map(function(e){return fbEsc(e.n)+' '+e.d;}).join('、')
+      +'」所在周期在当前筛选下无任何反馈记录，图上未标记（不补造数据点）。</div>';
+  }
   return o;
 }
 function fbqTipHTML(m,i){
@@ -15966,6 +15975,7 @@ function fbqKpiHTML(m){
   h+='</div>';
   h+='<div class="fbq-kpinote">对比口径：'+fbEsc(curLab)+'（当前周期） vs '+fbEsc(prevLab)+'（上一周期），'
     +'按'+FBQ_GRAN.filter(function(g){return g.k===FBQ.gran;})[0].n+'聚合；提及次数为议题重复出现量，条数为独立反馈条目数，两者不混算。</div>';
+  h+='<div class="fbq-kpinote fbq-bias">阅读提示：反馈采集存在选择性偏差——正向反馈通常不会被主动收集，因此<b>已收集反馈的正负面比例不代表全体玩家的真实情绪分布，本页也不以此判断玩家整体满意度</b>；单条反馈的「性质」仅为该条内容的标注，不作为满意度指标。</div>';
   return h;
 }
 /* —— 模块 3：话题结构与变化排名 —— */
@@ -16211,6 +16221,8 @@ function fbqCSS(){
   +'.fbq-k.warn{border-color:#e8cfc6}.fbq-k.warn .fbq-kv em{color:#b45f4d}'
   +'.fbq-k.na .fbq-kv{color:#a8a29a}'
   +'.fbq-kpinote{font-size:11px;color:#a8a29a;margin-top:7px;line-height:1.6}'
+  +'.fbq-bias{margin-top:5px;padding:7px 10px;background:#fdf6ec;border-left:3px solid #c2a882;border-radius:0 7px 7px 0;color:#8a7350}'
+  +'.fbq-bias b{color:#7a5c34;font-weight:600}'
   +'.fbq-chart{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;padding:12px}'
   +'.fbq-chart-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}'
   +'.fbq-legends{display:flex;gap:6px;flex-wrap:wrap}'
