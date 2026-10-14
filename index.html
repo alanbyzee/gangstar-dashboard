@@ -3926,14 +3926,7 @@ function renderFanInsights(data){
         action:'确认该平台是否纳入采集；未纳入前只在总粉丝中体现规模，不参与增长分析'});
       return;
     }
-    // 仅当该平台「比全平台整体更陈旧」时单独提示，避免全平台陈旧时逐平台重复同一根因
-    if(s.staleDays>FAN_ALERT_CFG.staleDays&&(!globalStale||s.staleDays>C.staleDays))
-      an.push({pri:'mid',short:'数据陈旧 '+s.staleDays+' 天',
-        title:esc(s.name)+' 数据更新落后于其他平台',
-        find:'最新快照 '+s.lastDate+'，距今 '+s.staleDays+' 天，落后于全平台最新日期 '+C.anchorDate+'。',
-        basis:s.name+' · 最近更新 '+s.lastDate+' · 距今 '+s.staleDays+' 天 · 全平台落后 '+C.staleDays+' 天 · 阈值 '+FAN_ALERT_CFG.staleDays+' 天',
-        cause:'待排查',
-        action:'补采该平台最新数据，否则其增长贡献会被系统性低估'});
+    // 数据陈旧不再逐平台单列：它与「本周无基线」同根因，统一在下方合并为一条区域级洞察
     if(s.week.ok&&s.week.diff<=0)
       an.push({pri:'mid',short:(s.week.diff<0?('本周净流失 '+fmt(s.week.diff)):'本周零增长'),
         title:esc(s.name)+' 本周'+(s.week.diff<0?'净流失':'增长停滞'),
@@ -4004,16 +3997,25 @@ function renderFanInsights(data){
           : '复制该平台本周的内容形式与发布节奏到其他平台'});
     }
   }
-  // --- 数据缺口：本周无法计算 ---
-  C.excOrder.forEach(function(k){
-    var s=C.per[k];
-    items.push({pri:'mid',plat:k,
-      title:esc(s.name)+' 本周无法计算净增',
-      find:'统计周内缺少可用基线快照，已排除在区域合计之外（不按 0 计）。',
-      basis:s.name+' · '+(s.week.reason==='no-snapshot-in-week'?'该统计周内没有快照':'没有可用基线快照'),
-      cause:'数据缺失（属采集问题，非业务异常）',
-      action:'提高该平台采集频率，保证每个自然周至少 2 个快照，才能计算周增长'});
-  });
+  // --- 数据缺口：本周未纳入增长计算的平台（数据陈旧 + 无基线同根因，合并为一条区域级洞察） ---
+  if(!globalStale){
+    var missKeys=C.order.filter(function(k){
+      var s=C.per[k];
+      return s.lastDate&&(s.staleDays>FAN_ALERT_CFG.staleDays||!s.week.ok);
+    });
+    if(missKeys.length){
+      var det=missKeys.map(function(k){
+        var s=C.per[k];
+        return esc(s.name)+' 末次 '+s.lastDate+'（距今 '+s.staleDays+' 天）'+(!s.week.ok?' · 本周无基线':'');
+      });
+      items.push({pri:'mid',plat:missKeys.length===1?missKeys[0]:null,
+        title:missKeys.length+' 个平台本周未纳入增长计算',
+        find:'这些平台在统计周 '+W+' 内没有可用基线快照，已排除在区域净增合计之外（不按 0 计），其增长贡献被系统性低估。',
+        basis:det.join('；')+' · 陈旧阈值 '+FAN_ALERT_CFG.staleDays+' 天',
+        cause:'数据缺失（采集问题，非业务异常）',
+        action:'提高这些平台的采集频率，保证每个自然周至少 2 个快照；补齐前，区域净增与增长率为保守下限'});
+    }
+  }
   items.sort(function(a,b){return RANK[a.pri]-RANK[b.pri];});
   var card=function(o){
     return '<div class="fz-icard p-'+o.pri+'">'
@@ -4262,14 +4264,14 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-10-08",
+  "updated_at": "2026-10-14",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 201170,
+      "value": 199236,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -4501,13 +4503,17 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-08",
           "value": 201170
+        },
+        {
+          "date": "2026-10-14",
+          "value": 199236
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 3974,
+      "value": 3975,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -4743,6 +4749,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-08",
           "value": 3974
+        },
+        {
+          "date": "2026-10-14",
+          "value": 3975
         }
       ],
       "name": "Facebook"
@@ -4751,7 +4761,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 91962,
+      "value": 91891,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -5059,6 +5069,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-08",
           "value": 91962
+        },
+        {
+          "date": "2026-10-14",
+          "value": 91891
         }
       ]
     },
@@ -5197,7 +5211,7 @@ const FALLBACK_DATA = {
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 34931,
+      "value": 36998,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -5357,6 +5371,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-08",
           "value": 34931
+        },
+        {
+          "date": "2026-10-14",
+          "value": 36998
         }
       ]
     },
@@ -5700,6 +5718,8 @@ const FALLBACK_DATA = {
     }
   }
 };
+
+
 
 
 
