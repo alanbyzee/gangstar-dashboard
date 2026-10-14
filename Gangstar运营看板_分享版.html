@@ -6075,6 +6075,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -15595,7 +15596,7 @@ var FBQ_SORTDEF=[{k:'cur',n:'当期提及量'},{k:'delta',n:'环比增幅'},{k:'
 var FBQ_PAL=['#2563eb','#0ea5e9','#10b981','#f59e0b','#8b5cf6','#64748b','#0d9488','#e11d48','#6366f1','#94a3b8'];
 /* 事件标记：只记录项目侧确有依据的节点，关系一律标「可能相关，需结合事件时间验证」 */
 var FBQ_EVENTS=[{d:'2026-08-20',n:'游戏上线',src:'发行节点'}];
-var FBQ={gran:'week',metric:'mention',sort:'cur',ch:[],q:'',topics:[],focus:'',limit:6,open:{},pi:-1};
+var FBQ={gran:'week',metric:'mention',yscale:'full',sort:'cur',ch:[],q:'',topics:[],focus:'',limit:6,open:{},pi:-1};
 var FBQ_CTX=null;
 var FBQ_TIPEL=null;
 
@@ -15813,20 +15814,106 @@ function fbqModel(chrono){
     totalItems:cur?cur.items:0,totalMent:cur?cur.total:0,
     prevItems:prev?prev.items:null,prevMent:prev?prev.total:null};
 }
-/* —— 图表：多系列折线（真实时间比例定位 · 缺失断开 · 事件标记） —— */
+var FBQ_YS=[{k:'full',n:'完整（含峰值）',tip:'纵轴覆盖全部数据点，峰值上方保留约 10% 空间（默认）'},
+  {k:'focus',n:'聚焦主体',tip:'按 95 分位定标以放大中小话题，超出轴顶的极端峰值单独列出（不删除数据）'}];
+/* —— 纵轴 / 文本度量工具 —— */
+function fbqNiceStep(raw){
+  raw=Math.abs(Number(raw)||0);
+  if(!(raw>0))return 1;
+  var e=Math.pow(10,Math.floor(Math.log10(raw)));
+  var f=raw/e;
+  var s=f<=1?1:(f<=2?2:(f<=2.5?2.5:(f<=5?5:10)));
+  return s*e;
+}
+/* 取整阶梯：细粒度，避免「964 → 2000」这种把留白拉到 50% 的过粗取整 */
+var FBQ_LAD=[1,1.02,1.05,1.08,1.1,1.12,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.6,1.7,1.8,1.9,2,2.1,2.2,2.25,2.4,2.5,2.6,2.75,3,3.2,3.5,3.75,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10];
+/* 纵轴上限：真实最大值 ×1.10（峰值上方保留约 8%~12% 空间），再对齐到整齐刻度；
+   任何情况下 top >= maxV，绝不裁切真实数据点。 */
+function fbqAxisTop(maxV,isShare){
+  maxV=Math.max(0,Number(maxV)||0);
+  if(!(maxV>0))return isShare?10:1;
+  var i,c,t=null;
+  if(isShare){
+    var tgt=Math.min(100,maxV*1.10);
+    var e=Math.pow(10,Math.floor(Math.log10(Math.max(tgt,0.1))));
+    for(i=0;i<FBQ_LAD.length;i++){c=FBQ_LAD[i]*e;if(c>=tgt-1e-9){t=c;break;}}
+    if(t===null)t=100;
+    t=Math.min(100,t);
+    if(t<maxV)t=100;
+    return t;
+  }
+  var target=maxV*1.10;
+  var e2=Math.pow(10,Math.floor(Math.log10(target)));
+  for(i=0;i<FBQ_LAD.length;i++){c=FBQ_LAD[i]*e2;if(c>=target-1e-9){t=c;break;}}
+  if(t===null)t=FBQ_LAD[FBQ_LAD.length-1]*e2;
+  if(t>maxV*1.14){
+    /* 留白超过 14% 说明取整过粗 → 收紧一档，同时仍保证至少 6% 余量 */
+    for(i=0;i<FBQ_LAD.length;i++){c=FBQ_LAD[i]*e2;if(c>=maxV*1.06){t=c;break;}}
+  }
+  if(t<maxV)t=maxV*1.10;
+  t=Math.ceil(t);   /* 提及量为整数计数，轴上限也取整数 */
+  return t;
+}
+/* 文本宽度估算（轴标签 10.5px） */
+function fbqTextW(s){
+  s=String(s||'');
+  var w=0;
+  for(var i=0;i<s.length;i++){
+    var c=s.charCodeAt(i);
+    w+=(c>0x2E80)?10.5:(c===46||c===44||c===32?3.2:(c===45||c===47?4.2:6.1));
+  }
+  return w;
+}
+/* 紧凑 X 轴标签：周期起始日（MM-DD / YYYY-MM），完整日期范围在图表下方单独给出 */
+function fbqShortLabel(b){
+  var st=b&&b.start;
+  if(st&&/^\d{4}-\d{2}-\d{2}$/.test(st))return st.slice(5);
+  if(st&&/^\d{4}-\d{2}$/.test(st))return st.slice(0,7);
+  var lb=String((b&&b.label)||'');
+  var m=/(\d{4})-(\d{2})-(\d{2})/.exec(lb)||/(\d{1,2})[.\/-](\d{1,2})/.exec(lb);
+  if(m&&m.length>=4)return (m[2].length===1?'0':'')+m[2]+'-'+(m[3].length===1?'0':'')+m[3];
+  if(m)return m[1]+'-'+m[2];
+  return lb.slice(0,7);
+}
+/* —— 图表：多系列折线（真实时间比例定位 · 缺失断开 · 事件标记 · 完整纵轴） —— */
 function fbqChartSVG(m,w,h){
-  w=Math.max(320,w||700);h=h||300;
-  var padL=52,padR=18,padT=16,padB=38;
-  var pw=Math.max(60,w-padL-padR),ph=Math.max(60,h-padT-padB);
-  var bs=m.buckets,n=m.n;
+  w=Math.max(260,Math.round(w||700));h=Math.max(220,Math.round(h||300));
+  var bs=m.buckets||[],n=m.n||bs.length;
   var sel=m.topics.filter(function(t){return FBQ.topics.indexOf(t.key)>=0;});
   var isShare=(FBQ.metric==='share');
   function val(s){if(!s)return null;return isShare?s.share:s.v;}
+  /* ① 真实最大值：在选系列的每一个点都参与，不剔除、不截断 */
+  var maxV=0;
+  sel.forEach(function(t){t.series.forEach(function(s){var v=val(s);if(v!==null&&v>maxV)maxV=v;});});
+  var vals=[];sel.forEach(function(t){t.series.forEach(function(s){var v=val(s);if(v!==null)vals.push(v);});});
+  vals.sort(function(a,b){return a-b;});
+  var p95=vals.length?vals[Math.min(vals.length-1,Math.floor(vals.length*0.95))]:0;
+  /* 纵轴模式：默认 full（完整容纳全部数据）；focus 为可选压缩视图，需显式切换并如实披露 */
+  var focus=(FBQ.yscale==='focus');
+  var top;
+  if(focus){
+    top=fbqAxisTop(p95,isShare);
+    if(!(top<maxV))focus=false;               /* 无可压缩空间 → 与完整视图等价 */
+  }
+  if(!focus)top=fbqAxisTop(maxV,isShare);
+  if(!(top>0))top=1;
+  var clipped=focus&&maxV>top;
+  var outs=[];
+  if(clipped){
+    sel.forEach(function(t){t.series.forEach(function(s,i){var v=val(s);if(v!==null&&v>top)outs.push({t:t,i:i,v:v});});});
+    outs.sort(function(a,b){return b.v-a.v;});
+  }
+  /* ② 边距按实际文本宽度计算，保证首 / 尾标签与刻度完整可见 */
+  var tickLab=isShare?(top<10?top.toFixed(1):String(Math.round(top)))+'%':fbqNum(Math.round(top));
+  var padL=Math.min(92,Math.max(46,Math.ceil(fbqTextW(tickLab)+16)));
+  /* 峰值贴顶时（如占比 100%）额外留出视觉空间，避免与顶部网格线重合 */
+  var padR=22,padB=46,padT=(maxV/top>0.98)?42:30;
+  var pw=Math.max(60,w-padL-padR),ph=Math.max(80,h-padT-padB);
   /* X 按「周期起点」比例定位（用桶起点而非桶内首条日期，避免单条记录导致标签挤压） */
   var xs=[],t0=null,t1=null;
   bs.forEach(function(b){
     var ds=b.start||b.min;
-    var d=ds?fbParseISO(ds):null;
+    var d=ds?fbParseISO(String(ds).length===7?ds+'-01':ds):null;
     xs.push(d?d.getTime():null);
     if(d){if(t0===null||d<t0)t0=d;if(t1===null||d>t1)t1=d;}
   });
@@ -15837,40 +15924,39 @@ function fbqChartSVG(m,w,h){
     var v=xs[i];if(v===null)v=minX+(maxX-minX)*(i/Math.max(1,n-1));
     return padL+((v-minX)/(maxX-minX||1))*pw;
   }
-  var maxV=0;
-  sel.forEach(function(t){t.series.forEach(function(s){var v=val(s);if(v!==null&&v>maxV)maxV=v;});});
-  var vals=[];sel.forEach(function(t){t.series.forEach(function(s){var v=val(s);if(v!==null)vals.push(v);});});
-  vals.sort(function(a,b){return a-b;});
-  var p95=vals.length?vals[Math.min(vals.length-1,Math.floor(vals.length*0.95))]:0;
-  var top=isShare?Math.min(100,Math.max(10,Math.ceil((Math.max(maxV,p95)||1)*1.15))):Math.max(1,Math.ceil((p95||maxV||1)*1.15));
-  var clipped=maxV>top;
   function Y(v){return padT+ph-(v/top)*ph;}
   var o='<svg class="fbq-svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="话题趋势折线图">';
-  /* 网格 + Y 轴 */
+  o+='<defs><clipPath id="fbqPlotClip"><rect x="'+(padL-6)+'" y="0" width="'+(pw+12)+'" height="'+(padT+ph+8)+'"/></clipPath></defs>';
+  /* 网格 + Y 轴（刻度覆盖到 top，即 ≥ 全部真实数据最大值） */
+  /* 刻度份数取能让刻度值为整数的档位，避免 262.5 这类读数 */
   var ticks=4;
+  [5,4,3,6].some(function(tt){if(Math.abs(top/tt-Math.round(top/tt))<1e-9){ticks=tt;return true;}return false;});
   for(var g=0;g<=ticks;g++){
     var v=top/ticks*g,y=Y(v);
+    var stepv=top/ticks,dec=(isShare&&Math.abs(stepv-Math.round(stepv))>1e-9)?1:0;
+    var lab=isShare?((dec?v.toFixed(1):String(Math.round(v)))+'%') : fbqNum(Math.round(v));
     o+='<line class="fbq-grid" x1="'+padL+'" y1="'+y.toFixed(1)+'" x2="'+(padL+pw)+'" y2="'+y.toFixed(1)+'"/>';
-    o+='<text class="fbq-ax" x="'+(padL-8)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end">'+(isShare?Math.round(v)+'%':fbqNum(Math.round(v)))+'</text>';
+    o+='<text class="fbq-ax" x="'+(padL-8)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end">'+lab+'</text>';
   }
   o+='<line class="fbq-axis" x1="'+padL+'" y1="'+(padT+ph)+'" x2="'+(padL+pw)+'" y2="'+(padT+ph)+'"/>';
-  /* 无记录区间（按日/按月视图） */
+  /* 无记录区间（按日 / 按月视图） */
   bs.forEach(function(b,i){
     if(!b.empty)return;
     var x=X(i);
     o+='<rect class="fbq-gap" x="'+(x-1).toFixed(1)+'" y="'+padT+'" width="2" height="'+ph+'"/>';
   });
-  /* 事件竖线 */
+  /* 事件竖线：标签置于绘图区上方，避免与折线峰值争抢空间 */
   m.events.forEach(function(e){
     var x=X(e.i);
     o+='<line class="fbq-evline" x1="'+x.toFixed(1)+'" y1="'+padT+'" x2="'+x.toFixed(1)+'" y2="'+(padT+ph)+'"/>';
     var lab='▲ '+fbEsc(e.ev.n);
-    var lw=lab.length*7+8;
+    var lw=fbqTextW(lab)+8;
     var lx=(x+lw+6>padL+pw)?x-6:x+5;
     var anch=(x+lw+6>padL+pw)?'end':'start';
-    o+='<text class="fbq-evlab" x="'+lx.toFixed(1)+'" y="'+(padT+11)+'" text-anchor="'+anch+'">'+lab+'</text>';
+    o+='<text class="fbq-evlab" x="'+lx.toFixed(1)+'" y="'+(padT-6)+'" text-anchor="'+anch+'">'+lab+'</text>';
   });
-  /* 折线：遇到 null 断开 */
+  /* 折线：遇到 null 断开（不插值、不补 0） */
+  o+='<g clip-path="url(#fbqPlotClip)">';
   sel.forEach(function(t){
     var segs=[],cur=[];
     t.series.forEach(function(s,i){
@@ -15889,38 +15975,63 @@ function fbqChartSVG(m,w,h){
       o+='<text class="fbq-noline" x="'+(padL+6)+'" y="'+(padT+ph-8)+'">'+fbEsc(t.name)+'：该视图下无足够记录</text>';
     }
   });
-  /* X 轴标签：贪心抽稀，保证相邻标签不重叠、且不越界 */
+  o+='</g>';
+  /* 压缩视图下超出轴顶的峰值：在轴顶画截断标记，数值在图下逐条列出 */
+  if(clipped){
+    outs.forEach(function(x){
+      var cx=X(x.i);
+      o+='<path d="M'+(cx-4).toFixed(1)+' '+(padT+7)+' L'+cx.toFixed(1)+' '+(padT+1)+' L'+(cx+4).toFixed(1)+' '+(padT+7)+' Z" fill="'+x.t.color+'"/>';
+    });
+    o+='<line class="fbq-clipline" x1="'+padL+'" y1="'+(padT+1)+'" x2="'+(padL+pw)+'" y2="'+(padT+1)+'"/>';
+  }
+  /* X 轴标签：紧凑日期 + 密度自适应 + 首尾锚定，保证完整可读且不越界 */
+  var labs=bs.map(function(b,i){return {i:i,x:X(i),txt:fbqShortLabel(b)};});
   var drawn=[];
-  function fits(cx,txt){
-    var half=txt.length*3.4+5;
-    if(cx-half<padL-14||cx+half>padL+pw+14)return false;
+  function place(d){
+    var wd=fbqTextW(d.txt),half=wd/2,x0,x1,ax,px;
+    if(d.i===0){ax='start';px=padL-2;x0=px;x1=px+wd;}
+    else if(d.i===n-1){ax='end';px=padL+pw+2;x1=px;x0=px-wd;}
+    else{ax='middle';px=d.x;x0=d.x-half;x1=d.x+half;}
+    if(d.i!==0&&x0<padL-8)return false;
+    if(d.i!==n-1&&x1>padL+pw+8)return false;
     for(var k=0;k<drawn.length;k++){
-      var dk=drawn[k],dh=dk.txt.length*3.4+5;
-      if(Math.abs(cx-dk.x)<(half+dh+8))return false;
+      var dk=drawn[k];
+      if(x0<dk.x1+10&&x1+10>dk.x0)return false;
     }
+    d.px=px;d.ax=ax;d.x0=x0;d.x1=x1;drawn.push(d);
     return true;
   }
-  for(var i=0;i<n;i++){
-    var cx=X(i),lab=String(bs[i].label||'');
-    var must=(i===n-1);
-    if(!must&&!fits(cx,lab))continue;
-    if(must){
-      /* 末标签优先保留：若与前一个冲突则丢弃前一个 */
-      while(drawn.length&&Math.abs(cx-drawn[drawn.length-1].x)<((lab.length*3.4+5)+(drawn[drawn.length-1].txt.length*3.4+5)+8))drawn.pop();
-    }
-    drawn.push({x:cx,i:i,txt:lab});
+  var maxLab=Math.max(2,Math.min(12,Math.floor(pw/72)));
+  var step=Math.max(1,Math.ceil(n/maxLab));
+  if(n===1){place(labs[0]);}
+  else{
+    place(labs[n-1]);place(labs[0]);
+    for(var i2=1;i2<n-1;i2++){if(i2%step===0)place(labs[i2]);}
   }
+  drawn.sort(function(a,b){return a.px-b.px;});
   drawn.forEach(function(d){
-    o+='<text class="fbq-ax" x="'+d.x.toFixed(1)+'" y="'+(padT+ph+20)+'" text-anchor="middle">'+fbEsc(d.txt)+'</text>';
+    o+='<text class="fbq-ax" x="'+d.px.toFixed(1)+'" y="'+(padT+ph+22)+'" text-anchor="'+d.ax+'">'+fbEsc(d.txt)+'</text>';
   });
   /* 悬停热区 */
-  for(var i2=0;i2<n;i2++){
-    var cx2=X(i2),half=pw/(n*2)+6;
-    o+='<rect class="fbq-hit" data-fbqi="'+i2+'" x="'+Math.max(padL-8,cx2-half).toFixed(1)+'" y="'+padT+'" width="'+(half*2).toFixed(1)+'" height="'+ph+'" fill="transparent"/>';
+  for(var i3=0;i3<n;i3++){
+    var cx3=X(i3),half3=pw/(n*2)+6;
+    o+='<rect class="fbq-hit" data-fbqi="'+i3+'" x="'+Math.max(padL-8,cx3-half3).toFixed(1)+'" y="'+padT+'" width="'+(half3*2).toFixed(1)+'" height="'+ph+'" fill="transparent"/>';
   }
   o+='</svg>';
+  /* 完整日期范围（轴标签用紧凑格式，范围信息在此完整保留） */
+  var f0=bs[0],f1=bs[n-1];
+  var r0=f0?(f0.start||f0.min||f0.label):'—',r1=f1?(f1.end||f1.max||f1.label):'—';
+  var granName=(FBQ.gran==='day'?'按日':FBQ.gran==='month'?'按月':'按周');
+  o+='<div class="fbq-range">横轴范围 '+fbEsc(String(r0))+' ~ '+fbEsc(String(r1))
+    +'（'+granName+' · 共 '+n+' 期'+(FBQ.gran==='week'?'，每期为周一起算的 7 天':'')
+    +'）· 轴标签为周期起始日，悬停查看该期完整日期与数值</div>';
   if(clipped){
-    o+='<div class="fbq-note">纵轴已按 95 分位截断以保留小话题可读性，真实峰值 '+fbqNum(maxV)+(isShare?'%':' 次提及')+'（悬停查看准确数值）。</div>';
+    var lst=outs.slice(0,5).map(function(x){
+      return fbEsc(x.t.name)+' · '+fbEsc(String((bs[x.i]&&bs[x.i].label)||''))+' · '+fbqNum(Math.round(x.v))+(isShare?'%':' 次提及');
+    }).join('；');
+    o+='<div class="fbq-warn">当前为「聚焦主体」视图：纵轴按 95 分位定标，'+outs.length+' 个极端峰值超出轴顶（'+lst
+      +(outs.length>5?' 等':'')+'）。这些点仍参与全部统计与悬停提示；真实最高值 '+fbqNum(Math.round(maxV))
+      +(isShare?'%':' 次提及')+'，切到「完整」视图即可看到完整峰值。</div>';
   }
   if(m.missEvents&&m.missEvents.length){
     o+='<div class="fbq-note">已记录事件「'+m.missEvents.map(function(e){return fbEsc(e.n)+' '+e.d;}).join('、')
@@ -15952,8 +16063,12 @@ function fbqTipHTML(m,i){
 function fbqBindTip(root,m){
   var box=root.querySelector('#fbqChart');
   if(!box)return;
-  var tip=root.querySelector('#fbqTip');
+  /* 重绘只替换 #fbqChart 内部 HTML（容器节点不变），因此监听只绑一次，
+     提示框节点在事件内动态取，避免 resize 重绘后引用到已被替换的旧节点。 */
+  if(box.getAttribute('data-fbqtip')==='1')return;
+  box.setAttribute('data-fbqtip','1');
   box.addEventListener('mousemove',function(e){
+    var tip=box.querySelector('#fbqTip');
     var t=e.target&&e.target.closest?e.target.closest('.fbq-hit'):null;
     if(!t){if(tip)tip.style.display='none';return;}
     var i=parseInt(t.getAttribute('data-fbqi'),10);
@@ -15966,7 +16081,7 @@ function fbqBindTip(root,m){
     if(y+tip.offsetHeight>r.height-4)y=Math.max(4,e.clientY-r.top-tip.offsetHeight-12);
     tip.style.left=x+'px';tip.style.top=y+'px';
   });
-  box.addEventListener('mouseleave',function(){if(tip)tip.style.display='none';});
+  box.addEventListener('mouseleave',function(){var tp=box.querySelector('#fbqTip');if(tp)tp.style.display='none';});
 }
 /* —— 模块 1：舆情总览 —— */
 function fbqKpiHTML(m){
@@ -16192,6 +16307,8 @@ function fbqChartHTML(m){
         return '<button class="fbq-segb'+(FBQ.metric===s.k?' on':'')+'" data-fbqmetric="'+s.k+'">'+s.n+'</button>';}).join('')+'</div></div>'
     +'<div class="fbq-chart-t"><span class="fbq-chart-tl">粒度</span><div class="fbq-seg">'+FBQ_GRAN.map(function(g){
         return '<button class="fbq-segb'+(FBQ.gran===g.k?' on':'')+'" data-fbqgran="'+g.k+'">'+g.n+'</button>';}).join('')+'</div></div>'
+    +'<div class="fbq-chart-t"><span class="fbq-chart-tl">纵轴</span><div class="fbq-seg">'+FBQ_YS.map(function(y){
+        return '<button class="fbq-segb'+(FBQ.yscale===y.k?' on':'')+'" data-fbqys="'+y.k+'" title="'+y.tip+'">'+y.n+'</button>';}).join('')+'</div></div>'
     +'<span class="fbq-chart-hr"></span>'
     +'<span class="fbq-hint">点击图例增删话题 · 悬停查看数值</span>'
     +'</div>';
@@ -16311,8 +16428,11 @@ function fbqCSS(){
   +'.fbq-lg.on{color:var(--fbq-ink);border-color:#d5dae1;background:#fbfcfd;font-weight:600}'
   +'.fbq-lg.on i{opacity:1}'
   +'.fbq-lg.on em{color:var(--fbq-muted)}'
-  +'.fbq-plot{position:relative;width:100%;min-height:280px}'
-  +'.fbq-svg{display:block;width:100%;height:auto}'
+  +'.fbq-plot{position:relative;width:100%;min-height:240px}'
+  +'.fbq-svg{display:block;width:100%;height:auto;max-width:100%}'
+  +'.fbq-range{font-size:var(--fbq-fs-micro);color:var(--fbq-muted);margin-top:12px;line-height:1.7}'
+  +'.fbq-plot .fbq-note,.fbq-plot .fbq-warn{margin-top:12px}'
+  +'.fbq-clipline{stroke:#c3c9d2;stroke-width:1;stroke-dasharray:3 3}'
   +'.fbq-grid{stroke:#eef0f3;stroke-width:1}'
   +'.fbq-axis{stroke:#dfe3e8;stroke-width:1}'
   +'.fbq-ax{font-size:10.5px;fill:#8b939e;font-variant-numeric:tabular-nums}'
@@ -16398,8 +16518,8 @@ function fbqCSS(){
   +'.fbq-fold summary{font-size:var(--fbq-fs-meta);color:var(--fbq-ink2);cursor:pointer;font-weight:600}'
   +'.fbq-fb{font-size:var(--fbq-fs-micro);color:var(--fbq-muted);line-height:1.85;margin-top:9px;overflow-wrap:anywhere}'
   +'@media(max-width:1180px){.fbq-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}'
-  +'@media(max-width:860px){.fbq-kpis{grid-template-columns:repeat(2,minmax(0,1fr));--fbq-fs-kpi:22px}.fbq-plot{min-height:230px}.fbq-hero-r{width:100%}}'
-  +'@media(max-width:560px){.fbq-root{padding:12px 12px 20px}.fbq-kpis{grid-template-columns:1fr}.fbq-h1{font-size:18px}.fbq-plot{min-height:210px}.fbq-frow-r{margin-left:0;width:100%}}'
+  +'@media(max-width:860px){.fbq-kpis{grid-template-columns:repeat(2,minmax(0,1fr));--fbq-fs-kpi:22px}.fbq-plot{min-height:220px}.fbq-hero-r{width:100%}}'
+  +'@media(max-width:560px){.fbq-root{padding:12px 12px 20px}.fbq-kpis{grid-template-columns:1fr}.fbq-h1{font-size:18px}.fbq-plot{min-height:210px}.fbq-frow-r{margin-left:0;width:100%}.fbq-hint{white-space:normal}}'
   +'</style>';
 }
 
@@ -16408,10 +16528,28 @@ function fbqRedrawChart(){
   if(!root||!FBQ_CTX)return;
   var box=root.querySelector('#fbqChart');
   if(!box)return;
-  var w=box.clientWidth||700;
-  var h=(window.innerWidth<560)?210:(window.innerWidth<860)?250:320;
+  var w=Math.round(box.clientWidth||0);
+  if(!w||w<80)w=Math.max(320,Math.round((root.clientWidth||720)-40));
+  /* 高度随容器宽度自适应（约 0.46 比例），窄屏也不会把绘图区压扁 */
+  var h=Math.max(240,Math.min(340,Math.round(w*0.46)));
   box.innerHTML='<div id="fbqTip" class="fbq-tip" style="display:none"></div>'+fbqChartSVG(FBQ_CTX,w,h);
 }
+/* 容器宽度变化（图例换行 / 侧边变化 / 分栏变化）也要重算，避免 resize 之外的溢出 */
+var fbqResizeT=null;
+function fbqWatchChart(){
+  var root=document.getElementById('feedbackView');
+  var box=root?root.querySelector('#fbqChart'):null;
+  if(!box)return;
+  if(typeof ResizeObserver==='function'){
+    if(fbqRO)fbqRO.disconnect();
+    fbqRO=new ResizeObserver(function(){
+      if(fbqResizeT)clearTimeout(fbqResizeT);
+      fbqResizeT=setTimeout(fbqRedrawChart,80);
+    });
+    fbqRO.observe(box);
+  }
+}
+var fbqRO=null;
 function fbqRender(){
   var d=getFeedback();var weeks=d.weeks||[];
   var root=document.getElementById('feedbackView');
@@ -16454,6 +16592,7 @@ function fbqRender(){
   html+='</div>';
   root.innerHTML=html;
   fbqRedrawChart();
+  fbqWatchChart();
   fbqBindTip(root,m);
   fbqBind(root);
 }
@@ -16464,6 +16603,9 @@ function fbqBind(root){
   });
   Array.prototype.forEach.call(all('[data-fbqmetric]'),function(b){
     b.onclick=function(){FBQ.metric=b.getAttribute('data-fbqmetric');fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqys]'),function(b){
+    b.onclick=function(){FBQ.yscale=b.getAttribute('data-fbqys');fbqRender();};
   });
   Array.prototype.forEach.call(all('[data-fbqsort]'),function(b){
     b.onclick=function(){FBQ.sort=b.getAttribute('data-fbqsort');fbqRender();};
@@ -16505,8 +16647,7 @@ function fbqBind(root){
 }
 
 function fbqToggle(arr,v){var i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else arr.push(v);return arr;}
-var fbqResizeT=null;
-window.addEventListener('resize',function(){if(fbqResizeT)clearTimeout(fbqResizeT);fbqResizeT=setTimeout(fbqRedrawChart,200);});
+window.addEventListener('resize',function(){if(fbqResizeT)clearTimeout(fbqResizeT);fbqResizeT=setTimeout(fbqRedrawChart,160);});
 
 function renderFeedback(){fbqRender();}
 
