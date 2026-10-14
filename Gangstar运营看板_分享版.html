@@ -6072,6 +6072,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -15497,12 +15498,6 @@ var FB_CHANNELS=[
   {k:'YTB',n:'YouTube'},
   {k:'FB',n:'Facebook'}
 ];
-var FB_SCOPE_DEF=[
-  {k:'week',n:'本周'},
-  {k:'last',n:'上周'},
-  {k:'d30',n:'近 30 天'},
-  {k:'all',n:'全部时间'}
-];
 var FB_SENSE_DEF=[
   {k:'pos',n:'正向认可',short:'认可'},
   {k:'neg',n:'负向吐槽',short:'吐槽'},
@@ -15527,23 +15522,8 @@ var FB_K2T={};
 (function(){FB_TOPICS.forEach(function(tp){FB_K2T[tp.key]=tp;});})();
 
 /* —— 唯一筛选状态：上方风向模块与下方列表共用 —— */
-function fbFilterDefault(){return {scope:'d30',from:'',to:'',topics:[],senses:[],channels:[],subs:[],q:''};}
-var FB_FILTER=fbFilterDefault();
       /* 每周可见条数（分页） */
    /* 高级筛选展开态 */
-function fbNormFilter(){
-  var f=window.FB_FILTER||{};
-  var d=fbFilterDefault();
-  ['scope','from','to','q'].forEach(function(k){if(typeof f[k]==='string')d[k]=f[k];});
-  ['topics','senses','channels','subs'].forEach(function(k){d[k]=(f[k]&&f[k].length)?f[k].slice():[];});
-  if(['week','last','d30','all','custom'].indexOf(d.scope)<0)d.scope='d30';
-  if(d.scope==='custom'&&!d.from&&!d.to)d.scope='d30';
-  if(d.q)d.q=d.q.slice(0,80);
-  window.FB_FILTER=d;return d;
-}
-function fbToggleVal(arr,v){var i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else arr.push(v);return arr;}
-
-
 /* —— 日期工具（数据 100% 带 date 字段；缺失时回退到周起始日） —— */
 function fbPad2(n){return (n<10?'0':'')+n;}
 function fbISO(d){return d.getFullYear()+'-'+fbPad2(d.getMonth()+1)+'-'+fbPad2(d.getDate());}
@@ -15577,65 +15557,9 @@ function fbChTokens(it){
   return String(it.channel||'').split(',').map(function(c){return c.trim().toUpperCase();}).filter(Boolean);
 }
 /* —— 取数：先按时间范围取行，再逐维度过滤 —— */
-function fbRowsInRange(chrono,from,to){
-  var out=[];
-  chrono.slice().reverse().forEach(function(w,ri){
-    fbWeekRawItems(w).forEach(function(it){
-      var iso=fbItemISO(it,w);
-      if(!iso){if(!from&&!to)out.push({w:w,ri:ri,it:it,iso:'',tk:fbTopicKeyOf(it),sk:fbSenseKey(it),tag:fbTagOf(it),chs:fbChTokens(it)});return;}
-      if(from&&iso<from)return;
-      if(to&&iso>to)return;
-      out.push({w:w,ri:ri,it:it,iso:iso,tk:fbTopicKeyOf(it),sk:fbSenseKey(it),tag:fbTagOf(it),chs:fbChTokens(it)});
-    });
-  });
-  return out;
-}
-function fbRows(chrono,F){
-  var rev=chrono.slice().reverse();
-  if(F.scope==='week')return rev.length?fbRowsInRange([rev[0]],'','').map(function(r){r.ri=0;return r;}):[];
-  if(F.scope==='last')return rev.length>1?fbRowsInRange([rev[1]],'','').map(function(r){r.ri=1;return r;}):[];
-  if(F.scope==='d30'){var d=new Date();d.setDate(d.getDate()-30);return fbRowsInRange(chrono,fbISO(d),fbISO(new Date()));}
-  if(F.scope==='custom')return fbRowsInRange(chrono,F.from||'',F.to||'');
-  return fbRowsInRange(chrono,'','');
-}
-function fbRowMatch(r,F,skip){
-  if(skip!=='topics'&&F.topics.length&&F.topics.indexOf(r.tk)<0)return false;
-  if(skip!=='subs'&&F.subs.length&&F.subs.indexOf(r.tag)<0)return false;
-  if(skip!=='senses'&&F.senses.length&&F.senses.indexOf(r.sk)<0)return false;
-  if(skip!=='channels'&&F.channels.length){
-    var hit=false;
-    for(var i=0;i<r.chs.length;i++){if(F.channels.indexOf(r.chs[i])>=0){hit=true;break;}}
-    if(!hit)return false;
-  }
-  var q=(F.q||'').trim().toLowerCase();
-  if(q){
-    var it=r.it;
-    var hay=(String(it.theme||'')+' '+String(it.orig||'')+' '+String(it.note||'')).toLowerCase();
-    var ks=q.split(/\s+/);
-    for(var j=0;j<ks.length;j++){if(hay.indexOf(ks[j])<0)return false;}
-  }
-  return true;
-}
-function fbFiltered(rows,F){return rows.filter(function(r){return fbRowMatch(r,F,null);});}
 /* 分面计数：统计「除该维度自身以外」的其它条件都满足后的条数 */
-function fbFacet(rows,F,dim){
-  var m={};
-  rows.forEach(function(r){
-    if(!fbRowMatch(r,F,dim))return;
-    if(dim==='topics')m[r.tk]=(m[r.tk]||0)+1;
-    else if(dim==='subs')m[r.tag]=(m[r.tag]||0)+1;
-    else if(dim==='senses')m[r.sk]=(m[r.sk]||0)+1;
-    else if(dim==='channels')r.chs.forEach(function(c){m[c]=(m[c]||0)+1;});
-  });
-  return m;
-}
-function fbSenseName(k){var n=k;FB_SENSE_DEF.forEach(function(s){if(s.k===k)n=s.n;});return n;}
 function fbChNameOf(k){var n=k;FB_CHANNELS.forEach(function(c){if(c.k===k)n=c.n;});return n;}
 function fbTopicName(k){return (FB_K2T[k]&&FB_K2T[k].name)||'未分类';}
-function fbScopeName(F){
-  if(F.scope==='custom')return '自定义 '+(F.from||'起始')+'~'+(F.to||'至今');
-  var n='本周';FB_SCOPE_DEF.forEach(function(s){if(s.k===F.scope)n=s.n;});return n;
-}
 /* —— 应用筛选（统一入口：保证两处状态一致 + 分页复位） —— */
 
 /* —— 结果摘要 —— */
@@ -15657,30 +15581,27 @@ const SC_KEY='gst_sentiment_v1';
 
 
 
-// ===== 玩家反馈风向（话题 × 风向 · 与下方列表共用同一套筛选状态与归类规则） =====
+/* ============ 玩家反馈页 v5：玩家舆情洞察看板 ============
+   设计原则：
+   1) 全页一份状态 FBQ（粒度 / 指标 / 来源 / 关键词 / 选中话题 / 周期 / 排序），所有模块由 fbqModel() 一次算出；
+   2) 核心指标只用「反馈条数 / 提及次数 / 话题结构与环比」，不使用正负面情绪占比（采集存在选择性偏差，见口径说明）；
+   3) 缺失周期一律记为「无记录」，不补 0、不插值、不造假；
+   4) 洞察必须带真实数值；只能证明相关性时写「可能相关，需结合事件时间验证」。 */
+var FBQ_GRAN=[{k:'week',n:'按周'},{k:'day',n:'按日'},{k:'month',n:'按月'}];
+var FBQ_METRIC=[{k:'mention',n:'反馈提及量'},{k:'share',n:'话题占比'}];
+var FBQ_SORTDEF=[{k:'cur',n:'当期提及量'},{k:'delta',n:'环比增幅'},{k:'prio',n:'优先关注级别'}];
+var FBQ_PAL=['#7e97a8','#b98a6f','#94a68f','#a294ab','#c2a882','#8fa3ad','#c08b7a','#7d9c8b','#9b8fae','#b0a99f'];
+/* 事件标记：只记录项目侧确有依据的节点，关系一律标「可能相关，需结合事件时间验证」 */
+var FBQ_EVENTS=[{d:'2026-08-20',n:'游戏上线',src:'发行节点'}];
+var FBQ={gran:'week',metric:'mention',sort:'cur',ch:[],q:'',topics:[],focus:'',limit:6,open:{},pi:-1};
+var FBQ_CTX=null;
+var FBQ_TIPEL=null;
 
-
-
-
-
-
-
-/* ============ 玩家反馈页 v4：统一筛选 · 核心摘要 · 话题×风向 · 原始反馈列表 ============ */
-/* 设计原则：
-   1) 全页只有一份筛选状态 FB_FILTER（fbNormFilter 归一化），摘要 / 话题矩阵 / 列表全部由 fbxBuild() 一次算出；
-   2) 同一组数字只在「摘要」出现一次，矩阵与列表只做细分与证据；
-   3) 所有统计来自真实数据，缺失标记未知，不用 0 冒充，不插值不伪造。 */
-var FBX_SORT='time_desc';   /* 列表排序：time_desc / time_asc / count */
-var FBX_LIMIT=20;           /* 列表渐进加载条数 */
-var FBX_FOCUS_MIN=10;       /* 「高关注议题」阈值：负向吐槽 且 提及次数 ≥ 10 */
-var FBX_OPEN={};            /* 已展开原声的条目 */
-var FBX_QTIMER=null;
-
-function fbxNum(n){n=Number(n)||0;return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
-function fbxPct(a,b){if(!b)return null;return Math.round(a/b*100);}
-
-/* 来源：只认 4 个正式来源，其余标记其他 / 未知，不擅自归类 */
-function fbxChLabel(it){
+function fbqNum(n){n=Number(n)||0;return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function fbqPct(a,b){if(!b)return null;return Math.round(a/b*100);}
+function fbqColor(i){return FBQ_PAL[i%FBQ_PAL.length];}
+function fbqSenseName(k){var n='未分类';FB_SENSE_DEF.forEach(function(s){if(s.k===k)n=s.n;});return n;}
+function fbqChLabel(it){
   var toks=String(it.channel||'').split(',').map(function(s){return s.trim().toUpperCase();}).filter(Boolean);
   if(!toks.length)return {txt:'未知来源',unk:true};
   var main=[],other=[];
@@ -15693,514 +15614,794 @@ function fbxChLabel(it){
   if(!txt)return {txt:'未知来源',unk:true};
   return {txt:txt,unk:false};
 }
-function fbxTopicLabel(it){return fbTagOf(it);}
-
-/* —— 唯一计算入口：一次算出全页所有数字 —— */
-function fbxBuild(chrono,F){
-  var rowsAll=fbRows(chrono,F);
-  var hits=fbFiltered(rowsAll,F);
-  var ment=0,sc={pos:0,neg:0,sug:0,na:0},agg={},unkSrc=0,dmin='',dmax='',focus=0;
-  hits.forEach(function(r){
-    var it=r.it,c=Number(it.count)||0;
-    r.key=String(it.orig||it.theme||'').slice(0,60)+'|'+r.iso;
-    ment+=c;sc[r.sk]++;
-    var a=agg[r.tk]||(agg[r.tk]={key:r.tk,name:fbTopicName(r.tk),en:(FB_K2T[r.tk]&&FB_K2T[r.tk].en)||'',c:0,n:0,pos:0,neg:0,sug:0,na:0});
-    a.c++;a.n+=c;a[r.sk]++;
-    if(fbxChLabel(it).unk)unkSrc++;
-    if(r.sk==='neg'&&c>=FBX_FOCUS_MIN)focus++;
-    if(r.iso){if(!dmin||r.iso<dmin)dmin=r.iso;if(!dmax||r.iso>dmax)dmax=r.iso;}
+/* —— 取全量条目（不做话题筛选，话题维度在模型内分系列） —— */
+function fbqRows(chrono){
+  var out=[];
+  chrono.forEach(function(w,wi){
+    fbWeekRawItems(w).forEach(function(it){
+      out.push({w:w,wi:wi,iso:fbItemISO(it,w),tk:fbTopicKeyOf(it),sk:fbSenseKey(it),it:it,
+        cnt:Number(it.count)||0,chs:String(it.channel||'').split(',').map(function(s){return s.trim().toUpperCase();}).filter(Boolean),
+        key:String(it.orig||it.theme||'').slice(0,60)+'|'+fbItemISO(it,w)});
+    });
   });
-  var topics=[];for(var k in agg)topics.push(agg[k]);
-  topics.sort(function(a,b){return b.n-a.n||b.c-a.c;});
-  topics.forEach(function(a){
-    a.share=ment?Math.round(a.n/ment*100):0;
-    a.hit=fbFiltered(rowsAll.filter(function(r){return r.tk===a.key;}),{topics:[],senses:F.senses,channels:F.channels,subs:[],q:F.q}).length;
+  return out;
+}
+function fbqMatch(r){
+  var F=FBQ;
+  if(F.ch.length){
+    var hit=false;
+    for(var i=0;i<r.chs.length;i++){if(F.ch.indexOf(r.chs[i])>=0){hit=true;break;}}
+    if(!hit)return false;
+  }
+  var q=(F.q||'').trim().toLowerCase();
+  if(q){
+    var hay=(String(r.it.theme||'')+' '+String(r.it.orig||'')+' '+String(r.it.note||'')).toLowerCase();
+    var ks=q.split(/\s+/);
+    for(var j=0;j<ks.length;j++){if(hay.indexOf(ks[j])<0)return false;}
+  }
+  return true;
+}
+/* —— 周期分桶：week=数据周 / day=连续日 / month=连续月 —— */
+function fbqBuckets(rows,gran,chrono){
+  var map={},order=[];
+  rows.forEach(function(r){
+    var k,rank,label;
+    if(gran==='week'){
+      k='W'+r.wi;rank=r.wi;label=String(r.w.week||('第'+(r.wi+1)+'周'));
+      if(!map[k]){
+        var ws=fbWeekStart(r.w);
+        var st=ws?fbISO(ws):'',en='';
+        if(ws){var we=new Date(ws.getFullYear(),ws.getMonth(),ws.getDate()+6);en=fbISO(we);}
+        map[k]={key:k,label:label,rank:rank,total:0,items:0,min:'',max:'',start:st,end:en,by:{}};order.push(k);
+      }
+    }
+    else if(gran==='month'){k=String(r.iso||'').slice(0,7)||'未知';rank=k;label=k;}
+    else{k=String(r.iso||'未知日期');rank=k;label=k.slice(5)||k;}
+    if(gran!=='week'&&!map[k]){map[k]={key:k,label:label,rank:rank,total:0,items:0,min:'',max:'',start:(gran==='day'?k:k+'-01'),end:(gran==='day'?k:k+'-31'),by:{}};order.push(k);}
+    var b=map[k];
+    b.total+=r.cnt;b.items++;
+    if(r.iso){if(!b.min||r.iso<b.min)b.min=r.iso;if(!b.max||r.iso>b.max)b.max=r.iso;}
+    var t=b.by[r.tk]||(b.by[r.tk]={ment:0,items:0});
+    t.ment+=r.cnt;t.items++;
   });
-  /* 全量（不受筛选）数据覆盖信息 */
+  var bs=order.map(function(k){return map[k];});
+  bs.sort(function(a,b){return (typeof a.rank==='number'&&typeof b.rank==='number')?(a.rank-b.rank):(String(a.rank)<String(b.rank)?-1:1);});
+  if(gran!=='week'){
+    /* 连续时间轴：补齐无反馈的周期，记为「无记录」 */
+    var all=[];
+    var minK=bs.length?bs[0].key:'',maxK=bs.length?bs[bs.length-1].key:'';
+    var keys=[];
+    if(gran==='day'&&/^\d{4}-\d{2}-\d{2}$/.test(minK)){
+      var d=fbParseISO(minK),end=fbParseISO(maxK);
+      if(d&&end){while(d<=end&&keys.length<400){keys.push(fbISO(d));d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);}}
+    }else if(gran==='month'&&/^\d{4}-\d{2}$/.test(minK)){
+      var m=/^(\d{4})-(\d{2})$/.exec(minK),m2=/^(\d{4})-(\d{2})$/.exec(maxK);
+      if(m&&m2){
+        var y=parseInt(m[1],10),mo=parseInt(m[2],10),y2=parseInt(m2[1],10),mo2=parseInt(m2[2],10);
+        while(y<y2||(y===y2&&mo<=mo2)){keys.push(y+'-'+(mo<10?'0':'')+mo);mo++;if(mo>12){mo=1;y++;}if(keys.length>60)break;}
+      }
+    }
+    if(keys.length){
+      var idx={};bs.forEach(function(b){idx[b.key]=b;});
+      keys.forEach(function(k){
+        all.push(idx[k]||{key:k,label:(gran==='day'?k.slice(5):k),rank:k,total:0,items:0,min:'',max:'',by:{},empty:true});
+      });
+      bs=all;
+    }
+  }
+  return bs;
+}
+/* —— 唯一计算入口 —— */
+function fbqModel(chrono){
+  var rows=fbqRows(chrono).filter(fbqMatch);
+  var bs=fbqBuckets(rows,FBQ.gran,chrono);
+  var n=bs.length;
+  var curIdx=FBQ.pi>=0&&FBQ.pi<n?FBQ.pi:n-1;
+  var prevIdx=curIdx-1;
+  var cur=bs[curIdx]||null,prev=prevIdx>=0?bs[prevIdx]:null;
+  /* 话题全集（按当期提及量排序，其次全期提及量） */
+  var agg={};
+  bs.forEach(function(b){for(var k in b.by){var a=agg[k]||(agg[k]={key:k,ment:0,items:0,periods:0});a.ment+=b.by[k].ment;a.items+=b.by[k].items;a.periods++;}});
+  var keys=Object.keys(agg);
+  var top5Sets=[];
+  bs.forEach(function(b){
+    var ks=Object.keys(b.by).sort(function(x,y){return b.by[y].ment-b.by[x].ment;}).slice(0,5);
+    top5Sets.push(ks);
+  });
+  var topics=keys.map(function(k){
+    var a=agg[k],t=FB_K2T[k]||{name:'未分类',en:''};
+    var series=bs.map(function(b){return b.by[k]?{v:b.by[k].ment,items:b.by[k].items,n:null}:null;});
+    /* 占比：该周期该话题提及 / 该周期总提及 */
+    series.forEach(function(s,i){if(s)s.share=(bs[i].total?Math.round(s.v/bs[i].total*100):null);});
+    var cv=cur&&cur.by[k]?cur.by[k].ment:null;
+    var pv=prev&&prev.by[k]?prev.by[k].ment:null;
+    var ci=cur&&cur.by[k]?cur.by[k].items:0;
+    var delta=null,deltaTxt='—';
+    if(cv===null&&pv===null){deltaTxt='无记录';}
+    else if(pv===null||pv===0){deltaTxt=(cv&&cv>0)?'新增':'—';}
+    else if(cv===null){deltaTxt='本期无记录';}
+    else{delta=Math.round((cv-pv)/pv*100);deltaTxt=(delta>0?'+':'')+delta+'%';}
+    /* 趋势方向：需要至少 2 个周期 */
+    var dir='data-na',dirTxt='数据不足';
+    var vals=series.map(function(s){return s?s.v:null;});
+    if(n>=2){
+      var last3=vals.slice(Math.max(0,n-3));
+      var valid=last3.filter(function(v){return v!==null;});
+      var pctShare=cur&&cv!==null&&cur.total?cv/cur.total:0;
+      if(pv===null&&cv!==null&&cv>0){dir='new';dirTxt='新出现';}
+      else if(delta!==null&&delta>=100&&pctShare>=0.05){dir='spike';dirTxt='突增';}
+      else if(valid.length>=3&&valid[0]<valid[1]&&valid[1]<valid[2]){dir='up';dirTxt='连续升温';}
+      else if(delta!==null&&delta>=30){dir='up1';dirTxt='升温';}
+      else if(valid.length>=3&&valid[0]>valid[1]&&valid[1]>valid[2]){dir='down';dirTxt='连续降温';}
+      else if(delta!==null&&delta<=-30){dir='down1';dirTxt='降温';}
+      else if(cv===null&&pv!==null){dir='gone';dirTxt='本期无记录';}
+      else{dir='flat';dirTxt='平稳';}
+    }
+    /* 长期高频：连续 ≥3 个周期进入当期 TOP5 */
+    var streak=0;
+    for(var i=n-1;i>=0;i--){if(top5Sets[i].indexOf(k)>=0)streak++;else break;}
+    return {key:k,name:t.name,en:t.en||'',color:'',ment:a.ment,items:a.items,periods:a.periods,series:series,
+      cur:cv,curItems:ci,prev:pv,delta:delta,deltaTxt:deltaTxt,dir:dir,dirTxt:dirTxt,streak:streak,
+      share:cv!==null&&cur&&cur.total?Math.round(cv/cur.total*100):null};
+  });
+  topics.sort(function(a,b){return (b.cur||0)-(a.cur||0)||b.ment-a.ment;});
+  var palIdx=0;
+  FB_TOPICS.forEach(function(t){
+    topics.forEach(function(x){if(x.key===t.key){x.color=fbqColor(palIdx++);}});
+  });
+  topics.forEach(function(x){if(!x.color)x.color=fbqColor(palIdx++);});
+  /* 优先级 */
+  topics.forEach(function(t){
+    if(t.cur===null){t.prio=4;t.prioTxt='—';}
+    else if((t.dir==='up'||t.dir==='spike')&&t.share!==null&&t.share>=15){t.prio=0;t.prioTxt='P0';}
+    else if(t.dir==='spike'||t.dir==='up'||(t.streak>=3&&t.share>=8)||(t.delta!==null&&t.delta>=50)){t.prio=1;t.prioTxt='P1';}
+    else if(t.share!==null&&t.share>=5){t.prio=2;t.prioTxt='P2';}
+    else{t.prio=3;t.prioTxt='P3';}
+  });
+  var order=topics.slice();
+  if(FBQ.sort==='delta')order.sort(function(a,b){
+    var av=(a.delta===null)?-9999:a.delta,bv=(b.delta===null)?-9999:b.delta;return bv-av;});
+  else if(FBQ.sort==='prio')order.sort(function(a,b){return a.prio-b.prio||(b.cur||0)-(a.cur||0);});
+  else order.sort(function(a,b){return (b.cur||0)-(a.cur||0)||b.ment-a.ment;});
+  /* 默认选中话题：当期提及量 TOP5（有记录者） */
+  if(!FBQ.topics.length){
+    FBQ.topics=topics.filter(function(t){return t.cur!==null;}).slice(0,5).map(function(t){return t.key;});
+  }
+  FBQ.topics=FBQ.topics.filter(function(k){return agg[k];});
+  if(!FBQ.topics.length&&topics.length)FBQ.topics=[topics[0].key];
+  /* 覆盖信息 */
   var allMin='',allMax='',rawCount=0,keepCount=0;
   chrono.forEach(function(w){
     var raw=(w.official||[]).concat(w.community||[]);rawCount+=raw.length;
-    fbWeekRawItems(w).forEach(function(it){
-      keepCount++;var iso=fbItemISO(it,w);
-      if(iso){if(!allMin||iso<allMin)allMin=iso;if(!allMax||iso>allMax)allMax=iso;}
-    });
+    fbWeekRawItems(w).forEach(function(it){keepCount++;var iso=fbItemISO(it,w);
+      if(iso){if(!allMin||iso<allMin)allMin=iso;if(!allMax||iso>allMax)allMax=iso;}});
   });
-  var latest=chrono[chrono.length-1];
-  return {rows:rowsAll,hits:hits,n:hits.length,ment:ment,sc:sc,topics:topics,focus:focus,unkSrc:unkSrc,
-    dmin:dmin,dmax:dmax,allMin:allMin,allMax:allMax,rawCount:rawCount,keepCount:keepCount,
-    latestWeek:latest?latest.week:'—',weeks:chrono.length,F:F,
-    fTopic:fbFacet(rowsAll,F,'topics'),fSense:fbFacet(rowsAll,F,'senses'),fCh:fbFacet(rowsAll,F,'channels')};
-}
-/* —— 列表排序 —— */
-function fbxSorted(hits){
-  var a=hits.slice();
-  if(FBX_SORT==='count')a.sort(function(x,y){return (Number(y.it.count)||0)-(Number(x.it.count)||0);});
-  else a.sort(function(x,y){
-    var dx=x.iso||'',dy=y.iso||'';
-    if(dx===dy)return (Number(y.it.count)||0)-(Number(x.it.count)||0);
-    return FBX_SORT==='time_asc'?(dx<dy?-1:1):(dx<dy?1:-1);
+  /* 事件映射 */
+  var events=[];
+  FBQ_EVENTS.forEach(function(ev){
+    for(var i=0;i<bs.length;i++){
+      var b=bs[i];
+      var lo=b.start||b.min,hi=b.end||b.max;
+      if(lo&&hi&&ev.d>=lo&&ev.d<=hi){events.push({i:i,ev:ev});break;}
+    }
   });
-  return a;
-}
-/* —— 关键词高亮（先转义后包裹，避免注入） —— */
-function fbxMark(s,q){
-  var t=fbEsc(String(s||''));
-  var qs=String(q||'').trim();if(!qs)return t;
-  qs.split(/\s+/).forEach(function(w){
-    if(!w)return;
-    try{var re=new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');t=t.replace(re,'<mark>$1</mark>');}catch(e){}
-  });
-  return t;
-}
-/* —— 单条反馈 —— */
-function fbxItemHTML(r,F){
-  var it=r.it;
-  var zh=fbStrip(it.theme||it.orig||'').replace(/^\s*\d+\s*[\.、）)．:：]\s*/,'');
-  var en=String(it.orig||'').trim();
-  var cnt=Number(it.count)||0;
-  var cl=fbxChLabel(it);
-  var qs=fbQuotesOf(it);
-  var open=!!FBX_OPEN[r.key];
-  var evi=(it.note&&/^https?:\/\//.test(it.note))?'<a class="fbx-evi" href="'+fbEsc(it.note)+'" target="_blank" rel="noopener">🔗 查看证据</a>':'';
-  var qHtml=qs.length?('<div class="fbx-qs">'+
-    qs.map(function(q,i){
-      return '<div class="fbx-q"><span class="fbx-qi">'+(i+1)+'</span><div class="fbx-qb"><div class="fbx-qzh">'+fbxMark(q.zh||q.en||'',F.q)+'</div>'
-        +(q.en?'<div class="fbx-qen">'+fbxMark(q.en,F.q)+'</div>':'')
-        +'<div class="fbx-qsrc">'+(q.src?fbEsc(String(q.src)):'玩家社区')+'</div></div></div>';
-    }).join('')+'</div>'):'<div class="fbx-qnone">该条为聚合议题，暂无逐字原声记录。</div>';
-  return '<div class="fbx-item'+(open?' open':'')+'" data-key="'+fbEsc(r.key)+'">'
-    +'<div class="fbx-txt">'+fbxMark(zh||en,F.q)+'</div>'
-    +(en&&en!==zh?'<div class="fbx-orig">'+fbxMark(en,F.q)+'</div>':'')
-    +'<div class="fbx-meta">'
-      +'<button class="fbx-tag t" data-fbxtopic="'+r.tk+'" title="筛选话题：'+fbEsc(fbTopicName(r.tk))+'">'+fbEsc(fbxTopicLabel(it))+'</button>'
-      +'<button class="fbx-tag s-'+r.sk+'" data-fbxsense="'+r.sk+'" title="筛选风向：'+fbEsc(fbSenseName(r.sk))+'">'+fbEsc(fbSenseName(r.sk))+'</button>'
-      +'<span class="fbx-m'+(cl.unk?' unk':'')+'">'+fbEsc(cl.txt)+'</span>'
-      +'<span class="fbx-m">'+(r.iso?r.iso:'日期未知')+'</span>'
-      +'<span class="fbx-m">'+fbxNum(cnt)+' 提及</span>'
-      +'<button class="fbx-open" data-fbxopen="'+fbEsc(r.key)+'">玩家原声 '+(qs.length||0)+' 条 '+(open?'▴':'▾')+'</button>'
-    +'</div>'
-    +(open?('<div class="fbx-body">'+qHtml+evi+'</div>'):'')
-  +'</div>';
-}
-/* —— 模块 4：原始反馈列表 —— */
-function fbxListHTML(ctx){
-  var F=ctx.F,sorted=fbxSorted(ctx.hits);
-  var shown=sorted.slice(0,FBX_LIMIT);
-  var more=sorted.length-shown.length;
-  var segBtn=function(k,t){return '<button class="fbx-segb'+(FBX_SORT===k?' on':'')+'" data-fbxsort="'+k+'">'+t+'</button>';};
-  var h='<section class="fbx-card" id="fbListAnchor">'
-    +'<div class="fbx-sec-h"><span class="fbx-sec-n">原始玩家反馈</span>'
-      +'<span class="fbx-sec-s">共 '+fbxNum(sorted.length)+' 条 · 当前显示 '+fbxNum(shown.length)+' 条（点击标签可继续筛选）</span>'
-      +'<span class="fbx-seg sm">'+segBtn('time_desc','时间 ↓')+segBtn('time_asc','时间 ↑')+segBtn('count','提及量 ↓')+'</span></div>';
-  if(!sorted.length){h+=fbxEmptyHTML(F);}
-  else{
-    h+='<div class="fbx-list">'+shown.map(function(r){return fbxItemHTML(r,F);}).join('')+'</div>';
-    if(more>0)h+='<div class="fbx-more"><button data-fbxmore="1">加载更多（还有 '+fbxNum(more)+' 条）</button></div>';
+  /* 事件相邻周期变化（仅作相关性提示，不作因果断言） */
+  var ei=null;
+  if(events.length){
+    var e0=events[0];
+    if(e0.i+1<bs.length){
+      var best=null;
+      topics.forEach(function(t){
+        var s0=t.series[e0.i],s1=t.series[e0.i+1];
+        if(s0&&s1&&s1.v>s0.v&&s0.v>0){
+          var dd=Math.round((s1.v-s0.v)/s0.v*100);
+          if(!best||dd>best.d)best={t:t,d:dd,v0:s0.v,v1:s1.v};
+        }
+      });
+      if(best)ei={ev:e0.ev,from:bs[e0.i].label,to:bs[e0.i+1].label,name:best.t.name,d:best.d,v0:best.v0,v1:best.v1};
+    }
   }
-  h+='</section>';
+  return {rows:rows,buckets:bs,n:n,curIdx:curIdx,prevIdx:prevIdx,cur:cur,prev:prev,topics:topics,order:order,
+    events:events,eventImpact:ei,allMin:allMin,allMax:allMax,rawCount:rawCount,keepCount:keepCount,chronos:chrono,
+    weeks:chrono.length,latestWeek:chrono.length?chrono[chrono.length-1].week:'—',
+    totalItems:cur?cur.items:0,totalMent:cur?cur.total:0,
+    prevItems:prev?prev.items:null,prevMent:prev?prev.total:null};
+}
+/* —— 图表：多系列折线（真实时间比例定位 · 缺失断开 · 事件标记） —— */
+function fbqChartSVG(m,w,h){
+  w=Math.max(320,w||700);h=h||300;
+  var padL=46,padR=14,padT=14,padB=36;
+  var pw=Math.max(60,w-padL-padR),ph=Math.max(60,h-padT-padB);
+  var bs=m.buckets,n=m.n;
+  var sel=m.topics.filter(function(t){return FBQ.topics.indexOf(t.key)>=0;});
+  var isShare=(FBQ.metric==='share');
+  function val(s){if(!s)return null;return isShare?s.share:s.v;}
+  /* X 按时间比例 */
+  var xs=[],t0=null,t1=null;
+  bs.forEach(function(b){
+    var d=b.min?fbParseISO(b.min):null;
+    xs.push(d?d.getTime():null);
+    if(d){if(t0===null||d<t0)t0=d;if(t1===null||d>t1)t1=d;}
+  });
+  var useTime=(t0!==null&&t1!==null&&t1>t0);
+  var minX=useTime?t0.getTime():0,maxX=useTime?t1.getTime():Math.max(1,n-1);
+  function X(i){
+    if(!useTime)return padL+(n<=1?pw/2:i/(n-1)*pw);
+    var v=xs[i];if(v===null)v=minX;
+    return padL+((v-minX)/(maxX-minX||1))*pw;
+  }
+  var maxV=0;
+  sel.forEach(function(t){t.series.forEach(function(s){var v=val(s);if(v!==null&&v>maxV)maxV=v;});});
+  var vals=[];sel.forEach(function(t){t.series.forEach(function(s){var v=val(s);if(v!==null)vals.push(v);});});
+  vals.sort(function(a,b){return a-b;});
+  var p95=vals.length?vals[Math.min(vals.length-1,Math.floor(vals.length*0.95))]:0;
+  var top=isShare?Math.min(100,Math.max(10,Math.ceil((Math.max(maxV,p95)||1)*1.15))):Math.max(1,Math.ceil((p95||maxV||1)*1.15));
+  var clipped=maxV>top;
+  function Y(v){return padT+ph-(v/top)*ph;}
+  var o='<svg class="fbq-svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="话题趋势折线图">';
+  /* 网格 + Y 轴 */
+  var ticks=4;
+  for(var g=0;g<=ticks;g++){
+    var v=top/ticks*g,y=Y(v);
+    o+='<line class="fbq-grid" x1="'+padL+'" y1="'+y.toFixed(1)+'" x2="'+(padL+pw)+'" y2="'+y.toFixed(1)+'"/>';
+    o+='<text class="fbq-ax" x="'+(padL-6)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end">'+(isShare?Math.round(v)+'%':fbqNum(Math.round(v)))+'</text>';
+  }
+  /* 无记录区间（按日/按月视图） */
+  bs.forEach(function(b,i){
+    if(!b.empty)return;
+    var x=X(i);
+    o+='<rect class="fbq-gap" x="'+(x-1).toFixed(1)+'" y="'+padT+'" width="2" height="'+ph+'"/>';
+  });
+  /* 事件竖线 */
+  m.events.forEach(function(e){
+    var x=X(e.i);
+    o+='<line class="fbq-evline" x1="'+x.toFixed(1)+'" y1="'+padT+'" x2="'+x.toFixed(1)+'" y2="'+(padT+ph)+'"/>';
+    o+='<text class="fbq-evlab" x="'+(x+4).toFixed(1)+'" y="'+(padT+10)+'">▲ '+fbEsc(e.ev.n)+'</text>';
+  });
+  /* 折线：遇到 null 断开 */
+  sel.forEach(function(t){
+    var segs=[],cur=[];
+    t.series.forEach(function(s,i){
+      var v=val(s);
+      if(v===null){if(cur.length)segs.push(cur);cur=[];}
+      else cur.push([X(i),Y(v)]);
+    });
+    if(cur.length)segs.push(cur);
+    segs.forEach(function(sg){
+      if(sg.length>1){
+        o+='<polyline class="fbq-line" fill="none" stroke="'+t.color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="'+sg.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'"/>';
+      }
+      sg.forEach(function(p){o+='<circle class="fbq-pt" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="'+t.color+'"/>';});
+    });
+    if(!segs.length){
+      o+='<text class="fbq-noline" x="'+(padL+6)+'" y="'+(padT+ph-6)+'">'+fbEsc(t.name)+'：该视图下无足够记录</text>';
+    }
+  });
+  /* X 轴标签（自适应抽稀） */
+  var step=Math.max(1,Math.ceil(n/Math.max(3,Math.floor(pw/80))));
+  bs.forEach(function(b,i){
+    if(i%step!==0&&i!==n-1)return;
+    var x=X(i),anch='middle';
+    if(i===n-1&&x>w-70){x=Math.min(x,w-6);anch='end';}
+    if(i===0&&x<padL+26){x=Math.max(x,4);anch='start';}
+    o+='<text class="fbq-ax" x="'+x.toFixed(1)+'" y="'+(padT+ph+18)+'" text-anchor="'+anch+'">'+fbEsc(b.label)+'</text>';
+  });
+  /* 悬停热区 */
+  for(var i2=0;i2<n;i2++){
+    var cx=X(i2),half=pw/(n*2)+6;
+    o+='<rect class="fbq-hit" data-fbqi="'+i2+'" x="'+(cx-half).toFixed(1)+'" y="'+padT+'" width="'+(half*2).toFixed(1)+'" height="'+ph+'" fill="transparent"/>';
+  }
+  o+='</svg>';
+  if(clipped){
+    o+='<div class="fbq-note">纵轴已按 95 分位截断以保留小话题可读性，真实峰值 '+fbqNum(maxV)+(isShare?'%':' 次提及')+'（悬停查看准确数值）。</div>';
+  }
+  return o;
+}
+function fbqTipHTML(m,i){
+  var b=m.buckets[i],prev=i>0?m.buckets[i-1]:null;
+  var sel=m.topics.filter(function(t){return FBQ.topics.indexOf(t.key)>=0;});
+  var h='<div class="fbq-tip-h">'+fbEsc(b.label)+'<span>'+(b.empty?'无反馈记录':fbqNum(b.items)+' 条 / '+fbqNum(b.total)+' 次提及')+'</span></div>';
+  h+='<div class="fbq-tip-b">';
+  sel.forEach(function(t){
+    var s=t.series[i],v=s?(FBQ.metric==='share'?s.share:s.v):null;
+    var pv2=(prev&&prev.by[t.key])?prev.by[t.key].ment:null;
+    var d='—';
+    if(s&&pv2===null)d='新增';
+    else if(!s)d='无记录';
+    else if(pv2===0)d='—';
+    else{var dd=Math.round((s.v-pv2)/pv2*100);d=(dd>0?'+':'')+dd+'%';}
+    h+='<div class="fbq-tip-r"><i style="background:'+t.color+'"></i><span class="fbq-tip-n">'+fbEsc(t.name)+'</span>'
+      +'<b>'+(v===null?'—':(FBQ.metric==='share'?v+'%':fbqNum(v)))+'</b>'
+      +'<em>'+(s&&s.share!==null?s.share+'% 占比':'—')+' · 环比 '+d+'</em></div>';
+  });
+  h+='</div>';
   return h;
 }
-/* —— 空状态 —— */
-function fbxEmptyHTML(F){
-  var chips=[];
-  if(F.senses.length)F.senses.forEach(function(v){chips.push({d:'senses',v:v,t:'情绪：'+fbSenseName(v)});});
-  if(F.topics.length)F.topics.forEach(function(v){chips.push({d:'topics',v:v,t:'话题：'+fbTopicName(v)});});
-  if(F.channels.length)F.channels.forEach(function(v){chips.push({d:'channels',v:v,t:'来源：'+fbChNameOf(v)});});
-  if(F.q.trim())chips.push({d:'q',v:'',t:'关键词：'+F.q.trim()});
-  if(F.scope!=='d30')chips.push({d:'scope',v:'',t:'时间：'+fbScopeName(F)});
-  return '<div class="fbx-empty"><div class="fbx-et">当前条件下没有匹配的玩家反馈</div>'
-    +'<div class="fbx-es">原始数据中确实不存在同时满足这些条件的反馈，未做任何补全或估算。可移除其中一项后重试：</div>'
-    +'<div class="fbx-ec">'+(chips.length?chips.map(function(c){return '<button class="fbx-erm" data-fbxrm="'+c.d+':'+fbEsc(c.v)+'">'+fbEsc(c.t)+' ✕</button>';}).join(''):'<span class="fbx-en">当前仅默认时间范围，无附加条件</span>')+'</div>'
-    +'<div class="fbx-eb"><button class="fbx-btn" data-fbxclear="1">清空全部筛选</button><button class="fbx-btn g" data-fbxscope="d30">回到默认时间范围</button></div></div>';
+function fbqBindTip(root,m){
+  var box=root.querySelector('#fbqChart');
+  if(!box)return;
+  var tip=root.querySelector('#fbqTip');
+  box.addEventListener('mousemove',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('.fbq-hit'):null;
+    if(!t){if(tip)tip.style.display='none';return;}
+    var i=parseInt(t.getAttribute('data-fbqi'),10);
+    if(isNaN(i))return;
+    tip.innerHTML=fbqTipHTML(m,i);
+    tip.style.display='block';
+    var r=box.getBoundingClientRect(),x=e.clientX-r.left+14,y=e.clientY-r.top+12;
+    if(x+tip.offsetWidth>r.width-4)x=e.clientX-r.left-tip.offsetWidth-14;
+    if(x<0)x=4;
+    if(y+tip.offsetHeight>r.height-4)y=Math.max(4,e.clientY-r.top-tip.offsetHeight-12);
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  });
+  box.addEventListener('mouseleave',function(){if(tip)tip.style.display='none';});
 }
-/* —— 模块 2：核心摘要（全页唯一一次呈现总量与情绪占比） —— */
-function fbxSummaryHTML(ctx){
-  var F=ctx.F,n=ctx.n,tot=n;
-  var has=tot>0;
-  var p=function(k){
-    var v=ctx.sc[k]||0,x=has?fbxPct(v,tot):null;
-    return '<div class="fbx-kpi s-'+k+'"><b>'+(has?fbxNum(v):'—')+'</b><span>'+fbSenseName(k)+'</span><em>'+(has?(x+'%'):'无数据')+'</em></div>';
-  };
-  var t0=ctx.topics[0];
-  var bar=has?('<div class="fbx-stack">'+['pos','neg','sug','na'].map(function(k){
-    var v=ctx.sc[k]||0;if(!v)return '';
-    return '<i class="b-'+k+'" style="width:'+(v/tot*100)+'%" title="'+fbSenseName(k)+' '+v+' 条"></i>';}).join('')+'</div>'):'';
-  return '<section class="fbx-card">'
-    +'<div class="fbx-sec-h"><span class="fbx-sec-n">核心摘要</span><span class="fbx-sec-s">全部数字来自当前筛选后的真实反馈 · 占比分母 = 反馈条数 '+fbxNum(tot)+'</span></div>'
-    +'<div class="fbx-kpis">'
-      +'<div class="fbx-kpi main"><b>'+(has?fbxNum(n):'—')+'</b><span>条玩家反馈</span><em>'+(has?fbxNum(ctx.ment)+' 次提及':'无匹配数据')+'</em></div>'
-      +p('pos')+p('neg')+p('sug')
-      +'<div class="fbx-kpi s-focus"><b>'+(has?fbxNum(ctx.focus):'—')+'</b><span>高关注议题</span><em>负向 且 提及 ≥ '+FBX_FOCUS_MIN+'</em></div>'
-    +'</div>'+bar
-    +'<div class="fbx-concl">'
-      +(t0?('讨论最集中：'+'<b>'+fbEsc(t0.name)+'</b>（'+fbxNum(t0.c)+' 条 / '+fbxNum(t0.n)+' 次提及，占 '+t0.share+'%）'):'当前筛选下没有可归纳的话题')
-      +(ctx.unkSrc?'<span class="fbx-warn">'+fbxNum(ctx.unkSrc)+' 条来源未归类（DM / Forum / Chat 等），未计入四大来源</span>':'')
-      +'<button class="fbx-jump" data-fbxjump="issues">需跟进 → 去问题追踪页（状态 / 负责人 / 进度）</button>'
-    +'</div>'
-  +'</section>';
-}
-/* —— 模块 3：话题 × 玩家风向（紧凑表格，替代原 10 张卡片） —— */
-function fbxMatrixHTML(ctx){
-  var F=ctx.F;
-  var cell=function(a,k){
-    var v=a[k]||0,x=a.c?fbxPct(v,a.c):null;
-    var on=(F.topics.indexOf(a.key)>=0&&F.senses.indexOf(k)>=0);
-    return '<td class="fbx-mc s-'+k+(v?'':' z')+(on?' on':'')+'" data-l="'+fbSenseName(k)+'" data-fbxtopic="'+a.key+'" data-fbxsense="'+k+'" title="点击筛选：'+fbEsc(a.name)+' × '+fbSenseName(k)+'（'+v+' 条）">'
-      +(v?('<b>'+v+'</b>'+(x!==null?'<em>'+x+'%</em>':'')):'—')+'</td>';
-  };
-  var rows=ctx.topics.map(function(a){
-    var on=F.topics.indexOf(a.key)>=0;
-    return '<tr class="'+(on?'on':'')+'">'
-      +'<th scope="row"><button class="fbx-tname'+(on?' on':'')+'" data-fbxtopic="'+a.key+'" title="点击筛选话题：'+fbEsc(a.name)+'">'+fbEsc(a.name)+'</button>'
-        +'<span class="fbx-ten">'+fbEsc(a.en)+'</span></th>'
-      +'<td class="fbx-mn" data-l="反馈量"><b>'+fbxNum(a.c)+'</b> 条<em>'+fbxNum(a.n)+' 提及 · '+a.share+'%</em></td>'
-      +cell(a,'pos')+cell(a,'neg')+cell(a,'sug')+cell(a,'na')
-      +'<td class="fbx-mbar" data-l="风向构成"><span class="fbx-mini">'
-        +['pos','neg','sug','na'].map(function(k){var v=a[k]||0;return v?'<i class="b-'+k+'" style="width:'+(v/a.c*100)+'%"></i>':'';}).join('')
-      +'</span></td>'
-    +'</tr>';
-  }).join('');
-  return '<section class="fbx-card">'
-    +'<div class="fbx-sec-h"><span class="fbx-sec-n">话题 × 玩家风向</span>'
-      +'<span class="fbx-sec-s">点击话题名 = 筛选该话题；点击「认可 / 吐槽 / 建议」单元格 = 话题 + 风向组合筛选，并自动定位到下方列表</span></div>'
-    +(ctx.topics.length?('<table class="fbx-mx"><thead><tr><th>话题</th><th>反馈量</th><th>正向认可</th><th>负向吐槽</th><th>改进建议</th><th>未分类</th><th class="c-bar">风向构成</th></tr></thead><tbody>'+rows+'</tbody></table>')
-      :'<div class="fbx-empty sm"><div class="fbx-et">当前筛选下没有话题数据</div><div class="fbx-es">请放宽时间范围或移除部分筛选条件。</div></div>')
-    +'<div class="fbx-fnote">口径：每行「反馈量」为筛选后该话题的反馈条数，单元格百分比分母 = 该话题条数；同一条反馈在数据模型中只归属 1 个话题、1 个风向，因此各行条数之和 = 摘要中的反馈总量，不做重复计数。</div>'
-  +'</section>';
-}
-/* —— 模块 1：全局筛选栏（唯一一份筛选状态） —— */
-function fbxBarHTML(ctx){
-  var F=ctx.F;
-  function seg(k,t){return '<button class="fbx-segb'+(F.scope===k?' on':'')+'" data-fbxscope="'+k+'">'+t+'</button>';}
-  function chip(attr,val,label,cnt,cls){
-    var on=(attr==='fbxtopic'&&F.topics.indexOf(val)>=0)||(attr==='fbxsense'&&F.senses.indexOf(val)>=0)||(attr==='fbxch'&&F.channels.indexOf(val)>=0);
-    var z=(!cnt&&!on)?' z':'';
-    return '<button class="fbx-chip'+(cls||'')+z+(on?' on':'')+'" data-'+attr+'="'+fbEsc(val)+'"'+(z?' title="当前条件下该选项为 0 条"':'')+'>'+fbEsc(label)+'<b>'+(cnt||0)+'</b></button>';
+/* —— 模块 1：舆情总览 —— */
+function fbqKpiHTML(m){
+  function card(lab,val,sub,cls){
+    return '<div class="fbq-k '+(cls||'')+'"><div class="fbq-kl">'+lab+'</div><div class="fbq-kv">'+val+'</div><div class="fbq-ks">'+sub+'</div></div>';
   }
-  var allBtn=function(attr,empty){return '<button class="fbx-chip all'+(empty?' on':'')+'" data-'+attr+'="">全部</button>';};
-  var scopeSeg='<div class="fbx-seg">'+FB_SCOPE_DEF.map(function(s){return seg(s.k,s.n);}).join('')
-    +(F.scope==='custom'?'<button class="fbx-segb on" data-fbxscope="custom">自定义</button>':'')+'</div>';
-  var dateBox='<span class="fbx-date">'
-    +'<input type="date" data-fbxdate="from" value="'+fbEsc(F.from)+'">'
-    +'<span class="fbx-to">至</span>'
-    +'<input type="date" data-fbxdate="to" value="'+fbEsc(F.to)+'">'
-    +(F.scope==='custom'?'<button class="fbx-minib" data-fbxdateclear="1">清除</button>':'')
-    +'</span>';
-  var topicOrder=FB_TOPICS.map(function(t){return t.key;}).filter(function(k){return ctx.fTopic[k];})
-    .sort(function(a,b){return (ctx.fTopic[b]||0)-(ctx.fTopic[a]||0);});
-  var senseLine='<div class="fbx-row"><span class="fbx-lab">情绪</span>'
-    +allBtn('fbxsense',!F.senses.length)
-    +FB_SENSE_DEF.map(function(s){return chip('fbxsense',s.k,s.n,ctx.fSense[s.k]||0,' s-'+s.k);}).join('')+'</div>';
-  var chLine='<div class="fbx-row"><span class="fbx-lab">来源</span>'
-    +allBtn('fbxch',!F.channels.length)
-    +FB_CHANNELS.map(function(c){return chip('fbxch',c.k,c.n,ctx.fCh[c.k]||0);}).join('')
-    +'<span class="fbx-hint">仅 Discord / IG / YTB / FB 四个来源；其余少量来源（DM / Forum / Chat）标记未归类，不在选项中</span></div>';
-  var topicLine='<div class="fbx-row"><span class="fbx-lab">话题</span>'
-    +allBtn('fbxtopic',!F.topics.length)
-    +(topicOrder.length?topicOrder.map(function(k){return chip('fbxtopic',k,fbTopicName(k),ctx.fTopic[k]||0);}).join('')
-      :'<span class="fbx-hint">当前时间范围内没有可用话题</span>')+'</div>';
-  var searchRow='<div class="fbx-row"><span class="fbx-lab">关键词</span>'
-    +'<span class="fbx-sbox"><span class="fbx-sic">🔍</span>'
-    +'<input id="fbQ" type="text" autocomplete="off" placeholder="搜索评论原文关键词（空格分隔 = 同时包含）" value="'+fbEsc(F.q)+'">'
-    +(F.q?'<button class="fbx-sx" data-fbxqclear="1" title="清空关键词">✕</button>':'')+'</span></div>';
-  var act=fbxActive(F);
-  var st=[];
-  st.push('<span class="fbx-sc fixed">时间：'+fbEsc(fbScopeName(F))+'</span>');
-  F.senses.forEach(function(v){st.push('<span class="fbx-sc s-'+v+'">情绪：'+fbSenseName(v)+'<button data-fbxrm="senses:'+v+'">✕</button></span>');});
-  F.topics.forEach(function(v){st.push('<span class="fbx-sc">话题：'+fbTopicName(v)+'<button data-fbxrm="topics:'+v+'">✕</button></span>');});
-  F.channels.forEach(function(v){st.push('<span class="fbx-sc">来源：'+fbChNameOf(v)+'<button data-fbxrm="channels:'+v+'">✕</button></span>');});
-  if(F.q.trim())st.push('<span class="fbx-sc">关键词：'+fbEsc(F.q.trim())+'<button data-fbxrm="q:">✕</button></span>');
-  var stateRow='<div class="fbx-row fbx-row-st"><span class="fbx-lab">已选</span>'+st.join('')
-    +(act?'<button class="fbx-clear" data-fbxclear="1">清空全部（'+act+' 项）</button>'
-         :'<button class="fbx-clear" data-fbxclear="1" disabled style="opacity:.45;cursor:not-allowed">清空全部</button>'
-          +'<span class="fbx-none">默认状态：近 30 天，无附加条件</span>')+'</div>';
-  return '<section class="fbx-card fbx-bar">'
-    +'<div class="fbx-row"><span class="fbx-lab">时间</span>'+scopeSeg+dateBox
-      +'<span class="fbx-hint">原始数据覆盖 '+ctx.allMin+' ~ '+ctx.allMax+'</span></div>'
-    +senseLine+chLine+topicLine+searchRow+stateRow
-  +'</section>';
-}
-function fbxActive(F){
-  return F.topics.length+F.senses.length+F.channels.length+(F.q.trim()?1:0)+((F.scope!=='d30')?1:0);
-}
-/* —— 滚动定位到列表 —— */
-function fbxScrollList(){
-  var el=document.getElementById('fbListAnchor');if(!el)return;
-  var v=document.getElementById('view-feedback');
-  try{
-    if(v){var y=el.getBoundingClientRect().top-v.getBoundingClientRect().top+v.scrollTop;v.scrollTo(0,Math.max(0,y-10));return;}
-  }catch(e){}
-  try{el.scrollIntoView({block:'start'});}catch(e2){}
-}
-/* —— 统一应用：改状态 → 重算 → 重渲染（可选滚动） —— */
-function fbxApply(opt){
-  opt=opt||{};
-  if(!opt.keepLimit)FBX_LIMIT=20;
-  fbNormFilter();
-  renderFeedback();
-  if(opt.scroll)fbxScrollList();
-}
-/* —— 事件绑定 —— */
-function fbxBind(root){
-  if(!root)return;
-  function each(sel,fn){root.querySelectorAll(sel).forEach(function(b){b.onclick=function(e){fn(b,e);};});}
-  each('[data-fbxscope]',function(b){
-    var k=b.getAttribute('data-fbxscope');
-    FB_FILTER.scope=k;
-    if(k!=='custom'){FB_FILTER.from='';FB_FILTER.to='';}
-    FBX_OPEN={};fbxApply({});
-  });
-  /* 注意绑定顺序：单元格同时带 topic + sense 两个属性，最后绑定的 topic 处理器会同时处理两者 */
-  each('[data-fbxsense]',function(b){
-    var v=b.getAttribute('data-fbxsense')||'';
-    if(v)fbToggleVal(FB_FILTER.senses,v);else FB_FILTER.senses=[];
-    fbxApply({scroll:true});
-  });
-  each('[data-fbxch]',function(b){
-    var v=b.getAttribute('data-fbxch')||'';
-    if(v)fbToggleVal(FB_FILTER.channels,v);else FB_FILTER.channels=[];
-    fbxApply({});
-  });
-  each('[data-fbxtopic]',function(b){
-    var v=b.getAttribute('data-fbxtopic')||'';
-    var s=b.getAttribute('data-fbxsense');
-    if(v)fbToggleVal(FB_FILTER.topics,v);else if(!s)FB_FILTER.topics=[];
-    if(s)FB_FILTER.senses=[s];
-    fbxApply({scroll:true});
-  });
-  each('[data-fbxrm]',function(b){
-    var v=b.getAttribute('data-fbxrm')||'',i=v.indexOf(':');
-    var dim=v.slice(0,i),val=v.slice(i+1);
-    if(dim==='scope'){FB_FILTER.scope='d30';FB_FILTER.from='';FB_FILTER.to='';}
-    else if(dim==='q'){FB_FILTER.q='';}
-    else{var a=FB_FILTER[dim]||[],k=a.indexOf(val);if(k>=0)a.splice(k,1);}
-    fbxApply({});
-  });
-  each('[data-fbxclear]',function(b){if(b.disabled)return;FB_FILTER=fbFilterDefault();FBX_OPEN={};fbxApply({});});
-  each('[data-fbxqclear]',function(){FB_FILTER.q='';fbxApply({});});
-  each('[data-fbxdateclear]',function(){FB_FILTER.scope='d30';FB_FILTER.from='';FB_FILTER.to='';fbxApply({});});
-  each('[data-fbxsort]',function(b){FBX_SORT=b.getAttribute('data-fbxsort');fbxApply({});});
-  each('[data-fbxmore]',function(){FBX_LIMIT+=30;fbxApply({keepLimit:true});});
-  each('[data-fbxopen]',function(b){
-    var k=b.getAttribute('data-fbxopen');
-    if(FBX_OPEN[k])delete FBX_OPEN[k];else FBX_OPEN[k]=1;
-    renderFeedback();
-  });
-  each('[data-fbxjump]',function(b){
-    var t=document.querySelector('.tab[data-view="issues"]');
-    if(t){t.click();}
-  });
-  each('.fbx-add',function(){openWeekModal();});
-  root.querySelectorAll('[data-fbxdate]').forEach(function(inp){
-    inp.onchange=function(){
-      var which=inp.getAttribute('data-fbxdate');
-      FB_FILTER[which]=inp.value||'';
-      if(FB_FILTER.from||FB_FILTER.to)FB_FILTER.scope='custom';else FB_FILTER.scope='d30';
-      fbxApply({});
-    };
-  });
-  var q=document.getElementById('fbQ');
-  if(q){
-    q.oninput=function(){
-      if(FBX_QTIMER)clearTimeout(FBX_QTIMER);
-      FBX_QTIMER=setTimeout(function(){FB_FILTER.q=q.value||'';fbxApply({});},320);
-    };
-    q.onkeydown=function(e){
-      if(e.key==='Enter'){if(FBX_QTIMER)clearTimeout(FBX_QTIMER);FB_FILTER.q=q.value||'';fbxApply({});}
-    };
+  var di=null,dm=null;
+  if(m.prevItems!==null&&m.prevItems>0)di=Math.round((m.totalItems-m.prevItems)/m.prevItems*100);
+  if(m.prevMent!==null&&m.prevMent>0)dm=Math.round((m.totalMent-m.prevMent)/m.prevMent*100);
+  function dtxt(d,p){if(p===null||p===undefined)return '上一周期无数据';return (d>0?'▲ +':'▼ ')+d+'%（上一周期 '+fbqNum(p)+'）';}
+  var top1=m.topics.filter(function(t){return t.cur!==null;})[0];
+  var risers=m.topics.filter(function(t){return t.delta!==null&&t.delta>0;}).sort(function(a,b){return b.delta-a.delta;});
+  var riser=risers[0];
+  var watch=m.topics.filter(function(t){return t.prio<=1&&t.cur!==null;}).sort(function(a,b){return a.prio-b.prio||(b.cur||0)-(a.cur||0);})[0];
+  var curLab=m.cur?m.cur.label:'—',prevLab=m.prev?m.prev.label:'无';
+  var h='<div class="fbq-kpis">';
+  h+=card('当期反馈量',fbqNum(m.totalItems)+' <em>条</em>','周期：'+fbEsc(curLab)+' · '+dtxt(di,m.prevItems));
+  h+=card('当期提及次数',fbqNum(m.totalMent)+' <em>次</em>',dtxt(dm,m.prevMent));
+  h+=card('关注度最高话题',top1?fbEsc(top1.name):'—',top1?('提及 '+fbqNum(top1.cur)+' 次 · 占当期 '+(top1.share===null?'—':top1.share+'%')):'当期无记录');
+  if(riser){
+    var isTop=(top1&&riser.key===top1.key);
+    h+=card('环比升幅最高',fbEsc(riser.name)+' <em>'+riser.deltaTxt+'</em>',
+      (riser.prev||0)+' → '+fbqNum(riser.cur)+' 次提及'+(isTop?' · 同时为当期第一':''),' up');
+  }else{
+    h+=card('环比升幅最高','—','本周期内没有话题实现正增长',' na');
   }
+  if(watch)h+=card('需重点关注',fbEsc(watch.name)+' <em>'+watch.prioTxt+'</em>',watch.dirTxt+' · 环比 '+watch.deltaTxt,' warn');
+  else h+=card('需重点关注','—','未发现突增或连续升温话题',' na');
+  h+='</div>';
+  h+='<div class="fbq-kpinote">对比口径：'+fbEsc(curLab)+'（当前周期） vs '+fbEsc(prevLab)+'（上一周期），'
+    +'按'+FBQ_GRAN.filter(function(g){return g.k===FBQ.gran;})[0].n+'聚合；提及次数为议题重复出现量，条数为独立反馈条目数，两者不混算。</div>';
+  return h;
 }
-/* —— 样式 —— */
-function fbxCSS(){
+/* —— 模块 3：话题结构与变化排名 —— */
+function fbqRankHTML(m){
+  var rows=m.order.filter(function(t){return t.cur!==null||t.prev!==null;});
+  if(!rows.length)return '<div class="fbq-empty"><div class="fbq-et">当前筛选下没有话题数据</div></div>';
+  var h='<div class="fbq-tblwrap"><table class="fbq-tbl"><thead><tr>'
+    +'<th>话题</th><th class="r">当期提及</th><th class="r">占比</th><th class="r">上一周期</th><th class="r">环比</th><th>趋势方向</th><th>优先关注</th></tr></thead><tbody>';
+  rows.forEach(function(t){
+    var barW=Math.max(2,Math.min(100,Math.round((t.cur||0)/(rows[0].cur||1)*100)));
+    h+='<tr class="fbq-tr'+(FBQ.focus===t.key?' on':'')+'" data-fbqfocus="'+fbEsc(t.key)+'">'
+      +'<td class="fbq-tdname"><i style="background:'+t.color+'"></i><span>'+fbEsc(t.name)+'</span>'
+        +(t.streak>=3?'<em class="fbq-streak">连续 '+t.streak+' 期居前</em>':'')+'</td>'
+      +'<td class="r"><b>'+(t.cur===null?'—':fbqNum(t.cur))+'</b><div class="fbq-bar"><span style="width:'+barW+'%;background:'+t.color+'"></span></div></td>'
+      +'<td class="r">'+(t.share===null?'—':t.share+'%')+'</td>'
+      +'<td class="r">'+(t.prev===null?'无记录':fbqNum(t.prev))+'</td>'
+      +'<td class="r"><span class="fbq-d '+(t.delta===null?'z':(t.delta>0?'up':(t.delta<0?'down':'flat')))+'">'+t.deltaTxt+'</span></td>'
+      +'<td><span class="fbq-dir d-'+t.dir+'">'+t.dirTxt+'</span></td>'
+      +'<td><span class="fbq-prio p'+t.prio+'">'+t.prioTxt+'</span></td></tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<div class="fbq-legend">优先关注级别：P0＝占比≥15% 且升温/突增；P1＝突增（环比≥100% 且占比≥5%）、连续升温、连续 ≥3 期居前且占比≥8%、或环比≥50%；P2＝占比≥5%；P3＝其余有记录话题。「长期高频」仅表示连续多期居前，是否已解决需到「🐞 问题追踪」页确认。</div>';
+  return h;
+}
+/* —— 模块 4：舆情洞察与总结 —— */
+function fbqInsightHTML(m){
+  var out=[];
+  var curLab=m.cur?m.cur.label:'—',prevLab=m.prev?m.prev.label:'无';
+  var vis=m.topics.filter(function(t){return t.cur!==null;});
+  var tot=m.totalMent||0;
+  out.push({t:'本周期舆情核心结论',h:(function(){
+    if(!vis.length)return '当前周期（'+fbEsc(curLab)+'）在所选条件下没有有效反馈记录，无法给出结论。';
+    var top3=vis.slice(0,3).map(function(t){return '「'+fbEsc(t.name)+'」'+fbqNum(t.cur)+' 次（'+(t.share===null?'—':t.share+'%')+'）';});
+    var s='当期共 '+fbqNum(m.totalItems)+' 条反馈 / '+fbqNum(tot)+' 次提及，覆盖 '+vis.length+' 个话题；讨论最集中的前三位是 '+top3.join('、')+'。';
+    if(m.n<2)s+=' 目前只有 1 个周期有记录，无法判断跨周期变化。';
+    return s;
+  })()});
+  out.push({t:'相比上一周期最明显的变化',h:(function(){
+    if(m.n<2||!m.prev)return '当前数据不足以判断趋势：所选粒度下只有 '+m.n+' 个周期，且上一周期无记录，不做环比推断。';
+    var up=m.topics.filter(function(t){return t.delta!==null&&t.delta>0;}).sort(function(a,b){return b.delta-a.delta;})[0];
+    var dn=m.topics.filter(function(t){return t.delta!==null&&t.delta<0;}).sort(function(a,b){return a.delta-b.delta;})[0];
+    var s='';
+    if(up)s+='升温最明显的是「'+fbEsc(up.name)+'」：'+fbqNum(up.prev)+' → '+fbqNum(up.cur)+' 次提及（'+up.deltaTxt+'）；';
+    else s+='没有话题实现正增长；';
+    if(dn)s+='降温最明显的是「'+fbEsc(dn.name)+'」：'+fbqNum(dn.prev)+' → '+fbqNum(dn.cur)+' 次提及（'+dn.deltaTxt+'）。';
+    else s+='没有话题出现下降。';
+    return s;
+  })()});
+  out.push({t:'需要持续观察的话题',h:(function(){
+    var w=m.topics.filter(function(t){return t.cur!==null&&(t.dir==='up'||t.dir==='spike'||t.streak>=3);})
+      .sort(function(a,b){return a.prio-b.prio||(b.cur||0)-(a.cur||0);});
+    if(!w.length)return '未发现连续升温、突增或长期居前的话题，当前无需新增观察项。';
+    return w.slice(0,4).map(function(t){
+      var why=[];
+      if(t.dir==='spike')why.push('突增');
+      if(t.dir==='up')why.push('连续升温');
+      if(t.streak>=3)why.push('连续 '+t.streak+' 期居前');
+      return '「'+fbEsc(t.name)+'」（'+why.join(' · ')+'，当期 '+fbqNum(t.cur)+' 次 / '+(t.share===null?'—':t.share+'%')+'，环比 '+t.deltaTxt+'）';
+    }).join('；')+'。';
+  })()});
+  out.push({t:'建议跟进方向',h:(function(){
+    var t=m.topics.filter(function(x){return x.prio<=1&&x.cur!==null;}).sort(function(a,b){return a.prio-b.prio||(b.cur||0)-(a.cur||0);}).slice(0,2);
+    if(!t.length)return '当期没有 P0/P1 级话题，建议维持现有内容节奏，持续按同一口径采集与复盘。';
+    var acts={
+      vehicle:'内容侧补载具玩法演示与地图点位说明，社群侧收集具体缺失车型',
+      content:'内容侧加快新任务/活动预告节奏，社群侧做「下一阶段内容」投票收集诉求',
+      bug:'整理复现路径与机型信息提交研发，社群侧同步已知问题与处理进展',
+      feature:'按功能点拆条反馈给到对应模块，社群侧做功能教学（Content Factory 思路）',
+      gang:'社群侧推动帮派招募与玩法引导，收集帮派管理痛点',
+      account:'收集账号异常个案细节，整理后提交客服/研发排查',
+      pay:'核对支付失败订单与到账情况，同步客服口径',
+      local:'区域侧补充本地化文案与节庆活动素材，收集具体语言问题',
+      praise:'放大正向口碑原文做二次分发，作为社群素材',
+      other:'补充关键词规则后再评估，当前暂不推断归属'
+    };
+    var s=t.map(function(x){
+      return '「'+fbEsc(x.name)+'」（'+x.prioTxt+'，'+fbqNum(x.cur)+' 次 / '+(x.share===null?'—':x.share+'%')+'）：'+(acts[x.key]||'结合原始反馈逐条评估后决定动作');
+    }).join('；');
+    if(m.eventImpact){
+      var ei=m.eventImpact;
+      s+='。事件提示：'+fbEsc(ei.ev.n)+'（'+ei.ev.d+'，落在 '+fbEsc(ei.from)+'）之后的下一周期（'+fbEsc(ei.to)+'），「'+fbEsc(ei.name)+'」由 '
+        +fbqNum(ei.v0)+' → '+fbqNum(ei.v1)+' 次提及（'+ei.d+'%）；两者时间相邻，仅可判定为可能相关，需结合事件时间验证，本页不作为因果结论';
+    }else{
+      s+='。若要把变化归因到某次更新或活动，需先核对事件时间：'+(m.events.length?
+        ('本期图表已标记「'+m.events.map(function(e){return fbEsc(e.ev.n)+'（'+e.ev.d+'）';}).join('、')+'」，仅可判定为可能相关，需结合事件时间验证')
+        :'当前所选周期范围内没有已记录的事件节点，无法做归因');
+    }
+    s+='。';
+    return s.replace(/\*\*/g,'');
+  })()});
+  var h='<div class="fbq-ins">';
+  out.forEach(function(o){
+    h+='<div class="fbq-ins-i"><div class="fbq-ins-t">'+o.t+'</div><div class="fbq-ins-h">'+o.h+'</div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+/* —— 模块 5：典型玩家反馈 —— */
+function fbqQuotes(m){
+  var b=m.cur;
+  if(!b)return [];
+  var scope=m.rows.filter(function(r){
+    if(FBQ.focus&&r.tk!==FBQ.focus)return false;
+    var bb=m.buckets[FBQ.gran==='week'?r.wi:(function(){
+      for(var i=0;i<m.buckets.length;i++){if(m.buckets[i].key===(FBQ.gran==='month'?String(r.iso||'').slice(0,7):String(r.iso||'')))return i;}
+      return -1;})()];
+    return bb===b;
+  });
+  if(FBQ.focus&&!scope.length){
+    scope=m.rows.filter(function(r){return r.tk===FBQ.focus;});
+  }
+  var byT={},list=[];
+  scope.forEach(function(r){
+    var k=r.tk;
+    if(!byT[k])byT[k]=[];
+    byT[k].push(r);
+  });
+  Object.keys(byT).forEach(function(k){
+    byT[k].sort(function(a,b2){return b2.cnt-a.cnt;});
+  });
+  var ks=Object.keys(byT).sort(function(a,b2){return (byT[b2][0].cnt||0)-(byT[a][0].cnt||0);});
+  var i=0;
+  while(list.length<Math.max(FBQ.limit,60)&&ks.length){
+    var added=false;
+    ks.forEach(function(k){
+      if(byT[k][i]){list.push(byT[k][i]);added=true;}
+    });
+    if(!added)break;
+    i++;
+  }
+  return list;
+}
+function fbqQuoteItemHTML(r){
+  var it=r.it;
+  var zh=fbStrip(it.theme||it.orig||'').replace(/^\s*\d+\s*[\.、）)．:：]\s*/,'');
+  var cl=fbqChLabel(it);
+  var open=!!FBQ.open[r.key];
+  var qs=open?fbQuotesOf(it):[];
+  var evi=(it.note&&/^https?:\/\//.test(it.note))?'<a class="fbq-evi" href="'+fbEsc(it.note)+'" target="_blank" rel="noopener">🔗 证据</a>':'';
+  var h='<div class="fbq-q'+(open?' open':'')+'">';
+  h+='<div class="fbq-qt">'+fbEsc(zh)+(r.cnt?'<span class="fbq-qc">'+fbqNum(r.cnt)+' 次提及</span>':'')+'</div>';
+  h+='<div class="fbq-qm">'
+    +'<span class="fbq-tag t"><i style="background:'+(FB_K2T[r.tk]&&FB_QCOLOR(r.tk)||'#b0a99f')+'"></i>'+fbEsc(fbTopicName(r.tk))+'</span>'
+    +'<span class="fbq-tag s-'+r.sk+'">'+fbEsc(fbqSenseName(r.sk))+'</span>'
+    +'<span class="fbq-tag c'+(cl.unk?' unk':'')+'">'+fbEsc(cl.txt)+'</span>'
+    +'<span class="fbq-qd">'+(r.iso?fbEsc(r.iso):'日期未知')+'</span>'+evi
+    +'<button class="fbq-open" data-fbqopen="'+fbEsc(r.key)+'">'+(open?'收起':'原声')+'</button></div>';
+  if(open&&qs.length){
+    h+='<div class="fbq-qs">'+qs.map(function(q,i){
+      return '<div class="fbq-qrow"><span class="fbq-qi">'+(i+1)+'</span><div><div>'+fbEsc(q.zh||q.en||'')+'</div>'
+        +(q.en?'<div class="fbq-qen">'+fbEsc(q.en)+'</div>':'')
+        +'<div class="fbq-qsrc">'+fbEsc(String(q.src||'玩家社区'))+'</div></div></div>';
+    }).join('')+'</div>';
+  }else if(open&&!qs.length){
+    h+='<div class="fbq-qs"><div class="fbq-qnone">该条未单独收录逐字原声，以上为原始录入的反馈描述。</div></div>';
+  }
+  h+='</div>';
+  return h;
+}
+function FB_QCOLOR(k){
+  var idx=FB_TOPICS.map(function(t){return t.key;}).indexOf(k);
+  return fbqColor(idx<0?9:idx);
+}
+function fbqQuotesHTML(m){
+  var list=fbqQuotes(m);
+  var focusName=FBQ.focus?fbTopicName(FBQ.focus):'';
+  var h='<div class="fbq-qhead">';
+  h+=FBQ.focus?('<span class="fbq-focustag">已按话题筛选：'+fbEsc(focusName)+'</span><button class="fbq-btn s" data-fbqfocus="">取消话题筛选</button>')
+    :'<span class="fbq-qhint">默认按话题交叉取样（每个话题取提及量最高的若干条），点击上方图表图例或表格行可按话题筛选</span>';
+  h+='<span class="fbq-qcount">共 '+list.length+' 条'+(list.length>FBQ.limit?'（已显示 '+Math.min(FBQ.limit,list.length)+' 条）':'')+'</span>';
+  h+='</div>';
+  if(!list.length)return h+'<div class="fbq-empty"><div class="fbq-et">没有符合条件的反馈</div><div class="fbq-es">试试放宽来源、关键词或取消话题筛选。</div></div>';
+  h+='<div class="fbq-qlist">'+list.slice(0,FBQ.limit).map(fbqQuoteItemHTML).join('')+'</div>';
+  if(list.length>FBQ.limit)h+='<div class="fbq-morewrap"><button class="fbq-btn" data-fbqmore="1">展开更多（还剩 '+(list.length-FBQ.limit)+' 条）</button></div>';
+  return h;
+}
+/* —— 图表区（含图例/指标切换） —— */
+function fbqChartHTML(m){
+  var h='<div class="fbq-chart">';
+  h+='<div class="fbq-chart-h">'
+    +'<div class="fbq-seg">'+FBQ_METRIC.map(function(s){
+        return '<button class="fbq-segb'+(FBQ.metric===s.k?' on':'')+'" data-fbqmetric="'+s.k+'">'+s.n+'</button>';}).join('')+'</div>'
+    +'<div class="fbq-legends">'+m.topics.map(function(t){
+        var on=FBQ.topics.indexOf(t.key)>=0;
+        return '<button class="fbq-lg'+(on?' on':'')+'" data-fbqtop="'+fbEsc(t.key)+'"><i style="background:'+t.color+'"></i>'+fbEsc(t.name)
+          +(t.cur!==null?' <em>'+fbqNum(t.cur)+'</em>':' <em>—</em>')+'</button>';}).join('')+'</div>'
+    +'</div>';
+  h+='<div class="fbq-plot" id="fbqChart"><div id="fbqTip" class="fbq-tip" style="display:none"></div></div>';
+  if(m.n<2)h+='<div class="fbq-warn">当前所选粒度只有 '+m.n+' 个周期，无法计算环比与趋势方向，图表仅展示结构快照。</div>';
+  return h+'</div>';
+}
+/* —— 筛选栏 —— */
+function fbqBarHTML(m){
+  var act=[];
+  if(FBQ.ch.length)act.push('来源：'+FBQ.ch.map(fbChNameOf).join('/'));
+  if(FBQ.q)act.push('关键词：'+fbEsc(FBQ.q));
+  if(FBQ.focus)act.push('话题：'+fbEsc(fbTopicName(FBQ.focus)));
+  var h='<div class="fbq-bar">';
+  h+='<div class="fbq-row"><span class="fbq-lab">周期粒度</span><div class="fbq-seg">'
+    +FBQ_GRAN.map(function(g){return '<button class="fbq-segb'+(FBQ.gran===g.k?' on':'')+'" data-fbqgran="'+g.k+'">'+g.n+'</button>';}).join('')
+    +'</div><span class="fbq-lab">对比周期</span><select class="fbq-sel" data-fbqpi>'
+    +m.buckets.map(function(b,i){return '<option value="'+i+'"'+(i===m.curIdx?' selected':'')+'>'+fbEsc(b.label)+'</option>';}).join('')
+    +'</select></div>';
+  h+='<div class="fbq-row"><span class="fbq-lab">来源</span>'
+    +FB_CHANNELS.map(function(c){return '<button class="fbq-chip'+(FBQ.ch.indexOf(c.k)>=0?' on':'')+'" data-fbqch="'+c.k+'">'+c.n+'</button>';}).join('')
+    +'<input class="fbq-input" data-fbqq placeholder="关键词（可与其它条件组合）" value="'+fbEsc(FBQ.q)+'">'
+    +(act.length?'<button class="fbq-clear" data-fbqclear="1">清空筛选（'+act.length+' 项）</button>':'<span class="fbq-none">默认：全部来源 · 最新周期</span>')
+    +'</div>';
+  h+='</div>';
+  return h;
+}
+/* —— CSS —— */
+function fbqCSS(){
   return '<style>'
-  +'.fbx-root{display:block}'
-  +'.fbx-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}'
-  +'.fbx-hd h2{margin:0;font-size:22px;font-weight:800;color:#0f172a;letter-spacing:.2px}'
-  +'.fbx-hd .fbx-sub{font-size:12.5px;color:#64748b;line-height:1.7;margin-top:5px}'
-  +'.fbx-hd .fbx-add{font-size:11.5px;font-weight:700;color:#475569;background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap}'
-  +'.fbx-hd .fbx-add:hover{color:#4338ca;border-color:#b9c2f5}'
-  +'.fbx-card{background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:16px 18px;margin-bottom:14px}'
-  +'.fbx-sec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}'
-  +'.fbx-sec-n{font-size:15px;font-weight:800;color:#0f172a}'
-  +'.fbx-sec-s{font-size:11.5px;color:#94a3b8;line-height:1.6;flex:1 1 240px;min-width:0}'
-  +'.fbx-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}'
-  +'.fbx-row:last-child{margin-bottom:0}'
-  +'.fbx-lab{font-size:11.5px;font-weight:800;color:#64748b;min-width:38px;flex:none}'
-  +'.fbx-seg{display:inline-flex;background:#f1f5f9;border:1px solid #e6e8ee;border-radius:9px;padding:2px;gap:2px;flex-wrap:wrap}'
-  +'.fbx-seg.sm{margin-left:auto}'
-  +'.fbx-segb{font-size:11.5px;font-weight:600;color:#5b6472;background:transparent;border:0;border-radius:7px;padding:5px 11px;cursor:pointer;font-family:inherit;white-space:nowrap}'
-  +'.fbx-segb:hover{color:#3730a3}'
-  +'.fbx-segb.on{background:#fff;color:#3730a3;font-weight:800;box-shadow:0 1px 3px rgba(16,24,40,.10)}'
-  +'.fbx-date{display:inline-flex;align-items:center;gap:6px}'
-  +'.fbx-date input{font-family:inherit;font-size:11.5px;color:#334155;border:1px solid #e6e8ee;border-radius:8px;padding:5px 8px;background:#fff}'
-  +'.fbx-to{font-size:11.5px;color:#94a3b8}'
-  +'.fbx-minib{font-size:11px;font-weight:700;color:#64748b;background:#fff;border:1px solid #e0e3ea;border-radius:8px;padding:4px 9px;cursor:pointer;font-family:inherit}'
-  +'.fbx-chip{font-size:11.5px;font-weight:600;color:#5b6472;background:#f6f7f9;border:1px solid #e6e8ee;border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}'
-  +'.fbx-chip b{font-size:10.5px;font-weight:800;color:#94a3b8;background:#fff;border-radius:6px;padding:0 4px}'
-  +'.fbx-chip:hover{border-color:#c3c9f7;color:#4338ca}'
-  +'.fbx-chip.on{background:#eef2ff;border-color:#b9c2f5;color:#3730a3;font-weight:800}'
-  +'.fbx-chip.on b{color:#6366f1;background:#fff}'
-  +'.fbx-chip.on.s-pos{background:#ecfdf5;border-color:#a7f3d0;color:#047857}'
-  +'.fbx-chip.on.s-neg{background:#fef2f2;border-color:#fecaca;color:#b91c1c}'
-  +'.fbx-chip.on.s-sug{background:#fff7ed;border-color:#fed7aa;color:#c2410c}'
-  +'.fbx-chip.on.s-na{background:#f1f5f9;border-color:#e2e8f0;color:#475569}'
-  +'.fbx-chip.all{background:#fff;border-style:dashed}'
-  +'.fbx-chip.z{opacity:.5}'
-  +'.fbx-sbox{display:flex;align-items:center;gap:6px;flex:1 1 260px;min-width:200px;background:#f8fafc;border:1px solid #e6e8ee;border-radius:9px;padding:5px 9px}'
-  +'.fbx-sbox:focus-within{border-color:#b9c2f5;background:#fff}'
-  +'.fbx-sic{font-size:12px;opacity:.6}'
-  +'.fbx-sbox input{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:12.5px;color:#334155;outline:none;padding:3px 0}'
-  +'.fbx-sx{border:0;background:transparent;color:#94a3b8;cursor:pointer;font-size:12px}'
-  +'.fbx-hint{font-size:10.5px;color:#a0a8b5;line-height:1.5}'
-  +'.fbx-row-st{border-top:1px dashed #e6e8ee;padding-top:9px;margin-top:9px}'
-  +'.fbx-sc{font-size:11px;font-weight:700;background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;border-radius:8px;padding:3px 4px 3px 9px;display:inline-flex;align-items:center;gap:4px}'
-  +'.fbx-sc.fixed{background:#f1f5f9;color:#475569;border-color:#e2e8f0;padding-right:9px}'
-  +'.fbx-sc button{border:0;background:transparent;color:#8b93a0;cursor:pointer;font-size:11px;padding:0 4px;font-family:inherit;border-radius:4px}'
-  +'.fbx-sc button:hover{color:#b91c1c;background:#fee2e2}'
-  +'.fbx-sc.s-neg{background:#fef2f2;color:#b91c1c;border-color:#fecaca}'
-  +'.fbx-sc.s-sug{background:#fff7ed;color:#c2410c;border-color:#fed7aa}'
-  +'.fbx-sc.s-pos{background:#ecfdf5;color:#047857;border-color:#a7f3d0}'
-  +'.fbx-none{font-size:11px;color:#94a3b8}'
-  +'.fbx-clear{margin-left:auto;font-size:11.5px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:4px 11px;cursor:pointer;font-family:inherit;white-space:nowrap}'
-  /* 摘要 */
-  +'.fbx-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px}'
-  +'.fbx-kpi{background:#f8fafc;border:1px solid #eef0f4;border-radius:11px;padding:11px 12px;display:flex;flex-direction:column;gap:2px}'
-  +'.fbx-kpi b{font-size:24px;font-weight:800;color:#0f172a;line-height:1.1}'
-  +'.fbx-kpi span{font-size:11.5px;font-weight:700;color:#475569}'
-  +'.fbx-kpi em{font-size:10.5px;font-style:normal;color:#94a3b8}'
-  +'.fbx-kpi.main{background:#f7f9ff;border-color:#e0e7ff}'
-  +'.fbx-kpi.s-pos b{color:#15803d}.fbx-kpi.s-neg b{color:#b91c1c}.fbx-kpi.s-sug b{color:#c2410c}.fbx-kpi.s-focus b{color:#4338ca}'
-  +'.fbx-stack{display:flex;height:5px;border-radius:3px;overflow:hidden;background:#eef0f4;margin:11px 0 2px}'
-  +'.fbx-stack i{display:block;height:100%}'
-  +'.fbx-stack .b-pos{background:#16a34a}.fbx-stack .b-neg{background:#dc2626}.fbx-stack .b-sug{background:#f97316}.fbx-stack .b-na{background:#cbd5e1}'
-  +'.fbx-concl{margin-top:11px;font-size:12.5px;line-height:1.7;color:#475569;display:flex;align-items:center;gap:8px;flex-wrap:wrap}'
-  +'.fbx-concl b{color:#0f172a}'
-  +'.fbx-warn{font-size:11px;font-weight:700;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:2px 8px}'
-  +'.fbx-jump{margin-left:auto;font-size:11.5px;font-weight:700;color:#4338ca;background:#eef2ff;border:1px solid #e0e7ff;border-radius:9px;padding:5px 12px;cursor:pointer;font-family:inherit;white-space:nowrap}'
-  /* 矩阵 */
-  +'.fbx-mx{width:100%;border-collapse:collapse;font-size:12.5px}'
-  +'.fbx-mx th,.fbx-mx td{text-align:left;padding:9px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}'
-  +'.fbx-mx thead th{font-size:11px;font-weight:800;color:#64748b;background:#f8fafc;border-bottom:1px solid #eef2f7;white-space:nowrap}'
-  +'.fbx-mx thead th.c-bar{width:150px}'
-  +'.fbx-mx tbody tr:hover{background:#fafbfc}'
-  +'.fbx-mx tbody tr.on{background:#f5f7ff}'
-  +'.fbx-tname{font-size:13px;font-weight:800;color:#0f172a;background:none;border:0;padding:0;cursor:pointer;font-family:inherit;text-align:left}'
-  +'.fbx-tname:hover{color:#4338ca;text-decoration:underline}'
-  +'.fbx-tname.on{color:#3730a3}'
-  +'.fbx-tname.on:after{content:" ✓";font-size:11px}'
-  +'.fbx-ten{display:block;font-size:10.5px;color:#a0a8b5;font-weight:600;margin-top:1px}'
-  +'.fbx-mn b{font-size:14px;color:#0f172a}'
-  +'.fbx-mn em{display:block;font-size:10.5px;font-style:normal;color:#94a3b8;margin-top:1px}'
-  +'.fbx-mc{cursor:pointer;white-space:nowrap}'
-  +'.fbx-mc b{font-size:13px;color:#334155}'
-  +'.fbx-mc em{font-style:normal;font-size:10.5px;color:#94a3b8;margin-left:4px}'
-  +'.fbx-mc.z{color:#cbd5e1}'
-  +'.fbx-mc.on{background:#eef2ff;box-shadow:inset 0 0 0 2px #c7d2fe}'
-  +'.fbx-mc.s-pos.on{background:#ecfdf5;box-shadow:inset 0 0 0 2px #a7f3d0}'
-  +'.fbx-mc.s-neg.on{background:#fef2f2;box-shadow:inset 0 0 0 2px #fecaca}'
-  +'.fbx-mc.s-sug.on{background:#fff7ed;box-shadow:inset 0 0 0 2px #fed7aa}'
-  +'.fbx-mini{display:flex;height:7px;border-radius:4px;overflow:hidden;background:#eef0f4;width:100%}'
-  +'.fbx-mini i{display:block;height:100%}'
-  +'.fbx-mini .b-pos{background:#16a34a}.fbx-mini .b-neg{background:#dc2626}.fbx-mini .b-sug{background:#f97316}.fbx-mini .b-na{background:#cbd5e1}'
-  +'.fbx-fnote{font-size:10.5px;color:#a0a8b5;line-height:1.65;margin-top:10px}'
-  /* 列表 */
-  +'.fbx-list{display:flex;flex-direction:column}'
-  +'.fbx-item{padding:12px 0;border-top:1px solid #f1f5f9}'
-  +'.fbx-item:first-child{border-top:0}'
-  +'.fbx-item.open{background:#fcfcfe;border-radius:10px;padding-left:10px;padding-right:10px}'
-  +'.fbx-txt{font-size:13.5px;line-height:1.7;color:#1e293b;font-weight:600;word-break:break-word;overflow-wrap:anywhere}'
-  +'.fbx-orig{font-size:11.5px;line-height:1.6;color:#94a3b8;font-style:italic;margin-top:3px;word-break:break-word;overflow-wrap:anywhere}'
-  +'.fbx-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:7px}'
-  +'.fbx-tag{font-size:11px;font-weight:700;border-radius:7px;padding:3px 8px;border:1px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap}'
-  +'.fbx-tag.t{background:#f1f5f9;color:#475569;border-color:#e2e8f0}'
-  +'.fbx-tag.s-pos{background:#ecfdf5;color:#047857;border-color:#a7f3d0}'
-  +'.fbx-tag.s-neg{background:#fef2f2;color:#b91c1c;border-color:#fecaca}'
-  +'.fbx-tag.s-sug{background:#fff7ed;color:#c2410c;border-color:#fed7aa}'
-  +'.fbx-tag.s-na{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}'
-  +'.fbx-m{font-size:11px;color:#94a3b8;white-space:nowrap}'
-  +'.fbx-m.unk{color:#b45309}'
-  +'.fbx-open{margin-left:auto;font-size:11px;font-weight:700;color:#4338ca;background:transparent;border:0;cursor:pointer;font-family:inherit;white-space:nowrap;padding:2px 4px}'
-  +'.fbx-open:hover{text-decoration:underline}'
-  +'.fbx-body{margin-top:9px;padding:10px 12px;background:#f8fafc;border:1px solid #eef0f4;border-radius:10px}'
-  +'.fbx-q{display:flex;gap:8px;padding:6px 0;border-top:1px dashed #e9edf3}'
-  +'.fbx-q:first-child{border-top:0}'
-  +'.fbx-qi{flex:none;width:17px;height:17px;border-radius:50%;background:#e2e8f0;color:#64748b;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}'
-  +'.fbx-qzh{font-size:12.5px;line-height:1.65;color:#334155}'
-  +'.fbx-qen{font-size:11.5px;line-height:1.6;color:#94a3b8;font-style:italic;margin-top:2px}'
-  +'.fbx-qsrc{font-size:10.5px;color:#a0a8b5;margin-top:2px}'
-  +'.fbx-qnone{font-size:11.5px;color:#94a3b8}'
-  +'.fbx-evi{display:inline-block;margin-top:8px;font-size:11.5px;font-weight:700;color:#4338ca}'
-  +'.fbx-more{margin-top:12px;text-align:center}'
-  +'.fbx-more button{font-size:11.5px;font-weight:700;color:#4338ca;background:#eef2ff;border:1px solid #e0e7ff;border-radius:9px;padding:6px 16px;cursor:pointer;font-family:inherit}'
-  +'.fbx-empty{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:16px;text-align:center;margin:8px 0}'
-  +'.fbx-empty.sm{padding:12px;text-align:left}'
-  +'.fbx-et{font-size:13.5px;font-weight:800;color:#334155;margin-bottom:5px}'
-  +'.fbx-es{font-size:12px;color:#64748b;line-height:1.7;margin-bottom:10px}'
-  +'.fbx-ec{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}'
-  +'.fbx-en{font-size:11.5px;color:#94a3b8}'
-  +'.fbx-erm{font-size:11.5px;font-weight:700;color:#475569;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:4px 11px;cursor:pointer;font-family:inherit}'
-  +'.fbx-eb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}'
-  +'.fbx-btn{font-size:12px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:9px;padding:6px 14px;cursor:pointer;font-family:inherit}'
-  +'.fbx-btn.g{color:#3730a3;background:#eef2ff;border-color:#e0e7ff}'
-  +'mark{background:#fef08a;color:#78350f;border-radius:3px;padding:0 1px}'
-  /* 折叠说明 */
-  +'.fbx-fold{margin:6px 0 4px;border:1px solid #eef0f4;border-radius:12px;background:#fff;padding:10px 14px}'
-  +'.fbx-fold summary{font-size:12px;font-weight:800;color:#64748b;cursor:pointer}'
-  +'.fbx-fold .fbx-fb{font-size:11.5px;line-height:1.8;color:#64748b;padding:8px 0 2px}'
-  +'.fbx-fold .fbx-fb b{color:#334155}'
-  +'@media(max-width:900px){.fbx-kpis{grid-template-columns:repeat(auto-fit,minmax(118px,1fr))}}'
-  +'@media(max-width:760px){'
-    +'.fbx-mx,.fbx-mx tbody,.fbx-mx tr,.fbx-mx td{display:block;width:100%}'
-    +'.fbx-mx thead{display:none}'
-    +'.fbx-mx tr{border:1px solid #eef0f4;border-radius:11px;padding:8px 10px;margin-bottom:9px;display:block}'
-    +'.fbx-mx tbody th{display:block;border:0;padding:4px 0}'
-    +'.fbx-mx td{border:0;padding:4px 0;display:flex;align-items:center;gap:8px}'
-    +'.fbx-mx td:before{content:attr(data-l);font-size:11px;font-weight:800;color:#94a3b8;min-width:66px;flex:none}'
-    +'.fbx-mx .fbx-mn em,.fbx-mc em{display:inline}'
-    +'.fbx-mbar{padding-top:6px!important}'
-    +'.fbx-lab{min-width:auto}'
-    +'.fbx-jump{margin-left:0}'
-  +'}'
-  +'@media(max-width:560px){.fbx-card{padding:13px 12px}.fbx-hd h2{font-size:19px}.fbx-sbox{flex:1 1 100%}.fbx-seg{width:100%}.fbx-seg.sm{width:auto;margin-left:0}.fbx-segb{flex:1}}'
+  +'.fbq-root{max-width:1180px;margin:0 auto;padding:0 4px 24px}'
+  +'.fbq-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:2px 0 12px}'
+  +'.fbq-hd h2{font-size:19px;margin:0;letter-spacing:.2px}'
+  +'.fbq-sub{font-size:12px;color:var(--muted,#8a857f);margin-top:4px;line-height:1.6}'
+  +'.fbq-sec{margin-top:18px}'
+  +'.fbq-sec-h{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}'
+  +'.fbq-sec-h h3{font-size:14px;margin:0;font-weight:700}'
+  +'.fbq-sec-h .fbq-sec-s{font-size:11.5px;color:var(--muted,#8a857f)}'
+  +'.fbq-bar{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;padding:10px 12px}'
+  +'.fbq-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}'
+  +'.fbq-row+.fbq-row{margin-top:8px}'
+  +'.fbq-lab{font-size:11.5px;color:var(--muted,#8a857f)}'
+  +'.fbq-seg{display:inline-flex;background:#f1eeea;border-radius:8px;padding:2px}'
+  +'.fbq-segb{border:0;background:none;font-size:12px;padding:5px 10px;border-radius:6px;cursor:pointer;color:#5c5751}'
+  +'.fbq-segb.on{background:#fff;color:#3b3735;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06)}'
+  +'.fbq-sel{font-size:12px;padding:5px 8px;border:1px solid var(--line,#e7e2dc);border-radius:7px;background:#fff;color:#3b3735;max-width:150px}'
+  +'.fbq-chip{font-size:12px;padding:5px 10px;border:1px solid var(--line,#e7e2dc);border-radius:14px;background:#fff;color:#5c5751;cursor:pointer}'
+  +'.fbq-chip.on{background:#3b3735;color:#fff;border-color:#3b3735}'
+  +'.fbq-input{flex:1;min-width:150px;font-size:12px;padding:6px 10px;border:1px solid var(--line,#e7e2dc);border-radius:8px;background:#fff;color:#3b3735}'
+  +'.fbq-clear{font-size:12px;padding:5px 10px;border:1px solid #e0d6cc;border-radius:8px;background:#fff;color:#b45f4d;cursor:pointer}'
+  +'.fbq-none{font-size:11.5px;color:#a8a29a}'
+  +'.fbq-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}'
+  +'.fbq-k{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;padding:11px 12px}'
+  +'.fbq-kl{font-size:11.5px;color:var(--muted,#8a857f)}'
+  +'.fbq-kv{font-size:20px;font-weight:700;color:#3b3735;margin:3px 0 2px;line-height:1.25}'
+  +'.fbq-kv em{font-size:12px;font-style:normal;font-weight:600;color:#b98a6f}'
+  +'.fbq-ks{font-size:11px;color:#8a857f;line-height:1.5}'
+  +'.fbq-k.up .fbq-kv em{color:#b45f4d}'
+  +'.fbq-k.warn{border-color:#e8cfc6}.fbq-k.warn .fbq-kv em{color:#b45f4d}'
+  +'.fbq-k.na .fbq-kv{color:#a8a29a}'
+  +'.fbq-kpinote{font-size:11px;color:#a8a29a;margin-top:7px;line-height:1.6}'
+  +'.fbq-chart{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;padding:12px}'
+  +'.fbq-chart-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}'
+  +'.fbq-legends{display:flex;gap:6px;flex-wrap:wrap}'
+  +'.fbq-lg{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:4px 9px;border:1px solid var(--line,#e7e2dc);border-radius:14px;background:#fff;color:#8a857f;cursor:pointer}'
+  +'.fbq-lg i{width:9px;height:9px;border-radius:2px;display:inline-block;opacity:.35}'
+  +'.fbq-lg em{font-style:normal;color:#a8a29a}'
+  +'.fbq-lg.on{color:#3b3735;border-color:#d8d1c8;background:#fdfcfa}.fbq-lg.on i{opacity:1}.fbq-lg.on em{color:#5c5751}'
+  +'.fbq-plot{position:relative;width:100%;overflow:hidden}'
+  +'.fbq-svg{display:block;width:100%;height:auto}'
+  +'.fbq-grid{stroke:#ece7e1;stroke-width:1}'
+  +'.fbq-ax{font-size:10.5px;fill:#a8a29a}'
+  +'.fbq-gap{fill:#f1eeea;opacity:.9}'
+  +'.fbq-evline{stroke:#c2a882;stroke-width:1.5;stroke-dasharray:4 3}'
+  +'.fbq-evlab{font-size:10px;fill:#a08a63}'
+  +'.fbq-noline{font-size:10.5px;fill:#a8a29a}'
+  +'.fbq-hit{cursor:crosshair}'
+  +'.fbq-tip{position:absolute;z-index:30;min-width:200px;max-width:280px;background:#fff;border:1px solid #e0d9d1;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.12);padding:9px 10px;pointer-events:none}'
+  +'.fbq-tip-h{font-size:12px;font-weight:700;color:#3b3735;display:flex;justify-content:space-between;gap:8px}'
+  +'.fbq-tip-h span{font-weight:400;font-size:11px;color:#8a857f}'
+  +'.fbq-tip-b{margin-top:6px}'
+  +'.fbq-tip-r{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#5c5751;padding:2px 0}'
+  +'.fbq-tip-r i{width:8px;height:8px;border-radius:2px;flex:0 0 8px}'
+  +'.fbq-tip-n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+  +'.fbq-tip-r b{font-variant-numeric:tabular-nums}'
+  +'.fbq-tip-r em{font-style:normal;font-size:10.5px;color:#a8a29a;margin-left:2px}'
+  +'.fbq-note,.fbq-warn{font-size:11px;color:#a08a63;margin-top:6px;line-height:1.6}'
+  +'.fbq-warn{color:#b45f4d}'
+  +'.fbq-tblwrap{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;overflow:auto}'
+  +'.fbq-tbl{width:100%;border-collapse:collapse;font-size:12px}'
+  +'.fbq-tbl th{text-align:left;font-weight:600;color:#8a857f;font-size:11.5px;padding:9px 10px;border-bottom:1px solid var(--line,#e7e2dc);white-space:nowrap;position:sticky;top:0;background:var(--card,#fbf9f7)}'
+  +'.fbq-tbl td{padding:8px 10px;border-bottom:1px solid #f2eee9;vertical-align:middle}'
+  +'.fbq-tbl tr:last-child td{border-bottom:0}'
+  +'.fbq-tbl .r{text-align:right;font-variant-numeric:tabular-nums}'
+  +'.fbq-tr{cursor:pointer}.fbq-tr:hover td{background:#faf7f4}.fbq-tr.on td{background:#f4efe9}'
+  +'.fbq-tdname{white-space:nowrap}'
+  +'.fbq-tdname i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}'
+  +'.fbq-streak{margin-left:6px;font-style:normal;font-size:10.5px;color:#b45f4d;background:#f7ece8;border-radius:4px;padding:1px 5px}'
+  +'.fbq-bar{height:4px;background:#f1eeea;border-radius:2px;margin-top:4px;overflow:hidden}'
+  +'.fbq-bar span{display:block;height:100%;border-radius:2px}'
+  +'.fbq-d{font-size:11.5px}.fbq-d.up{color:#b45f4d}.fbq-d.down{color:#7e97a8}.fbq-d.flat{color:#8a857f}.fbq-d.z{color:#b9b3ab}'
+  +'.fbq-dir{font-size:11px;padding:2px 7px;border-radius:10px;background:#f1eeea;color:#5c5751;white-space:nowrap}'
+  +'.fbq-dir.d-up,.fbq-dir.d-up1,.fbq-dir.d-spike{background:#f7ece8;color:#b45f4d}'
+  +'.fbq-dir.d-down,.fbq-dir.d-down1{background:#eef2f5;color:#5f7b8c}'
+  +'.fbq-dir.d-data-na,.fbq-dir.d-gone{background:#f4f2ef;color:#a8a29a}'
+  +'.fbq-prio{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px}'
+  +'.fbq-prio.p0{background:#b45f4d;color:#fff}.fbq-prio.p1{background:#f1dfd8;color:#a0493a}'
+  +'.fbq-prio.p2{background:#eef1ec;color:#5d6f56}.fbq-prio.p3{background:#f4f2ef;color:#a8a29a}'
+  +'.fbq-legend{font-size:11px;color:#a8a29a;margin-top:7px;line-height:1.6}'
+  +'.fbq-ins{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}'
+  +'.fbq-ins-i{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;padding:11px 12px}'
+  +'.fbq-ins-t{font-size:12px;font-weight:700;color:#3b3735;margin-bottom:5px}'
+  +'.fbq-ins-h{font-size:12px;color:#5c5751;line-height:1.75}'
+  +'.fbq-qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}'
+  +'.fbq-qhint,.fbq-qcount{font-size:11.5px;color:#a8a29a}'
+  +'.fbq-qcount{margin-left:auto}'
+  +'.fbq-focustag{font-size:11.5px;background:#f4efe9;color:#5c5751;border-radius:8px;padding:3px 8px}'
+  +'.fbq-btn{font-size:12px;padding:5px 11px;border:1px solid var(--line,#e7e2dc);border-radius:8px;background:#fff;color:#5c5751;cursor:pointer}'
+  +'.fbq-btn.s{padding:3px 9px;font-size:11.5px}'
+  +'.fbq-qlist{background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;overflow:hidden}'
+  +'.fbq-q{padding:11px 13px;border-bottom:1px solid #f2eee9}'
+  +'.fbq-q:last-child{border-bottom:0}'
+  +'.fbq-qt{font-size:13.5px;line-height:1.7;color:#2f2c29;word-break:break-word}'
+  +'.fbq-qc{margin-left:6px;font-size:11px;color:#b98a6f;background:#f7f1e9;border-radius:6px;padding:1px 6px;white-space:nowrap}'
+  +'.fbq-qm{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}'
+  +'.fbq-tag{font-size:11px;padding:2px 7px;border-radius:8px;background:#f1eeea;color:#5c5751;white-space:nowrap}'
+  +'.fbq-tag i{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:4px;vertical-align:middle}'
+  +'.fbq-tag.s-pos{background:#eef1ec;color:#5d6f56}.fbq-tag.s-neg{background:#f7ece8;color:#a0493a}.fbq-tag.s-sug{background:#eef2f5;color:#5f7b8c}.fbq-tag.s-na{color:#a8a29a}'
+  +'.fbq-tag.unk{background:#f9f2e6;color:#a08a63}'
+  +'.fbq-qd{font-size:11px;color:#a8a29a}'
+  +'.fbq-evi{font-size:11px;color:#7e97a8;text-decoration:none}'
+  +'.fbq-open{margin-left:auto;font-size:11px;padding:2px 8px;border:1px solid var(--line,#e7e2dc);border-radius:7px;background:#fff;color:#8a857f;cursor:pointer}'
+  +'.fbq-qs{margin-top:8px;background:#faf7f4;border-radius:9px;padding:8px 10px}'
+  +'.fbq-qrow{display:flex;gap:7px;font-size:12px;line-height:1.7;color:#5c5751;padding:3px 0}'
+  +'.fbq-qi{flex:0 0 16px;font-size:10.5px;color:#a8a29a;padding-top:2px}'
+  +'.fbq-qen{font-size:11px;color:#a8a29a;margin-top:1px}'
+  +'.fbq-qsrc{font-size:10.5px;color:#b9b3ab;margin-top:1px}'
+  +'.fbq-qnone{font-size:11.5px;color:#a8a29a}'
+  +'.fbq-morewrap{margin-top:9px;text-align:center}'
+  +'.fbq-empty{background:var(--card,#fbf9f7);border:1px dashed #ddd6ce;border-radius:12px;padding:22px 14px;text-align:center}'
+  +'.fbq-et{font-size:13px;color:#5c5751;font-weight:600}'
+  +'.fbq-es{font-size:11.5px;color:#a8a29a;margin-top:5px}'
+  +'.fbq-fold{margin-top:16px;background:var(--card,#fbf9f7);border:1px solid var(--line,#e7e2dc);border-radius:12px;padding:9px 12px}'
+  +'.fbq-fold summary{font-size:12px;color:#5c5751;cursor:pointer}'
+  +'.fbq-fb{font-size:11.5px;color:#6b6660;line-height:1.8;margin-top:7px}'
+  +'@media(max-width:1100px){.fbq-kpis{grid-template-columns:repeat(3,1fr)}.fbq-ins{grid-template-columns:1fr}}'
+  +'@media(max-width:760px){.fbq-kpis{grid-template-columns:repeat(2,1fr)}.fbq-ins{grid-template-columns:1fr}.fbq-kv{font-size:18px}}'
+  +'@media(max-width:480px){.fbq-kpis{grid-template-columns:1fr}.fbq-tbl{font-size:11.5px}}'
   +'</style>';
 }
-/* ===== 页面主渲染 ===== */
-function renderFeedback(){
+/* —— 渲染 —— */
+function fbqRedrawChart(){
+  var root=document.getElementById('feedbackView');
+  if(!root||!FBQ_CTX)return;
+  var box=root.querySelector('#fbqChart');
+  if(!box)return;
+  var tip=root.querySelector('#fbqTip');
+  var w=box.clientWidth||700;
+  var h=(window.innerWidth<760)?230:300;
+  box.innerHTML='<div id="fbqTip" class="fbq-tip" style="display:none"></div>'+fbqChartSVG(FBQ_CTX,w,h);
+}
+function fbqRender(){
   var d=getFeedback();var weeks=d.weeks||[];
   var root=document.getElementById('feedbackView');
   if(!root)return;
   if(!weeks.length){
-    root.innerHTML='<div class="fbx-root"><h2>💬 玩家反馈</h2><div class="fbx-empty"><div class="fbx-et">暂无周报数据</div>'
-      +'<div class="fbx-es">每周提供两份原始表（玩家社区 / 官号后台）后，助手整理真实评论并录入此处。</div>'
-      +'<div class="fbx-eb"><button class="fbx-btn g fbx-add">＋ 新增一周</button></div></div></div>';
-    var b0=root.querySelector('.fbx-add');if(b0)b0.onclick=openWeekModal;
+    root.innerHTML='<div class="fbq-root"><h2>💬 玩家舆情洞察</h2><div class="fbq-empty"><div class="fbq-et">暂无周报数据</div>'
+      +'<div class="fbq-es">录入每周原始反馈后，本页自动生成舆情趋势、话题变化与洞察。</div></div></div>';
     return;
   }
   var chrono=weeks.slice().sort(function(a,b){var da=fbWeekStart(a),db=fbWeekStart(b);return (da?da.getTime():0)-(db?db.getTime():0);});
-  var F=fbNormFilter();
-  var ctx=fbxBuild(chrono,F);
-  var html=fbxCSS();
-  html+='<div class="fbx-root">';
-  html+='<div class="fbx-hd"><div><h2>💬 玩家反馈</h2>'
-    +'<div class="fbx-sub">覆盖 '+ctx.weeks+' 周 · 最新周 '+fbEsc(ctx.latestWeek)+' · 原始数据日期 '+ctx.allMin+' ~ '+ctx.allMax
-    +' · 共 '+fbxNum(ctx.keepCount)+' 条有效反馈'+(ctx.rawCount>ctx.keepCount?'（已过滤 '+fbxNum(ctx.rawCount-ctx.keepCount)+' 条无效 / 重复）':'')+'</div></div>'
-    +'<button class="fbx-add">＋ 新增一周</button></div>';
-  html+=fbxBarHTML(ctx);
-  html+=fbxSummaryHTML(ctx);
-  html+=fbxMatrixHTML(ctx);
-  html+=fbxListHTML(ctx);
-  html+='<details class="fbx-fold"><summary>口径与数据说明（分类规则 / 来源 / 过滤）</summary><div class="fbx-fb">'
-    +'<b>统计口径</b>：反馈总量与各分类数量均按「条数」统计，占比分母 = 当前筛选后的反馈条数；「提及次数」是该议题的重复出现量，不与条数混算。<br>'
-    +'<b>情绪分类</b>：来自原始数据的 type 字段（good/pos → 正向认可；bad → 负向吐槽；sug → 改进建议；其它 → 未分类）。数据模型中每条反馈仅有单一 type，因此「改进建议」与「正向 / 负向」在数据层面互斥，未做二次归类或推测拆分。<br>'
-    +'<b>话题分类</b>：由关键词规则映射到 10 类话题；每条反馈只归属 1 个话题，未命中的标记「未分类」，不臆断。<br>'
-    +'<b>来源</b>：仅 Discord / Instagram / YouTube / Facebook 四个正式来源可筛；DM / Forum / Chat 等少量来源在原样展示时标注「未归类来源」，不并入四大来源。<br>'
-    +'<b>缺失处理</b>：无日期按所属周起始日兜底并在列表中标记「日期未知」；无数据的话题直接不展示，不用 0 冒充；不做任何插值或补全。<br>'
-    +'<b>与问题追踪页分工</b>：本页只回答玩家说了什么、关注什么、态度如何；问题确认、处理状态、负责人、优先级与进度在「🐞 问题追踪」页维护。'
+  var m=fbqModel(chrono);
+  FBQ_CTX=m;
+  var html=fbqCSS();
+  html+='<div class="fbq-root">';
+  html+='<div class="fbq-hd"><div><h2>💬 玩家舆情洞察看板</h2>'
+    +'<div class="fbq-sub">覆盖 '+m.weeks+' 周 · 最新周 '+fbEsc(m.latestWeek)+' · 原始数据日期 '+(m.allMin||'—')+' ~ '+(m.allMax||'—')
+    +' · 共 '+fbqNum(m.keepCount)+' 条有效反馈'+(m.rawCount>m.keepCount?'（已过滤 '+fbqNum(m.rawCount-m.keepCount)+' 条无效 / 重复）':'')+'</div></div></div>';
+  html+=fbqBarHTML(m);
+  html+='<div class="fbq-sec"><div class="fbq-sec-h"><h3>① 舆情总览</h3><span class="fbq-sec-s">当期规模、对比上一周期、最热话题与异常信号</span></div>'+fbqKpiHTML(m)+'</div>';
+  html+='<div class="fbq-sec"><div class="fbq-sec-h"><h3>② 玩家舆情偏好变化线</h3><span class="fbq-sec-s">话题 × 时间，可切换提及量 / 占比，点击图例增删话题，悬停查看数值与环比</span></div>'+fbqChartHTML(m)+'</div>';
+  html+='<div class="fbq-sec"><div class="fbq-sec-h"><h3>③ 当前话题结构与变化排名</h3><span class="fbq-sec-s">排序：'
+    +FBQ_SORTDEF.map(function(s){return '<button class="fbq-btn s'+(FBQ.sort===s.k?' on':'')+'" data-fbqsort="'+s.k+'" style="'+(FBQ.sort===s.k?'background:#3b3735;color:#fff':'')+'">'+s.n+'</button>';}).join(' ')
+    +'</span></div>'+fbqRankHTML(m)+'</div>';
+  html+='<div class="fbq-sec"><div class="fbq-sec-h"><h3>④ 舆情洞察与总结</h3><span class="fbq-sec-s">全部结论由当期统计自动生成，含具体数值与口径</span></div>'+fbqInsightHTML(m)+'</div>';
+  html+='<div class="fbq-sec"><div class="fbq-sec-h"><h3>⑤ 典型玩家反馈</h3><span class="fbq-sec-s">按话题交叉取样的代表性原声，可展开逐字原文</span></div>'+fbqQuotesHTML(m)+'</div>';
+  html+='<details class="fbq-fold"><summary>统计口径与数据说明（务必先读）</summary><div class="fbq-fb">'
+    +'<b>采集口径偏差（重要）</b>：当前玩家反馈采集存在选择性——正向反馈通常不会被主动收集，因此<b>已收集反馈中的正 / 负 / 建议比例不代表全部玩家的真实情绪分布</b>，'
+    +'不得据此判断玩家整体满意度。本页核心指标一律使用「反馈条数 / 提及次数 / 话题结构与环比」，情绪标签仅作为单条反馈的性质备注。<br>'
+    +'<b>条数 vs 提及次数</b>：条数＝独立反馈条目数；提及次数＝同一议题被重复提出的累计量。两者分母一致但含义不同，页面内不混算、不互换。<br>'
+    +'<b>周期聚合</b>：默认按数据周聚合；按日 / 按月时会补齐无反馈的周期并标记为「无记录」，不补 0、不插值。话题在某周期无记录时折线断开，不画虚假平滑曲线。<br>'
+    +'<b>环比与趋势</b>：环比＝（当期 − 上一周期）/ 上一周期；上一周期为 0 时记「新增」，当期无记录时记「本期无记录」，均不按 0 计算。周期数少于 2 时明确输出「当前数据不足以判断趋势」。<br>'
+    +'<b>话题分类</b>：由关键词规则映射到 '+FB_TOPICS.length+' 类话题，每条反馈仅归属 1 个话题，未命中规则标记「未分类」，不臆断归属。<br>'
+    +'<b>来源</b>：仅 Discord / Instagram / YouTube / Facebook 四个正式来源可筛；DM / Forum / Chat 等少量来源原样展示并标注「未归类来源」，不并入四大来源。<br>'
+    +'<b>事件标记</b>：仅标记项目侧确有依据的节点（如 '+FBQ_EVENTS.map(function(e){return e.n+' '+e.d;}).join('；')+'）。事件与话题变化同时出现只代表<b>可能相关，需结合事件时间验证</b>，本页不做因果断言。<br>'
+    +'<b>与问题追踪页分工</b>：本页只回答玩家说了什么、关注什么、态度如何、哪些话题值得关注；问题确认、处理状态、负责人、优先级与进度在「🐞 问题追踪」页维护，「长期高频」不等于「未解决」。'
     +'</div></details>';
   html+='</div>';
   root.innerHTML=html;
-  fbxBind(root);
+  fbqRedrawChart();
+  fbqBindTip(root,m);
+  fbqBind(root);
 }
+function fbqBind(root){
+  function all(sel){return root.querySelectorAll(sel);}
+  Array.prototype.forEach.call(all('[data-fbqgran]'),function(b){
+    b.onclick=function(){FBQ.gran=b.getAttribute('data-fbqgran');FBQ.pi=-1;FBQ.topics=[];fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqmetric]'),function(b){
+    b.onclick=function(){FBQ.metric=b.getAttribute('data-fbqmetric');fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqsort]'),function(b){
+    b.onclick=function(){FBQ.sort=b.getAttribute('data-fbqsort');fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqtop]'),function(b){
+    b.onclick=function(){var k=b.getAttribute('data-fbqtop');fbqToggle(FBQ.topics,k);if(!FBQ.topics.length)FBQ.topics=[k];fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqch]'),function(b){
+    b.onclick=function(){fbqToggle(FBQ.ch,b.getAttribute('data-fbqch'));fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqfocus]'),function(b){
+    b.onclick=function(){
+      var k=b.getAttribute('data-fbqfocus');
+      FBQ.focus=(FBQ.focus===k)?'':k;
+      fbqRender();
+      var el=document.getElementById('feedbackView').querySelector('.fbq-qlist');
+      if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});
+    };
+  });
+  Array.prototype.forEach.call(all('[data-fbqmore]'),function(b){
+    b.onclick=function(){FBQ.limit+=10;fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqopen]'),function(b){
+    b.onclick=function(){var k=b.getAttribute('data-fbqopen');if(FBQ.open[k])delete FBQ.open[k];else FBQ.open[k]=1;fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqclear]'),function(b){
+    b.onclick=function(){FBQ.ch=[];FBQ.q='';FBQ.focus='';FBQ.pi=-1;FBQ.limit=6;fbqRender();};
+  });
+  Array.prototype.forEach.call(all('[data-fbqq]'),function(inp){
+    var t=null;
+    inp.oninput=function(){if(t)clearTimeout(t);t=setTimeout(function(){FBQ.q=inp.value;fbqRender();var el=document.getElementById('feedbackView').querySelector('[data-fbqq]');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}},420);};
+  });
+  Array.prototype.forEach.call(all('[data-fbqpi]'),function(sel){
+    sel.onchange=function(){FBQ.pi=parseInt(sel.value,10);fbqRender();};
+  });
+}
+function fbqToggle(arr,v){var i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else arr.push(v);return arr;}
+var fbqResizeT=null;
+window.addEventListener('resize',function(){if(fbqResizeT)clearTimeout(fbqResizeT);fbqResizeT=setTimeout(fbqRedrawChart,200);});
+
+function renderFeedback(){fbqRender();}
+
 
 
 function openWeekModal(){
