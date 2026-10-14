@@ -2035,6 +2035,106 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   .fz-tip{max-width:200px;font-size:10.5px}
 }
 
+/* ===== 粉丝监控 v6：全局时间范围 + 7 平台卡片 + 平台独立趋势列表 ===== */
+/* ---- 顶部唯一时间范围控件 ---- */
+.fz-rctl{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap}
+.fz-rctl-l{font-size:11.5px;font-weight:800;color:#8b93a4;letter-spacing:.2px;flex:none}
+.fz-rseg{display:inline-flex;background:#f1f4f9;border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.fz-rb{border:none;background:transparent;padding:7px 12px;border-radius:8px;font-size:12.5px;font-weight:700;color:#64748b;cursor:pointer;line-height:1;font-family:inherit;white-space:nowrap}
+.fz-rb:hover{color:var(--ink)}
+.fz-rb.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
+.fz-rdate{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#64748b}
+.fz-rdate input{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12px;color:var(--ink);background:#fff;font-family:inherit}
+.fz-rctl-h{font-size:10.8px;color:#94a3b8;line-height:1.5}
+/* ---- 刷新按钮降级为次要操作（保留功能，不抢主视觉） ---- */
+.refresh.subtle{background:#fff;color:#5b6472;border:1px solid var(--line);box-shadow:none;padding:8px 14px;font-size:12.5px;font-weight:700}
+.refresh.subtle:hover{background:#f8fafc;border-color:#cbd5e1;box-shadow:none}
+.refresh.subtle .spin{border-color:rgba(91,100,114,.3);border-top-color:#5b6472}
+@media(max-width:640px){ .fz-rb{padding:9px 12px} .fz-rctl-h{display:none} }
+/* ---- 02 平台粉丝卡片：桌面 4 列 / 窄屏 3 列 / 平板 2 列 / 手机 2 列→1 列 ---- */
+.fz-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media(max-width:1360px){.fz-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1023px){.fz-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:430px){.fz-cards{grid-template-columns:1fr;gap:10px}}
+.fz-card{position:relative;background:var(--card);border:1px solid var(--line);border-left-width:3px;border-radius:var(--r-md);padding:13px 15px 11px;box-shadow:var(--shadow-sm);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.fz-card:hover{box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.fz-card.st-up{border-left-color:#10b981}
+.fz-card.st-down{border-left-color:#ef4444}
+.fz-card.st-flat{border-left-color:#cbd5e1}
+.fz-card.st-na{border-left-color:#e2e8f0}
+.fz-card-h{display:flex;align-items:center;gap:7px;min-width:0}
+.fz-card-h b{font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fz-card-m{font-size:10.5px;color:#94a3b8;white-space:nowrap;flex:none}
+.fz-card-v{font-size:29px;font-weight:800;letter-spacing:-.5px;line-height:1.15;margin:7px 0 3px;color:var(--ink);font-variant-numeric:tabular-nums}
+.fz-card-d{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12.5px;font-variant-numeric:tabular-nums;min-height:18px}
+.fz-card-d .up{color:#047857;font-weight:800}
+.fz-card-d .down{color:#b91c1c;font-weight:800}
+.fz-card-d .flat{color:#64748b;font-weight:700}
+.fz-card-d .na{color:#b6bdc9;font-weight:700;font-size:11.5px}
+.fz-card-f{margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);font-size:10.8px;color:#8b93a4;line-height:1.6}
+.fz-card-f b{color:#475569;font-weight:800}
+.fz-card-f em{font-style:normal;color:#b45309;font-weight:800}
+.fz-card-why{margin-top:3px;color:#b45309}
+@media(max-width:560px){ .fz-card{padding:12px 12px 10px} .fz-card-v{font-size:24px} }
+@media(max-width:430px){ .fz-card-v{font-size:28px} }
+.fz-cards-note{margin-top:10px;font-size:11px;color:#8b93a4;line-height:1.75}
+/* ---- 03 平台独立趋势列表 ---- */
+.fz-trend{padding:14px 16px}
+.fz-tr-sortbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.fz-tr-sortbar .fz-lab{font-size:11.5px;font-weight:800;color:#8b93a4}
+.fz-tr-sortbar .fz-rseg{padding:2px}
+.fz-tr-sortbar .fz-rb{font-size:11.8px;padding:6px 11px}
+.fz-tr-list{display:flex;flex-direction:column;gap:8px}
+.fz-trow{position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px}
+.fz-trow.hl{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.10)}
+.fz-trow-main{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+.fz-trow-id{display:flex;align-items:center;gap:6px;flex:1 1 168px;min-width:0}
+.fz-trow-id b{font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fz-trow-num{flex:0 0 auto;display:flex;flex-direction:column;gap:1px;min-width:118px}
+.fz-trow-v{font-size:17px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.fz-trow-g{font-size:11.8px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fz-trow-g.up{color:#047857;font-weight:800}
+.fz-trow-g.down{color:#b91c1c;font-weight:800}
+.fz-trow-g.flat{color:#64748b;font-weight:700}
+.fz-trow-g.na{color:#b6bdc9;font-weight:700}
+.fz-trow-chart{flex:1 1 260px;min-width:180px;height:62px}
+.fz-trow-chart svg{display:block}
+.fz-trow-btn{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:#5b6472;border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;min-height:32px}
+.fz-trow-btn:hover{border-color:#cbd5e1;color:var(--ink)}
+.fz-mini-empty{font-size:11px;color:#94a3b8;line-height:1.6;padding:6px 2px}
+.fz-trow-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.fz-tag{font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;white-space:nowrap}
+.fz-tag.gap{color:#b45309;background:#fffbeb;border:1px solid #fde68a}
+.fz-tag.drop{color:#b91c1c;background:#fef2f2;border:1px solid #fecaca}
+.fz-tag.flat{color:#64748b;background:#f1f5f9;border:1px solid #e2e8f0}
+.fz-tag.spike{color:#b45309;background:#fffbeb;border:1px solid #fde68a}
+.fz-tag.na{color:#94a3b8;background:#f8fafc;border:1px solid #eef0f4}
+.fz-trow-det{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+.fz-trow-det[hidden]{display:none}
+.fz-det-sum{font-size:11.5px;color:#475569;font-weight:700;margin-bottom:6px}
+.fz-det-scroll{max-height:220px;overflow:auto;-webkit-overflow-scrolling:touch}
+.fz-det-tb{width:100%;border-collapse:collapse;font-size:11px}
+.fz-det-tb th{position:sticky;top:0;background:#f8fafc;text-align:left;font-size:10.5px;font-weight:800;color:#8b93a4;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.fz-det-tb td{padding:5px 8px;border-bottom:1px solid #f1f5f9;color:#334155;white-space:nowrap}
+.fz-det-tb td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.fz-det-tb td.na{color:#b6bdc9;font-weight:600}
+.fz-det-tb td em{font-style:normal;color:#b45309;font-weight:800;font-size:10px}
+.fz-det-f{margin-top:5px;font-size:10.5px;color:#94a3b8}
+.fz-tr-notes{margin-top:10px}
+@media(max-width:900px){
+  .fz-trow-chart{flex:1 1 100%;order:3;height:68px;min-width:0}
+  .fz-trow-btn{order:4;margin-left:auto}
+}
+@media(max-width:520px){
+  .fz-trend{padding:12px 12px}
+  .fz-trow{padding:10px}
+  .fz-trow-id{flex:1 1 auto;min-width:0}
+  .fz-trow-num{flex:0 0 auto;align-items:flex-end}
+  .fz-trow-v{font-size:19px}
+  .fz-trow-chart{height:64px}
+  .fz-tip{max-width:190px;font-size:10.5px}
+}
+
 </style>
 
 </head>
@@ -2070,7 +2170,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
           <div class="sub" data-page-node-id="uhQFznCxCULU3Satf0Kb5z">7 平台官方指标（粉丝 / 关注者 / 订阅者 / 服务器成员）· 按天快照 · 点击「刷新」重新拉取最新数据</div>
         </div>
         <div class="toolbar" data-page-node-id="Sjo08Gf1fCn4aPPMBWzNlv">
-          <button class="refresh" id="refreshBtn" data-page-node-id="1xPPLG13GJaOqJioBKnyXJ">
+          <div class="fan-ctl" id="fanRangeCtl"></div>
+          <button class="refresh subtle" id="refreshBtn" data-page-node-id="1xPPLG13GJaOqJioBKnyXJ">
             <span class="spin" data-page-node-id="VjPBEQ3UFs5pEAv1PEjO7t"></span>
             <span class="btn-text" data-page-node-id="fiNuq6CbIebVWI6Vk2VZ62">🔄 刷新粉丝数</span>
           </button>
@@ -2086,13 +2187,13 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <!-- 2. 平台表现对比 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>平台表现对比</h3><span class="cc-sub">按本周净增降序 · 点击行展开该平台趋势与详情</span></div>
-        <div class="plat-grid" id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
+        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>7 平台粉丝卡片</h3><span class="cc-sub">当前粉丝数 · 周期净增长与增长率 · 数据完整性（跟随顶部时间范围）</span></div>
+        <div id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
       </section>
 
       <!-- 3. 历史增长趋势 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">03</span><span class="cc-emoji">📉</span><h3>历史增长趋势</h3><span class="cc-sub">默认近 30 天 · 7 / 30 / 90 天 / 自定义 · 单平台或多平台对比</span></div>
+        <div class="cc-sec-head"><span class="cc-num">03</span><span class="cc-emoji">📉</span><h3>历史增长趋势</h3><span class="cc-sub">7 个平台默认全展示 · 每行独立纵轴 · 悬浮或点击数据点看精确值</span></div>
         <div id="fanTrend"></div>
       </section>
 
@@ -3567,311 +3668,113 @@ function renderGrowthOverview(data){
     +'</div>';
 }
 // ============================================================
-//  2. 平台表现对比（唯一展示各平台粉丝数的地方 · 默认按本周净增排序）
+//  顶部统一控制：全局时间范围（全页唯一的时间筛选控件）
+//  同步驱动 02 平台粉丝卡片 与 03 平台独立趋势列表
 // ============================================================
-var FAN_SORT={key:'diff',dir:'desc'};
-var FAN_ROW_OPEN=null;   // 当前展开的平台 key（同一时刻只展开一行）
-function renderPlatformTable(data){
-  var el=document.getElementById('platforms'); if(!el) return;
-  var C=FAN_CTX||fanBuildCtx(data); if(!C) return;
-  var rows=C.order.map(function(k){return C.per[k];});
-  var key=FAN_SORT.key,dir=FAN_SORT.dir==='asc'?1:-1;
-  rows.sort(function(a,b){
-    var av,bv;
-    if(key==='name'){return a.name.localeCompare(b.name)*dir;}
-    if(key==='diff'){av=a.week.ok?a.week.diff:null;bv=b.week.ok?b.week.diff:null;}
-    else if(key==='pct'){av=(a.week.ok&&a.week.base.value>=FAN_ALERT_CFG.smallBase)?a.week.pct:null;bv=(b.week.ok&&b.week.base.value>=FAN_ALERT_CFG.smallBase)?b.week.pct:null;}
-    else {av=a.value;bv=b.value;}
-    if(av===null&&bv===null) return 0;
-    if(av===null) return 1;   // 缺失恒排末尾
-    if(bv===null) return -1;
-    return (av-bv)*dir;
-  });
-  var th=function(k,label,extra){
-    var on=FAN_SORT.key===k;
-    return '<th class="fz-th'+(on?' on':'')+' r" data-fsort="'+k+'">'+label
-      +'<span class="fz-sort">'+(on?(FAN_SORT.dir==='asc'?'▲':'▼'):'↕')+'</span></th>';
-  };
-  // 增长状态：优先表达业务状态（正增长 / 下降 / 停滞），数据陈旧只作附加角标，避免淹没真实信号
-  var stateOf=function(s){
-    if(!s.lastDate) return ['na','无快照'];
-    if(!s.week.ok) return ['na','无数据'];
-    if(s.week.diff>0) return ['up','正增长'];
-    if(s.week.diff<0) return ['down','下降'];
-    return ['flat','停滞'];
-  };
-  var body=rows.map(function(s){
-    var w=s.week;
-    var diffCell=w.ok
-      ? (w.diff>0?'<span class="fz-up">▲ +'+fmt(w.diff)+'</span>':(w.diff<0?'<span class="fz-down">▼ '+fmt(w.diff)+'</span>':'<span class="fz-flat">±0</span>'))
-      : '<span class="fz-na" title="'+({ 'no-snapshot-in-week':'该统计周内没有快照','no-baseline':'没有可用基线快照'}[w.reason]||'数据不足')+'">无数据</span>';
-    var pctCell=(w.ok&&w.base.value>0)
-      ? ((w.base.value<FAN_ALERT_CFG.smallBase)
-          ? '<span class="fz-na" title="基数 '+fmt(w.base.value)+' < '+FAN_ALERT_CFG.smallBase+'，增长率不具参考性">基数过小</span>'
-          : (w.pct>0?'<span class="fz-up">'+fanPct(w.pct)+'</span>':(w.pct<0?'<span class="fz-down">'+fanPct(w.pct)+'</span>':'<span class="fz-flat">0.0%</span>')))
-      : '<span class="fz-na">—</span>';
-    var stale=s.staleDays!==null&&s.staleDays>FAN_ALERT_CFG.staleDays;
-    var updCell=s.lastDate
-      ? '<span class="fz-upd'+(stale?' st':'')+'">'+s.lastDate
-        +(stale?' <em title="最新快照距今 '+s.staleDays+' 天，超过 '+FAN_ALERT_CFG.staleDays+' 天阈值">⚠'+s.staleDays+'天</em>':'')+'</span>'
-      : '<span class="fz-na">无快照</span>';
-    var st=stateOf(s);
-    return '<tr class="fz-tr'+(FAN_ROW_OPEN===s.key?' open':'')+'" data-fplat="'+s.key+'">'
-      +'<td class="fz-td-name"><span class="fz-dot" style="background:'+s.color+'"></span>'
-        +'<b>'+esc(s.name)+'</b><span class="fz-metric">'+esc(s.metric)+'</span></td>'
-      +'<td class="fz-td-num">'+fmt(s.value)+'</td>'
-      +'<td class="fz-td-num">'+diffCell+'</td>'
-      +'<td class="fz-td-num">'+pctCell+'</td>'
-      +'<td class="fz-td-num">'+updCell+'</td>'
-      +'<td class="fz-td-num"><span class="fz-st '+st[0]+'">'+st[1]+'</span>'
-      +(stale?' <span class="fz-st stale" title="最新快照距今 '+s.staleDays+' 天">数据陈旧</span>':'')+'</td>'
-      +'</tr>';
-  }).join('');
-  el.classList.add('as-table');   // 表格视图：脱离 plat-grid 12 列网格，独占整行
-  el.innerHTML='<div class="fz-table-wrap">'
-    +'<div class="fz-tbar"><span class="fz-tbar-l">默认按本周净增降序 · 点击表头排序 · 点击行展开该平台趋势与详情</span>'
-      +'<span class="fz-hint">各平台当前粉丝数只在此表详细展示</span></div>'
-    +'<table class="fz-table"><thead><tr>'
-      +'<th class="fz-th" data-fsort="name">平台<span class="fz-sort">↕</span></th>'
-      +th('value','当前粉丝数')+th('diff','本周净增')+th('pct','本周增长率')
-      +'<th class="fz-th r">数据更新时间</th><th class="fz-th r">增长状态</th>'
-    +'</tr></thead><tbody>'+body+'</tbody></table>'
-    +'<div class="fz-tfoot">缺失数据标记「无数据 / —」，不按 0 计入合计或排名；增长率基数 &lt; '+FAN_ALERT_CFG.smallBase+' 时标注「基数过小」不参与比较；'
-    +'「数据陈旧」= 该平台最新快照距今 &gt; '+FAN_ALERT_CFG.staleDays+' 天（阈值集中定义于 FAN_ALERT_CFG）。</div>'
-    +'</div>';
-  el.querySelectorAll('[data-fsort]').forEach(function(h){
-    h.onclick=function(){
-      var k=h.getAttribute('data-fsort');
-      if(FAN_SORT.key===k) FAN_SORT.dir=(FAN_SORT.dir==='asc'?'desc':'asc');
-      else {FAN_SORT.key=k;FAN_SORT.dir=(k==='name'?'asc':'desc');}
-      renderPlatformTable(lastData||FAN_CTX.data);
-    };
-  });
-  el.querySelectorAll('[data-fplat]').forEach(function(tr){
-    tr.onclick=function(){
-      var k=tr.getAttribute('data-fplat');
-      FAN_ROW_OPEN=(FAN_ROW_OPEN===k)?null:k;
-      renderPlatformTable(lastData||FAN_CTX.data);
-      if(FAN_ROW_OPEN) fanRenderRowPanel(k);
-    };
-  });
-}
-// 行展开面板：该平台近 30 天趋势 + 数据详情（不重复区域级指标）
-function fanRenderRowPanel(k){
-  var C=FAN_CTX; if(!C||!C.per[k]) return;
-  var s=C.per[k];
-  var tb=document.querySelector('#platforms .fz-table tbody'); if(!tb) return;
-  var tr=document.createElement('tr'); tr.className='fz-rowpanel';
-  var td=document.createElement('td'); td.colSpan=6;
-  var from=fanAddDays(C.anchorDate,-29);
-  var pts=fanRange(s.hist,from,C.anchorDate);
-  var _r=(pts.length>=2)?fanLineChart([{key:k,name:s.name,color:s.color,metric:s.metric,points:pts}],{mode:'pct',W:620,H:170}):null;
-  var chart=_r?_r.html:'<div class="fz-chart-empty">近 30 天快照不足 2 个（当前 '+pts.length+' 个），无法绘制。</div>';
-  var firstP=pts.length?pts[0]:null,lastP=pts.length?pts[pts.length-1]:null;
-  var d30=(firstP&&lastP)?lastP.value-firstP.value:null;
-  var p30=(firstP&&firstP.value)?d30/firstP.value*100:null;
-  var share=C.total?s.value/C.total*100:null;
-  var kv=function(a,b){return '<div class="fz-rp-kv"><span>'+a+'</span><span>'+b+'</span></div>';};
-  td.innerHTML='<div class="fz-rp">'
-    +'<div class="fz-rp-chart">'+chart+'</div>'
-    +'<div class="fz-rp-info">'
-      +kv('当前'+esc(s.metric),fmt(s.value))
-      +kv('占区域总粉丝',share===null?'—':share.toFixed(1)+'%')
-      +kv('快照总数',s.points+' 个（'+(s.hist.length?s.hist[0].date:'—')+' → '+(s.lastDate||'—')+'）')
-      +kv('近 30 天变化',(d30===null)?'—':((d30>0?'+':'')+fmt(d30)+'（'+fanPct(p30)+'）'))
-      +kv('本周基线',s.week.ok?(s.week.base.date+' · 区间 '+s.week.spanDays+' 天'):'无可用基线')
-      +kv('日均净增',(s.week.ok&&s.week.daily!==null)?s.week.daily.toFixed(1)+' / 天':'—')
-      +kv('数据陈旧',(s.staleDays===null?'—':s.staleDays+' 天'))
-      +'<div style="margin-top:10px"><button class="fz-btn" data-fjump="'+k+'">在「历史增长趋势」中查看该平台</button></div>'
-    +'</div></div>';
-  tr.appendChild(td);
-  var ref=document.querySelector('#platforms tr[data-fplat="'+k+'"]');
-  if(ref&&ref.nextSibling) tb.insertBefore(tr,ref.nextSibling);
-  else tb.appendChild(tr);
-  var jb=td.querySelector('[data-fjump]');
-  if(jb) jb.onclick=function(e){
-    e.stopPropagation();
-    FAN_TREND.plat=k; FAN_TREND.range='30';
-    renderHistoryTrend(lastData||C.data);
-    var t=document.getElementById('fanTrend');
-    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
-  };
-}
-// ============================================================
-//  3. 历史粉丝趋势
-// ============================================================
-var FAN_TREND={plat:'instagram',range:'30',from:'',to:'',mode:'pct',scale:'robust'};
-var FAN_DET_SORT={key:'diff',dir:'desc'};
-function fanTrendRange(C){
-  var r=FAN_TREND.range, from='', to=C.anchorDate;
+var FAN_RANGE={range:'30',from:'',to:''};
+var FAN_RANGE_DEF=[['7','近 7 天'],['30','近 30 天'],['90','近 90 天'],['custom','自定义']];
+function fanGlobalRange(C){
+  var r=FAN_RANGE.range, from='', to=C.anchorDate;
   if(r==='7') from=fanAddDays(C.anchorDate,-6);
   else if(r==='30') from=fanAddDays(C.anchorDate,-29);
   else if(r==='90') from=fanAddDays(C.anchorDate,-89);
-  else if(r==='custom'){ from=FAN_TREND.from||''; to=FAN_TREND.to||C.anchorDate; }
-  return {from:from,to:to,label:(r==='all'?'全部':(r==='custom'?((from||'起始')+' ~ '+(to||'最新')):('最近 '+r+' 天')))};
+  else if(r==='custom'){ from=FAN_RANGE.from||''; to=FAN_RANGE.to||C.anchorDate; }
+  return {from:from,to:to,label:(r==='custom'?((from||'起始')+' ~ '+(to||'最新')):('近 '+r+' 天'))};
 }
-function fanMiniSpark(hist,color){
-  var vals=hist.map(function(h){return h.value;});
-  var lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals),span=(hi-lo)||1;
-  var W=76,H=22,pts=vals.map(function(v,i){
-    return {x:3+(W-6)*(vals.length<=1?0.5:i/(vals.length-1)),y:H-3-(H-6)*((v-lo)/span)};
-  });
-  var d=pts.map(function(p,i){return (i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
-  var up=vals[vals.length-1]-vals[0];
-  var c=up>0?'#16a34a':(up<0?'#dc2626':'#94a3b8');
-  return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'
-    +'<path d="'+d+'" fill="none" stroke="'+(color||c)+'" stroke-width="1.8" stroke-linejoin="round"/>'
-    +'<circle cx="'+pts[pts.length-1].x.toFixed(1)+'" cy="'+pts[pts.length-1].y.toFixed(1)+'" r="2.2" fill="'+(color||c)+'"/></svg>';
+// 区间内缺失天数（相邻有效快照间隔 > 1 天的累计缺失天数）
+function fanGapDays(pts){
+  var g=0;
+  for(var i=1;i<pts.length;i++){ var d=fanDiffDays(pts[i-1].date,pts[i].date); if(d!==null&&d>1) g+=d-1; }
+  return g;
 }
-// 多序列折线 v5：
-//  mode='pct' 增长表现（纵轴 = 相对区间首点的累计涨跌 %，起点 0%）
-//  mode='abs' 粉丝规模（纵轴 = 绝对人数）
-//  缺失日期不补零、不插值；跨天缺口用虚线，并在悬浮提示中给出前后快照与缺失天数
-//  默认不画末端数字标签，仅 opt.labelKeys 指定的序列（单平台视图）画末点标签
-function fanLineChart(series,opt){
-  opt=opt||{};
-  var mode=opt.mode||'pct';
-  var W=opt.W||860,H=opt.H||260;
-  var labelKeys=opt.labelKeys||[];
-  var padL=56,padR=labelKeys.length?62:24,padT=20,padB=28;
-  var dates={};
-  series.forEach(function(s){s.points.forEach(function(p){dates[p.date]=1;});});
-  var axis=Object.keys(dates).sort();
-  if(axis.length<FAN_ALERT_CFG.minPoints){
-    return {html:'<div class="fz-chart-empty">该区间内可绘快照不足 '+FAN_ALERT_CFG.minPoints+' 个（当前 '+axis.length+' 个），无法绘制趋势。请放宽时间范围或换一个平台。</div>',clipped:0,extreme:null};
-  }
-  var idxOf={};axis.forEach(function(d,i){idxOf[d]=i;});
-  var plotted=[];
-  series.forEach(function(s){
-    if(s.points.length<2){s._skip=true;return;}
-    s._base=s.points[0].value||1;
-    s._vals=s.points.map(function(p){return mode==='pct'?((p.value/s._base-1)*100):p.value;});
-    s._vals.forEach(function(v){plotted.push(v);});
+function fanRangeApply(){ var d=lastData||(FAN_CTX&&FAN_CTX.data); renderFanCards(d); renderHistoryTrend(d); }
+function renderFanRangeCtl(data){
+  var el=document.getElementById('fanRangeCtl'); if(!el) return;
+  var C=FAN_CTX||fanBuildCtx(data); if(!C) return;
+  var btns=FAN_RANGE_DEF.map(function(d){
+    return '<button class="fz-rb'+(FAN_RANGE.range===d[0]?' on':'')+'" data-frange="'+d[0]+'">'+d[1]+'</button>';
+  }).join('');
+  var date=(FAN_RANGE.range==='custom')
+    ? '<span class="fz-rdate"><input type="date" id="fzFrom" value="'+esc(FAN_RANGE.from)+'"> ~ <input type="date" id="fzTo" value="'+esc(FAN_RANGE.to)+'"></span>' : '';
+  el.innerHTML='<div class="fz-rctl"><span class="fz-rctl-l">时间范围</span><div class="fz-rseg">'+btns+'</div>'+date
+    +'<span class="fz-rctl-h" title="01 总览为固定「本周」口径（以全平台最新快照所在自然周为准），不受此控件影响">同步 02 卡片与 03 趋势 · 01 为固定本周口径</span></div>';
+  el.querySelectorAll('[data-frange]').forEach(function(b){
+    b.onclick=function(){
+      FAN_RANGE.range=b.getAttribute('data-frange');
+      if(FAN_RANGE.range==='custom'&&!FAN_RANGE.from){FAN_RANGE.from=fanAddDays(C.anchorDate,-29);FAN_RANGE.to=C.anchorDate;}
+      renderFanRangeCtl(lastData||C.data);
+      fanRangeApply();
+    };
   });
-  var live=series.filter(function(s){return !s._skip;});
-  if(!live.length||!plotted.length) return {html:'<div class="fz-chart-empty">无可绘制数据（所选平台在该区间内均不足 2 个快照）。</div>',clipped:0,extreme:null};
-
-  // ---- 纵轴刻度：稳健（P5~P95）或完整；超出稳健刻度的点照实计算，只在边界截断绘制并标注 ----
-  var sorted=plotted.slice().sort(function(a,b){return a-b;});
-  var qf=function(p){return sorted[Math.min(sorted.length-1,Math.max(0,Math.floor((sorted.length-1)*p)))];};
-  var robust=opt.scale!=='full'&&sorted.length>=5;
-  var lo=robust?qf(0.05):sorted[0];
-  var hi=robust?qf(0.95):sorted[sorted.length-1];
-  var pad=(hi-lo)*0.12;
-  if(!pad) pad=Math.max(Math.abs(hi)*0.03,(mode==='pct'?0.5:1));
-  var minV=lo-pad,maxV=hi+pad;
-  if(mode==='pct'&&minV>0&&sorted[0]<=0) minV=Math.min(minV,sorted[0]-pad);
-  if(mode==='pct'&&maxV<0&&sorted[sorted.length-1]>=0) maxV=Math.max(maxV,sorted[sorted.length-1]+pad);
-  var span=(maxV-minV)||1;
-  var X=function(i){return padL+(W-padL-padR)*(axis.length<=1?0.5:i/(axis.length-1));};
-  var Y=function(v){return padT+(H-padT-padB)*(1-(Math.max(minV,Math.min(maxV,v))-minV)/span);};
-  var clipLo=0,clipHi=0;
-  plotted.forEach(function(v){ if(v<minV) clipLo++; else if(v>maxV) clipHi++; });
-
-  var g='';
-  [0,.25,.5,.75,1].forEach(function(f){
-    var v=minV+span*f,y=Y(v);
-    g+='<line x1="'+padL+'" y1="'+y.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+y.toFixed(1)+'" stroke="#eef0f4"/>'
-      +'<text x="'+(padL-7)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" fill="#7c8499">'
-      +(mode==='pct'?((v>0?'+':'')+v.toFixed(1)+'%'):fmt(Math.round(v)))+'</text>';
+  var f=document.getElementById('fzFrom'),t2=document.getElementById('fzTo');
+  if(f) f.onchange=function(){FAN_RANGE.from=f.value; fanRangeApply();};
+  if(t2) t2.onchange=function(){FAN_RANGE.to=t2.value; fanRangeApply();};
+}
+// ============================================================
+//  2. 平台粉丝卡片：7 个平台一次全展示（周期口径 = 顶部全局时间范围）
+//  职责：回答「现在有多少粉丝？这个周期涨了多少？」
+// ============================================================
+function renderFanCards(data){
+  var el=document.getElementById('platforms'); if(!el) return;
+  var C=FAN_CTX||fanBuildCtx(data); if(!C) return;
+  var rg=fanGlobalRange(C);
+  var rows=C.order.map(function(k){return fanTrendSeries(C,k,rg);}).filter(Boolean);
+  var cards=rows.map(function(s){
+    var st=(s.diff===null)?'na':(s.diff>0?'up':(s.diff<0?'down':'flat'));
+    var arrow=(s.diff===null)?'':(s.diff>0?'▲ ':(s.diff<0?'▼ ':'±'));
+    var diffTxt=(s.diff===null)?'数据不足':(arrow+(s.diff>0?'+':'')+fmt(s.diff));
+    var pctTxt=(s.pct===null)?'':fanPct(s.pct);
+    var gaps=fanGapDays(s.points);
+    var stale=(s.staleDays!==null&&s.staleDays>FAN_ALERT_CFG.staleDays);
+    var why=(s.n===0)?('该区间内没有有效快照，不按 0 计增长')
+           :((s.n===1)?('该区间内仅 1 个有效快照，无法计算周期增长（至少需 2 个）'):'');
+    var foot='有效快照 <b>'+s.n+'</b> 个'
+      +(gaps?(' · 缺 '+gaps+' 天'):'')
+      +' · 更新至 <b>'+(s.lastDate?s.lastDate.slice(5):'—')+'</b>'
+      +(stale?(' <em>陈旧 '+s.staleDays+' 天</em>'):'');
+    return '<div class="fz-card st-'+st+'" data-fcard="'+s.key+'" role="button" tabindex="0" title="'+esc(why||('点击查看 '+s.name+' 的趋势明细（可选）'))+'">'
+      +'<div class="fz-card-h"><span class="fz-dot" style="background:'+s.color+'"></span><b>'+esc(s.name)+'</b><span class="fz-card-m">'+esc(s.metric)+'</span></div>'
+      +'<div class="fz-card-v">'+fmt(s.value)+'</div>'
+      +'<div class="fz-card-d"><span class="'+st+'">'+diffTxt+'</span>'+(pctTxt?('<span class="'+st+'">'+pctTxt+'</span>'):'')+'</div>'
+      +'<div class="fz-card-f">'+foot+(why?('<div class="fz-card-why">'+esc(why)+'</div>'):'')+'</div>'
+      +'</div>';
+  }).join('');
+  el.classList.remove('as-table');
+  el.innerHTML='<div class="fz-cards">'+cards+'</div>'
+    +'<div class="fz-cards-note">当前粉丝数 = 各平台最新有效快照；周期增长 = 所选区间内「首个 → 末个」有效快照之差，口径与 03 趋势完全一致。'
+    +'各平台官方指标口径不同（'+C.order.map(function(k){return esc(C.per[k].name)+'·'+esc(C.per[k].metric);}).join(' / ')+'），卡片内不做跨口径换算，区域合计口径见 01。'
+    +'缺失日期不补零、不插值；有效快照不足 2 个时显示「数据不足」，不按 0 计入。</div>';
+  el.querySelectorAll('[data-fcard]').forEach(function(c){
+    var go=function(){ fanDrill(c.getAttribute('data-fcard')); };
+    c.onclick=go;
+    c.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } };
   });
-  // 零基准线（增长表现视图）
-  if(mode==='pct'&&minV<0&&maxV>0){
-    var y0=Y(0);
-    g+='<line x1="'+padL+'" y1="'+y0.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+y0.toFixed(1)+'" stroke="#cbd5e1" stroke-dasharray="3,3"/>'
-      +'<text x="'+(padL-7)+'" y="'+(y0+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" font-weight="700" fill="#64748b">0%</text>';
-  }
-  var xl='';
-  var step=Math.max(1,Math.ceil(axis.length/(W>=600?9:5)));
-  axis.forEach(function(d,i){
-    if(i%step===0||i===axis.length-1)
-      xl+='<text x="'+X(i).toFixed(1)+'" y="'+(H-9)+'" text-anchor="middle" font-size="9.5" fill="#7c8499">'+d.slice(5)+'</text>';
-  });
-
-  var paths='';
-  live.forEach(function(s){
-    var segs=[],cur=[s.points[0]];
-    for(var i=1;i<s.points.length;i++){
-      var gap=fanDiffDays(s.points[i-1].date,s.points[i].date);
-      if(gap!==null&&gap>1){
-        segs.push({pts:cur,gap:false});
-        segs.push({pts:[s.points[i-1],s.points[i]],gap:true});
-        cur=[s.points[i]];
-      }else cur.push(s.points[i]);
+}
+// 卡片 → 趋势行（可选深入入口，不是查看粉丝数的前置条件）
+function fanDrill(k){
+  var t=document.getElementById('fanTrend'); if(!t) return;
+  t.scrollIntoView({behavior:'smooth',block:'start'});
+  t.querySelectorAll('.fz-trow').forEach(function(r){ r.classList.toggle('hl',r.getAttribute('data-trow')===k); });
+  var row=t.querySelector('.fz-trow[data-trow="'+k+'"]');
+  if(row){
+    var det=row.querySelector('[data-det]');
+    if(det&&det.hidden){
+      FAN_TREND_OPEN[k]=true; det.hidden=false;
+      var b=row.querySelector('[data-fexp]'); if(b){ b.setAttribute('aria-expanded','true'); b.textContent='收起明细'; }
     }
-    segs.push({pts:cur,gap:false});
-    segs.forEach(function(sg){
-      if(sg.pts.length<2) return;
-      var d=sg.pts.map(function(p,j){
-        var i2=idxOf[p.date];
-        return (j?'L':'M')+X(i2).toFixed(1)+','+Y(mode==='pct'?((p.value/s._base-1)*100):p.value).toFixed(1);
-      }).join(' ');
-      paths+='<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="2.1" stroke-linejoin="round"'
-        +(sg.gap?' stroke-dasharray="5,4" opacity=".7"':'')+'/>';
-    });
-    // 数据点 + 透明命中区（悬浮提示）
-    s.points.forEach(function(p,i2){
-      var i=idxOf[p.date];
-      var v=mode==='pct'?((p.value/s._base-1)*100):p.value;
-      var y=Y(v);
-      var prev=i2>0?s.points[i2-1]:null;
-      var tip=esc(s.name)+'（'+esc(s.metric)+'）'
-        +'\n'+p.date+' · '+fmt(p.value)+' '+esc(s.metric)
-        +'\n较区间起点（'+s.points[0].date+'，'+fmt(s.points[0].value)+'）：'+((p.value-s.points[0].value)>0?'+':'')+fmt(p.value-s.points[0].value)+'（'+fanPct(s.points[0].value?(p.value/s.points[0].value-1)*100:null)+'）'
-        +(prev?('\n较上一快照（'+prev.date+'，'+fmt(prev.value)+'）：'+((p.value-prev.value)>0?'+':'')+fmt(p.value-prev.value)+'（'+fanPct(prev.value?(p.value/prev.value-1)*100:null)+'）'):'')
-        +(prev&&fanDiffDays(prev.date,p.date)>1?('\n⚠ 与前一次快照间隔 '+fanDiffDays(prev.date,p.date)+' 天，中间日期无采集数据，曲线为直接连线，不代表每日连续变化'):'')
-        +((v<minV||v>maxV)?('\n（该点超出当前纵轴刻度，已在边界截断显示）'):'');
-      paths+='<circle cx="'+X(i).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.8" fill="#fff" stroke="'+s.color+'" stroke-width="1.8"/>'
-        +'<circle class="fz-hit" cx="'+X(i).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="9" fill="transparent" data-t="'+tip+'" style="cursor:pointer"/>';
-      if(v>maxV+1e-9||v<minV-1e-9)
-        paths+='<text x="'+(X(i)+7).toFixed(1)+'" y="'+(y+3).toFixed(1)+'" font-size="10" fill="#b45309">▸</text>';
-    });
-    // 末端标签：仅单平台视图（labelKeys 命中）才画，且做边界收敛，绝不超出画布
-    if(labelKeys.indexOf(s.key)>=0){
-      var lp=s.points[s.points.length-1];
-      var lv=mode==='pct'?((lp.value/s._base-1)*100):lp.value;
-      var lx=X(idxOf[lp.date]),ly=Y(lv);
-      var anchor='middle',tx=lx;
-      if(lx>W-padR-30){anchor='end';tx=W-padR-4;}
-      else if(lx<padL+30){anchor='start';tx=padL+4;}
-      var ty=Math.max(padT+11,ly-9);
-      paths+='<text x="'+tx.toFixed(1)+'" y="'+ty.toFixed(1)+'" text-anchor="'+anchor+'" font-size="10.5" font-weight="800" fill="'+s.color+'">'
-        +(mode==='pct'?fanPct(lv):fmt(lp.value))+'</text>';
-    }
-    // 关键异常点标记（多平台时只画符号，不画数字，避免末端拥挤）
-    (opt.marks||[]).filter(function(m){return m.key===s.key;}).forEach(function(m){
-      var i=idxOf[m.date]; if(i===undefined) return;
-      var pv=s.points.filter(function(p){return p.date===m.date;})[0];
-      if(!pv) return;
-      var v=mode==='pct'?((pv.value/s._base-1)*100):pv.value;
-      var mx=X(i),my=Y(v)-12;
-      paths+='<text x="'+Math.min(mx,W-padR-6).toFixed(1)+'" y="'+Math.max(padT+9,my).toFixed(1)+'" text-anchor="middle" font-size="10" fill="#b45309">⚠</text>';
-    });
-  });
+  }
+  setTimeout(function(){ t.querySelectorAll('.fz-trow.hl').forEach(function(r){ r.classList.remove('hl'); }); },2600);
+}
 
-  var gaps=0;
-  for(var gi=1;gi<axis.length;gi++){ var gd=fanDiffDays(axis[gi-1],axis[gi]); if(gd!==null&&gd>1) gaps+=gd-1; }
-  var html='<svg class="fz-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">'+g+xl+paths+'</svg>';
-  return {html:html,clipped:clipLo+clipHi,clipLo:clipLo,clipHi:clipHi,gaps:gaps,
-    extreme:{min:sorted[0],max:sorted[sorted.length-1]},robust:robust};
-}
-// 量级分档：避免 Instagram(19.9万) 与 X(117) 共用同一纵轴导致小平台被压平
-var FAN_TIERS=[[0,1000,'1 千以下'],[1000,10000,'1 千 ~ 1 万'],[10000,50000,'1 万 ~ 5 万'],[50000,200000,'5 万 ~ 20 万'],[200000,Infinity,'20 万以上']];
-function fanTierOf(v){
-  for(var i=0;i<FAN_TIERS.length;i++) if(v>=FAN_TIERS[i][0]&&v<FAN_TIERS[i][1]) return i;
-  return FAN_TIERS.length-1;
-}
-function fanTierGroups(series){
-  var map={};
-  series.forEach(function(s){
-    var t=fanTierOf(s.last?s.last.value:s.value);
-    (map[t]=map[t]||[]).push(s);
-  });
-  return Object.keys(map).map(Number).sort(function(a,b){return b-a;}).map(function(t){
-    return {tier:t,label:FAN_TIERS[t][2],series:map[t]};
-  });
-}
-// 周期表现明细：图表与表格的唯一计算入口
+// ============================================================
+//  3. 历史增长趋势：平台独立趋势列表（每平台一行 · 各自独立纵轴 · 默认全展示）
+//  职责：回答「这段时间增长是持续、波动还是停滞？」
+//  不做的事：不共用纵轴、不重复图例、不重复放轴标签/网格线/末端数字、不插值
+// ============================================================
+var FAN_TREND_SORT={key:'value',dir:'desc'};   // value=按当前粉丝数（默认稳定顺序） / diff=按周期净增长
+var FAN_TREND_OPEN={};                          // 展开「快照明细」的平台 key
+var _fanResizeT=null;
+// 周期表现：卡片与趋势行的唯一计算入口（同一区间、同一口径）
 function fanTrendSeries(C,k,rg){
   var s=C.per[k]; if(!s) return null;
   var pts=fanRange(s.hist,rg.from,rg.to);
@@ -3898,200 +3801,216 @@ function fanTrendFlag(s){
     return {t:'spike',label:'⚠ 基数待核实',why:'周期 '+fanPct(s.pct)+'，但区间内仅 '+s.n+' 个快照、基数 '+fmt(s.first.value)+'，需核实统计口径与快照完整性'};
   return null;
 }
-function renderTrendDetail(C,rg,series){
-  var el=document.getElementById('fanTrendDetail'); if(!el) return;
-  var SORTKEY={name:'name',value:'value',diff:'diff',pct:'pct'};
-  var rows=series.slice();
-  var key=SORTKEY[FAN_DET_SORT.key]||'diff';
-  var dir=(FAN_DET_SORT.dir==='asc')?1:-1;
-  rows.sort(function(a,b){
-    var va,vb;
-    if(key==='name'){ return dir*(a.name<b.name?-1:(a.name>b.name?1:0)); }
-    va=(a[key]===null||a[key]===undefined)?-Infinity:a[key];
-    vb=(b[key]===null||b[key]===undefined)?-Infinity:b[key];
-    if(va===vb) return a.name<b.name?-1:1;
-    return dir*(va<vb?-1:1);
+// 单平台迷你趋势图：只表达时间变化。独立纵轴（该平台区间内实际极值）、无轴标签、无网格线、无末端数字、无图例
+// 真实采集点；跨越缺失区间用虚线段 + 浅灰带明示；不补零、不插值
+function fanMiniTrend(s,opt){
+  opt=opt||{};
+  var W=opt.W||300,H=opt.H||62;
+  var pts=s.points;
+  var vals=pts.map(function(p){return p.value;});
+  var lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
+  var pad=(hi-lo)*0.15; if(!pad) pad=Math.max(1,Math.abs(hi)*0.003);
+  var minV=lo-pad,maxV=hi+pad,span=(maxV-minV)||1;
+  var padL=7,padR=7,padT=11,padB=11;
+  var total=fanDiffDays(pts[0].date,pts[pts.length-1].date)||1;
+  var X=function(d){ var k=fanDiffDays(pts[0].date,d); if(k===null)k=0; return padL+(W-padL-padR)*(k/total); };
+  var Y=function(v){ return padT+(H-padT-padB)*(1-(v-minV)/span); };
+  var gaps=0,band='';
+  for(var i=1;i<pts.length;i++){
+    var gd=fanDiffDays(pts[i-1].date,pts[i].date);
+    if(gd!==null&&gd>1){
+      gaps+=gd-1;
+      var bx=X(pts[i-1].date),bw=Math.max(1,X(pts[i].date)-bx);
+      band+='<rect x="'+bx.toFixed(1)+'" y="'+padT+'" width="'+bw.toFixed(1)+'" height="'+(H-padT-padB)+'" fill="#94a3b8" opacity=".12"/>';
+    }
+  }
+  var area='M'+X(pts[0].date).toFixed(1)+','+(H-padB).toFixed(1)
+    +' '+pts.map(function(p){return 'L'+X(p.date).toFixed(1)+','+Y(p.value).toFixed(1);}).join(' ')
+    +' L'+X(pts[pts.length-1].date).toFixed(1)+','+(H-padB).toFixed(1)+' Z';
+  var segs=[],cur=[pts[0]];
+  for(var j=1;j<pts.length;j++){
+    var g2=fanDiffDays(pts[j-1].date,pts[j].date);
+    if(g2!==null&&g2>1){ segs.push({p:cur,gap:false}); segs.push({p:[pts[j-1],pts[j]],gap:true}); cur=[pts[j]]; }
+    else cur.push(pts[j]);
+  }
+  segs.push({p:cur,gap:false});
+  var line=segs.map(function(sg){
+    if(sg.p.length<2) return '';
+    var d=sg.p.map(function(p,m){return (m?'L':'M')+X(p.date).toFixed(1)+','+Y(p.value).toFixed(1);}).join(' ');
+    return '<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="2"'+(sg.gap?' stroke-dasharray="4,3" opacity=".75"':'')+' stroke-linejoin="round" stroke-linecap="round"/>';
+  }).join('');
+  var dots='';
+  pts.forEach(function(p,m){
+    var x=X(p.date),y=Y(p.value),prev=(m>0?pts[m-1]:null);
+    var gd=prev?fanDiffDays(prev.date,p.date):null;
+    var tip=esc(s.name)+' · '+p.date
+      +'\n'+esc(s.metric)+'：'+fmt(p.value)
+      +(prev?('\n较上一有效快照（'+prev.date+'）：'+((p.value-prev.value)>0?'+':'')+fmt(p.value-prev.value)
+        +(gd>1?('（间隔 '+gd+' 天，中间日期无采集数据）'):'')):'\n（区间首个有效快照）')
+      +'\n较区间起点（'+pts[0].date+'）：'+((p.value-pts[0].value)>0?'+':'')+fmt(p.value-pts[0].value);
+    dots+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.4" fill="#fff" stroke="'+s.color+'" stroke-width="1.6"/>'
+      +'<circle class="fz-hit" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="9" fill="transparent" data-t="'+tip+'" style="cursor:pointer"/>';
   });
-  var th=function(k,label,cls){
-    var on=(FAN_DET_SORT.key===k);
-    return '<th class="fz-dth'+(cls?' '+cls:'')+(on?' on':'')+'" data-dsort="'+k+'">'+label
-      +(on?('<span class="fz-arrow">'+(FAN_DET_SORT.dir==='asc'?'▲':'▼')+'</span>'):'')+'</th>';
+  var lx=X(pts[pts.length-1].date),ly=Y(pts[pts.length-1].value);
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'
+    +band+'<path d="'+area+'" fill="'+s.color+'" opacity=".07"/>'+line+dots
+    +'<circle cx="'+lx.toFixed(1)+'" cy="'+ly.toFixed(1)+'" r="3.2" fill="'+s.color+'"/></svg>';
+  return {svg:svg,gaps:gaps};
+}
+// 按容器实际宽度绘制（宽度变化时重绘，保证不拉伸变形）
+function fanTrendDrawCharts(rows){
+  var boxes=document.querySelectorAll('#fanTrend [data-chart]');
+  boxes.forEach(function(box){
+    var k=box.getAttribute('data-chart'),s=null;
+    rows.forEach(function(x){ if(x.key===k) s=x; });
+    if(!s) return;
+    box.innerHTML='';
+    if(s.points.length<2){
+      box.innerHTML='<div class="fz-mini-empty">数据不足：'+(s.points.length===1?'该区间内仅 1 个有效快照':'该区间内无有效快照')+' —— 不绘制曲线，不做补零或插值</div>';
+      return;
+    }
+    var w=Math.max(200,Math.round(box.clientWidth||300));
+    var h=(window.innerWidth<=640)?68:62;
+    box.innerHTML=fanMiniTrend(s,{W:w,H:h}).svg;
+  });
+}
+// 悬浮 / 点击数据点 → 显示日期、实际粉丝数、与上一有效快照的差值
+function fanBindTips(){
+  var el=document.getElementById('fanTrend'); if(!el||el._tipBound) return;
+  el._tipBound=true;
+  var hideAll=function(){ el.querySelectorAll('.fz-tip').forEach(function(t){ t.style.display='none'; }); };
+  var show=function(e){
+    var tgt=e.target;
+    if(!tgt||!tgt.closest) return;
+    var row=tgt.closest('.fz-trow'); if(!row) { hideAll(); return; }
+    var tip=row.querySelector('.fz-tip'); if(!tip) return;
+    var hit=tgt.closest('[data-t]');
+    if(!hit){ tip.style.display='none'; return; }
+    tip.innerHTML=String(hit.getAttribute('data-t')).split('\n').map(esc).join('<br>');
+    tip.style.display='block';
+    var rr=row.getBoundingClientRect(),hr=hit.getBoundingClientRect();
+    var x=hr.left+hr.width/2-rr.left+12, y=e.clientY-rr.top+14;
+    if(x+tip.offsetWidth>rr.width-4) x=Math.max(2,x-tip.offsetWidth-24);
+    if(y+tip.offsetHeight>rr.height-4) y=Math.max(2,y-tip.offsetHeight-28);
+    tip.style.left=x+'px'; tip.style.top=y+'px';
   };
-  var html='<div class="fz-det">'
-    +'<div class="fz-det-head"><span>周期表现明细</span><span class="fz-det-sub">与上方图表同源（同一区间、同一计算逻辑）· 点击行切换到该平台</span></div>'
-    +'<div class="fz-det-wrap"><table class="fz-dtable"><thead><tr>'
-      +th('name','平台')
-      +th('value','期末粉丝数','num')+th('diff','周期净增长','num')+th('pct','周期增长率','num')
-      +'<th class="fz-dth num">有效快照数</th><th class="fz-dth">最近更新时间</th>'
-    +'</tr></thead><tbody>';
-  rows.forEach(function(s){
-    var fl=fanTrendFlag(s);
-    var stale=(s.staleDays!==null&&s.staleDays>FAN_ALERT_CFG.staleDays);
-    html+='<tr class="fz-dtr'+(FAN_TREND.plat===s.key?' on':'')+'" data-dplat="'+s.key+'">'
-      +'<td><span class="fz-dot" style="background:'+s.color+'"></span><b>'+esc(s.name)+'</b>'
-        +'<div class="fz-hint">'+esc(s.metric)+'</div></td>'
-      +'<td class="num">'+fmt(s.last?s.last.value:s.value)+'</td>'
-      +'<td class="num '+(s.diff===null?'na':(s.diff>0?'fz-up':(s.diff<0?'fz-down':'fz-flat')))+'">'
-        +(s.diff===null?'无数据':((s.diff>0?'+':'')+fmt(s.diff)))+'</td>'
-      +'<td class="num '+(s.pct===null?'na':(s.pct>0?'fz-up':(s.pct<0?'fz-down':'fz-flat')))+'">'
-        +(s.pct===null?'无数据':fanPct(s.pct))
-        +(fl?('<div class="fz-flag '+fl.t+'" title="'+esc(fl.why)+'（原因未核实，标注「待排查」）">'+fl.label+'</div>'):'')+'</td>'
-      +'<td class="num">'+s.n+' 个'+(s.n<2?'（不足以绘图）':'')+'</td>'
-      +'<td class="'+(stale?'fz-upd st':'fz-upd')+'">'+esc(s.lastDate||'—')
-        +(stale?' <em>陈旧 '+s.staleDays+' 天</em>':'')+'</td>'
-      +'</tr>';
-  });
-  html+='</tbody></table></div>'
-    +'<div class="fz-chart-note">缺失日期不补零、不插值；快照不足 2 个的平台不参与曲线绘制。'
-    +'标注「待排查」的条目仅说明数值达到阈值，原因未经核实。'
-    +(FAN_METRIC.discord?' Discord 口径为「服务器成员」，与社媒粉丝不同源，异常高增长需优先核实基数与成员统计口径。':'')+'</div>'
-    +'</div>';
-  el.innerHTML=html;
-  el.querySelectorAll('[data-dsort]').forEach(function(h){
-    h.onclick=function(){
-      var k=h.getAttribute('data-dsort');
-      if(FAN_DET_SORT.key===k) FAN_DET_SORT.dir=(FAN_DET_SORT.dir==='asc'?'desc':'asc');
-      else {FAN_DET_SORT.key=k;FAN_DET_SORT.dir=(k==='name'?'asc':'desc');}
-      renderTrendDetail(C,rg,series);
-    };
-  });
-  el.querySelectorAll('[data-dplat]').forEach(function(tr){
-    tr.onclick=function(){
-      FAN_TREND.plat=tr.getAttribute('data-dplat');
-      renderHistoryTrend(lastData||C.data);
-      var t=document.getElementById('fanTrend');
-      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
-    };
-  });
+  el.addEventListener('mouseover',show);
+  el.addEventListener('mousemove',show);
+  el.addEventListener('mouseleave',hideAll);
+  el.addEventListener('click',show);
+  document.addEventListener('click',function(e){ if(!el.contains(e.target)) hideAll(); });
+}
+// 行内展开：该平台在所选区间内的逐条快照明细（默认收起）
+function fanTrendRowDetail(s,rg){
+  var pts=s.points;
+  if(!pts.length) return '<div class="fz-mini-empty">'+esc(rg.label)+'区间内没有任何有效快照，无法计算周期增长（不按 0 计）。</div>';
+  var body='';
+  for(var i=pts.length-1;i>=0;i--){
+    var p=pts[i],prev=(i>0?pts[i-1]:null);
+    var gd=prev?fanDiffDays(prev.date,p.date):null;
+    var d=prev?(p.value-prev.value):null;
+    body+='<tr><td>'+p.date+'</td><td class="num">'+fmt(p.value)+'</td>'
+      +'<td class="num '+(d===null?'na':(d>0?'fz-up':(d<0?'fz-down':'fz-flat')))+'">'+(d===null?'—':((d>0?'+':'')+fmt(d)))+'</td>'
+      +'<td class="num">'+(gd===null?'—':(gd+' 天'+(gd>1?' <em>有缺口</em>':'')))+'</td></tr>';
+  }
+  var head=(s.first&&s.last)
+    ? '<div class="fz-det-sum">期初 '+s.first.date+' · '+fmt(s.first.value)+' → 期末 '+s.last.date+' · '+fmt(s.last.value)
+      +' · 跨度 '+(s.spanDays===null?'—':s.spanDays+' 天')+'</div>' : '';
+  return head+'<div class="fz-det-scroll"><table class="fz-det-tb"><thead><tr><th>日期</th><th class="num">'+esc(s.metric)+'</th><th class="num">较上一有效快照</th><th class="num">间隔</th></tr></thead><tbody>'+body+'</tbody></table></div>'
+    +'<div class="fz-det-f">共 '+pts.length+' 个有效快照（'+esc(rg.label)+'）· 缺失日期不补零、不插值</div>';
 }
 function renderHistoryTrend(data){
   var el=document.getElementById('fanTrend'); if(!el) return;
   var C=FAN_CTX||fanBuildCtx(data); if(!C) return;
-  var rg=fanTrendRange(C);
-  var multi=FAN_TREND.plat==='__all__';
-  var keys=multi?C.order:[FAN_TREND.plat];
-  var series=[],missing=[],thin=[];
-  keys.forEach(function(k){
-    var s=fanTrendSeries(C,k,rg); if(!s) return;
-    if(s.n===0){ missing.push(s.name+'（该区间无快照）'); return; }
-    if(s.n<2){ thin.push(s.name+'（仅 1 个快照）'); return; }
-    series.push(s);
+  var rg=fanGlobalRange(C);
+  var rows=C.order.map(function(k){return fanTrendSeries(C,k,rg);}).filter(Boolean);
+  var key=FAN_TREND_SORT.key,dir=(FAN_TREND_SORT.dir==='asc')?1:-1;
+  rows.sort(function(a,b){
+    if(key==='diff'){
+      var av=a.diff,bv=b.diff;
+      if(av===null&&bv===null) return (a.value<b.value)?1:-1;
+      if(av===null) return 1;
+      if(bv===null) return -1;
+      if(av===bv) return (a.value<b.value)?1:-1;
+      return (av-bv)*dir;
+    }
+    return (a.value-b.value)*dir;
   });
-  var modeBtn=function(m,label,title){
-    return '<button class="fz-segb'+(FAN_TREND.mode===m?' on':'')+'" data-fmode="'+m+'" title="'+title+'">'+label+'</button>';
-  };
-  var rangeBtn=function(r,label){
-    return '<button class="fz-segb'+(FAN_TREND.range===r?' on':'')+'" data-frange="'+r+'">'+label+'</button>';
-  };
-  var platBtn='<button class="fz-chip'+(multi?' on':'')+'" data-fplat="__all__">全部平台对比</button>'
-    +C.order.map(function(k){
-      var on=(FAN_TREND.plat===k);
-      return '<button class="fz-chip'+(on?' on':'')+'" data-fplat="'+k+'" style="'+(on?('border-color:'+C.per[k].color+';'):'')+'">'+esc(C.per[k].name)+'</button>';
-    }).join('');
-  var modeLabel=FAN_TREND.mode==='pct'?'增长表现':'粉丝规模';
-  var yUnit=FAN_TREND.mode==='pct'?'涨跌幅（%） · 以区间首点为 0%':'人数（'+esc(series.length===1?series[0].metric:'各平台原始指标')+'）';
-
-  // ---- 1. 时间范围与数据更新时间 ----
-  var snapTotal=series.reduce(function(a,s){return a+s.n;},0);
+  var snapTotal=rows.reduce(function(a,s){return a+s.n;},0);
+  var gapTotal=0; rows.forEach(function(s){ gapTotal+=fanGapDays(s.points); });
+  var thin=rows.filter(function(s){return s.n<2;}).map(function(s){return s.name;});
   var meta='<div class="fz-tr-meta">'
     +'<span class="fz-tr-m-i"><i>统计区间</i><b>'+esc(rg.label)+'</b>'+esc(rg.from||'起始')+' ~ '+esc(rg.to||C.anchorDate)+'</span>'
     +'<span class="fz-tr-m-i"><i>数据更新至</i><b>'+C.anchorDate+'</b>'
-      +(C.staleDays>FAN_ALERT_CFG.staleDays?'<span class="fz-stale">距今 '+C.staleDays+' 天</span>':'')+'</span>'
-    +'<span class="fz-tr-m-i"><i>有效快照</i><b>'+snapTotal+' 个</b>'
-      +(multi?('（'+series.length+' 个平台）'):('（'+esc(series.length?series[0].name:'—')+'）'))+'</span>'
+      +(C.staleDays>FAN_ALERT_CFG.staleDays?('<span class="fz-stale">距今 '+C.staleDays+' 天</span>'):'')+'</span>'
+    +'<span class="fz-tr-m-i"><i>有效快照</i><b>'+snapTotal+' 个</b>（'+rows.length+' 个平台）</span>'
+    +(gapTotal?('<span class="fz-tr-m-i"><i>区间缺口</i><b>累计 '+gapTotal+' 天无快照</b>（虚线段 + 浅灰带）</span>'):'')
     +'</div>';
-
-  // ---- 2/3. 视角切换 + 平台选择 ----
-  var bar1='<div class="fz-tr-bar"><span class="fz-lab">分析视角</span><div class="fz-seg">'
-      +modeBtn('pct','增长表现','纵轴为相对区间首点的累计涨跌幅（%），用于比较各平台相对增长')
-      +modeBtn('abs','粉丝规模','纵轴为绝对人数；全部平台对比时按量级分组展示')
-      +'</div></div>';
-  var bar2='<div class="fz-tr-bar"><span class="fz-lab">平台</span><div class="fz-chips">'+platBtn+'</div></div>';
-  var bar3='<div class="fz-tr-bar"><span class="fz-lab">时间范围</span><div class="fz-seg">'
-      +rangeBtn('7','最近 7 天')+rangeBtn('30','最近 30 天')+rangeBtn('90','最近 90 天')+rangeBtn('all','全部')+rangeBtn('custom','自定义')
+  var sortBtn=function(k,label){
+    return '<button class="fz-rb'+(FAN_TREND_SORT.key===k?' on':'')+'" data-tsort="'+k+'">'+label+'</button>';
+  };
+  var sortbar='<div class="fz-tr-sortbar"><span class="fz-lab">排序</span><div class="fz-rseg">'
+    +sortBtn('value','按当前粉丝数')+sortBtn('diff','按周期净增长')+'</div>'
+    +'<span class="fz-rctl-h">每行独立纵轴，只比形状与走向；精确数值悬浮或点击数据点</span></div>';
+  var list=rows.map(function(s){
+    var st=(s.diff===null)?'na':(s.diff>0?'up':(s.diff<0?'down':'flat'));
+    var arrow=(s.diff===null)?'':(s.diff>0?'▲ ':(s.diff<0?'▼ ':'±'));
+    var diffTxt=(s.diff===null)?'数据不足':(arrow+(s.diff>0?'+':'')+fmt(s.diff));
+    var pctTxt=(s.pct===null)?'':fanPct(s.pct);
+    var gaps=fanGapDays(s.points);
+    var fl=fanTrendFlag(s);
+    var tags='';
+    if(gaps) tags+='<span class="fz-tag gap" title="缺失日期不补零、不插值，曲线在该段为直接连线">'+gaps+' 天无快照</span>';
+    if(fl) tags+='<span class="fz-tag '+fl.t+'" title="'+esc(fl.why)+'">'+fl.label+'</span>';
+    if(s.n<2) tags+='<span class="fz-tag na">有效快照不足 2 个，未绘制曲线</span>';
+    var open=!!FAN_TREND_OPEN[s.key];
+    return '<div class="fz-trow" data-trow="'+s.key+'">'
+      +'<div class="fz-trow-main">'
+        +'<div class="fz-trow-id"><span class="fz-dot" style="background:'+s.color+'"></span><b>'+esc(s.name)+'</b><span class="fz-metric">'+esc(s.metric)+'</span></div>'
+        +'<div class="fz-trow-num"><span class="fz-trow-v">'+fmt(s.value)+'</span><span class="fz-trow-g '+st+'">'+diffTxt+(pctTxt?(' · '+pctTxt):'')+'</span></div>'
+        +'<div class="fz-trow-chart" data-chart="'+s.key+'"></div>'
+        +'<button class="fz-trow-btn" data-fexp="'+s.key+'" aria-expanded="'+(open?'true':'false')+'">'+(open?'收起明细':'快照明细')+'</button>'
       +'</div>'
-      +(FAN_TREND.range==='custom'
-        ? '<span class="fz-date"><input type="date" id="fzFrom" value="'+esc(FAN_TREND.from)+'"> 至 <input type="date" id="fzTo" value="'+esc(FAN_TREND.to)+'"></span>':'')
+      +(tags?('<div class="fz-trow-tags">'+tags+'</div>'):'')
+      +'<div class="fz-trow-det" data-det="'+s.key+'"'+(open?'':' hidden')+'>'+fanTrendRowDetail(s,rg)+'</div>'
+      +'<div class="fz-tip"></div>'
       +'</div>';
-
-  // ---- 4. 主图表 ----
-  var marks=[];
-  series.forEach(function(s){ var f=fanTrendFlag(s); if(f&&(f.t==='drop'||f.t==='spike')) marks.push({key:s.key,date:s.last.date}); });
-  var chartHtml='',notes=[];
-  if(!series.length){
-    chartHtml='<div class="fz-chart-empty">当前选择无可绘制数据。'+(missing.concat(thin).length?('未绘制：'+esc(missing.concat(thin).join('；'))+'（数据不足，未做补零或估算）。'):'')+'</div>';
-  }else if(FAN_TREND.mode==='abs'&&multi&&series.length>1){
-    // 粉丝规模 + 全部平台 → 按量级分组小图，组内共享纵轴
-    var groups=fanTierGroups(series),clipped=0,gapsAll=0;
-    chartHtml='<div class="fz-small-grid">'+groups.map(function(gp){
-      var r=fanLineChart(gp.series,{mode:'abs',W:520,H:190,scale:FAN_TREND.scale,marks:marks});
-      clipped+=r.clipped||0; gapsAll+=r.gaps||0;
-      return '<div class="fz-small-card">'
-        +'<div class="fz-small-h">量级组 · '+gp.label+'<span>'+gp.series.length+' 个平台</span></div>'
-        +'<div class="fz-chartbox">'+r.html+'<div class="fz-tip"></div></div>'
-        +'</div>';
-    }).join('')+'</div>';
-    notes.push('全部平台对比已按粉丝量级分为 '+groups.length+' 组，每组独立纵轴，避免大平台压缩小平台曲线。');
-    if(clipped) notes.push(clipped+' 个数据点超出稳健刻度（P5~P95），已在边界截断显示（▸ 标记），实际值见悬浮提示与明细表，未做平滑或删除。');
-    if(gapsAll) notes.push('区间内累计有 '+gapsAll+' 天无快照，虚线表示跨天缺口（未对缺失日期补零或插值）。');
-  }else{
-    var r2=fanLineChart(series,{mode:FAN_TREND.mode,W:880,H:300,scale:FAN_TREND.scale,
-      labelKeys:multi?[]:[series[0].key],marks:marks});
-    chartHtml='<div class="fz-chartbox">'+r2.html+'<div class="fz-tip"></div></div>';
-    if(r2.clipped) notes.push(r2.clipped+' 个数据点超出稳健刻度（P5~P95），已在边界截断显示（▸ 标记），真实极值为 '
-      +fanPct(r2.extreme.min)+' ~ '+fanPct(r2.extreme.max)+'，未做任何平滑或删除。');
-    if(r2.gaps) notes.push('区间内有 '+r2.gaps+' 天无快照，虚线表示跨天缺口（未对缺失日期补零或插值）。');
-  }
-  var scaleBar=(notes.filter(function(n){return n.indexOf('稳健刻度')>=0;}).length)
-    ? '<div class="fz-tr-bar"><span class="fz-lab">纵轴刻度</span><div class="fz-seg">'
-      +'<button class="fz-segb'+(FAN_TREND.scale==='robust'?' on':'')+'" data-fscale="robust" title="按 P5~P95 取值，极端值在边界截断并标注">稳健刻度</button>'
-      +'<button class="fz-segb'+(FAN_TREND.scale==='full'?' on':'')+'" data-fscale="full" title="包含全部极值，可能因单个异常值压缩其他曲线">完整刻度</button>'
-      +'</div></div>' : '';
-  var axisNote='<div class="fz-axis-note">'
-    +'<span>纵轴：'+yUnit+'</span>'
-    +'<span>横轴：真实采集日期（仅实际有快照的日期，缺失日不补点）</span>'
-    +'<span>当前视图：'+modeLabel+(multi?' · 全部平台对比':' · 单平台')+'</span>'
-    +'<span class="fz-dashdemo"><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#94a3b8" stroke-dasharray="5,4"/></svg> 虚线 = 跨越缺失日期</span>'
-    +'</div>';
-
-  el.innerHTML='<div class="fz-trend">'
-    +meta+bar3+bar1+scaleBar+bar2+axisNote
-    +chartHtml
-    +'<div class="fz-tr-notes">'+(notes.length?notes.map(function(n){return '<div class="fz-chart-note">'+esc(n)+'</div>';}).join('')
-        :'<div class="fz-chart-note">该区间内未发现数据缺口或刻度截断。</div>')+'</div>'
-    +'<div id="fanTrendDetail"></div>'
-    +'</div>';
-
-  el.querySelectorAll('[data-fplat]').forEach(function(b){b.onclick=function(){FAN_TREND.plat=b.getAttribute('data-fplat');renderHistoryTrend(lastData||C.data);};});
-  el.querySelectorAll('[data-frange]').forEach(function(b){b.onclick=function(){FAN_TREND.range=b.getAttribute('data-frange');renderHistoryTrend(lastData||C.data);};});
-  el.querySelectorAll('[data-fmode]').forEach(function(b){b.onclick=function(){FAN_TREND.mode=b.getAttribute('data-fmode');renderHistoryTrend(lastData||C.data);};});
-  el.querySelectorAll('[data-fscale]').forEach(function(b){b.onclick=function(){FAN_TREND.scale=b.getAttribute('data-fscale');renderHistoryTrend(lastData||C.data);};});
-  var f=document.getElementById('fzFrom'),t2=document.getElementById('fzTo');
-  if(f)f.onchange=function(){FAN_TREND.from=f.value;renderHistoryTrend(lastData||C.data);};
-  if(t2)t2.onchange=function(){FAN_TREND.to=t2.value;renderHistoryTrend(lastData||C.data);};
-  // 悬浮提示
-  el.querySelectorAll('.fz-chartbox').forEach(function(box){
-    var tip=box.querySelector('.fz-tip');
-    box.addEventListener('mouseover',function(e){
-      var h=e.target&&e.target.closest?e.target.closest('[data-t]'):null;
-      if(!h){ tip.style.display='none'; return; }
-      tip.innerHTML=h.getAttribute('data-t').split('\n').map(esc).join('<br>');
-      tip.style.display='block';
-    });
-    box.addEventListener('mousemove',function(e){
-      if(tip.style.display!=='block') return;
-      var r=box.getBoundingClientRect();
-      var x=e.clientX-r.left+14,y=e.clientY-r.top+14;
-      if(x+tip.offsetWidth>r.width-4) x=e.clientX-r.left-tip.offsetWidth-14;
-      if(y+tip.offsetHeight>r.height-4) y=e.clientY-r.top-tip.offsetHeight-14;
-      tip.style.left=Math.max(2,x)+'px'; tip.style.top=Math.max(2,y)+'px';
-    });
-    box.addEventListener('mouseleave',function(){ tip.style.display='none'; });
+  }).join('');
+  el.innerHTML='<div class="fz-trend">'+meta+sortbar+'<div class="fz-tr-list">'+list+'</div>'
+    +'<div class="fz-tr-notes">'
+      +'<div class="fz-chart-note">每行使用各自独立的纵轴（按该平台区间内的实际极值缩放），只能比较「形状与走向」，不能比较高低；比较规模与增幅请看上方 02 平台卡片。</div>'
+      +'<div class="fz-chart-note">曲线只连接真实采集点：缺失日期不补零、不插值；跨天缺口用虚线段 + 浅灰带表示；有效快照不足 2 个的平台显示「数据不足」，不画平滑曲线。</div>'
+      +(thin.length?('<div class="fz-chart-note">当前区间有效快照不足 2 个的平台：'+esc(thin.join('、'))+'（不绘制曲线；02 卡片仍展示其最新快照人数）。</div>'):'')
+    +'</div></div>';
+  el.querySelectorAll('[data-tsort]').forEach(function(b){
+    b.onclick=function(){
+      var k=b.getAttribute('data-tsort');
+      if(FAN_TREND_SORT.key===k) FAN_TREND_SORT.dir=(FAN_TREND_SORT.dir==='asc'?'desc':'asc');
+      else { FAN_TREND_SORT.key=k; FAN_TREND_SORT.dir='desc'; }
+      renderHistoryTrend(lastData||C.data);
+    };
   });
-  // 明细表始终覆盖全部平台：图表可只看一个平台，表格保留全局对比与排序、点击行即切换图表
-  var allSeries=C.order.map(function(k){return fanTrendSeries(C,k,rg);}).filter(Boolean);
-  renderTrendDetail(C,rg,allSeries);
+  el.querySelectorAll('[data-fexp]').forEach(function(b){
+    b.onclick=function(){
+      var k=b.getAttribute('data-fexp');
+      var row=b.closest?b.closest('.fz-trow'):null;
+      var det=row?row.querySelector('[data-det]'):null; if(!det) return;
+      var open=det.hidden; det.hidden=!open; b.setAttribute('aria-expanded',open?'true':'false');
+      b.textContent=open?'收起明细':'快照明细'; FAN_TREND_OPEN[k]=open;
+    };
+  });
+  fanTrendDrawCharts(rows);
+  fanBindTips();
 }
+// 视口变化 → 按新宽度重绘迷你图（不重建列表，保持展开状态）
+window.addEventListener('resize',function(){
+  if(_fanResizeT) clearTimeout(_fanResizeT);
+  _fanResizeT=setTimeout(function(){
+    if(!FAN_CTX) return;
+    var rows=FAN_CTX.order.map(function(k){return fanTrendSeries(FAN_CTX,k,fanGlobalRange(FAN_CTX));}).filter(Boolean);
+    fanTrendDrawCharts(rows);
+  },180);
+});
 
 // ============================================================
 //  4. 社区健康评分（维度拆解 · 缺失不强行合成）
@@ -4316,12 +4235,7 @@ function renderFanInsights(data){
     +'<div class="fz-ins-meta">共 '+items.length+' 条 · 阈值集中定义于 FAN_ALERT_CFG（陈旧 '+FAN_ALERT_CFG.staleDays+' 天 / 连续掉粉 '+FAN_ALERT_CFG.dropRun+' 个快照 / 放缓 '+FAN_ALERT_CFG.slowRatio+' / 日化波动 '+FAN_ALERT_CFG.spikePctPerDay+'%）。'
     +'标注「待排查」的原因均为本页无对应数据源，不做推测结论。</div>';
   el.querySelectorAll('[data-fgoto]').forEach(function(b){
-    b.onclick=function(){
-      FAN_TREND.plat=b.getAttribute('data-fgoto');
-      renderHistoryTrend(lastData||C.data);
-      var t=document.getElementById('fanTrend');
-      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
-    };
+    b.onclick=function(){ fanDrill(b.getAttribute('data-fgoto')); };
   });
 }
 // ============================================================
@@ -4360,8 +4274,9 @@ function renderFans(data){
       +(_C0&&_C0.staleDays>FAN_ALERT_CFG.staleDays?(' · ⚠ 距今 '+_C0.staleDays+' 天未更新'):'');
   }
   renderGrowthOverview(data);    // 01 总览（唯一计算入口，产出 FAN_CTX）
-  renderPlatformTable(data);     // 02 平台对比
-  renderHistoryTrend(data);      // 03 趋势
+  renderFanRangeCtl(data);      // 顶部唯一时间范围控件
+  renderFanCards(data);          // 02 平台粉丝卡片（7 平台一次全展示）
+  renderHistoryTrend(data);     // 03 平台独立趋势列表
   renderFanInsights(data);       // 04 洞察与行动建议
   renderCommandCenter(data);     // 仍负责问题追踪页 + 折叠区内的健康评分拆解
   renderFanCaliber(data);        // 05 折叠：口径与缺口
@@ -6000,6 +5915,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
