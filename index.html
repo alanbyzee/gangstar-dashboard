@@ -65,16 +65,24 @@ body{
 .tab-toggle:hover{background:#f3e8ff;border-color:#7c3aed}
 .tab-toggle.on{border-style:solid;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 4px 12px rgba(109,40,217,.28)}
 .spacer{flex:1}
-.upd{font-size:12px;color:var(--muted);white-space:nowrap;flex:1 1 100%}
+.upd{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}
 .undo-btn{margin-left:10px;padding:8px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:6px}
 .undo-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft);box-shadow:0 3px 10px rgba(109,40,217,.12)}
 .undo-btn:active{transform:translateY(1px)}
+/* 平板与窄屏：品牌+撤销一行，标签整行横滚，更新时间整行 */
+@media(max-width:1023px){
+  .topbar{flex-wrap:wrap;row-gap:8px;padding:10px 16px;gap:8px 10px}
+  .brand{order:0;flex:0 1 auto;font-size:15px}
+  .undo-btn{order:1;margin-left:auto;padding:7px 12px;font-size:12.5px}
+  .tabs{order:2;flex:1 1 100%;margin-left:0}
+  .upd{order:3;flex:1 1 100%;max-width:none;white-space:normal}
+}
 @media(max-width:680px){
-  .topbar{flex-wrap:wrap;gap:6px 8px;padding:10px 14px}
-  .brand{font-size:15px;flex:1 1 100%}
-  .tabs{order:3;flex:1 1 100%;margin-left:0;margin-top:4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .upd{order:4;font-size:11.5px;color:#94a3b8}
-  .undo-btn{display:none}
+  .topbar{padding:10px 14px}
+  .brand{font-size:14.5px}
+  .tab{padding:9px 14px}
+  .tab-toggle{padding:9px 14px}
+  .upd{font-size:11.5px;color:#94a3b8}
   .spacer{display:none}
 }
 
@@ -1807,7 +1815,110 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 .fz-cal-tb td{color:#475569;padding:5px 0;line-height:1.7;border-top:1px solid #f6f7f9}
 .health-status.grey{background:#f1f5f9;color:var(--muted);border-color:var(--line)}
 @media(max-width:1100px){.fz-kpis{grid-template-columns:repeat(2,1fr)}.fz-dims{grid-template-columns:1fr}.fz-ins{grid-template-columns:1fr}}
-@media(max-width:640px){.fz-kpis{grid-template-columns:1fr}.fz-ov-w{margin-left:0}.fz-cal-tb th{width:auto;display:block;padding-bottom:0}.fz-cal-tb td{display:block;border-top:0;padding-top:2px}}
+
+/* ======================================================================
+   粉丝监控 v3 · UI/UX 统一（SaaS 设计体系）
+   原则：中性底 + 白卡 + 低饱和品牌色；状态色仅服务信息表达；
+   间距/圆角/层级全站统一；移动优先响应式；触控目标 ≥44px。
+   ====================================================================== */
+.fan{
+  --sec-gap:30px;            /* 板块纵向节奏 */
+  --r-lg:16px; --r-md:12px;  /* 圆角两档 */
+  --focus:#2563eb;           /* 键盘焦点色 */
+}
+/* 键盘可见焦点（全站首页生效） */
+.fan :focus-visible,.topbar :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+
+/* ---- 页面容器：统一左右留白与节奏；底部给本地同步浮条留空间 ---- */
+.fan{padding:26px 40px 40px}
+@media(max-width:1100px){.fan{padding:22px 20px 96px}}
+@media(max-width:640px){.fan{padding:16px 14px 120px}}
+
+/* ---- 板块节奏与标题层级（原 60px 大空洞 → 30px 统一节奏） ---- */
+.fan .fan-block{margin-bottom:var(--sec-gap)}
+.fan .fan-block:last-child{margin-bottom:0}
+.fan .cc-sec-head{margin:0 0 14px;flex-wrap:wrap;gap:6px 10px}
+.fan .cc-sec-head h3{font-size:17px;letter-spacing:.2px}
+.fan .cc-sec-head .cc-sub{font-size:12px}
+
+/* ---- 页头：标题/说明左 · 操作右，垂直居中 ---- */
+.fan .fan-head{align-items:center;margin-bottom:24px;padding-bottom:16px}
+.fan .fan-head h2{font-size:20px}
+.fan .fan-head .sub{font-size:12.5px}
+
+/* ---- 01 区域增长总览：中和外层旧 goal-card 双层卡 ---- */
+.fan #goalProgress.goal-card{background:none;border:none;border-radius:0;padding:0;box-shadow:none;margin:0 0 var(--sec-gap)}
+.fz-overview{padding:18px 20px;border-radius:var(--r-lg);box-shadow:var(--shadow-sm)}
+.fz-ov-t{font-size:15.5px}
+.fz-kpi{border-radius:var(--r-md);transition:border-color .15s}
+.fz-v{font-size:27px}
+/* 手机：2 列紧凑（数值缩小），避免 4 卡竖排过长 */
+@media(max-width:640px){
+  .fz-kpis{grid-template-columns:repeat(2,1fr)}
+  .fz-v{font-size:21px}
+  .fz-kpi{padding:11px 12px}
+  .fz-overview{padding:16px 14px}
+  .fz-ov-w{margin-left:0;width:100%}
+  .fz-cal-tb th{width:auto;display:block;padding-bottom:0}
+  .fz-cal-tb td{display:block;border-top:0;padding-top:2px}
+}
+@media(max-width:360px){.fz-kpis{grid-template-columns:1fr}}
+
+/* ---- 02 排名表：表格模式独占整行；窄屏横向滚动 ---- */
+.fan #platforms.plat-grid.as-table{display:block}
+.fz-table-wrap{padding:14px 16px;border-radius:var(--r-lg)}
+.fz-table{min-width:720px}
+.fz-table th{border-bottom:2px solid var(--line)}
+.fz-tr:hover{background:#f8faff}
+.fz-th:hover{color:var(--ink)}
+@media(max-width:640px){
+  .fz-table-wrap{padding:12px;border-radius:var(--r-md)}
+  .fz-table{font-size:12px}
+}
+
+/* ---- 卡片视图（旧平台卡）：保持原响应式，仅统一圆角 ---- */
+.fan .pc{border-radius:var(--r-md)}
+
+/* ---- 04 健康区：评分头 + 维度拆解 + KPI 行（垂直堆叠，全宽） ---- */
+.fan .fz-hcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm)}
+.fan .fz-hcard .health-main{display:flex;flex-direction:row;align-items:center;gap:14px;padding:0 0 14px;border-bottom:1px solid var(--line2)}
+.fan .fz-hcard .health-score{font-size:42px}
+.fan .fz-hcard .health-verdict{font-size:11.5px;line-height:1.5;max-width:520px}
+.fz-health{margin-top:14px;background:#f8fafc;border-color:var(--line);border-radius:var(--r-md);padding:14px}
+.fan .fz-kpirow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.fan .fz-kpirow .kpi{border-radius:var(--r-md)}
+@media(max-width:1280px){.fan .fz-kpirow{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:860px){.fan .fz-kpirow{grid-template-columns:repeat(2,1fr)}.fan .fz-kpirow .kpi-val{font-size:24px}}
+@media(max-width:640px){
+  .fan .fz-hcard{padding:14px}
+  .fan .fz-hcard .health-score{font-size:34px}
+  .fan .fz-hcard .health-main{flex-wrap:wrap}
+  .fan .fz-kpirow{grid-template-columns:repeat(2,1fr);gap:10px}
+  .fan .fz-kpirow .kpi{padding:13px 12px}
+  .fan .fz-kpirow .kpi-val{font-size:21px}
+}
+@media(max-width:360px){.fan .fz-kpirow{grid-template-columns:1fr}}
+
+/* ---- 03 趋势 / 05 洞察 / 07 口径：统一卡面 ---- */
+.fz-trend,.fz-cal{border-radius:var(--r-lg)}
+.fz-ins-box{border-radius:var(--r-md)}
+.fz-hint{color:#7c8499}   /* 对比度提升（原 #9aa1ad 不达 4.5:1） */
+
+/* ---- 触控目标：窄屏下 chips / 按钮 / 输入框 ≥40px ---- */
+@media(max-width:640px){
+  .fz-chip,.fz-segb{padding:9px 14px;font-size:12.5px}
+  .fz-date input{padding:8px 10px;font-size:13px}
+  .fz-tgtset input{padding:8px 10px;font-size:13px;width:110px}
+  .fz-tgtset button{padding:8px 14px;font-size:12.5px}
+  .refresh{padding:11px 18px;font-size:13.5px}
+  .fz-cal{padding:14px}
+}
+
+/* ---- 减少动态效果（尊重系统设置） ---- */
+@media (prefers-reduced-motion: reduce){
+  .fan *,.topbar *,.toast{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .fan .view.scroll{scroll-behavior:auto}
+}
 </style>
 
 </head>
@@ -2911,9 +3022,9 @@ function renderCommandCenter(data){
         +'<span class="hk-badge '+h.status+'">健康度 '+h.overall+'/100 · '+h.label+'</span>'
         +'<span class="hk-sum-txt">本周净增 <b>+'+fmt(h.wg)+'</b>（'+h.growRate+'%），整体'+verdictTxt+'；玩家情绪'+(sent.neg>15?'承压':'平稳')+'（负面 '+sent.neg+'%）。<b>建议：</b>'+rec+'。</span>'
       +'</div>'
-      +'<div class="hk-layout">'
-      /* 左栏：健康分卡（含5维度 + 结论标签） */
-      +'<div class="hk-health-col"><div id="healthSection"><div class="health"><div class="health-main">'
+      +'<div class="fz-hcard">'
+      /* 评分头：分数(左) + 状态/结论(右) */
+      +'<div class="health-main">'
         +'<div class="health-left">'
         +'<div class="health-score" style="color:'+hColor+'">'+(h.overall===null||h.overall===undefined?'—':h.overall)+'<small>/100</small></div>'
         +'<div class="health-label">综合评分 · 可用维度加权'+(missingDims.length?('（已排除 '+missingDims.join('、')+'）'):'')+'</div>'
@@ -2922,15 +3033,13 @@ function renderCommandCenter(data){
         +'<div class="health-status '+h.status+'"><span class="sdot '+h.status+'"></span>'+h.label+'</div>'
         +'<div class="health-verdict">'+verdictTxt+'</div>'
         +'</div>'
-        +'</div>'
-        +'<div class="health-dims">'
-          +renderHealthDims(h,data)
-        +'</div></div></div></div>'
-      /* 右栏：KPI 网格 */
-      +'<div class="hk-kpi-col"><div id="kpiSection" class="kpi-grid">'
-      /* 5 个 KPI 卡（方法说明 + 含义解读） */
+      +'</div>'
+      /* 维度拆解（全宽 3 列） */
+      +renderHealthDims(h,data)
+      +'</div>'
+      /* KPI 卡网格（全宽 5 列） */
+      +'<div class="fz-kpirow">'
       +kpis.map(k=>'<div class="kpi"><div class="kpi-name">'+k.n+'</div><div class="kpi-body"><div class="kpi-val">'+k.v+'</div><div class="kpi-method">'+(kpiMethods[k.n]||'')+'</div><div class="kpi-note">'+k.note+'</div></div><div class="kpi-foot"><span class="kpi-wow '+(k.up?'up':'down')+'">'+(k.up?'▲':'▼')+' '+k.wow+'</span>'+sparkline(k.spark)+'</div></div>').join('')
-      +'</div></div>'
       +'</div>';
   }
 
@@ -3332,6 +3441,7 @@ function renderPlatformTable(data){
   var el=document.getElementById('platforms'); if(!el) return;
   var C=FAN_CTX||fanBuildCtx(data); if(!C) return;
   if(FAN_TABLE_VIEW==='card'){
+    el.classList.remove('as-table');   // 卡片视图需要 plat-grid 12 列网格
     renderPlatformCards(data);
     var bar=document.createElement('div');
     bar.className='fz-tbar';
@@ -3399,6 +3509,7 @@ function renderPlatformTable(data){
       +'<td class="fz-td-spark">'+spark+'</td>'
       +'</tr>';
   }).join('');
+  el.classList.add('as-table');   // 表格视图：脱离 plat-grid 12 列网格，独占整行
   el.innerHTML='<div class="fz-table-wrap">'
     +'<div class="fz-tbar"><span class="fz-tbar-l">点击表头排序 · 点击行查看该平台历史趋势</span>'
       +'<span class="fz-seg"><button class="fz-segb on" data-fview="table">排名表</button>'
@@ -5338,6 +5449,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
