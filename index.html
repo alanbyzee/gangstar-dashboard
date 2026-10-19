@@ -2187,7 +2187,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <!-- 2. 平台表现对比 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>7 平台粉丝卡片</h3><span class="cc-sub">当前粉丝数 · 周期净增长与增长率 · 数据完整性（跟随顶部时间范围）</span></div>
+        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>7 平台粉丝卡片</h3><span class="cc-sub">当前粉丝数 · 周净增（自然周：最新快照 vs 上周最后快照，一周多次更新基准不变）· 数据完整性</span></div>
         <div id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
       </section>
 
@@ -2905,19 +2905,20 @@ function drawSpark(hist,color,uid){
     +'</svg>';
 }
 
-// ===== 周增长计算（基于历史，找 ~7 天前锚点）=====
+// ===== 周增长计算（自然周口径：最新快照 vs 上一个自然周的最后一条快照；周内多次更新不改变基准）=====
 function weeklyGrowth(pl){
   const hist=dedupeHistory(pl.history||[]);
   if(hist.length<2) return null;
   const last=hist[hist.length-1];
   const lastDate=new Date(last.date+'T00:00:00');
-  const target=new Date(lastDate); target.setDate(target.getDate()-7);
+  const dow=(lastDate.getDay()+6)%7;            // 周一=0
+  const mon=new Date(lastDate); mon.setDate(lastDate.getDate()-dow);  // 本自然周周一
   let base=null;
   for(const h of hist){
     const d=new Date(h.date+'T00:00:00');
-    if(d<=target) base=h.value; else break;
+    if(d<mon) base=h.value; else break;
   }
-  if(base===null) base=hist[0].value;
+  if(base===null) return null;                  // 上周之前无快照：不计算，不拿首条冒充基线
   const diff=last.value-base;
   const pct=base? (diff/base*100):0;
   return {diff, pct, daily:diff/7};
@@ -3242,7 +3243,7 @@ function renderCommandCenter(data){
     // KPI 方法说明映射
     const kpiMethods={
       '总粉丝数':'7 平台粉丝数求和（来自 fan_data.json）',
-      '新增粉丝(周)':'本周最后一天 vs 7天前同日差值',
+      '新增粉丝(周)':'自然周口径：本周最新快照 vs 上周最后一条快照（一周多次更新基准不变）',
       '收集反馈':'玩家反馈看板累计条数（社媒+Discord+NODWIN）',
       '非负占比':'正面% + 中性%（来自反馈情感分析）',
       '负面占比':'负面反馈 / 总反馈 × 100'
@@ -3505,18 +3506,16 @@ function fanHist(pl){
 function fanRange(hist,from,to){
   return hist.filter(function(h){return (!from||h.date>=from)&&(!to||h.date<=to);});
 }
-// 某个自然周窗口内的周增长（严格区分「周初快照缺失」与「首次采集」）
+// 某个自然周窗口内的周增长（基线固定 = 上周最后一条快照，严格区分「上周基线缺失」与「首次采集」）
 function fanWeekStat(hist,ws,we){
   var inW=fanRange(hist,ws,we);
   var end=inW.length?inW[inW.length-1]:null;
   if(!end) return {ok:false,reason:'no-snapshot-in-week'};
-  var base=null,baseSrc='';
-  if(inW.length>1){ base=inW[0]; baseSrc='week-first'; }
-  else{
-    var pre=hist.filter(function(h){return h.date<ws;});
-    if(pre.length){ base=pre[pre.length-1]; baseSrc='pre-week'; }
-  }
-  if(!base) return {ok:false,reason:'no-baseline',end:end}; // 绝不使用「首次采集」冒充周初
+  // 周净增口径（自然周 周一~周日）：基线固定 = 上一个自然周的最后一条快照；
+  // 本周内多次更新只移动「末点」，绝不改变对比基准（不取周内第一条当周初）。
+  var pre=hist.filter(function(h){return h.date<ws;});
+  if(!pre.length) return {ok:false,reason:'no-baseline',end:end}; // 绝不使用「首次采集」冒充周初
+  var base=pre[pre.length-1],baseSrc='pre-week';
   var span=fanDiffDays(base.date,end.date);
   var diff=end.value-base.value;
   var pct=base.value?diff/base.value*100:null;
@@ -3638,14 +3637,14 @@ function renderGrowthOverview(data){
       +wow(C.weekDiff,C.prevDiff,'')
       +'<div class="fz-note">已计入 '+C.incOrder.length+'/'+C.order.length+' 个平台'
       +(C.excOrder.length?('；未计入 '+C.excOrder.map(function(k){return esc(C.per[k].name);}).join('、')+'（无可比基线）'):'')+'</div></div>');
-  }else cards.push(naCard('本周净增长','统计周内没有任何平台同时具备周初与周末快照'));
+  }else cards.push(naCard('本周净增长','统计周内没有任何平台同时具备「周内快照 + 上周基线快照」'));
   // KPI 3 本周增长率
   if(C.weekPct!==null&&C.weekBase>0){
     cards.push('<div class="fz-kpi"><div class="fz-k">本周增长率</div><div class="fz-v">'+fanPct(C.weekPct)+'</div>'
-      +'<div class="fz-s">周初基数 '+fmt(C.weekBase)+'</div>'
+      +'<div class="fz-s">上周末基数（上周最后快照合计） '+fmt(C.weekBase)+'</div>'
       +wow(C.weekPct,C.prevPct,'pp')
-      +'<div class="fz-note">本周净增 ÷ 周初合计快照</div></div>');
-  }else cards.push(naCard('本周增长率','周初基数缺失或为 0，无法计算'));
+      +'<div class="fz-note">本周净增 ÷ 上周末合计快照</div></div>');
+  }else cards.push(naCard('本周增长率','上周末基数缺失或为 0，无法计算'));
   // KPI 4 目标完成率（仅在已配置目标时展示，未配置则整卡不出现）
   if(t.set){
     cards.push('<div class="fz-kpi"><div class="fz-k">目标完成率</div><div class="fz-v">'+fanPctPlain(t.pct)
@@ -3656,15 +3655,13 @@ function renderGrowthOverview(data){
   }
   var baseNote=C.incOrder.map(function(k){
     var s=C.per[k];
-    return s.week.baseSrc==='pre-week'
-      ? esc(s.name)+'：周内无周初快照，已用周前最近快照 '+s.week.base.date+' 作基线（实际区间 '+s.week.spanDays+' 天）'
-      : esc(s.name)+'：周内首快照 '+s.week.base.date+' 作基线（区间 '+s.week.spanDays+' 天）';
+    return esc(s.name)+'：基线 = 上周最后快照 '+s.week.base.date+'（实际区间 '+s.week.spanDays+' 天，周内多次更新不改变基准）';
   }).join('；');
   el.innerHTML='<div class="fz-overview">'
     +'<div class="fz-ov-head"><span class="fz-ov-t">📈 整体表现总览</span>'+staleBadge
       +'<span class="fz-ov-w">统计周 '+C.week.start+' ~ '+C.week.end+'（以全平台最新快照所在自然周为准）</span></div>'
     +'<div class="fz-kpis">'+cards.join('')+'</div>'
-    +(C.incOrder.length?('<div class="fz-caliber"><b>周初基线：</b>'+(baseNote||'—')+'</div>'):'')
+    +(C.incOrder.length?('<div class="fz-caliber"><b>上周基线（上周最后快照）：</b>'+(baseNote||'—')+'</div>'):'')
     +'</div>';
 }
 // ============================================================
@@ -3720,15 +3717,21 @@ function renderFanCards(data){
   var rg=fanGlobalRange(C);
   var rows=C.order.map(function(k){return fanTrendSeries(C,k,rg);}).filter(Boolean);
   var cards=rows.map(function(s){
-    var st=(s.diff===null)?'na':(s.diff>0?'up':(s.diff<0?'down':'flat'));
-    var arrow=(s.diff===null)?'':(s.diff>0?'▲ ':(s.diff<0?'▼ ':'±'));
-    var diffTxt=(s.diff===null)?'数据不足':(arrow+(s.diff>0?'+':'')+fmt(s.diff));
-    var pctTxt=(s.pct===null)?'':fanPct(s.pct);
+    // 周净增 = 自然周口径：最新快照 − 上周最后一条快照（与区间选择无关；一周多次更新基准不变）
+    var wks=C.per[s.key]||{};
+    var wk=(wks.week&&wks.week.ok)?wks.week:null;
+    var wdiff=wk?wk.diff:null, wpct=wk?wk.pct:null;
+    var st=(wdiff===null)?'na':(wdiff>0?'up':(wdiff<0?'down':'flat'));
+    var arrow=(wdiff===null)?'':(wdiff>0?'▲ ':(wdiff<0?'▼ ':'±'));
+    var diffTxt=(wdiff===null)?'数据不足':(arrow+(wdiff>0?'+':'')+fmt(wdiff));
+    var pctTxt=(wpct===null)?'':fanPct(wpct);
     var gaps=fanGapDays(s.points);
     var stale=(s.staleDays!==null&&s.staleDays>FAN_ALERT_CFG.staleDays);
-    var why=(s.n===0)?('该区间内没有有效快照，不按 0 计增长')
-           :((s.n===1)?('该区间内仅 1 个有效快照，无法计算周期增长（至少需 2 个）'):'');
-    var foot='有效快照 <b>'+s.n+'</b> 个'
+    var why=(!wk)?((wks.week&&wks.week.reason==='no-snapshot-in-week')
+           ?('本周（'+C.week.start+' 起）暂无有效快照，无法计算周净增')
+           :('上周之前没有更早的快照，无法计算周净增（至少需上周一条基线）')):'';
+    var baseLab=(wk&&wk.base.date>=C.prev.start)?'上周最后快照':'上周无快照，取更早 '+wk.base.date.slice(5);
+    var foot=(wk?('周净增基准 <b>'+wk.base.date.slice(5)+'</b>（'+baseLab+'） · '):'')+'有效快照 <b>'+s.n+'</b> 个'
       +(gaps?(' · 缺 '+gaps+' 天'):'')
       +' · 更新至 <b>'+(s.lastDate?s.lastDate.slice(5):'—')+'</b>'
       +(stale?(' <em>陈旧 '+s.staleDays+' 天</em>'):'');
@@ -3741,7 +3744,7 @@ function renderFanCards(data){
   }).join('');
   el.classList.remove('as-table');
   el.innerHTML='<div class="fz-cards">'+cards+'</div>'
-    +'<div class="fz-cards-note">当前粉丝数 = 各平台最新有效快照；周期增长 = 所选区间内「首个 → 末个」有效快照之差，口径与 03 趋势完全一致。'
+    +'<div class="fz-cards-note">当前粉丝数 = 各平台最新有效快照；周净增 = 自然周（周一~周日）口径：最新快照 − 上一个自然周的最后一条快照。一周内多次更新不改变对比基准（始终 vs 上周最后一条）；03 趋势列表仍跟随顶部时间范围（区间首 → 末快照）。'
     +'各平台官方指标口径不同（'+C.order.map(function(k){return esc(C.per[k].name)+'·'+esc(C.per[k].metric);}).join(' / ')+'），卡片内不做跨口径换算，区域合计口径见 01。'
     +'缺失日期不补零、不插值；有效快照不足 2 个时显示「数据不足」，不按 0 计入。</div>';
   el.querySelectorAll('[data-fcard]').forEach(function(c){
@@ -4040,7 +4043,7 @@ function fanHealthDims(C){
       ]});
   }else{
     dims.push({key:'growth',name:'增长健康度',score:null,weight:FAN_DIM_W.growth,avail:false,
-      reason:'统计周内没有任何平台具备「周初 + 周末」两组快照，无法计算净增与增长率'});
+      reason:'统计周内没有任何平台具备「周内快照 + 上周基线快照」，无法计算净增与增长率'});
   }
   // ---- 活跃健康度 ----
   dims.push({key:'active',name:'活跃健康度',score:null,weight:FAN_DIM_W.active,avail:false,
@@ -4317,9 +4320,9 @@ function renderFanFormula(data){
     +fm('当前总粉丝','Σ 各平台「最新有效快照值」。口径：'+((C&&C.order)?C.order.map(function(k){return esc(C.per[k].name)+'·'+esc(C.per[k].metric);}).join(' / '):'—')
       +'。不同含义的指标（粉丝 / 关注者 / 订阅者 / 服务器成员）不合并为同一指标，只在「区域总粉丝」这一口径下相加。')
     +fm('本周净增长','本周有效期末快照 − 本周有效期初快照。统计周 = 全平台最新快照所在自然周'
-      +(C?('（'+C.week.start+' ~ '+C.week.end+'）'):'')+'。周内只有 1 个快照时，取周前最近快照作基线并标注实际区间；'
+      +(C?('（'+C.week.start+' ~ '+C.week.end+'）'):'')+'。基线固定为上一个自然周（周一~周日）的最后一条快照，本周内多次更新只移动末点、不改变基准；'
       +'完全没有基线时不计算、不按 0 计入合计。')
-    +fm('本周增长率','本周净增 ÷ 周初合计有效快照。周初基数为 0 或缺失时不计算。基数 &lt; '+FAN_ALERT_CFG.smallBase+' 的平台不参与增长率排名。')
+    +fm('本周增长率','本周净增 ÷ 上周末合计有效快照（上周最后快照合计）。上周末基数为 0 或缺失时不计算。基数 &lt; '+FAN_ALERT_CFG.smallBase+' 的平台不参与增长率排名。')
     +fm('日均净增','本周净增 ÷ 基线到期末的实际跨度天数（用于跨周期比较，避免区间长度不同造成的误判）。')
     +fm('目标完成率','当前总粉丝 ÷ 已配置目标值。目标为本机浏览器设置，未配置时不展示该指标。')
     +fm('判定阈值','数据陈旧 &gt; '+FAN_ALERT_CFG.staleDays+' 天；连续掉粉 ≥ '+FAN_ALERT_CFG.dropRun+' 个快照；'
@@ -5943,6 +5946,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
