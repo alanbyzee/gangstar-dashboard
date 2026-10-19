@@ -6117,6 +6117,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -8383,6 +8384,294 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA = {
   "weeks": [
+  {
+    "week": "10.12 - 10.18",
+    "attitude": "承压",
+    "summary": "本周回收 **126 条提及 / 29 条代表反馈**（Discord 103、Instagram 97，其中 34 提及原始标记为 INS，按 Instagram 同一平台计入；多渠道条目按来源重复计入）。**负面·Bug 49（39%）**，**建议 71（56%）**，**正面 6（5%）**。 **真正的风险不是负面率（39%，环比 -9pp），而是第一次出现「内容厌倦 → 掉粉退群」的可观测后果**：单条「重复任务厌倦 · 呼吁大版本更新」拿到 **15 提及**（全周最高），另一条 6 提及直接记录玩家因**更新慢、单房间 20 人上限、兑换码无效**而取关与退群；同期官方号 Instagram **-1,322**、YouTube **-337**（10-19 快照）。 **结构性矛盾**：玩家要的是新抢劫 / 新职业 / 新地图这类**版本级供给**（15 + 12 提及），我们给的仍是活动与单车 / 皮肤级更新；而载具诉求依旧是第一大类（**32 提及**：摩托 / 超跑 / 直升机 / 坦克 / 船只）。 **动作**：①在社媒评论区对「大版本内容路线图」做一次明确回应，先给出抢劫 / 职业 / 地图的时间与范围；②Bug 侧优先修粉红天空贴图（跨 10/13、10/15 两次复现）与背包幽灵 NEW 红点、东南亚服连不上；③核对本周采集覆盖（原始反馈仅 10/13–10/15 三天），确认声量回落是采集口径而非真实活跃度下滑。",
+    "dims": {
+      "attitude": {
+        "label": "承压",
+        "detail": "负面率 39%（49/126），环比 -9pp，数字在改善；但首次出现「内容厌倦 → 取关退群」的明确表述（6 提及），且单条 15 提及的版本级诉求为全周最高——压力从「骂 Bug」转向「不走人」。"
+      },
+      "comprehension": {
+        "label": "载具 + 版本级内容",
+        "detail": "载具 32 提及为第一大类（摩托 / 超跑 / 直升机 / 坦克 / 船只 / 警车涂装）；内容耗尽 15 提及几乎全部集中在「重复任务厌倦 · 要新抢劫 / 新职业 / 地图扩展」；另有外观与房屋自定义 6（正装 / 战队服 / 纹身 / 豪宅 / 车库扩容）、帮派管理 6、本地化（印地语）5、HUD 与陀螺仪 11。"
+      },
+      "reputation": {
+        "label": "渲染与界面 Bug 抬头",
+        "detail": "粉红 / 紫色天空贴图跨两日复现（4 提及）、背包幽灵 NEW 红点无法消除（5 提及）、设备发热与卡顿（3 提及）、东南亚服务器连不上与登录卡死（5 提及）、地图掉落与卡水下（5 提及）；另有聊天频道言语虐待举报（2 提及）。上周的账号资产安全类问题本周未再出现。"
+      },
+      "engagement": {
+        "label": "声量回落，需核对采集",
+        "detail": "本周 126 提及 / 29 条，较上周 203 / 54 下降约 38%；原始反馈仅覆盖 10/13–10/15 三天，需先排除采集口径因素。同期 Instagram 官方号 -1,322（连续 4 个统计点下滑）、YouTube -337，活跃度与留存信号需交叉核实后再下结论。"
+      }
+    },
+    "community": [
+      {
+        "theme": "画面Bug：游戏内天空与云层贴图变成粉红色。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Bug: Sky and cloud textures turn pink during gameplay.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "界面Bug：已查看物品后，背包、商城和菜单中的幽灵“NEW”红点提示依然无法消除。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Persistent ghost \"NEW\" notification red badges remain visible across inventory materials, mall value packs, and menus after items are inspected.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "车辆改装Bug：已购买并装备的底盘灯在预览及游戏内均无法正常渲染显示。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Bug: Vehicle chassis and underglow lights do not render in preview or in-game after purchase/equipping.",
+        "channel": "IG, DC",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "聊天限制Bug：禁言到期后，倒计时卡在 -1s，玩家仍无法恢复正常聊天。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Chat restriction penalty timer gets permanently stuck at -1s after expiration, preventing players from typing.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "任务与成就Bug：Pinpoint任务互动门失效、Jackie任务金额计数卡死，以及Hit List成就所需Boss未刷出。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Mission & Achievement glitches (door interaction disappears in Pinpoint mission, Jackie smuggler run cash counter freezes, target boss missing in Hit List achievement).",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "地图与物理Bug：撞墙掉落地图外、角色漂浮飞行、卡在水下、行走摇杆消失以及视角强制变成第一人称。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Bug: Map & Physics glitches causing characters to fall under the world upon wall collision, float/fly across the map, become stuck underwater, lose movement joystick controls, or get locked in unwanted FPP view.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "网络与系统Bug：东南亚服务器连不上、登录界面卡死、游戏内音效丢失以及排气管喷火位置异常。",
+        "count": 5,
+        "type": "bad",
+        "orig": "Bug / Technical: Southeast Asia server connectivity failure, login screen freezing on launch, complete loss of in-game audio, and nitro flames emitting from old vehicle exhaust locations.",
+        "channel": "DC, IG",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "玩家因更新进度缓慢、单房间20人限制过低以及兑换码无效而感到失望，引发关注者减少及群组退游潮。",
+        "count": 6,
+        "type": "bad",
+        "orig": "Content Delays & Churn: Widespread dissatisfaction over slow major updates, strict 20-player session cap, and non-functional reward codes leading to player boredom and mass uninstallation.",
+        "channel": "IG",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "玩家建议增加载具种类，包括摩托车、警车涂装、Mammoth 6x6卡车及Tempesta Regale超跑。",
+        "count": 6,
+        "type": "sug",
+        "orig": "Vehicles: Requesting motorcycles/bikes, police car liveries, Mammoth 6x6 truck, and Tempesta Regale supercar.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "建议增加家具动作交互（坐椅/睡床）、第一人称视角、纹身系统、角色体型自定义及GTA V式的NPC深度互动。",
+        "count": 5,
+        "type": "sug",
+        "orig": "Life-Sim / Social: Requests to sit on chairs/sofas, sleep on beds, toggle FPP mode, add tattoos/body customization, and incorporate GTA V style NPC interactions.",
+        "channel": "IG, DC",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "玩家强烈请求赋予帮主踢出不活跃成员的权限，并建议新增帮派战（Gang Wars）和帮派领地掌控玩法。",
+        "count": 6,
+        "type": "sug",
+        "orig": "Gang Systems: Strong request for gang leaders to have \"Kick\" permissions for inactive players, alongside adding Gang Wars and territory control.",
+        "channel": "DC, IG",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "建议支持完整的控件自定义（按键/摇杆位置与大小调整）、增加陀螺仪瞄准以及HUD设置云端备份功能。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Controls & HUD: Requests for complete HUD customization (button resizing/relocation, editable joystick), Gyroscope aiming support, and cloud backup layout sync.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "建议增加车辆上锁防盗功能、允许购买带车库的豪宅以展示车辆收藏，以及安保服务。",
+        "count": 3,
+        "type": "sug",
+        "orig": "Real Estate & Security: Requests for car lock features to prevent vehicle theft, purchasing mansions with garages to showcase car collections, and security options.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "建议提供印地语本地化支持、过滤世界频道违规不雅词汇、典当行黄金换现金、商城增加车模涂装及优化导演模式设置。",
+        "count": 5,
+        "type": "sug",
+        "orig": "QoL & Moderation: Suggestions for Hindi language localization, filtering profanity in World Chat, pawn shop gold conversion, vehicle decals in Mall, and Director Mode refinements.",
+        "channel": "IG, DC",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "玩家对整体游戏体验、高画质表现以及类似GTA V的开放世界设计给予积极正面评价。",
+        "count": 3,
+        "type": "good",
+        "orig": "Game Praise: High praise for open-world gameplay design, high graphics quality, and resemblance to GTA V.",
+        "channel": "IG",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-13"
+      },
+      {
+        "theme": "玩家盛赞游戏的开放世界玩法、画质和视觉设计。",
+        "count": 3,
+        "type": "good",
+        "orig": "Players praised the game's open-world mechanics, graphics, and visual design.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "漏洞：天空/云朵意外变成粉红色或紫色，且车辆转弯时天空会出现白条纹。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Bug: Sky/clouds turn pink/purple unexpectedly, and a white line appears in the sky while turning vehicles.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "漏洞：游戏中设备严重发热且游戏运行出现滞后卡顿。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Severe device overheating and game performance lag during gameplay.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "漏洞：在“The Grand Scheme”任务中Backbone车辆射击键失灵，且走私任务进度卡在$18,798/30,000。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Fire button fails in Backbone car during \"The Grand Scheme\" mission, and Smuggler's Run progress gets stuck at $18,798/30,000.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "漏洞：加入/离开团队或完成任务时屏幕卡死且地图/按钮消失；打开游戏时显示空白页。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Screen freezes and map/action buttons disappear when joining/leaving teams or completing missions; blank screen on opening.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "漏洞：召唤车辆显示损坏，Theseus自动驾驶撞墙，且警车追逐中车辆掉入地图水域缝隙。",
+        "count": 3,
+        "type": "bad",
+        "orig": "Bug: Vehicle spawn appears broken, Theseus auto-drive crashes into walls/railings, and police chase vehicles fall through water gaps in map.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "漏洞：背包中“NEW”红点提示持续存在无法消除；未拥有车辆时集装箱车贴不显示在背包中。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Bug: Persistent \"NEW\" item notification badge stuck in inventory; container decals do not show up if the vehicle is not owned.",
+        "channel": "DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家对重复任务表示厌倦，强烈呼吁进行大版本更新，增加新抢劫任务、活动、职业及地图扩展。",
+        "count": 15,
+        "type": "sug",
+        "orig": "Players report boredom with repetitive missions and urge major updates, new heist missions, events, jobs, and map expansions.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家强烈建议增加摩托车、跑车、越野车、直升机、坦克和船只。",
+        "count": 12,
+        "type": "sug",
+        "orig": "Players strongly request adding motorcycles/bikes, sports cars, off-road vehicles, helicopters, tanks, and boats.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家建议增加正装与街头服饰、战队服装自定义、纹身发型，以及购买豪宅和扩大车库容量。",
+        "count": 6,
+        "type": "sug",
+        "orig": "Players request clothing options (formal/streetwear), team outfit customization, tattoo/hairstyles, and buyable mansions with larger garage capacity.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家建议用现金购买蓝钻石、提高脏钱兑换比例(>20%)、商店出售T2载具零件以及提升战斗通行证/VIP奖励。",
+        "count": 5,
+        "type": "sug",
+        "orig": "Players suggest buying Blue Diamonds with Cash, higher dirty money conversion rates (>20%), T2 vehicle parts in store, and improved Battle Pass/VIP rewards.",
+        "channel": "IG, DC",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家建议针对3/4指玩家调整HUD计分板布局、增加新手保护模式、集装箱奖励预览及车辆转向灯。",
+        "count": 4,
+        "type": "sug",
+        "orig": "Players request HUD score box layout adjustments for 3/4 finger players, new player protection (Shadow Mode), container reward previews, and vehicle indicators.",
+        "channel": "DC, IG",
+        "note": "",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家举报游戏内聊天频道存在严重的言语虐待、人身攻击及恶劣行为。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Players report severe verbal abuse, personal insults, and toxic behavior in in-game chat channels.",
+        "channel": "IG",
+        "note": "原始来源标记含 INS，按 Instagram 计入（IG/INS 视为同一平台不同入口）",
+        "date": "2026-10-15"
+      },
+      {
+        "theme": "玩家对队友在中途退出合作任务导致任务屡次失败表示沮丧。",
+        "count": 2,
+        "type": "bad",
+        "orig": "Players express frustration over teammates abandoning co-op missions mid-game, causing repeated mission failures.",
+        "channel": "IG",
+        "note": "",
+        "date": "2026-10-15"
+      }
+    ],
+    "communitySummary": "本周社群反馈共 126 条提及 / 29 条代表条目，主要来自 Discord(103)、Instagram(97)（含 INS 标记 34 提及，多渠道条目按来源重复计入）。 诉求侧以载具（32 提及：摩托 / 超跑 / 直升机 / 坦克 / 船只）与版本级内容（15 提及：新抢劫 / 新职业 / 地图扩展）为主体，叠加服饰 / 纹身 / 豪宅等外观与房屋自定义（6 提及）、帮派管理（6）、印地语本地化（5）、HUD 与陀螺仪（11）。 负面与 Bug 占 39%，集中在粉红天空贴图、背包幽灵 NEW 红点、设备发热卡顿、东南亚服务器连不上、地图掉落与卡水下。",
+    "trend": "走向：负面率继续回落（48% → 39%），但**诉求性质升级**——从「修 Bug」升级为「要版本」，15 提及的「重复任务厌倦 · 呼吁大版本更新」是本期最大单点，且已有玩家把更新慢与取关、退群直接挂钩。载具连续多周稳居第一大类（32 提及），说明单点载具更新无法替代版本级内容供给。Bug 侧粉红天空贴图跨两日复现、背包幽灵 NEW 红点连续第二周出现，属未闭环项。 **下一步**：①发布大版本内容路线图（抢劫 / 职业 / 地图 + 时间窗）并在评论区置顶回应；②闭环粉红天空贴图与 NEW 红点两个跨周 Bug；③核对 10/13–10/15 之后的采集盲区，确认声量回落口径。"
+  },
   {
     "week": "10.5 - 10.11",
     "attitude": "承压",
@@ -15507,9 +15796,10 @@ function fbQuotesOf(it){
 // ===== 周报决策卡片：议题短标签聚合 + 决策建议 =====
 var FB_TAG_RULES=[
   [/登出|账号|登录|进度丢失|存档|换绑|丢失进度/,'账号异常'],
-  [/黑屏|闪退|崩溃|卡死|冻结|突然退出|999ms|掉帧|卡顿|性能|延迟/,'闪退崩溃'],
-  [/Bag It|粉红|火烈鸟|活动任务|每日活动|便利店/,'活动 Bug'],
-  [/穿模|虚空|掉出地图|掉下去|地图错误/,'地图穿模'],
+  [/黑屏|闪退|崩溃|卡死|冻结|突然退出|999ms|掉帧|卡顿|性能|延迟|贴图|渲染|画面|发热|粉红/,'闪退崩溃'],
+  [/红点|UI 消失|幽灵|菜单|界面/,'界面异常'],
+  [/Bag It|火烈鸟|活动任务|每日活动|便利店/,'活动 Bug'],
+  [/穿模|虚空|掉出地图|掉下去|掉落地图|掉入地图|卡在水下|漂浮|地图错误/,'地图穿模'],
   [/机枪|Backbone|武器|射击|瞄准|陀螺仪|灵敏度|HUD|枪械|手感|操作/,'武器与手感'],
   [/摩托|自行|机车|载具|车辆|直升机|船只|飞机|超跑|车库|漂移|火车/,'载具不足'],
   [/无聊|乏味|厌倦|没东西|内容耗尽|主线|剧情|故事|劫案|新内容|等级上限/,'内容耗尽'],
@@ -15520,7 +15810,7 @@ var FB_TAG_RULES=[
   [/房屋|家具|住宅|装饰|别墅|室内/,'房屋系统'],
   [/支付|充值|钻石|粉钻|礼包|购买|退款|到账/,'支付问题'],
   [/印地|本地化|语言|翻译|Diwali|印度/,'本地化'],
-  [/举报|恶意|外挂|作弊|辱骂/,'环境治理'],
+  [/举报|恶意|外挂|作弊|辱骂|虐待|人身攻击|恶劣行为/,'环境治理'],
   [/精美|最佳|杰作|称赞|热爱|好玩|喜欢|爱你们|潜力|水准/,'正面口碑']
 ];
 function fbTagOf(it){
@@ -15551,7 +15841,7 @@ var FB_SENSE_DEF=[
 var FB_TOPICS=[
   {key:'vehicle',name:'载具体验',en:'Vehicles',tags:['载具不足']},
   {key:'content',name:'任务与游戏内容',en:'Missions & Content',tags:['内容耗尽','活动 Bug']},
-  {key:'bug',name:'性能与 Bug',en:'Performance & Bugs',tags:['闪退崩溃','地图穿模']},
+  {key:'bug',name:'性能与 Bug',en:'Performance & Bugs',tags:['闪退崩溃','地图穿模','界面异常']},
   {key:'feature',name:'功能与系统',en:'Features & Systems',tags:['武器与手感','警察系统','房屋系统','网络与匹配','环境治理']},
   {key:'gang',name:'帮派与社交',en:'Gangs & Social',tags:['帮派管理','改名卡']},
   {key:'account',name:'账号与登录',en:'Account',tags:['账号异常']},
