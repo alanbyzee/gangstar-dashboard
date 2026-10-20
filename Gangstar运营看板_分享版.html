@@ -2145,7 +2145,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   <div class="tabs" data-page-node-id="7RxOCd2TxyN26BMsF15x63">
     <div class="tab active" data-view="fan" data-page-node-id="WdezKlU3Y93Agd3N10t52C">📊 粉丝监控</div>
     <div class="tab" data-view="feedback" data-page-node-id="KIVIeUVFV0sXK45Cj1KbMb">💬 玩家反馈</div>
-    <div class="tab" data-view="issues" data-page-node-id="QdYyAPbzFO97WpNmoCG2mk">🐞 问题追踪</div>
     <div class="tab" data-view="sa" id="tab-sa" style="display:none" data-page-node-id="Zl2iFypyq4THVF3LBQ5lea">📅 南亚社群排期</div>
     <!-- 区域素材tab 已隐藏(2026-08-05)，待用可恢复：去掉 style 即可 -->
     <div class="tab" data-view="regional" style="display:none" data-page-node-id="miY8ov6h8HcZzAxMRAKtPE">📝 区域素材</div>
@@ -2236,9 +2235,6 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
   </div>
   <div class="view scroll" id="view-feedback" data-page-node-id="6mXTomwoVcsT13rItCYRPl">
     <div class="feedback" id="feedbackView" data-page-node-id="OrnGWmQP5WDDZbFCYgFF3S"></div>
-  </div>
-  <div class="view scroll" id="view-issues" data-page-node-id="zysr41qAth61i8bCB2ivAy">
-    <div class="issues" id="issuesView" data-page-node-id="NT36Fewygbz7KeorNHYgkc"></div>
   </div>
 </div>
 
@@ -2729,7 +2725,7 @@ window.HQ_DATA = {
 <script>
 // ===== 标签切换 =====
 const tabs=document.querySelectorAll('.tab');
-const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional'),issues:document.getElementById('view-issues')};
+const views={sa:document.getElementById('view-sa'),fan:document.getElementById('view-fan'),feedback:document.getElementById('view-feedback'),regional:document.getElementById('view-regional')};
 function activateTab(v){
   const t=[...tabs].find(x=>x.dataset.view===v);
   if(!t||t.style.display==='none') return; // 跳过被隐藏的 tab（如区域素材）
@@ -2743,7 +2739,6 @@ function activateTab(v){
   if(v==='feedback') renderFeedback();
   if(v==='sa') renderSouthAsia();
   if(v==='regional') renderRegional();
-  if(v==='issues') renderIssues();
 }
 tabs.forEach(t=>t.onclick=()=>activateTab(t.dataset.view));
 // 南亚社群排期：默认隐藏，可一键展开/收起（2026-09-02）
@@ -2768,7 +2763,7 @@ setTimeout(()=>{
     saToggle.classList.add('on');
   }
   if(sv==='sa' && saVisible) activateTab('sa');
-  else if(sv && sv!=='sa' && sv!=='regional' && sv!=='content') activateTab(sv);
+  else if(sv && sv!=='sa' && sv!=='regional' && sv!=='content' && sv!=='issues') activateTab(sv);
   else activateTab('fan');
 },0);
 document.getElementById('undoBtn').onclick=doUndo;
@@ -3362,90 +3357,6 @@ function renderCommandCenter(data){
     });
   }
 }
-
-// ============================================================
-//  Issue Tracker
-// ============================================================
-function renderIssues(){
-  const el=document.getElementById('issuesView');
-  if(!el) return;
-  const iss=CC_DATA.issues;
-  const cnt=st=>iss.filter(i=>i.status===st).length;
-  const resolved=cnt('Fixed')+cnt('Communicated');
-  const rate=iss.length?Math.round(resolved/iss.length*100):0;
-
-  const stats=[
-    {v:iss.length,n:'问题总数',accent:true},
-    {v:cnt('New'),n:'新建'},
-    {v:cnt('Reported to Dev'),n:'已报开发'},
-    {v:cnt('In Progress'),n:'处理中'},
-    {v:cnt('Fixed')+cnt('Communicated'),n:'已解决'},
-    {v:cnt('Communicated'),n:'已同步'}
-  ];
-
-  el.innerHTML=`
-    <div class="fan-head" style="grid-column:1/-1">
-      <div><h2>🐞 问题追踪</h2><div class="sub">玩家反馈 → 开发闭环 · 解决率 <b style="color:var(--ok)">${rate}%</b>（${resolved}/${iss.length} 已解决并同步）</div></div>
-    </div>
-    <div class="issue-stats" style="grid-column:1/-1">
-      ${stats.map(s=>`<div class="istat ${s.accent?'accent':''}"><div class="is-val">${s.v}</div><div class="is-name">${s.n}</div></div>`).join('')}
-    </div>
-    <div class="content-toolbar" style="grid-column:1/-1">
-      <input id="issSearch" class="filter-sel" style="flex:1;min-width:200px" placeholder="🔍 搜索 主题 / 负责人 / 来源…">
-      <select id="issPrio" class="filter-sel"><option value="">全部优先级</option><option>P1</option><option>P2</option><option>P3</option></select>
-      <span class="cc-sec-head" style="margin:0"><span class="cc-sub">点击卡片查看 / 修改处理记录</span></span>
-    </div>
-    <div class="issue-board" id="issBoard" style="grid-column:1/-1"></div>`;
-
-  const board=el.querySelector('#issBoard');
-  function draw(){
-    const q=(el.querySelector('#issSearch').value||'').toLowerCase();
-    const pq=el.querySelector('#issPrio').value;
-    board.innerHTML=CC_ISSUE_STATES.map(st=>{
-      const list=iss.filter(i=>i.status===st && (!q||(i.topic+i.owner+i.source).toLowerCase().includes(q)) && (!pq||i.priority===pq));
-      return `<div class="icol"><h5>${stateLabel(st)}<span class="c-count">${list.length}</span></h5>${
-        list.map(i=>`<div class="icard" data-id="${i.id}" onclick="openIssue('${i.id}')">
-          <div class="ic-topic">${esc(i.topic)}</div>
-          <div class="ic-meta"><span class="ic-vol">${i.volume} 条提及</span><span class="prio ${i.priority.toLowerCase()}">${i.priority}</span></div>
-          <div class="ic-meta"><span>${esc(i.source)} · ${esc(i.owner)}</span></div>
-        </div>`).join('')||'<div style="font-size:11px;color:var(--muted);padding:6px">—</div>'
-      }</div>`;
-    }).join('');
-  }
-  draw();
-  el.querySelector('#issSearch').oninput=draw;
-  el.querySelector('#issPrio').onchange=draw;
-}
-
-function openIssue(id){
-  const i=CC_DATA.issues.find(x=>x.id===id); if(!i) return;
-  const old=document.querySelector('.sa-modal-bg'); if(old) old.remove();
-  const bg=document.createElement('div'); bg.className='sa-modal-bg';
-  const ta='width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);font-family:inherit;background:#fff';
-  bg.innerHTML=`<div class="sa-modal">
-    <h3>${esc(i.topic)} <span style="font-size:12px;color:var(--muted);font-weight:600">${i.id}</span></h3>
-    <div style="font-size:12.5px;color:var(--muted);margin:-8px 0 14px">${i.volume} 条提及 · ${esc(i.source)} · 负责人：${esc(i.owner)}</div>
-    <label>状态</label>
-    <select id="issStatus">${CC_ISSUE_STATES.map(s=>`<option value="${s}" ${s===i.status?'selected':''}>${stateLabel(s)}</option>`).join('')}</select>
-    <label>开发回复</label>
-    <textarea id="issDev" style="${ta};height:64px;resize:vertical">${esc(i.devResp||'')}</textarea>
-    <label>玩家沟通</label>
-    <textarea id="issComm" style="${ta};height:52px;resize:vertical">${esc(i.playerComm||'')}</textarea>
-    <div class="sa-modal-btns"><button class="btn-cancel" type="button" onclick="this.closest('.sa-modal-bg').remove()">取消</button><button class="btn-save" type="button" onclick="saveIssue('${i.id}')">保存</button></div>
-  </div>`;
-  document.body.appendChild(bg);
-  bg.onclick=e=>{if(e.target===bg)bg.remove();};
-}
-function saveIssue(id){
-  const i=CC_DATA.issues.find(x=>x.id===id); if(!i) return;
-  const bg=document.querySelector('.sa-modal-bg');
-  i.status=bg.querySelector('#issStatus').value;
-  i.devResp=bg.querySelector('#issDev').value;
-  i.playerComm=bg.querySelector('#issComm').value;
-  i.updated=new Date().toISOString().slice(0,10);
-  if(bg)bg.remove(); renderIssues(); showToast('✅ 问题 '+id+' 已更新','ok');
-}
-function closeModal(){const m=document.querySelector('.sa-modal-bg');if(m)m.remove();}
 
 // ===== 粉丝监控工具函数 =====
 function wkTag(wg,label){
@@ -4281,7 +4192,7 @@ function renderFans(data){
   renderFanCards(data);          // 02 平台粉丝卡片（7 平台一次全展示）
   renderHistoryTrend(data);     // 03 平台独立趋势列表
   renderFanInsights(data);       // 04 洞察与行动建议
-  renderCommandCenter(data);     // 仍负责问题追踪页 + 折叠区内的健康评分拆解
+  renderCommandCenter(data);     // 负责折叠区内的健康评分拆解（含未闭环问题计数）
   renderFanCaliber(data);        // 05 折叠：口径与缺口
   renderFanSnapshot(data);       // 05 折叠：快照明细
   renderFanFormula(data);        // 05 折叠：计算公式
@@ -5946,6 +5857,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
@@ -16618,7 +16530,7 @@ function fbqRankHTML(m){
       +'<td><span class="fbq-prio p'+t.prio+'">'+t.prioTxt+'</span></td></tr>';
   });
   h+='</tbody></table></div>';
-  h+='<div class="fbq-legend">优先关注级别：P0＝占比≥15% 且升温/突增；P1＝突增（环比≥100% 且占比≥5%）、连续升温、连续 ≥3 期居前且占比≥8%、或环比≥50%；P2＝占比≥5%；P3＝其余有记录话题。「长期高频」仅表示连续多期居前，是否已解决需到「🐞 问题追踪」页确认。</div>';
+  h+='<div class="fbq-legend">优先关注级别：P0＝占比≥15% 且升温/突增；P1＝突增（环比≥100% 且占比≥5%）、连续升温、连续 ≥3 期居前且占比≥8%、或环比≥50%；P2＝占比≥5%；P3＝其余有记录话题。「长期高频」仅表示连续多期居前，是否已解决需与开发确认（看板不再维护独立的问题追踪表）。</div>';
   return h;
 }
 /* —— 模块 4：舆情洞察与总结（单面板，4 段） —— */
@@ -17062,7 +16974,7 @@ function fbqRender(){
     +'<b>话题分类</b>：由关键词规则映射到 '+FB_TOPICS.length+' 类话题，每条反馈仅归属 1 个话题，未命中规则标记「未分类」，不臆断归属。<br>'
     +'<b>来源</b>：仅 Discord / Instagram / YouTube / Facebook 四个正式来源可筛；DM / Forum / Chat 等少量来源原样展示并标注「未归类来源」，不并入四大来源。<br>'
     +'<b>事件标记</b>：仅标记项目侧确有依据的节点（如 '+FBQ_EVENTS.map(function(e){return e.n+' '+e.d;}).join('；')+'）。事件与话题变化同时出现只代表<b>可能相关，需结合事件时间验证</b>，本页不做因果断言。<br>'
-    +'<b>与问题追踪页分工</b>：本页只回答玩家说了什么、关注什么、态度如何、哪些话题值得关注；问题确认、处理状态、负责人、优先级与进度在「问题追踪」页维护，「长期高频」不等于「未解决」。'
+    +'<b>与开发侧分工</b>：本页只回答玩家说了什么、关注什么、态度如何、哪些话题值得关注；问题确认、处理状态、负责人与进度由开发侧维护，「长期高频」不等于「未解决」。'
     +'</div></details>';
   html+='</div>';
   root.innerHTML=html;
