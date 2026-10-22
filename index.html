@@ -2186,7 +2186,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:15px;border-t
 
       <!-- 2. 平台表现对比 -->
       <section class="fan-block">
-        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>7 平台粉丝卡片</h3><span class="cc-sub">当前粉丝数 · 周净增（自然周：最新快照 vs 上周最后快照，一周多次更新基准不变）· 数据完整性</span></div>
+        <div class="cc-sec-head"><span class="cc-num">02</span><span class="cc-emoji">📱</span><h3>7 平台粉丝卡片</h3><span class="cc-sub">当前粉丝数 · 周净增（自然周：最新快照 vs 上周峰值，一周多次更新基准不变）· 数据完整性</span></div>
         <div id="platforms" data-page-node-id="2xxiauRueCYcJmwiLVtjJH"></div>
       </section>
 
@@ -3433,6 +3433,28 @@ function fanWeekStat(hist,ws,we){
   return {ok:true,end:end,base:base,baseSrc:baseSrc,spanDays:span,diff:diff,pct:pct,
     daily:span>0?diff/span:null,inWeekCount:inW.length};
 }
+// 周净增（卡片口径）：基线 = 上一个自然周（周一~周日）内的「峰值」快照；
+// 上周无快照则回退到更早的最近一条快照（不冒充峰值）。
+function fanWeekPeakStat(hist,ws,we){
+  var inW=fanRange(hist,ws,we);
+  var end=inW.length?inW[inW.length-1]:null;
+  if(!end) return {ok:false,reason:'no-snapshot-in-week'};
+  var pre=fanRange(hist,fanAddDays(ws,-7),fanAddDays(ws,-1));
+  var base,baseSrc;
+  if(pre.length){
+    base=pre.reduce(function(a,b){return b.value>a.value?b:a;});
+    baseSrc='pre-week-peak';
+  }else{
+    var older=hist.filter(function(h){return h.date<ws;});
+    if(!older.length) return {ok:false,reason:'no-baseline',end:end};
+    base=older[older.length-1]; baseSrc='older';
+  }
+  var span=fanDiffDays(base.date,end.date);
+  var diff=end.value-base.value;
+  var pct=base.value?diff/base.value*100:null;
+  return {ok:true,end:end,base:base,baseSrc:baseSrc,spanDays:span,diff:diff,pct:pct,
+    daily:span>0?diff/span:null,inWeekCount:inW.length};
+}
 // 从末尾往前数连续下降的快照个数
 function fanDropRun(hist){
   var run=0;
@@ -3628,9 +3650,9 @@ function renderFanCards(data){
   var rg=fanGlobalRange(C);
   var rows=C.order.map(function(k){return fanTrendSeries(C,k,rg);}).filter(Boolean);
   var cards=rows.map(function(s){
-    // 周净增 = 自然周口径：最新快照 − 上周最后一条快照（与区间选择无关；一周多次更新基准不变）
-    var wks=C.per[s.key]||{};
-    var wk=(wks.week&&wks.week.ok)?wks.week:null;
+    // 周净增 = 自然周口径：最新快照 − 上周峰值快照（与区间选择无关；基准为上周自然周内最大值）
+    var wks=fanWeekPeakStat(C.hist[s.key],C.week.start,C.week.end);
+    var wk=wks.ok?wks:null;
     var wdiff=wk?wk.diff:null, wpct=wk?wk.pct:null;
     var st=(wdiff===null)?'na':(wdiff>0?'up':(wdiff<0?'down':'flat'));
     var arrow=(wdiff===null)?'':(wdiff>0?'▲ ':(wdiff<0?'▼ ':'±'));
@@ -3638,10 +3660,10 @@ function renderFanCards(data){
     var pctTxt=(wpct===null)?'':fanPct(wpct);
     var gaps=fanGapDays(s.points);
     var stale=(s.staleDays!==null&&s.staleDays>FAN_ALERT_CFG.staleDays);
-    var why=(!wk)?((wks.week&&wks.week.reason==='no-snapshot-in-week')
+    var why=(!wk)?((wks.reason==='no-snapshot-in-week')
            ?('本周（'+C.week.start+' 起）暂无有效快照，无法计算周净增')
            :('上周之前没有更早的快照，无法计算周净增（至少需上周一条基线）')):'';
-    var baseLab=(wk&&wk.base.date>=C.prev.start)?'上周最后快照':'上周无快照，取更早 '+wk.base.date.slice(5);
+    var baseLab=(wk&&wk.baseSrc==='pre-week-peak')?'上周峰值':'上周无快照，取更早 '+wk.base.date.slice(5);
     var foot=(wk?('周净增基准 <b>'+wk.base.date.slice(5)+'</b>（'+baseLab+'） · '):'')+'有效快照 <b>'+s.n+'</b> 个'
       +(gaps?(' · 缺 '+gaps+' 天'):'')
       +' · 更新至 <b>'+(s.lastDate?s.lastDate.slice(5):'—')+'</b>'
@@ -3655,7 +3677,7 @@ function renderFanCards(data){
   }).join('');
   el.classList.remove('as-table');
   el.innerHTML='<div class="fz-cards">'+cards+'</div>'
-    +'<div class="fz-cards-note">当前粉丝数 = 各平台最新有效快照；周净增 = 自然周（周一~周日）口径：最新快照 − 上一个自然周的最后一条快照。一周内多次更新不改变对比基准（始终 vs 上周最后一条）；03 趋势列表仍跟随顶部时间范围（区间首 → 末快照）。'
+    +'<div class="fz-cards-note">当前粉丝数 = 各平台最新有效快照；周净增 = 自然周（周一~周日）口径：最新快照 − 上一个自然周的峰值快照（上周内最高点）。一周内多次更新不改变对比基准（上周峰值在周日结束前固定不变）；03 趋势列表仍跟随顶部时间范围（区间首 → 末快照）。'
     +'各平台官方指标口径不同（'+C.order.map(function(k){return esc(C.per[k].name)+'·'+esc(C.per[k].metric);}).join(' / ')+'），卡片内不做跨口径换算，区域合计口径见 01。'
     +'缺失日期不补零、不插值；有效快照不足 2 个时显示「数据不足」，不按 0 计入。</div>';
   el.querySelectorAll('[data-fcard]').forEach(function(c){
@@ -5881,6 +5903,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
