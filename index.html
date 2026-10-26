@@ -6140,6 +6140,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -8406,6 +8407,305 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA = {
   "weeks": [
+    {
+      "week": "10.19 - 10.25",
+      "attitude": "承压",
+      "summary": "本周回收 **187 条玩家反馈 / 34 个议题**（Instagram 176、YouTube 122、Discord 76；多渠道议题按来源重复计入），采集覆盖 **10/21–10/24 四个批次**，与上周同为 count 累加口径，**可直接环比（上周 247 条，−24.3%）**。量在降，但**情绪在恶化**：负面·Bug **84 条（44.9%，上周 36.0%，回升 8.9pp）**、建议·诉求 76（40.6%）、正面口碑 27（14.4%，上周 7.3%，**翻倍**）。核心矛盾是 **10/29 更新公告已经发了，不满却没有平息**——任务与游戏内容 **60 条（32.1%）跃居第一**，其中「更新疲劳」三条合计 **35 条**：玩家厌倦重复任务、嘲讽预告片「啥都有就是没有版本更新」（28 赞）、因「7 天 7 揭晓」首日跳票集体困惑（17 赞警告别把更新吹过头）、只求官方至少说清楚要来什么（10 赞，并警告别搞成 BGMI 那种更新）。**预热已经开始反噬**。正面口碑翻倍来自 10/29 公告（8 条）、万圣节预告与三条官方教程（画质 / 逃离追捕 / 改装）——**给具体信息，玩家是买账的**。另有一处运营事故：10/24「五星生存挑战」上线但 Discord 频道始终找不到，单议题 9 条。",
+      "dims": {
+        "attitude": {
+          "label": "负面率回升 8.9pp：公告发了，不满没平息，预热开始反噬",
+          "detail": "负面·Bug 84 条（44.9%，上周 36.0%）回升 8.9pp，建议·诉求 76（40.6%），正面口碑 27（14.4%，上周 7.3%）。负面率不降反升的直接原因是预热节奏：10/22 嘲讽预告片（28 赞）、10/23「7 天 7 揭晓」首日没出现引发困惑（17 赞警告别吹过头）、10/24「全是新闻没有更新」（10 赞）并警告别搞成 BGMI 那种更新。玩家不是不要更新，是不要「只有预告」。"
+        },
+        "comprehension": {
+          "label": "任务与内容 60 条跃居第一，更新疲劳占 35 条",
+          "detail": "任务与游戏内容 60 条（32.1%，上周 41 条居第三）：更新疲劳三条 35 条（10/21 13、10/22 11、10/23 11）为全周最大单点群，另有新劫案/新模式/排名系统/万圣节与鬼魂主题内容、排灯节活动 4、每日活动连环出问题 5（全速狩猎赢 4 次不计数、合作劫案钻头卡住、精准射手长期不可用）。载具 39 条（20.9%）退居第二，两轮车依旧是最高频单点（10/21 10、10/23 7、10/24 7）。"
+        },
+        "reputation": {
+          "label": "口碑翻倍到 27 条，但信任很脆：给具体内容就买账，跳票就反噬",
+          "detail": "正面口碑 27 条（14.4%，翻倍）：10/29 更新公告 8 条（热门评论 14 赞 / 10 赞）、万圣节预告与游戏画质称赞 5 条（33 赞）、逃离追捕教程与改装教程被点名感谢、2GB 内存机型流畅运行、「最佳的手机开放世界游戏」10 赞。反面是同一批玩家也在嘲讽预告片与揭晓跳票——信任的开关在「有没有给具体信息」，不在「有没有发公告」。另需修复：10/24 五星生存挑战上线但 Discord 频道找不到（9 条），活动入口缺失等于白做。"
+        },
+        "engagement": {
+          "label": "口径统一：187 条反馈 / 34 议题，与上周可比",
+          "detail": "本周数据源为《1026 反馈.xlsx》34 行原始数据，**反馈量＝各议题 count 列之和＝187 条，34 为独立议题数**；采集日 10/21（13 议题 / 64 条）、10/22（8 / 44）、10/23（7 / 45）、10/24（6 / 34），与上周（247 条 / 54 议题）同为 count 累加口径，**可直接环比 −24.3%**。渠道：Instagram 176、YouTube 122、Discord 76（多渠道议题按来源重复计入）。本周无「性能与 Bug」话题条目——bug 类反馈集中在任务与载具，未出现粉红天空等长期未修项。"
+        }
+      },
+      "community": [
+        {
+          "date": "2026-10-21",
+          "theme": "更新疲劳：到现在还没有更新、连日期都不给，好多人都玩得厌倦了，自己或朋友已经卸载取关（热门评论 21 个赞）",
+          "count": 13,
+          "type": "bad",
+          "orig": "Update Fatigue: Players are frustrated there is still no update or release date; many say the game has become boring and that they or their friends have uninstalled / unfollowed (top comment 21 likes).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "网络全线不稳：最新机型也频繁掉线、ping 卡在 999、游戏还提示已在别的设备登录，还有人在问尼泊尔什么时候能玩",
+          "count": 4,
+          "type": "bad",
+          "orig": "Network/Crashes: Game keeps crashing on an up-to-date device, ping stuck at 999, account shows as logged in on another device, general network complaints, and players asking when the game launches in Nepal.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "任务与经济连环出错：精准射手任务进不去、走私者最高难度把人送错地方、手机里云联系选项消失，典当行兑换限额还是不每周重置",
+          "count": 4,
+          "type": "bad",
+          "orig": "Bug - Missions & Economy: Pinpoint Straight Shooter mission unavailable for several players, Smuggler Run sends players to a different location at the hardest difficulty, Cloud contact option missing in phone, and pawn shop conversion limit still not resetting weekly.",
+          "channel": "DC,YTB"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "载具异常：打完珠宝劫案（困难）后车和摇杆都失灵，车辆自动驾驶直接撞上 NPC 的车，人物脸还会变黑并一直挂着 N 通知图标",
+          "count": 3,
+          "type": "bad",
+          "orig": "Bug - Vehicles & Character: Car / joystick glitch after completing Jewelry Heist (hard), car autopilot crashes into NPC cars, and character face turns black with a persistent N notification icon.",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "武器平衡争议：街头竞速里被撞就失控、豪车直接碾压，玩家要求开隐身模式；还有一堆人要求禁用火箭发射器这类武器（14 个赞）",
+          "count": 3,
+          "type": "bad",
+          "orig": "Balance: In Street Race PvP, lag-induced bumping and expensive cars give an unfair advantage (players request a Ghost mode); repeated requests to ban rocket launchers (14 likes).",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "客服求助：想找回朋友那个 49 级账号，还有人问客服到底怎么联系",
+          "count": 2,
+          "type": "bad",
+          "orig": "Support: Request to recover a friend's lost account (level 49) and a player asking for a customer care contact.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "点名要车：自行车、宝马（还要经典款 M3）、特斯拉 Roadster、马恒达 Scorpio、野马 Shelby，总之就是新车越多越好",
+          "count": 10,
+          "type": "sug",
+          "orig": "Vehicles: Requests for bikes, BMW (including classic M3), Tesla Roadster, Mahindra Scorpio, Mustang Shelby, and new cars in general.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "车辆玩法要扩展：能一次叫出多辆自己的车、能把车借给朋友、要有更大的车库和展示区，再加个车辆损坏百分比",
+          "count": 3,
+          "type": "sug",
+          "orig": "Vehicle Features: Spawn multiple personal cars at once, lend cars to friends, larger garage / display area for car collections, and a vehicle damage percentage indicator.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "经济诉求：粉钻太贵，要么降价要么能 1:5 换蓝钻；还要房产收租、给朋友转账送礼，以及多发点兑换码",
+          "count": 6,
+          "type": "sug",
+          "orig": "Economy: Lower pink diamond pricing or a 1:5 pink-to-blue conversion, rental income from owned property, sending money / gifts to friends, and more CD keys.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "操控与 PvP：要陀螺仪辅助瞄准、要掩体和一键反击、战斗手感得改，还要独立的 PvP 排名和战绩记录",
+          "count": 4,
+          "type": "sug",
+          "orig": "Controls & PvP: Gyroscope support, gloo wall and one-tap system, better combat, and separate PvP rankings with match history.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "要新内容：新任务、新劫案、新活动、新职业，再来点万圣节和鬼魂主题的玩意儿",
+          "count": 4,
+          "type": "sug",
+          "orig": "Content: New missions, heists, events and jobs, plus Halloween / ghost-themed content.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "社区侧诉求：搞个能办比赛的社区活动机器人、采纳玩家自制的 Arctic-7 皮肤设计，再接上 Google Play 成就",
+          "count": 3,
+          "type": "sug",
+          "orig": "Community & Creators: Community tournament bot for races, a fan-made Arctic-7 Headhunter skin concept, and Google Play Games achievements.",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-21",
+          "theme": "这波好评给画质：玩家点名称赞游戏画质和视觉效果（33 赞）、感谢官方出的逃离追捕教程，还有人被万圣节预告吊足了胃口",
+          "count": 5,
+          "type": "good",
+          "orig": "Game Praise: Players praised the graphics and visuals (33 likes), thanked the team for the cop-escape tutorial, and are excited about the Halloween teaser.",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "更新疲劳没缓解：10/29 更新公告发了，玩家照样喊无聊、说任务全清完了，还嘲讽预告片里啥都有就是没有版本更新；有人担心这次又是「美食盛宴」那种活动（28 个赞）",
+          "count": 11,
+          "type": "bad",
+          "orig": "Update Fatigue: Even after the 29 Oct update announcement, players say they are bored, have finished all missions, and mock the teasers (everything except a patch update); a worry that it will be another Food Feast-style event (28 likes).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "每日活动连环出问题：全速狩猎赢 4 次不算完成、合作劫案（钻头）卡住、云端任务和淘汰赛找不到入口、精准射手依旧进不去，黑杰克 ECU 蓝图从来不掉",
+          "count": 5,
+          "type": "bad",
+          "orig": "Bug - Missions & Events: Full Speed Hunt Win 4 times task does not complete, Co-op Heist (Drill Bit) gets stuck, Cloud mission / Gauntlet cannot be found, Pinpoint Straight Shooter still unavailable, Blackjack ECU blueprint never drops.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "载具异常：街头竞速撞墙后转向会卡住三四秒，车跑到极速还会剧烈抖动",
+          "count": 2,
+          "type": "bad",
+          "orig": "Bug - Vehicle Handling: Steering freezes for 3-4 seconds after hitting a wall in Street Racers, and cars vibrate heavily at top speed.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "设备与账号：三星 Galaxy A13 在商店里显示不兼容，还有玩家说自己的账号丢了",
+          "count": 2,
+          "type": "bad",
+          "orig": "Device & Account: Samsung Galaxy A13 shown as incompatible on Play Store, and a player reports a lost account.",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "继续点名要车：自行车、宝马、布加迪威龙、迈凯伦、路虎卫士，还有印度本地车",
+          "count": 6,
+          "type": "sug",
+          "orig": "Vehicles: Requests for bikes, BMW, Bugatti Veyron, McLaren, Land Rover Defender, and Indian cars.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "要内容和玩法：更多合作劫案和新模式（8 赞）、要排名系统、要排灯节活动、要布娃娃物理，还要敌人掉装备",
+          "count": 6,
+          "type": "sug",
+          "orig": "Content: More co-op heist missions and modes (8 likes), a ranking system, a Diwali event, ragdoll physics, and weapons dropped by enemies.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "功能清单：陀螺仪辅助（7 赞）、一次叫出多辆车、能自己盖房子的地方、放车的车库，还有玩家之间互相送礼",
+          "count": 4,
+          "type": "sug",
+          "orig": "Features: Gyroscope support (7 likes), spawning multiple vehicles at once, places to build a home, garages, and a gifting system.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-22",
+          "theme": "更新热度起来了：玩家对 10/29 更新公告又兴奋又感激（热门评论 14 赞和 10 赞），还有人称赞游戏在 2GB 内存的老机上也能跑",
+          "count": 8,
+          "type": "good",
+          "orig": "Update Hype: Players are excited and thankful about the 29 Oct update announcement (top comments 14 and 10 likes); one player praised the game running smoothly on a 2 GB RAM device.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "更新疲劳还在发酵：任务全清完还在等，玩家已经等得厌倦；说好的「7 天 7 揭晓」第一天在 10/22 没出现，玩家一头雾水；有人直接警告别把更新吹过头（17 个赞）",
+          "count": 11,
+          "type": "bad",
+          "orig": "Update Fatigue & Reveal Confusion: Players say they have finished all missions and are still waiting; confusion that the 7 Days 7 Reveals Day 1 reveal did not appear on 22 Oct; a comment warning the team not to over-hype the update (17 likes).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "连不上服务器加上一堆 Bug：进不去任何服务器，全速狩猎赢 4 次和精准射手依旧是坏的，Discord 上一堆人跟着确认；大家都在求新版前先把 bug 和活动修了（8 个赞）",
+          "count": 5,
+          "type": "bad",
+          "orig": "Bugs: Unable to join any server, Full Speed Hunt Win 4 times and Pinpoint Straight Shooter still broken with more players confirming on Discord, and a request to fix bugs, lag and events before the new version (8 likes).",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "奖励太抠：高级容器开了几十个，开箱抽奖里赛车蓝图总是抽不到；每天给的活动代币根本不够用（求把剩下的换钱或改装件）；14 天签到奖励结束得太快",
+          "count": 3,
+          "type": "bad",
+          "orig": "Rewards & Economy: Racing blueprints too rare even after opening many premium containers, daily event tokens are not enough (request to trade leftover tokens for money or upgrade parts), and the 14-day login reward ends too quickly.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "还是在要车：反复点名自行车（最好便宜点）、新车，还有能开的小飞机",
+          "count": 7,
+          "type": "sug",
+          "orig": "Vehicles: Repeated requests for bikes (preferably low priced), new cars, and small planes.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "住的地方要能折腾：自家房屋带私人停车位（5 赞）、公寓室内装饰要多几种、改装店里能试听喇叭声，还要开放改装玩法",
+          "count": 5,
+          "type": "sug",
+          "orig": "Customization & Housing: Personal garage attached to the home (5 likes), varied apartment interiors, audible horn preview in the car mod shop, and modding support.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "玩法和模式要加：PvP 能观战、要有常驻的影子/被动模式防随机杀人、战斗手感得改，还有人想把早期版本的过场动画找回来，本地服务器也想要排灯节活动",
+          "count": 7,
+          "type": "sug",
+          "orig": "Gameplay & Modes: Spectate option in PvP modes, a permanent shadow / passive mode against random killers, better combat, bring back beta story content and cutscenes, a Diwali event for the Indian server (8 likes), and Director Mode.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-23",
+          "theme": "口碑继续回暖：玩家对即将到来的万圣节更新很兴奋（热门评论 10 赞）、感谢官方出的改装教程，还有人直接说这是最佳的游戏",
+          "count": 7,
+          "type": "good",
+          "orig": "Hype & Praise: Players are excited about the upcoming Halloween update (top comment 10 likes), thanked the team for the car customization tutorial, and called it the best game.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-24",
+          "theme": "社区活动入口找不到：五星生存挑战都上线了，一堆人在 Discord 里找不到对应的频道（6 赞）；有人提醒活动明天就结束、频道却还没建；还有人搞不清规则（到底能不能徒步、能不能穿护甲、几个人算赢）",
+          "count": 9,
+          "type": "bad",
+          "orig": "Event Access: Five Star Survival Challenge went live but many players cannot find the #five-star-survival-challenge channel on Discord (top comment 6 likes); one notes the event ends tomorrow and the channel still does not exist; others confused about rules (on-foot survival, whether vests are allowed, number of winners).",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-24",
+          "theme": "等更新的耐心在耗光：玩家已经等得厌倦，只求官方至少说清楚要来什么（10 赞），抱怨全是新闻没有更新，说这波热度是自己吹出来的，还警告别搞成 BGMI 那种更新；YouTube 观众天天问发布日期，也有人抱怨两轮的车还是没影",
+          "count": 6,
+          "type": "bad",
+          "orig": "Update Wait: Players ask the team to at least say what is coming (10 likes), complain there is only news and no update, call the hype self-made, and warn against a BGMI-style update; YouTube viewers keep asking for the release date and complain bikes are still missing.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-24",
+          "theme": "载具异常：有辆车在没有玩家的情况下自己往前开",
+          "count": 1,
+          "type": "bad",
+          "orig": "Bug - Vehicles: A car keeps driving on its own without a player inside.",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-24",
+          "theme": "要车也要世界：自行车（5 赞，还点名印度款）、宝马 M4 Competition、更便宜的车和枪、新房子、能摆车的车库，还有 GTA V 那套——机场、飞机、海滩上的行人、城市里的火车",
+          "count": 7,
+          "type": "sug",
+          "orig": "Vehicles & World: Bikes (5 likes) incl. Indian bikes, BMW M4 Competition, cheaper cars and guns, new houses, a garage to display owned cars, and GTA V-style additions like an airport, planes, beach NPCs and a city train service.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-24",
+          "theme": "还想加新内容：更多任务和更好的 PvP 模式、全城开分公司、服装再多几套、战斗改一改，还有人想要作弊码和插件",
+          "count": 4,
+          "type": "sug",
+          "orig": "Content & Gameplay: More missions and better PvP modes, company branches across the city, better outfits, improved combat, and cheat codes / plugins.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-24",
+          "theme": "口碑好评：玩家称这是最佳的手机开放世界游戏（10 赞），说这游戏在自己心里有特殊位置，也对即将到来的更新充满期待",
+          "count": 7,
+          "type": "good",
+          "orig": "Praise & Hype: Players call it the best mobile open-world game (10 likes), say it holds a special place in their heart, and are excited for the upcoming update.",
+          "channel": "IG"
+        }
+      ],
+      "communitySummary": "本周社群反馈共 **187 条玩家反馈 / 34 个议题**，来源 Instagram(176)、YouTube(122)、Discord(76)，多渠道议题按来源重复计入。采集日 10/21（13 议题 / 64 条）、10/22（8 / 44）、10/23（7 / 45）、10/24（6 / 34），**反馈量按 count 列累加、与上周口径一致，可直接环比**。话题分布：任务与游戏内容 60(32.1%)、载具体验 39(20.9%)、功能与系统 28(15.0%)、口碑与其他 27(14.4%)、支付与商业化 13(7.0%)、帮派与社交 12(6.4%)、账号与登录 8(4.3%)。情绪：负面 84(44.9%)、建议 76(40.6%)、正面 27(14.4%)。本周无「性能与 Bug」类条目。",
+      "trend": "环比上周（247 条 / 54 议题）：反馈量 **−24.3%**、议题数 −20，但**负面率 36.0% → 44.9%（+8.9pp）**，说明量降不等于压力降——沉默的人在走，留下的人更不满。结构上任务与游戏内容由第三（41 条）跃居第一（60 条），载具由第一（62 条）退居第二（39 条）；**正面口碑 18 → 27 条（7.3% → 14.4%）是上线以来最好的一次**，驱动力是 10/29 更新公告与万圣节预告。⚠️ 关键判断：**预热正在反噬**——10/22–10/24 连续三天出现对预告与揭晓节奏的嘲讽（28 赞 / 17 赞 / 10 赞），若 10/29 当天给不出实打实的内容，负面率还会再上一个台阶。"
+    },
     {
       "week": "10.12 - 10.18",
       "attitude": "分化",
@@ -15367,7 +15667,7 @@ var FEEDBACK_DATA = {
       "invalid": "已过滤：emoji / 无关 / 纯点赞 / 单字等无效评论（按采集规范不收录）。"
     }
   ]
-};;
+};;;
 /* ===== 玩家反馈真实原声 + 筛选集合（2026-09-13 注入，不改动 FEEDBACK_DATA） ===== */
 var FEEDBACK_QUOTES = {
  "Add bikes and train and airplane": [
