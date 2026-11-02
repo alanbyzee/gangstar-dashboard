@@ -3715,26 +3715,34 @@ function fanTrendSeries(C,k,rg){
   var s=C.per[k]; if(!s) return null;
   var pts=fanRange(s.hist,rg.from,rg.to);
   var first=pts.length?pts[0]:null,last=pts.length?pts[pts.length-1]:null;
-  var diff=(first&&last)?(last.value-first.value):null;
+  var diff=(first&&last)?(last.value-first.value):null;            // 区间首末差（仅明细展示用）
   var pct=(first&&last&&first.value)?(diff/first.value*100):null;
   var span=(first&&last)?fanDiffDays(first.date,last.date):null;
   var daily=(span&&span>0&&diff!==null)?diff/span:null;
+  // 行内「周增减」与 02 平台卡片同口径：末点 vs 上一个自然周（周一~周日）内峰值快照
+  var pk=fanWeekPeakStat(s.hist,C.week.start,C.week.end);
+  var wkOk=!!(pk&&pk.ok);
   return {key:k,name:s.name,color:s.color,metric:s.metric,points:pts,n:pts.length,
     first:first,last:last,diff:diff,pct:pct,spanDays:span,daily:daily,
+    wkOk:wkOk,wkDiff:wkOk?pk.diff:null,wkPct:wkOk?pk.pct:null,
+    wkBase:wkOk?pk.base:null,wkBaseSrc:wkOk?pk.baseSrc:null,
+    wkSpanDays:wkOk?pk.spanDays:null,wkDaily:wkOk?pk.daily:null,
+    wkReason:pk?(pk.reason||''):'no-snapshot',
     lastDate:s.lastDate,staleDays:s.staleDays,value:s.value};
 }
 // 异常判定：必须有明确数值依据，无法确认原因时一律「待排查」
 function fanTrendFlag(s){
   if(!s||!s.last) return null;
-  if(s.diff!==null&&s.diff<0) return {t:'drop',label:'净流失',why:'周期净增 '+fmt(s.diff)+'（'+fanPct(s.pct)+'），出现净流失'};
-  if(s.diff===0) return {t:'flat',label:'增长停滞',why:'周期净增为 0'};
-  if(s.pct!==null&&Math.abs(s.pct)>=100)
-    return {t:'spike',label:'⚠ 高增长待核实',why:'周期 '+fanPct(s.pct)+'，基数 '+fmt(s.first.value)+'（'+s.first.date+'）→ 期末 '+fmt(s.last.value)
+  var bd=s.wkBase?('（基线 '+s.wkBase.date+' · '+fmt(s.wkBase.value)+'，'+(s.wkBaseSrc==='pre-week-peak'?'上周峰值':'上周无快照，取更早')+'）'):'';
+  if(s.wkDiff!==null&&s.wkDiff<0) return {t:'drop',label:'净流失',why:'较上周峰值 '+fmt(s.wkDiff)+'（'+fanPct(s.wkPct)+'）'+bd+'，出现净流失'};
+  if(s.wkDiff===0) return {t:'flat',label:'增长停滞',why:'较上周峰值净增为 0'+bd};
+  if(s.wkPct!==null&&Math.abs(s.wkPct)>=100)
+    return {t:'spike',label:'⚠ 高增长待核实',why:'较上周峰值 '+fanPct(s.wkPct)+'，基线 '+fmt(s.wkBase?s.wkBase.value:s.first.value)+' → 末点 '+fmt(s.last.value)
       +'；需核实基数、成员/粉丝统计口径与快照完整性'};
-  if(s.daily!==null&&s.first&&s.first.value>0&&Math.abs(s.daily/s.first.value*100)>=FAN_ALERT_CFG.spikePctPerDay)
-    return {t:'spike',label:'⚠ 波动待排查',why:'日化变动 '+fanPct(s.daily/s.first.value*100)+'/天（阈值 '+FAN_ALERT_CFG.spikePctPerDay+'%/天）'};
-  if(s.pct!==null&&Math.abs(s.pct)>=50&&s.n<=3)
-    return {t:'spike',label:'⚠ 基数待核实',why:'周期 '+fanPct(s.pct)+'，但区间内仅 '+s.n+' 个快照、基数 '+fmt(s.first.value)+'，需核实统计口径与快照完整性'};
+  if(s.wkDaily!==null&&s.wkBase&&s.wkBase.value>0&&Math.abs(s.wkDaily/s.wkBase.value*100)>=FAN_ALERT_CFG.spikePctPerDay)
+    return {t:'spike',label:'⚠ 波动待排查',why:'日化变动 '+fanPct(s.wkDaily/s.wkBase.value*100)+'/天（阈值 '+FAN_ALERT_CFG.spikePctPerDay+'%/天）'+bd};
+  if(s.wkPct!==null&&Math.abs(s.wkPct)>=50&&s.n<=3)
+    return {t:'spike',label:'⚠ 基数待核实',why:'较上周峰值 '+fanPct(s.wkPct)+'，但区间内仅 '+s.n+' 个快照、基线 '+fmt(s.wkBase?s.wkBase.value:s.first.value)+'，需核实统计口径与快照完整性'};
   return null;
 }
 // 单平台迷你趋势图：只表达时间变化。独立纵轴（该平台区间内实际极值）、无轴标签、无网格线、无末端数字、无图例
@@ -3852,6 +3860,10 @@ function fanTrendRowDetail(s,rg){
   var head=(s.first&&s.last)
     ? '<div class="fz-det-sum">期初 '+s.first.date+' · '+fmt(s.first.value)+' → 期末 '+s.last.date+' · '+fmt(s.last.value)
       +' · 跨度 '+(s.spanDays===null?'—':s.spanDays+' 天')+'</div>' : '';
+  if(s.wkOk&&s.wkBase)
+    head+='<div class="fz-det-sum">周增减基线：'+s.wkBase.date+' · '+fmt(s.wkBase.value)+'（'+(s.wkBaseSrc==='pre-week-peak'?'上周峰值':'上周无快照，取更早')+'）→ 末点 '+fmt(s.value)+' · 较基线 '+(s.wkDiff>0?'+':'')+fmt(s.wkDiff)+'</div>';
+  else if(s.wkReason==='no-snapshot-in-week')
+    head+='<div class="fz-det-sum">本周窗口内无有效快照，无法计算周增减（不按 0 计入合计）。</div>';
   return head+'<div class="fz-det-scroll"><table class="fz-det-tb"><thead><tr><th>日期</th><th class="num">'+esc(s.metric)+'</th><th class="num">较上一有效快照</th><th class="num">间隔</th></tr></thead><tbody>'+body+'</tbody></table></div>'
     +'<div class="fz-det-f">共 '+pts.length+' 个有效快照（'+esc(rg.label)+'）· 缺失日期不补零、不插值</div>';
 }
@@ -3863,7 +3875,7 @@ function renderHistoryTrend(data){
   var key=FAN_TREND_SORT.key,dir=(FAN_TREND_SORT.dir==='asc')?1:-1;
   rows.sort(function(a,b){
     if(key==='diff'){
-      var av=a.diff,bv=b.diff;
+      var av=a.wkDiff,bv=b.wkDiff;
       if(av===null&&bv===null) return (a.value<b.value)?1:-1;
       if(av===null) return 1;
       if(bv===null) return -1;
@@ -3886,13 +3898,14 @@ function renderHistoryTrend(data){
     return '<button class="fz-rb'+(FAN_TREND_SORT.key===k?' on':'')+'" data-tsort="'+k+'">'+label+'</button>';
   };
   var sortbar='<div class="fz-tr-sortbar"><span class="fz-lab">排序</span><div class="fz-rseg">'
-    +sortBtn('value','按当前粉丝数')+sortBtn('diff','按周期净增长')+'</div>'
-    +'<span class="fz-rctl-h">每行独立纵轴，只比形状与走向；精确数值悬浮或点击数据点</span></div>';
+    +sortBtn('value','按当前粉丝数')+sortBtn('diff','按周净增（较上周峰值）')+'</div>'
+    +'<span class="fz-rctl-h">周增减＝最新快照 vs 上一个自然周峰值（与 02 卡片同口径）；每行独立纵轴，只比形状与走向</span></div>';
   var list=rows.map(function(s){
-    var st=(s.diff===null)?'na':(s.diff>0?'up':(s.diff<0?'down':'flat'));
-    var arrow=(s.diff===null)?'':(s.diff>0?'▲ ':(s.diff<0?'▼ ':'±'));
-    var diffTxt=(s.diff===null)?'数据不足':(arrow+(s.diff>0?'+':'')+fmt(s.diff));
-    var pctTxt=(s.pct===null)?'':fanPct(s.pct);
+    var dv=s.wkDiff,pv=s.wkPct;
+    var st=(dv===null)?'na':(dv>0?'up':(dv<0?'down':'flat'));
+    var arrow=(dv===null)?'':(dv>0?'▲ ':(dv<0?'▼ ':'±'));
+    var diffTxt=(dv===null)?(s.wkReason==='no-snapshot-in-week'?'本周无快照':'数据不足'):(arrow+(dv>0?'+':'')+fmt(dv));
+    var pctTxt=(pv===null)?'':fanPct(pv);
     var gaps=fanGapDays(s.points);
     var fl=fanTrendFlag(s);
     var tags='';
@@ -3915,6 +3928,7 @@ function renderHistoryTrend(data){
   el.innerHTML='<div class="fz-trend">'+meta+sortbar+'<div class="fz-tr-list">'+list+'</div>'
     +'<div class="fz-tr-notes">'
       +'<div class="fz-chart-note">每行使用各自独立的纵轴（按该平台区间内的实际极值缩放），只能比较「形状与走向」，不能比较高低；比较规模与增幅请看上方 02 平台卡片。</div>'
+      +'<div class="fz-chart-note">周增减口径与 02 平台卡片一致：末点 vs 上一个自然周（周一~周日）内的<b>峰值</b>快照；上周无快照则回退到更早快照并在「快照明细」中注明基线日期，绝不拿首次采集冒充基线。</div>'
       +'<div class="fz-chart-note">曲线只连接真实采集点：缺失日期不补零、不插值；跨天缺口用虚线段 + 浅灰带表示；有效快照不足 2 个的平台显示「数据不足」，不画平滑曲线。</div>'
       +(thin.length?('<div class="fz-chart-note">当前区间有效快照不足 2 个的平台：'+esc(thin.join('、'))+'（不绘制曲线；02 卡片仍展示其最新快照人数）。</div>'):'')
     +'</div></div>';
@@ -5955,6 +5969,7 @@ const FALLBACK_DATA = {
     }
   }
 };
+
 
 
 
