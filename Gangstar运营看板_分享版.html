@@ -6179,6 +6179,7 @@ const FALLBACK_DATA = {
 
 
 
+
 let lastData=null;
 const isFile = (location.protocol==='file:');
 async function loadFans(){
@@ -8445,6 +8446,593 @@ if(views.sa.classList.contains('active')) renderSouthAsia();
 // ===== 玩家反馈收集看板（按周 · 印度市场态度追踪） =====
 var FEEDBACK_DATA = {
   "weeks": [
+    {
+      "week": "10.26 - 11.01",
+      "attitude": "恶化",
+      "summary": "本周回收 **627 条玩家反馈 / 70 个议题**（Instagram 614、YouTube 479、Discord 413；多渠道议题按来源重复计入），覆盖 **10/26–10/31 六个采集日**，口径与上周一致（count 累加），**反馈量 +235%、议题数 +106%**——量级暴涨 3 倍多，全部由 **10/29 Franchise Fury 更新** 这一个事件引爆：更新当日 **251 条（40.0%）**，次日 10/31 仍有 138 条余波。情绪是上线以来最差的一周：**负面·Bug 378 条（60.3%，上周 44.9%，+15.4pp）**、建议 179（28.5%）、正面口碑 70（11.2%，上周 14.4%，回落 3.2pp）。上周预警的「预热反噬」被完整验证：**给不出实打实内容，负面率就再上一个台阶**。三条结构性矛盾——① **内容落差**：说好的「庞大车单」只落地 Razor + 一辆货车 + 一辆嘟嘟车，**摩托第六次缺席**（单条 15 赞、有人威胁删游戏），「7GB 更新就为换一辆车」；② **商业化信任崩塌**：Razor/RV 车抽奖单议题 **30 条**为全周最大单点（23 赞 + 12 赞），砸 120 万–5000 万现金抽不到车，被玩家定性为「赌博/欺骗」，要求退款或改直售；Midasbuy 5% 折扣帖被骂爆（印度用不了、通行证 680 卢比太贵），并出现「别做成 Free Fire 那种 pay-to-win」的集体担忧——**支付与商业化话题 111 条（17.7%），上周仅 13 条**；③ **新系统自带死锁**：Vice Tonic（罪恶币）经济上线后，玩家买光罪恶币即永久卡死、无法继续生意，相关议题 5 条 78 条，是本周最大 Bug 群，而官方攻略发布得太晚。另有一处纯体验倒退：更新后 **HUD 自定义布局被重置且存不住、下蹲键钉死**（4 个独立议题、7 条 Discord 帖）。正向资产只剩一条——**Pinpoint 系列**（15 条 + 8 条）与辛迪加系统好评，说明玩家对「有剧情、有人物的内容」依然买账。**下一步动作优先级：抽奖概率/保底公开 + Razor 直售定价（止血信任）→ 罪恶币死锁修复与补偿（止血流失）→ HUD 自定义热修（止血体验）→ 摩托给出明确时间点（止血期待）→ 排灯节发免费礼物（把 11/8 前窗口接住）。**",
+      "dims": {
+        "attitude": {
+          "label": "负面率 60.3%，+15.4pp：更新兑现失败 + 商业化被定性为赌博",
+          "detail": "负面·Bug 378 条（60.3%，上周 44.9%，+15.4pp），建议 179（28.5%），正面口碑 70（11.2%，较上周 −3.2pp）。恶化由 10/29 更新直接触发：更新当日 251 条（全周 40.0%），其中「Razor/RV 车抽奖」30 条、「更新内容让人失望」25 条、「罪恶币死锁」22 条分列前三。玩家的定性已经从「不满意」升级为「被欺骗」（「Game walo ne loot liya razor deke」12 赞、「骗人的幻影之城」），并首次出现对标 Free Fire 的 pay-to-win 担忧——这是信任层面的警报，不是版本满意度问题。"
+        },
+        "comprehension": {
+          "label": "内容落差是第一矛盾：摩托第六次缺席，7GB 只换来一辆车",
+          "detail": "任务与游戏内容 137 条（21.9%）居首，核心是「承诺 vs 落地」的落差：宣传的庞大车单实际只有 Razor、一辆货车和一辆嘟嘟车，嘟嘟车还锁在付费战斗通行证里；「7GB 更新就为换一辆车」「完全看不懂这次更新」成为高频表达。载具体验 133 条（21.2%）里，**摩托是全周最持续的单点诉求**——跨 6 个采集日、9 个议题、累计 100+ 条，有玩家刷屏「加摩托」38 次，热门评论 15 赞并附带删游戏威胁。玩家不是不要新内容，是不要「预告里的新内容」。"
+        },
+        "reputation": {
+          "label": "口碑 11.2% 回落但结构清晰：有剧情有人物的内容仍然买账",
+          "detail": "正面口碑 70 条（11.2%，上周 14.4%），全部集中在内容侧：Pinpoint 系列两集 23 条（reel 3K 赞、催更 20 赞、「管理员每天都在玩创意」12 赞）、更新好评 24 条（「最佳更新」、称赞辛迪加系统与新画质、印度玩家感谢排灯节内容）、粉丝艺术与万圣节 8 条。反面是商业化话题首次进入前三（111 条 / 17.7%）——口碑的开关不在「发了多少条内容」，在「有没有让人觉得被坑」。修复确认类好评（表情 Bug 已修、私信得到帮助）说明响应速度本身能换回 goodwill。"
+        },
+        "engagement": {
+          "label": "口径统一：627 条 / 70 议题，单日峰值 251 条创上线以来新高",
+          "detail": "本周数据源为《112反馈.xlsx》70 行原始数据，**反馈量＝各议题 count 列之和＝627 条，70 为独立议题数**；采集日 10/26（8 议题 / 54 条）、10/27（7 / 43）、10/28（9 / 86）、10/29（26 / 251）、10/30（8 / 55）、10/31（12 / 138），与上周（187 条 / 34 议题）同为 count 累加口径，**可直接环比 +235%**。渠道：Instagram 614、YouTube 479、Discord 413（多渠道议题按来源重复计入）。10/29 单日 251 条为上线以来单日最高，10/31 仍达 138 条（罪恶币死锁未见缓解 + 商业化反弹叠加），说明这不是「更新当天的情绪尖峰」，而是**未收敛的持续事件**。"
+        }
+      },
+      "community": [
+        {
+          "date": "2026-10-26",
+          "theme": "等更新等到玩腻：一直追问更新到底什么时候来，说已经无聊了，不加摩托就不上线（6 赞），还有人直接放话删游戏",
+          "count": 7,
+          "type": "bad",
+          "orig": "Update Wait & Churn Risk: Players say they are bored and keep asking when the update arrives; some say they will only play again (6 likes) or will delete the game if bikes are not added.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "Bug 合集：网络正常也报网络错误进不去；车库加载时人掉出地图；背抓动作抽风；「宏伟计划」装甲车机枪只有开高画质才打得响；全速狩猎赢 4 次还是不计数（6 赞）",
+          "count": 5,
+          "type": "bad",
+          "orig": "Bugs: Login fails with a network error even on a working connection, character falls under the map while the garage loads, Back Grab glitch, armoured car gun in A Grand Scheme only works on high graphics, and Full Speed Hunt Win 4 times still broken (6 upvotes).",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "性能与画质：部分机型出现粉红天空和粉红草地，任务中途卡顿掉帧、摇杆手感发飘，还要求开尼泊尔服和抢先体验服",
+          "count": 4,
+          "type": "bad",
+          "orig": "Performance & Graphics: Pink sky and pink grass on some devices, lag and FPS drops mid-mission with poor joystick control, and requests for Nepal availability and an advance server.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "外挂：有人开着无限血和防爆车，要求官方封号",
+          "count": 1,
+          "type": "bad",
+          "orig": "Cheating: Players report hackers with unlimited health and blast-proof cars and ask for them to be banned.",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "载具清单还是摩托排第一（10 赞 / 9 赞）：要 Royal Enfield 和摩托帮，还有 BMW M4、布加迪、黑色 Scorpio、Mahindra Thar、一台点名的车（17 赞）和坦克",
+          "count": 16,
+          "type": "sug",
+          "orig": "Bikes & Vehicles: Bikes remain the top request (10 and 9 likes), incl. Royal Enfield and a bike-riding gang; also BMW M4, Bugatti, Black Scorpio, Mahindra Thar, a specific requested car (17 likes), and a tank.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "生活与交易：住宅和公寓要配专属停车位（4 赞），能卖掉不用的车和枪，加个玩家交易点，再多来点出租车这种公共活儿",
+          "count": 3,
+          "type": "sug",
+          "orig": "Housing & Trading: Dedicated parking / garage for apartments (4 upvotes), a place to sell unused cars and weapons, a player trading point, and more public jobs like taxi service.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "玩法许愿：改名选项、角色扮演动作（躺下、坐下、趴射、站车顶、上厕所）、天气控制、新衣服和发型、把全速提示弹窗挪个位置、故事模式、军营和警察哨所、更爽的近身打斗、私信系统、动漫车皮（11 赞）",
+          "count": 10,
+          "type": "sug",
+          "orig": "Gameplay & Features: Rename option, roleplay animations (lie down, sit, prone shooting, stand on cars, use bathroom), weather control, new outfits and hairstyles, move the Full Speed / Drift popup, story mode, army camp / police post, better combat, a messaging system, and anime car skins (11 likes).",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-26",
+          "theme": "粉丝艺术大赛的获奖者感谢官方把他们的车皮放进了游戏，玩家称赞这份创意，对「惊悚盛宴」捉鬼活动和接下来的更新很兴奋（有人夸「没有哪款手游比得上」），还猜新车是 Supra（15 赞）",
+          "count": 8,
+          "type": "good",
+          "orig": "Fan Art & Halloween Hype: Fan art contest winners thanked the team for featuring their car skins, players praised the creativity and are excited for the Frightful Feast ghost hunt and upcoming update (one said no mobile game compares), and guessed the new car is a Supra (15 likes).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "登录挂了：从 10 月 26 日起一堆人进不去——网络正常却报网络错误，南亚服和别的服都进不去，卡在加载页；Discord 上约 9 条独立反馈加一条 IG 投诉（12 赞）",
+          "count": 10,
+          "type": "bad",
+          "orig": "Login & Server Outage: Many players unable to log in since 26 Oct - network error despite a working connection, cannot join South Asia or any server, stuck on the loading screen; around 9 separate Discord reports plus an Instagram complaint (12 likes).",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "账号和奖励：有人领了「Mouth Off」门票后 200 万现金当场掉到 80 万，私信也没人回；还有人说 10 月的奖励码根本没通过私信发过来",
+          "count": 2,
+          "type": "bad",
+          "orig": "Account & Rewards: A player reports 2M cash dropped to 800K right after claiming a Mouth Off ticket with no reply to DMs, and another says the October Reward code was never sent by DM.",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "任务与奖励掉链子：杰基走私者逃亡这个活动任务做不完，「猫的摇篮」车皮在游戏里不显示，未读提示还挂着，另外更多玩家证实了外挂（无限血、防爆车）",
+          "count": 5,
+          "type": "bad",
+          "orig": "Bugs: Jackie Smuggler's Run mission does not complete, Cat's Cradle skin not showing in-game, ghost NEW / red dot notifications still persist, and more players confirming the hacker report (unlimited health, blast-proof cars).",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "载具和世界：摩托、宝马和跑车、宠物、季节天气（下雨、秋天、雪）以及罪恶都市风格的地图",
+          "count": 7,
+          "type": "sug",
+          "orig": "Vehicles & World: Bikes, BMW and sports cars, pets, seasons and weather (rain, autumn, snowfall), and a Vice City style map.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "玩法：困难任务要能像普通任务一样单人打通（36 赞），加改名选项，让玩家自己建帮派，再多给点钻石",
+          "count": 4,
+          "type": "sug",
+          "orig": "Gameplay: Make hard missions playable solo like normal missions (36 likes), add a name-change option, let players create gangs, and give more diamonds.",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "Pinpoint 系列火了：Pinpoint kahan hai 这条 reel 破 3K 赞，新一集 Let's Go（91 赞），玩家称赞这个系列并催更（14 赞），还兴奋地猜 Pinpoint 会不会掉马（13 赞）；一位 YouTube 观众吐槽了台词（把 Natalia 叫成 bhai）",
+          "count": 8,
+          "type": "good",
+          "orig": "Pinpoint Series: Strong response to the Pinpoint kahan hai reel (3K likes) - New series lets go (91 likes), players want more such videos (14 likes) and are excited Pinpoint may reveal his identity (13 likes); one YouTube viewer criticised the dialogue (calling Natalia bhai).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-27",
+          "theme": "Franchise Fury 期待拉满：玩家对 v1.1.0 补丁说明和 10 月 29 日的更新很兴奋（热门评论 4 条、3 赞），有人直接说这是史上最佳",
+          "count": 7,
+          "type": "good",
+          "orig": "Franchise Fury Hype: Players are excited about the v1.1.0 patch notes and the 29 Oct update (top comments 4 and 3 likes), and one called the game the GOAT.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "登录和账号：好几个人打不开账号（63 级的号卡在登录界面、有个号两天都进不去、Discord 上有人卡在南亚服主页、还有人「什么都显示不出来、玩不了」），有人问旧号怎么找回；低中端机用户继续要求更好的优化和更小的包体（比如骁龙 4 Gen 2，500–700MB）",
+          "count": 7,
+          "type": "bad",
+          "orig": "Login, Account & Performance: Several players unable to log in or open their ID (a level 63 account stuck on login, an ID not opening for 2 days, a Discord report stuck on the home page on the South Asia server, another 'nothing is showing / not able to play'), one player asking how to recover an old account, and low/mid-range device users again asking for better optimisation and a smaller download size (e.g. Snapdragon 4 Gen 2, 500-700 MB).",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "任务 Bug：无人机猎人这个活动任务里弹匣打光无人机也不掉；激光突袭者箱子花 500 钻石买的 8 张兑换券被吃掉却没发货；成就/联系人任务里奥罗拉和帮派成员不刷新、杀了首领也不算完成；黑杰克等车极速时引擎声卡住发怪响（死亡竞赛）",
+          "count": 4,
+          "type": "bad",
+          "orig": "Bugs: Drone Hunter event - drone is not destroyed even after emptying a full magazine; Laser Raider Crate - 8 vouchers bought for 500 diamonds were consumed but the crate was not received; achievement/contact mission - Ororra and gang members do not spawn and killing the boss does not complete the mission; Black Jack and other cars - engine sound gets stuck / sounds weird at top speed (DM).",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "嘟嘟车预告翻车：一直要的是摩托，结果预告放出的是嘟嘟车/自动人力车——「要摩托等来一辆自动人力车」（9 赞）、「想当黑帮结果成了出租车司机」，有人放话退游，还有人抱怨这些车被锁在付费战斗通行证里、不做任务不给抽",
+          "count": 10,
+          "type": "bad",
+          "orig": "Auto-Rickshaw Teaser: Players who have been asking for bikes reacted negatively to the tuk-tuk/auto-rickshaw teaser ('asked for a bike, got an auto' - 9 likes; 'wanted to be a gangster, became an auto driver'), a few said they will quit, and others complained it is locked behind the paid Battle Pass (P2P only) instead of being available through missions or spins.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "奖励发放：Discord 上五星生存挑战的赢家问奖品怎么领（2 帖），有人说没收到 10 月奖励（已让团队看私信），还有人问抽奖结果",
+          "count": 4,
+          "type": "bad",
+          "orig": "Rewards: Five-Star Survival Challenge winners on Discord asking how to claim their prize (2 posts), a player saying the October reward was not received (asked team to check DM), and another asking for the giveaway results.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "社区环境：要求处理世界聊天里的辱骂，举报开防爆车和无限血的外挂（帖子被顶），因为有毒玩家要求分服，还有人骂官方帖子「蠢/不专业」、抱怨帖子和对白里一股 AI 味",
+          "count": 5,
+          "type": "bad",
+          "orig": "Community & Fair Play: Request to take action on abusive language in World Chat, hackers with blast-proof cars and unlimited health still being reported (thread bumped), a request to separate servers because of toxic players, and criticism of 'silly/unprofessional' posters, dialogues and heavy AI use in posts.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "载具清单：摩托/超摩依旧是第一诉求（IG 和 YouTube 上 15 条以上评论催），还要飞行器、直升机、飞机、火车、轮船和地铁（12 赞）、宝马 M5（4 个反应）、布加迪、新增 Pinpoint 那台 Lykan Hypersport，以及买车前能在赛道上试驾",
+          "count": 22,
+          "type": "sug",
+          "orig": "Vehicles: Bikes/superbikes remain the top request (15+ comments across IG and YouTube), plus flying vehicles / helicopter, planes, train, ship and metro (12 likes), BMW M5 (4 reactions), Bugatti, adding Pinpoint's Lykan Hypersport, and a test-drive option at the racing ground before buying a car.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "本地化：一堆玩家要印地语支持和角色印地语配音（热门评论 15 赞）",
+          "count": 7,
+          "type": "sug",
+          "orig": "Hindi Language: Multiple players asking for Hindi language support and Hindi voice-over for the characters (top comment 15 likes).",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "玩法和内容：多来点抢劫任务（现在才 3 个）、游戏内剧情任务、做成 Pinpoint 那种带完整结局的系列、永久蓝图兑换、100 人好友位、免费入场表情、改名卡、健身房/银行系统、更大的排灯节活动，以及给创作者的抢先服资格",
+          "count": 12,
+          "type": "sug",
+          "orig": "Gameplay & Features: More heist missions (only 3 available), in-game story missions in the style of the Pinpoint series with a proper story ending, a permanent blueprint exchange option, 100-friend list, free entry emote, rename card, garage / gym / bank system, a bigger Diwali event, and 'advance server' access for creators.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-28",
+          "theme": "Pinpoint 第二集炸了：玩家说这系列疯得有创意（「管理员每天都在玩创意」，12 赞），催第三部分快点出（20 赞），还有人说 GMC 能跟顶级游戏掰手腕、是 2026 年最佳手游（私信）",
+          "count": 15,
+          "type": "good",
+          "orig": "Pinpoint Series: Strong reaction to Pinpoint Episode 2 - players calling the series crazy and creative ('admin creativity day by day', 12 likes), asking for Part 3 quickly (20 likes), and some saying GMC competes with top games / is the best mobile game of 2026 (DM).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新后打不开：10 月 29 日更新后一堆人卡在加载页、进不去（IG 和 Discord 共 5 条），有人天玑 9300+ 现在卡顿掉帧到 30 帧、觉得这版没做优化，还有人嫌更新包太大",
+          "count": 7,
+          "type": "bad",
+          "orig": "Update Launch & Performance: After the 29 Oct update several players report the game not opening / stuck on the loading screen (5 reports across IG and Discord), one says a Dimensity 9300+ device now drops to 30 FPS and the update feels unoptimised, and another complained about the large update size.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "新车抽奖被骂抢钱：有人砸了 600 万到 800 万现金（还有一个砸了 2200 钻石）抽新车，结果啥也没抽到——一个要求退一半（还走了私信），一个说要退游；还有人抱怨新超跑放抽奖不放经销商店，Razor 和装甲巴士定价 1100 万–1200 万现金（「废车」）",
+          "count": 10,
+          "type": "bad",
+          "orig": "New Car Spin & Pricing: Players spent 6-8M cash (one 2,200 diamonds) on the new car spin without getting the car - one asked for a 50% refund (also via DM) and another said he will quit; complaints that the new supercar is in a spin instead of the dealership, and that Razor and Armored Bus are priced at ~11-12M cash ('useless gadi').",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新内容落差：说好的庞大车单实际就 Razor、一辆货车和一辆嘟嘟车，超摩依然没有；方向盘驾驶手感还是没修；有人说这版更新没用",
+          "count": 4,
+          "type": "bad",
+          "orig": "Update Content: Players disappointed that the 'massive vehicle lineup' was only the Razor, a van and the tuk-tuk with no superbikes again, steering-wheel driving feel still not fixed, and some calling it a useless update.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "HUD 自定义被改坏：更新后下蹲键钉死在一个位置不能自定义（2 条 Discord 帖），旧的自定 HUD 布局被删、自定义失效，就算重置成基础布局摇杆也拖不动",
+          "count": 4,
+          "type": "bad",
+          "orig": "Controls & HUD: After the update the crouch button is stuck at a fixed position and cannot be customised (2 Discord posts), an old custom HUD layout was deleted and customisation does not work, and the joystick will not move even after resetting to the basic layout.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "新内容任务卡住：新任务里蜘蛛丝蛋白凝胶加不进去、也没法和搅拌机里的东西互动；玩家问水果和杯子在哪；表情工坊报错；有人手滑把副币全花在补给上现在买不了东西；还有人换不了谷歌关联",
+          "count": 6,
+          "type": "bad",
+          "orig": "Missions & Items: In the new mission, Spider Silk protein gel cannot be added and players cannot interact with items to put in the mixer; players asking where the fruit and mug are; Error in Emote Workshop; one player accidentally spent all Vice Coins on supplies and cannot buy more; one cannot change the linked Google account.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "社区管理：有玩家私信投诉一个恶意威胁要封他的创作者不但没被撤，反而升成了版主；另一个玩家要求官方别再在帖子里用 AI",
+          "count": 2,
+          "type": "bad",
+          "orig": "Moderation: A player complained by DM that a creator who threatened to get him banned was promoted instead of being removed as moderator, and another asked the team to stop using AI in posts.",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "载具：更新后超摩/超音速摩托和普通摩托依然是最集中的诉求（Discord「要超摩」和建议帖、IG 与 YouTube 评论）",
+          "count": 7,
+          "type": "sug",
+          "orig": "Superbikes & Bikes: Superbikes / hyper bikes and regular bikes are still the top ask after the update (Discord 'Need Superbike' and suggestion posts, IG and YouTube comments).",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "玩法和内容：把 Underbelly 塔楼做完并让它能爬，加望远镜和建帮派基地的引导（私信）；更真实的布娃娃物理和可进入的建筑（银行、警察局、商场、竞技场）；新劫案和每日 CD 兑换码；单人任务版本、第一人称视角和语音包；奖励正确决策的「大亨」系统；能用现金/Vice 币买商场代币；印地语",
+          "count": 11,
+          "type": "sug",
+          "orig": "Gameplay & Features: Complete the Underbelly tower and make it climbable, add binoculars and guidance for setting up a gang base (DM); more realistic ragdoll physics and enterable buildings (bank, police station, mall, arena); new heist missions and daily CD keys; single-player versions of missions, first-person view, gyro and voice packs; a 'tycoon' system that rewards smart choices; mall tokens purchasable with cash/diamonds; Hindi language.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新好评：玩家说这版是最佳更新，画质和质感被夸，有人给总评 7/10，还夸了克劳德和 Pinpoint 的故事线",
+          "count": 5,
+          "type": "good",
+          "orig": "Update Praise: Players happy with the update - 'best update', graphics and professional look praised after today's update, one rated it 7/10 overall, and players praising Cloud and the Pinpoint story.",
+          "channel": "YTB,IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "Razor 车抽奖：在新的 Franchise Fury 帖下，玩家说自己砸了 1500 万到 6000 万现金却没抽到车（有人说现在单抽要 2000 万），一些人要求退款；一位私信玩家说「公路生活」抽奖是浪费 450 万现金的骗局",
+          "count": 7,
+          "type": "bad",
+          "orig": "Razor / New Car Spin: On the new Franchise Fury post players say they spent 15M-60M cash on the Razor car draw without getting the car (one says a single draw now costs 20M), several asking for a refund; one expected a Rename Card in the update; a DM calls the 'Life on the Road' draw a 4.5M waste / scam.",
+          "channel": "IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新没达到预期：没有新主线任务、街头挑战、抢劫或走私者目标（「7GB 更新就为换一辆车」），要的两轮车依旧没有，说好的庞大车单也没见到，嘟嘟车还锁付费（YT）；一位天玑 9300+ 玩家说现在帧率掉到 30 以下并吐槽 AI 动画（私信）",
+          "count": 8,
+          "type": "bad",
+          "orig": "Update Content & Performance: Players say the update did not meet expectations - no new contact missions, street challenges, heists or Smuggler Run goals ('7GB update just for one car'), still no superbikes or bikes and no 'massive vehicle lineup', the tuk-tuk being paid (YT); one player reports a Dimensity 9300+ device now runs below 30 FPS and criticised the AI reels (DM).",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "HUD 与耐力：更多玩家反映更新后下蹲键钉死拖不动、不能自定义（Discord、IG 评论和私信），滑行现在还更费耐力；还有人觉得瞄准精度变了",
+          "count": 6,
+          "type": "bad",
+          "orig": "Controls & Stamina: More reports that the crouch button is stuck and cannot be moved/customised after the update (Discord, IG comments and DMs), and that sliding now drains much more stamina; one player also feels aim precision changed.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "表情在商店界面里显示成锁定、还要再买一次，有些表情用了也放不出来",
+          "count": 3,
+          "type": "bad",
+          "orig": "Emote Shop: Emotes that players already purchased are showing as locked / available to buy again in the Emote Shop, and some emotes are not working when used.",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "估值和定价出错：买了两辆车后资产估值没涨，有人车和枪都一样估值却从 5500 万掉到 900 万，资产进度条显示错误（估值 6320 万）；标价 0.99 美元的钻石礼包结账时被收了 2.99 美元",
+          "count": 4,
+          "type": "bad",
+          "orig": "Valuation & Pricing: Asset valuation did not increase after buying 2 cars, one player's valuation dropped from 55M to 9M with the same cars and guns, the Asset Value progress bar displays incorrectly (63.2M valuation), and a diamond bundle listed at $0.99 charges $2.99 at checkout.",
+          "channel": "DC"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "新内容任务翻车：做巧克力水果时每次把玩家弹飞约 5 公里；「精灵冰棒」任务跑不起来（已私信发视频）；有人不知道搅拌站怎么用；还有人领不到新手签到奖励",
+          "count": 4,
+          "type": "bad",
+          "orig": "Missions & Rewards: In the new mission, making the chocolate fruit throws the player ~5 km away each time; Spirit Pops mission not working (DM with video); a player unsure how to use the mixer station; and the welcome login reward cannot be claimed.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "功能许愿：给好友转游戏内现金和 Vice 币、更多衣服能用游戏内现金买、把卡通风格的车辆血条重做、像其他 Level Infinite 游戏那样给报 Bug 发奖励、排灯节活动（2 条）、印地语，以及能挪动地图",
+          "count": 10,
+          "type": "sug",
+          "orig": "Features: Send in-game cash / diamonds / Vice Coins to friends, more clothes purchasable with in-game cash, redesign the cartoonish vehicle health bar, rewards for reporting bugs (like other Level Infinite games), Diwali event (2), Hindi language, bikes, a mansion, and the ability to move the map.",
+          "channel": "DC,YTB,IG"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新好评：有玩家喜欢《Franchise Fury》这次更新（「mast update，itna kuch diya hai」、「bahut achcha update」），并称赞新的画质和专业感",
+          "count": 3,
+          "type": "good",
+          "orig": "Update Praise: Some players enjoying the Franchise Fury update ('mast update, itna kuch diya hai', 'bahut achcha update') and praising the new graphics and professional look.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "Razor/RV 车抽奖引发众怒：玩家砸了 120 万到 5000 万游戏币却没抽到车（热门评论 23 赞，「Game walo ne loot liya razor deke」12 赞），一堆人要求退款或改成直接购买/上架商店，直说这是赌博或欺骗；Razor 定价约 1200 万（还不带氮气），玩家要求多开赚钱路子好抽得起",
+          "count": 30,
+          "type": "bad",
+          "orig": "Razor / RV Car Spin: Biggest complaint after the update - players spent 1.2M to 50M cash on the Razor and RV spins without getting the vehicle (top comment 23 likes, 'Game walo ne loot liya razor deke' 12 likes), many asking for refunds or a direct-purchase / shop option, calling it gambling or fraud; the Razor costing ~12M without nitro, and requests for more cash-earning sources so the spin is reachable.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新内容让人失望：两轮车又一次没来（热门评论 15 赞，有人威胁删游戏），没有新任务、抢劫和故事推进，嘟嘟车锁在付费战斗通行证里，7GB/3GB 的下载还要重下资源，Vice Tonic 生意又慢又无聊回报还低（「像黑帮一样种地」），服装设计也被吐槽",
+          "count": 25,
+          "type": "bad",
+          "orig": "Update Content: Strong disappointment that bikes were not added again (top comment 15 likes, several threatening to delete the game), no new missions, heists or story progress, tuk-tuk locked to the paid Battle Pass, the 7GB / 3GB download and resource re-download, the Vice Tonic business feeling slow, boring and low-reward ('gangster se kheti karwate hai'), and poor costume designs.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "罪恶币死锁：很多人不小心拆掉或卖掉了包装站/包装工具/工作台/种植箱，或者把罪恶币全花在补给上，现在买不回来也交不了订单，因为罪恶币只能靠卖包裹赚；一堆人求恢复或开放罪恶币购买（IG 评论、私信、8 条以上 Discord 帖）。还有人买了种植箱却放不下、东西放不回原位",
+          "count": 18,
+          "type": "bad",
+          "orig": "Vice Coins Soft-lock: Many players accidentally destroyed or sold the Packing Station / packaging tools / workstation / planter, or spent all Vice Coins on supplies, and now cannot buy them back or complete orders because Vice Coins can only be earned by selling packets; asking for a Vice Coin recovery or purchase option (IG comments, DMs and 8+ Discord posts). One player also cannot place a bought planter / re-place items in the same spot.",
+          "channel": "IG,DC"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "Vice Tonic 活动任务和奖励：终端任务（买纯净水和包装袋）做不完，离线后任务卡住，Vice Tonic 产业里的容器和武器袋打不开、没奖励，商业声望奖励缺失或只给黑钱，混合站 1 会把玩家传送到地图顶端，平板上拖不动包裹，订单送不到，缺了植物生长选项，「调查闹鬼区域」任务报错，查理的万圣节任务少东西，战斗通行证任务没给黑皮书",
+          "count": 14,
+          "type": "bad",
+          "orig": "Vice Tonic Missions & Rewards: Terminal mission (buy purified water and packing bag) not completing, task stuck after going offline, container and arms bag in the Vice Tonic property not opening / no rewards, business reputation rewards missing or only dirty money, Mixing Station 1 teleporting the player to the top of the map, packaging drag not working on tablet, orders not arriving, plant growth option missing, 'Investigate the haunted area' mission bugged, a missing item in Charlie's Halloween mission, and Blackbook not received from a Battle Pass mission.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "表情又没了：更新前买的表情（包括 300 钻石那个）在商店界面里显示成锁定要重买，有些还放不出来；另外库存里一直有个假的「N」新物品高亮",
+          "count": 9,
+          "type": "bad",
+          "orig": "Emotes: Emotes bought before the update (including 300-diamond emotes) show as locked and ask to be purchased again, and some emotes do not play; also a false 'N' new-item highlight in Inventory > Material.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "HUD 布局被重置：自定义按钮布局更新后被清空而且改完存不住——下蹲键钉在底部、设置键固定在一个位置（左撇子玩家遭殃），控制设置改不动（7 条 Discord 帖 + IG 和 YT 评论）",
+          "count": 10,
+          "type": "bad",
+          "orig": "Controls & Layout: Custom button layouts reset after the update and changes do not save - crouch button stuck at the bottom, setup button fixed in one place (left-hand players affected), control settings cannot be changed (7 Discord posts plus IG and YT comments).",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "杂项 Bug：买了新火箭筒后公司估值反而掉（5740 万那例，另有掉 40 万）；走私任务奖励领不了；加入集团后任务做不完；集团描述在界面里文字重叠；车没坏却显示「维修中」；场景绿得过头；麦克风/语音聊天用不了还重声；坐下键失灵；车血量太低掉进海里；高级公司每日奖励正常发放",
+          "count": 12,
+          "type": "bad",
+          "orig": "Other Bugs: Company valuation drops after buying the new rocket launcher (57.4M case, another -400K); Smuggler Run reward not claimable; Syndicate join mission not completing even after joining; Syndicate description text overlapping; vehicle showing 'repair' when not destroyed; scenery too green; mic / voice chat not working and double voice; sit button glitch; low car health causing cars to fall into the ocean; premium company daily reward arriving as normal.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "功能许愿一大堆：玩家间转账、给新公司雇员工、辛迪加排名、更多合法赚钱活儿、买或找回罪恶币的办法、改名/改名卡（多条）、印地语或印地语字幕、摩托、直升机、机场、警察活儿、跑车氮气、能摆 4 辆车的车库、软体碰撞物理、更好看的衣服、电影感车视角、体感操作、麦克风和游戏音量分开、新的 CD 兑换码、排灯节活动，以及更合理的粉钻换蓝钻汇率",
+          "count": 20,
+          "type": "sug",
+          "orig": "Features: Money transfer between players, hire workers for the new company, Syndicate ranking, more legal cash jobs, a way to buy or recover Vice Coins, name-change / rename card (multiple), Hindi language or Hindi subtitles, bikes / helicopter / airport / police job, nitro for sports cars, a garage to show 4 cars, soft-body crash physics, better costumes, cinematic car camera, gyroscope, separate mic and game volume, new CD keys, Diwali event, and a fairer pink-to-blue diamond conversion rate.",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-29",
+          "theme": "更新好评：玩家称赞这次更新比预期还好（「管理员你太牛了」8 赞），点名夸哈拉尔德、新的辛迪加系统和更顺的画质，还把游戏跟 GTA 比；印度玩家感谢团队做了排灯节内容",
+          "count": 12,
+          "type": "good",
+          "orig": "Update Praise: Players calling the update incredible and better than expected ('You nailed it Admin' 8 likes), praising Harald, the new Syndicate system, smoother graphics and comparing the game favourably to GTA; Indian players thanking the team for the Diwali content.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "登录和加载：玩家卡在加载页或进不去游戏，网络明明没问题——Discord 上这条今天 26 条回复，外加 10 月 29–30 日的独立帖、IG 评论和私信；另外还有高延迟卡顿、更新下不下来、直播时游戏崩溃",
+          "count": 12,
+          "type": "bad",
+          "orig": "Login & Loading: Players stuck on the loading screen or unable to enter the game despite good internet - a Discord thread with 26 replies today plus separate posts from 29-30 Oct, IG comments and DMs; also high ping / lag, update not downloading, and the game crashing during live streams.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "罪恶币和 Vice Tonic 生意：玩家买产品和补给时（有的还没做完教程）就把罪恶币/生意币花光，结果买不了种子、交不了订单、升不了级；他们问去哪儿还能搞到罪恶币、要多开点赚罪恶币的路子（IG 评论和私信）；Discord 上还反映这个活动任务里没有升级 Vice Tonic 办公室的选项和引导",
+          "count": 9,
+          "type": "bad",
+          "orig": "Vice Coins & Vice Tonic Business: Players keep running out of Vice Coins / business coins while buying products and supplies (some before finishing the tutorial), leaving them unable to buy seeds, complete orders or upgrade the business; asking where to get more Vice Coins and for more ways to earn them (IG comments and DMs); no option or guide to upgrade the Vice Tonics office (Discord).",
+          "channel": "IG,DC"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "HUD 和耐力：自定布局里的下蹲键在游戏里位置完全对不上、卡在射击键下面（2 条 Discord 帖），准星和换弹图标有问题，走几步耐力就见底还反复弹提示，所有车的血条一起显示，延迟每隔几秒飙一次",
+          "count": 5,
+          "type": "bad",
+          "orig": "Controls, HUD & Stamina: Crouch button placed in custom layout appears in a totally different place in game / stuck under the fire button (2 Discord posts), crosshair and reload icon issue, stamina running out after a couple of steps with a repeated notification, all car health bars showing at once, and ping spiking every few seconds.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "集团、估值和表情：新的集团活动任务认不到已有集团（目标一直没完成）；估值只加物品价值的一半左右（比如 18.8L 的「突袭」只加约 9L）；更新后之前买的表情又没了",
+          "count": 3,
+          "type": "bad",
+          "orig": "Syndicate, Valuation & Emotes: New Syndicate Event mission does not register an existing Syndicate (objective stays incomplete); valuation only increases by about half of the item value (e.g. 18.8L Takedown adds ~9L); previously purchased emotes missing again after the update.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "登录和语音：还是卡在加载页、要试 5–6 次才进得去，要求升级服务器；语音聊天也有问题——换服后麦克风音量变得极低、声音超大、听不到队友（私信，Discord 麦克风帖又被顶起来）",
+          "count": 4,
+          "type": "bad",
+          "orig": "Login, Server & Mic: Still getting stuck on the loading screen / needing 5-6 login attempts, a request to upgrade servers, and voice chat issues - mic volume becoming very low after switching servers, very loud sound and friends' voices not coming through (DM, Discord mic thread active again).",
+          "channel": "IG,DC"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "Razor 价格和这次更新：在 Razor 转盘上砸了 300 万以上的玩家问它会不会进商店、卖多少钱，还有人说东西要钻石而他们充不了值；相比之前的动作内容，新活动显得「卡通」；两轮车依然没来",
+          "count": 6,
+          "type": "bad",
+          "orig": "Razor Price & Update: Players who spent 3M+ on the Razor spin asking whether it will come to the shop and at what price, others saying items need diamonds they cannot top up for, the new events feel 'cartoonish' compared to earlier action content, and bikes still missing.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "功能许愿：男女角色不同的跑/走姿势、车辆上锁解锁和车库、宠物、直升机、飞机、机场、火车、摩托、更多的车枪和衣服、能买的展厅和集团私人保安、更真的画质和引擎声、更顺的驾驶、更多赚罪恶币的方式",
+          "count": 12,
+          "type": "sug",
+          "orig": "Features: Different running / walking styles for male and female characters, car lock-unlock and a garage, pets, helicopter / airplane / airport / train, bikes, more cars, guns and clothes, buyable showrooms and personal security for Syndicates, more realistic graphics and car engine sounds, smoother driving controls, and more ways to earn Vice Coins.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-30",
+          "theme": "更新好评：「这游戏好玩得离谱，任务非常棒，体验简直太赞了」、「更新很棒」（私信），玩家说喜欢这种内容，还想多来点",
+          "count": 4,
+          "type": "good",
+          "orig": "Update Praise: 'The game is absolutely amazing, missions are fantastic, gameplay is just WOW', 'update mast hai' (DM), and players asking for more such content.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "罪恶币死锁还在继续：很多人把罪恶币全买了土壤、水果包或补给，或者不小心拆了包装机/工作台，结果罪恶币/VT 代币耗尽，买不了水、包装材料和种子，生意直接停摆（新的罪恶药剂攻略帖下面全是评论：「罪恶币用完怎么办？」、「只剩 17 个代币了，这游戏是不是结束了？」；私信；4 条 Discord 帖）。玩家求恢复或开放购买，还说攻略发得太晚",
+          "count": 22,
+          "type": "bad",
+          "orig": "Vice Coins Soft-lock (continuing): Many more players have run out of Vice Coins / VT tokens after buying max soil, fruit packs or other supplies, or after accidentally destroying the packing machine / table, and cannot buy water, packaging or seeds to continue (comments on the new Vice Tonics guide post: 'what happens when Vice Coins run out', 'only 17 tokens, is the game over?'; DMs; 4 Discord posts). Players ask for a way to recover or buy Vice Coins and say the guide came too late.",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "Vice Tonic 活动任务和奖励：升级奖励里的非法袋子和容器打不开；1–14 级奖励没发（只给黑钱）；2 级种子每日重置只在第一天生效；买了纯净水和包装袋后终端任务还是做不完；水果和储物箱的互动键点了没反应；种子桌卡在施肥步骤；种植机 2 的升级选项没了；买不了散装水果；三星平板上拖不动东西",
+          "count": 9,
+          "type": "bad",
+          "orig": "Vice Tonic Missions & Rewards: Illicit bags and containers from Vice Tonic level-up rewards cannot be opened; level 1-14 rewards not credited (only dirty money); level 2 seed daily reset only works on day one; terminal mission not completing after buying purified water and packing bag; interaction button not working for fruit and storage boxes; seed table stuck at fertiliser step; planter 2 upgrade mission option missing; bulk fruit cannot be bought; dragging items not working on Samsung tablet.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "登录和报错 59：网络没问题还是卡在加载/下载配置页（Discord 帖和 7 条回复的服务器问题帖），一堆人报「错误 [59] 无效账号信息」、1000ms 延迟、登出后账号没了，还有主播直播时游戏崩溃",
+          "count": 10,
+          "type": "bad",
+          "orig": "Login & Error 59: Players still stuck on the loading / download-configuration screen despite good internet (Discord posts and a 7-reply server issue thread), 'Error [59] Invalid account information' reported by several players, 1000ms ping, an account lost after being logged out, and the game crashing for streamers.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "界面和操作：下蹲/坐下键改不了，按钮大小改了不生效（iQOO Z9x），背包里「N」新物品提示一直消不掉，血条不显示，粉红天空又回来了，更新后骗子转盘活动里的一个背包还丢了",
+          "count": 5,
+          "type": "bad",
+          "orig": "Controls & UI: Crouch / sit button cannot be adjusted and button size changes do not apply (iQOO Z9x), constant 'N' new-item glitch in inventory, health bar not displaying, pink sky issue again, and a bag from the Swindler spin event missing after the update.",
+          "channel": "DC,IG,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "商业化反弹：「战斗通行证和嘟嘟车在 Midasbuy 上 5% 折扣」这条帖被骂爆——玩家要嘟嘟车免费或进普通通行证，觉得通行证（约 680 卢比）太贵，而且 Midasbuy 在印度根本用不了；玩家在 Razor/RV 抽奖上还在亏 200 万到 1400 万，要求降价或改成固定价直接卖；担心游戏会像 Free Fire 那样变成付费取胜，而 Vice Tonic 生意玩起来像放置游戏（「sab log cargo, fight, mission chhod kr ab ch*g bech rahe」）",
+          "count": 20,
+          "type": "bad",
+          "orig": "Monetisation & Car Spin: Backlash on the 'Battle Pass and Tuk-Tuk at 5% off on Midasbuy' post - players want the tuk-tuk free or in the normal pass, say the pass (~680 Rs) is too expensive and Midasbuy is not active for India; players still losing 2-14M cash on the Razor / RV spin and asking to reduce the price or sell it at a fixed price; concerns the game is becoming pay-to-win like Free Fire, and the Vice Tonic business feeling like an idle game ('sab log cargo, fight, mission chhod kr ab ch*g bech rahe').",
+          "channel": "IG,YTB,DC"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "公平和经济：保持公平、别做成付费取胜，把新车抽奖价格降下来（不值 1500 万现金），能送东西给好友，做区域集团排行榜，开带观战的 PvP 自定义房间",
+          "count": 6,
+          "type": "sug",
+          "orig": "Fair Play & Economy: Keep the game fair and avoid pay-to-win, reduce the new car spin price (not worth 15M cash), a rename card or at least one free name change, gifting items to friends, a regional Syndicate leaderboard, PvP custom rooms with spectator option.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "载具和功能：摩托依然是最急的诉求——有个玩家几乎每条帖都刷长长的「加摩托」（38 次），一堆人反复问「摩托什么时候上」；另外还有坐卧系统、像 GTA 5 里 Chop 那样的宠物狗、直升机和喷气背包、快速车库/豪宅、11 月 8 日前的排灯节活动、印地语视频，以及 Pinpoint 故事的下一部分",
+          "count": 18,
+          "type": "sug",
+          "orig": "Bikes & Features: Motorcycles remain the top ask - one player posted a long 'add motorcycles' request across almost every post (38 times) and many others repeated 'bike kab aayega'; also a sitting and sleeping system, a pet dog like GTA 5's Chop, helicopter and jetpack, fast garage / rich house, Diwali event before 8 Nov, Hindi videos, and the next Pinpoint story part.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "好评和修复确认：一位玩家在 Discord 上确认表情 Bug 已修好（「感谢开发者」），另一位在私信里得到帮助后说「这是最佳的游戏、团队也最棒」，一位玩家清数据后解决了登录问题，新的开场视频也被夸",
+          "count": 4,
+          "type": "good",
+          "orig": "Praise & Fixes: A player confirmed on Discord that the emote bug is fixed ('Thank you developers'), another said 'this is the best game with the best team' after getting help (DM), login fixed for a player after clearing data, and the new opening video was praised.",
+          "channel": "DC,IG"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "罪恶币和其他 Bug（晚间）：玩家把罪恶币/绿币全买了肥料或土壤后依然卡住，做不了任务（「jab samjha kya karna hai tab vice coin khatam」）；罪恶补品商店每日重置后种子没刷新（2 条 Discord 帖）；重开应用后准星和换弹图标异常，10 月 31 日的修复更新后还在；骗子转盘活动的背包还是没回来（2 条）；「新更新没生效」；粉红天空依旧（YT）",
+          "count": 14,
+          "type": "bad",
+          "orig": "Vice Coins & Other Bugs (evening): Players still stuck after spending all Vice Coins / green coins on fertiliser or soil and unable to continue missions ('jab samjha kya karna hai tab vice coin khatam'); Vice Tonics supplies shop daily reset not refreshing seeds (2 Discord posts); crosshair and reload icon glitch after reopening the app, still happening after the 31 Oct bug-fix update; bag from the Swindler spin event still missing after the update (2); 'new update sahi se kaam nahi kar raha'; pink sky still appearing (YT).",
+          "channel": "IG,DC,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "更新和车转盘：在新的「倒计时 2 天」排灯节预告下，玩家说这次更新又乱又无聊（「完全看不懂」），商业模式把游戏变成了开店经营，Razor 要 150 万以上现金还没有车（「骗人的幻影之城」），要求把新车抽奖价格降下来，加了车皮却没有蓝钻任务，4 级之后的任务太难打理（私信），还有人抱怨 Discord 删掉了关于宗教辱骂的举报",
+          "count": 12,
+          "type": "bad",
+          "orig": "Update & Car Spin: On the new '2 Days To Go' Diwali teaser players say the update is confusing and boring ('kuch samajh nahi aa raha'), the business turned the game into running a shop, Razor costs 15L+ cash with no car ('scam mirage city'), requests to reduce the new car event price, car skins added but no blue diamond missions, missions too difficult to manage after level 4 (DM), and a complaint that Discord deletes reports of religious abuse.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "排灯节和功能：玩家问这次排灯节更新到底有什么、希望能白送点东西（豪华住宅、车库），白金展厅里要摩托和各种两轮车（多款），GTA 5 风格的房屋和车库、豪宅而且要无加载无缝进出，驾驶时的帧率模式，私人会话/抢劫准备/任务锁定解锁系统，女友角色，赚罪恶币的任务，还有蓝钻任务",
+          "count": 14,
+          "type": "sug",
+          "orig": "Diwali & Features: Players asking what the Diwali update brings and hoping for free gifts (luxury house, garage), bikes in the Platinum showroom and motorbikes in general (several), GTA 5 style house and garage, mansions and seamless entry without loading screens, FPS mode while driving, private sessions / heist prep / mission lock-unlock system, a girlfriend character, a Vice Coin earning mission, and blue diamond missions.",
+          "channel": "IG,YTB"
+        },
+        {
+          "date": "2026-10-31",
+          "theme": "好评：「新版本和辛迪加系统真的太棒了」，一位玩了 200 小时、连续签到 70 天的玩家说「我喜欢你们的游戏」（私信），还有人对即将到来的排灯节揭晓很兴奋（「感觉要出大事了」、「管理员又要搞点危险的东西了」）",
+          "count": 4,
+          "type": "good",
+          "orig": "Praise: 'Naya update aur Syndicate system sach mein bahut zabardast hai', a player with 200 hours and a 70-day login streak saying 'I love your game' (DM), and excitement for the upcoming Diwali reveal ('kuch tagda hone ki khushbu aa rahi hai', 'admin fir kuch khatarnak la raha hai').",
+          "channel": "IG"
+        }
+      ],
+      "communitySummary": "本周社群反馈共 **627 条玩家反馈 / 70 个议题**，来源 Instagram(614)、YouTube(479)、Discord(413)，多渠道议题按来源重复计入。采集日 10/26（8 议题 / 54 条）、10/27（7 / 43）、10/28（9 / 86）、10/29（26 / 251）、10/30（8 / 55）、10/31（12 / 138），**反馈量按 count 列累加、与上周口径一致，可直接环比 +235%**。话题分布：任务与游戏内容 137(21.9%)、载具体验 133(21.2%)、支付与商业化 111(17.7%)、性能与 Bug 64(10.2%)、功能与系统 61(9.7%)、账号与登录 49(7.8%)、口碑与其他 45(7.2%)、本地化与区域 23(3.7%)、帮派与社交 4(0.6%)。情绪：负面 378(60.3%)、建议 179(28.5%)、正面 70(11.2%)。",
+      "trend": "环比上周（187 条 / 54 议题）：反馈量 **+235.3%**、议题数 +36，**负面率 44.9% → 60.3%（+15.4pp）**，正面口碑 14.4% → 11.2%。上周的预警被完整验证——10/29 没给出玩家认定的「实打实内容」，负面率应声上台阶，且 10/31 仍有 138 条，说明**未收敛**。结构上：任务与游戏内容保持第一（60 → 137 条），**支付与商业化由 13 条飙到 111 条（7.0% → 17.7%）是新出现的起火点**，性能与 Bug 从 0 回到 64 条（更新引入 Vice Tonic 死锁 + HUD 重置 + 登录故障），账号与登录 8 → 49 条。⚠️ 关键判断：**这次更新的问题不在量而在兑现方式**——抽奖吃掉玩家 120 万–5000 万现金却给不出车，是把「期待」直接变现成了「被掠夺感」。若 11/8 前的排灯节仍以付费转盘为主、且不给免费礼物与明确保底，负面率会继续走高，IG 掉粉也会同步加速。"
+    },
     {
       "week": "10.19 - 10.25",
       "attitude": "承压",
