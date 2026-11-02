@@ -3663,7 +3663,7 @@ function renderFanCards(data){
     var why=(!wk)?((wks.reason==='no-snapshot-in-week')
            ?('本周（'+C.week.start+' 起）暂无有效快照，无法计算周净增')
            :('上周之前没有更早的快照，无法计算周净增（至少需上周一条基线）')):'';
-    var baseLab=(wk&&wk.baseSrc==='pre-week-peak')?'上周峰值':'上周无快照，取更早 '+wk.base.date.slice(5);
+    var baseLab=wk?((wk.baseSrc==='pre-week-peak')?'上周峰值':('上周无快照，取更早 '+wk.base.date.slice(5))):'';
     var foot=(wk?('周净增基准 <b>'+wk.base.date.slice(5)+'</b>（'+baseLab+'） · '):'')+'有效快照 <b>'+s.n+'</b> 个'
       +(gaps?(' · 缺 '+gaps+' 天'):'')
       +' · 更新至 <b>'+(s.lastDate?s.lastDate.slice(5):'—')+'</b>'
@@ -4397,14 +4397,14 @@ function showToast(msg,type){
 // ===== 数据加载 =====
 // 离线兜底数据：即使以 file:// 打开或断网，也保证粉丝页不空白
 const FALLBACK_DATA = {
-  "updated_at": "2026-10-26",
+  "updated_at": "2026-11-02",
   "launch_date": "2026-08-20",
   "platforms": {
     "instagram": {
       "name": "Instagram",
       "handle": "@gangstarmiragecityindia",
       "url": "https://www.instagram.com/gangstarmiragecityindia/",
-      "value": 195365,
+      "value": 191433,
       "label": "粉丝",
       "color": "#E1306C",
       "note": "数据来源：用户截图校准（2026-08-17）；145帖子",
@@ -4652,13 +4652,17 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-26",
           "value": 195365
+        },
+        {
+          "date": "2026-11-02",
+          "value": 191433
         }
       ]
     },
     "facebook": {
       "handle": "Gangstar Mirage City India",
       "url": "https://www.facebook.com/profile.php?id=61572148744773",
-      "value": 4065,
+      "value": 4365,
       "label": "关注者",
       "color": "#1877F2",
       "note": "数据来源：用户截图校准（2026-08-17）；227位粉丝",
@@ -4910,6 +4914,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-26",
           "value": 4065
+        },
+        {
+          "date": "2026-11-02",
+          "value": 4365
         }
       ],
       "name": "Facebook"
@@ -4918,7 +4926,7 @@ const FALLBACK_DATA = {
       "name": "YouTube",
       "handle": "@GangstarMirageCityIndia",
       "url": "https://www.youtube.com/channel/UCEPkKwjbk3ZJ5rz9nXyjpWw",
-      "value": 91506,
+      "value": 92253,
       "label": "订阅者",
       "color": "#FF0000",
       "note": "数据来源：用户截图校准（2026-08-17，YT Studio）；当前订阅人数 12,602",
@@ -5242,6 +5250,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-26",
           "value": 91506
+        },
+        {
+          "date": "2026-11-02",
+          "value": 92253
         }
       ]
     },
@@ -5388,7 +5400,7 @@ const FALLBACK_DATA = {
       "name": "Discord",
       "handle": "Gangstar Mirage City 社区",
       "url": "https://discord.gg/bzsUFQvarm",
-      "value": 38082,
+      "value": 37905,
       "label": "成员",
       "color": "#5865F2",
       "note": "数据来源：用户截图校准（2026-08-17）",
@@ -5564,6 +5576,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-26",
           "value": 38082
+        },
+        {
+          "date": "2026-11-02",
+          "value": 37905
         }
       ]
     },
@@ -5571,7 +5587,7 @@ const FALLBACK_DATA = {
       "name": "Moj",
       "handle": "@gangstarmiragecityindia",
       "url": "https://mojapp.in/@gangstarmiragecityindia",
-      "value": 103723,
+      "value": 104723,
       "label": "粉丝",
       "color": "#7C3AED",
       "note": "数据来源：用户提供当前值（2026-08-17）：8,372；8/1 建号起逐日上升估算（带自然起伏）",
@@ -5771,6 +5787,10 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-26",
           "value": 103723
+        },
+        {
+          "date": "2026-11-02",
+          "value": 104723
         }
       ]
     },
@@ -5778,7 +5798,7 @@ const FALLBACK_DATA = {
       "name": "ShareChat",
       "handle": "@gangstarmiragecityindia",
       "url": "https://sharechat.com/profile/gangstarmiragecityindia",
-      "value": 17724,
+      "value": 18423,
       "label": "粉丝",
       "color": "#FF7A00",
       "note": "数据来源：用户提供当前值（2026-08-15）：328；8/1 建号起逐日上升估算（带自然起伏）",
@@ -5926,11 +5946,17 @@ const FALLBACK_DATA = {
         {
           "date": "2026-10-26",
           "value": 17724
+        },
+        {
+          "date": "2026-11-02",
+          "value": 18423
         }
       ]
     }
   }
 };
+
+
 
 
 
